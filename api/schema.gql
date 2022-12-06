@@ -1,0 +1,113 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+directive @constraint(pattern: String) on FIELD_DEFINITION
+
+type User {
+  _id: ID!
+
+  """Pseudo of the user"""
+  pseudo: String!
+
+  """E-mail of the user"""
+  email: String!
+
+  """Password of the user"""
+  password: String!
+
+  """Public key of the user"""
+  publicKey: String!
+
+  """access of the user : bin rwrw"""
+  credidential: Float!
+  isConnected: Boolean!
+}
+
+type Query {
+  User(id: String, email: String, input: SearchUserInput): User
+  whoami: User
+  exist(email: String!): Boolean!
+  Users(filter: FilterUserInput): [User!]!
+}
+
+input SearchUserInput {
+  """Pseudo of the user"""
+  pseudo: String!
+
+  """Public key of the user"""
+  publicKey: String!
+}
+
+input FilterUserInput {
+  """Pseudo of the user"""
+  pseudo: [String!]
+
+  """E-mail of the user"""
+  email: [String!]
+
+  """Password of the user"""
+  password: [String!]
+
+  """Public key of the user"""
+  publicKey: [String!]
+
+  """access of the user : bin rwrw"""
+  credidential: [Float!]
+}
+
+type Mutation {
+  createUser(input: UserInput!): User!
+  newUser(input: NewUserInput!): User!
+  deleteUser(id: String!): User
+  updateUser(id: String!, input: UpdateUserInput!): User
+}
+
+input UserInput {
+  """Pseudo of the user"""
+  pseudo: String!
+
+  """E-mail of the user"""
+  email: String!
+
+  """Password of the user"""
+  password: String!
+
+  """Public key of the user"""
+  publicKey: String!
+
+  """access of the user : bin rwrw"""
+  credidential: Float!
+}
+
+input NewUserInput {
+  """Pseudo of the user"""
+  pseudo: String!
+
+  """E-mail of the user"""
+  email: String!
+
+  """Password of the user"""
+  password: String!
+}
+
+input UpdateUserInput {
+  """E-mail of the user"""
+  email: String
+
+  """pseudo of the user"""
+  pseudo: String
+
+  """Password of the user"""
+  password: String
+
+  """Public key of the user"""
+  publicKey: String
+
+  """access of the user : bin rwrw"""
+  credidential: Float
+}
+
+type Subscription {
+  connectedUser: User!
+}
