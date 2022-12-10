@@ -50,7 +50,7 @@ export default function RegisterScreen(ctx) {
                 const query = `query exists($email : String!) {
                     exist(email: $email)
                 }`;
-                const response = await fetch('http://localhost:3000/graphQL', {
+                const response = await fetch('http://192.168.0.42:3000/graphQL', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

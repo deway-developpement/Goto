@@ -72,12 +72,12 @@ function createApolloClient(authContext, publicAxios) {
     });
     
     const httpLink = new HttpLink({
-        uri: 'http://localhost:3000/graphql',
+        uri: 'http://192.168.0.42:3000/graphql',
     });
 
 
     const wsLink = new GraphQLWsLink(createClient({
-        url: 'ws://localhost:3000/graphql',
+        url: 'ws://192.168.0.42:3000/graphql',
         shouldRetry: true,
         keepAlive: true,
         connectionParams: {

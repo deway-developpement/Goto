@@ -31,12 +31,12 @@ export default function App() {
                             <Stack.Screen
                                 name="Home"
                                 component={HomeScreen}
-                                options={{ headerShown: false }}
+                                options={{ headerShown: false, gestureEnabled: false }}
                             />
                             <Stack.Screen
                                 name="Register"
                                 component={RegisterScreen}
-                                options={{ headerShown: false }}
+                                options={{ headerShown: false, gestureEnabled: false }}
                             />
                         </Stack.Navigator>
                     </NavigationContainer>

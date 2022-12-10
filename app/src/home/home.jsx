@@ -10,6 +10,7 @@ import {
     FlatList,
     TouchableOpacity,
     Image,
+    StatusBar,
 } from 'react-native';
 import { Button } from 'react-native-elements';
 import { AuthContext } from '../context/AuthContext';
@@ -18,64 +19,14 @@ import { useTheme } from '@react-navigation/native';
 import { useApolloClient, gql, useQuery } from '@apollo/client';
 import KeyboardDismissView from '../KeyboardDismissView/KeyboardDismissView';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
+import MapView, { Marker } from 'react-native-maps';
+import * as Location from 'expo-location';
+import { NavigationContainer } from '@react-navigation/native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
-function ListConnectedUsers() {
-    const authContext = useContext(AuthContext);
+const Tab = createBottomTabNavigator();
 
-    const flatListRef = useRef(null);
-
-    const { data } = useQuery(gql`query {
-        Users {
-            pseudo
-            publicKey
-            isConnected
-        }
-    }`, {
-        context: {
-            headers: {
-                'Authorization': `Bearer ${authContext.getAccessToken()}`,
-            },
-        },
-        pollInterval: 5000,
-    });
-
-    return (
-        <SafeAreaView style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-            <FlatList
-                data={data?.Users || []}
-                renderItem={({item}) => (
-                    <TouchableOpacity>
-                        <View>
-                            <Text>{item?.pseudo}</Text>
-                            <Text>{item?.isConnected ? 'connected' : 'deconnected'}</Text>
-                        </View>
-                    </TouchableOpacity>
-                )}
-                keyExtractor={item => item.pseudo + '#' + item.publicKey}
-                ListEmptyComponent={() => (
-                    <View>
-                        <ActivityIndicator size="large" color="#0000ff" />
-                    </View>
-                )}
-                extraData={data}
-                style={{flexGrow: 1, flex:1}}
-                ref={flatListRef}
-                onLayout={() => {
-                    if (flatListRef.current && data) {
-                        flatListRef.current.scrollToEnd({animated: true});
-                    }
-                } }
-                onContentSizeChange={() => {
-                    if (flatListRef.current && data) {
-                        flatListRef.current.scrollToEnd({animated: true});
-                    }
-                } }
-            />
-        </SafeAreaView>
-    );
-}
-
-function Profil({navigation}) {
+function ProfilScreen({navigation}) {
     const authContext = useContext(AuthContext);
     const { colors } = useTheme();
     const styles = stylesheet(colors);
@@ -114,36 +65,116 @@ function Profil({navigation}) {
     } , [authContext.authState]);
 
     return (
-        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-            <Text>This is your profil :</Text>
-            <Text>{profil.pseudo}#{profil.publicKey}</Text>
-            <Text>{profil.email}</Text>
-            <View style={styles.btnContainer}>
-                <View style={styles.btn}>
-                    <Button
-                        title="Logout"
-                        onPress={() => {
-                            logout(authContext);
-                            navigation.navigate('Login');
-                        }}
-                        buttonStyle={styles.btn}
+        <KeyboardAvoidingView style={styles.container}>
+            <KeyboardDismissView >
+                <SafeAreaView style={styles.container}>
+                    <View style={{flexDirection: 'row', alignItems:'start'}}>
+                        <Image source={require('../../assets/images/logo.png')} style={styles.logo} />
+                        <Text style={styles.header}>Gotò</Text>
+                    </View>
+                    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                        <Text>This is your profil :</Text>
+                        <Text>{profil.pseudo}#{profil.publicKey}</Text>
+                        <Text>{profil.email}</Text>
+                        <View style={styles.btnContainer}>
+                            <View style={styles.btn}>
+                                <Button
+                                    title="Logout"
+                                    onPress={() => {
+                                        logout(authContext);
+                                        navigation.navigate('Login');
+                                    }}
+                                    buttonStyle={styles.btn}
+                                />
+                                <MaterialIcon
+                                    name="logout"
+                                    size={30}
+                                    color={colors.link}
+                                    onPress={() => {
+                                        logout(authContext);
+                                        navigation.navigate('Login');
+                                    }}
+                                    style={{alignSelf: 'center'}}
+                                />
+                            </View>
+                        </View>
+                    </View>
+                </SafeAreaView>
+            </KeyboardDismissView>
+        </KeyboardAvoidingView>
+    );
+}
+
+function MapScreen({navigation}) {
+    const { colors } = useTheme();
+    const styles = stylesheet(colors);
+
+    const [location, setLocation] = useState(null);
+    const [errorMsg, setErrorMsg] = useState(null);
+
+    useEffect(() => {
+        (async () => {
+      
+            let { status } = await Location.requestForegroundPermissionsAsync();
+            if (status !== 'granted') {
+                setErrorMsg('Permission to access location was denied');
+                return;
+            }
+
+            let templocation = await (await Location.getCurrentPositionAsync({}));
+            console.log(templocation);
+            setLocation(templocation);
+        })();
+    }, []);
+
+    useEffect(() => {
+        console.log(location?.coords?.latitude);
+    }, [location]);
+
+    return (
+        <View style={styles.container}>
+            <SafeAreaView />
+            {location == null ? (errorMsg != null ? 
+                <Text>{errorMsg}</Text> :
+                <ActivityIndicator size="large" color="#0000ff" style={{flex: 3, width: '100%'}} />) :
+                <MapView initialRegion={{
+                    latitude: location?.coords?.latitude || 48.99007834363359,
+                    longitude: location?.coords?.longitude || 2.76576986365421,
+                    latitudeDelta: 0.00922,
+                    longitudeDelta: 0.00421,
+                }} 
+                region={{
+                    latitude: location?.coords?.latitude,
+                    longitude: location?.coords?.longitude,
+                    latitudeDelta: 0.00922,
+                    longitudeDelta: 0.00421,
+                }}
+                style={{flex: 1, width: '100%'}} >
+                    <Marker coordinate={{
+                        latitude: location?.coords?.latitude,
+                        longitude: location?.coords?.longitude,
+                    }}
+                    title="Position"
+                    description="You are here"
+                    pinColor="blue"
+                    flat={true}
                     />
-                    <MaterialIcon
-                        name="logout"
-                        size={30}
-                        color={colors.link}
-                        onPress={() => {
-                            logout(authContext);
-                            navigation.navigate('Login');
-                        }}
-                        style={{alignSelf: 'center'}}
-                    />
-                </View>
-            </View>
-           
+                </MapView>
+            }
         </View>
     );
 }
+
+const Tabs = {
+    Map: {
+        component: MapScreen,
+        label: 'Map',
+    },
+    Profil: {
+        component: ProfilScreen,
+        label: 'Profil',
+    },
+};
 
 function HomeScreen({navigation}) {
     const { colors } = useTheme();
@@ -156,11 +187,25 @@ function HomeScreen({navigation}) {
             <KeyboardDismissView>
                 <View style={styles.inner}>
                     <SafeAreaView />
-                    <View style={{flexDirection: 'row', alignItems:'start'}}>
-                        <Image source={require('../../assets/images/logo.png')} style={styles.logo} />
-                        <Text style={styles.header}>Gotò</Text>
-                    </View>
-                    <Profil navigation={navigation}/>
+                    <StatusBar animated={true} />
+                    <Tab.Navigator
+                        initialRouteName={Object.entries(Tabs)[0].name}
+                        screenOptions={{ headerShown: false }}
+                    >
+                        {Object.entries(Tabs).map(
+                            ([name, { component, label }], key) => (
+                                <Tab.Screen
+                                    key={key}
+                                    name={name}
+                                    component={component}
+                                    initialParams={{ navigation }}
+                                    options={{
+                                        tabBarLabel: label,
+                                    }}
+                                />
+                            )
+                        )}
+                    </Tab.Navigator>
                 </View>
             </KeyboardDismissView>
         </KeyboardAvoidingView>
