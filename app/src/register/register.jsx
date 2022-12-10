@@ -133,7 +133,7 @@ export default function RegisterScreen(ctx) {
                 })}
             >
                 <View style={styles.inner}>
-                    <View style={{flexDirection: 'row', alignItems:'start'}}>
+                    <View style={{flexDirection: 'row', alignItems:'flex-start'}}>
                         <Image source={require('../../assets/images/logo.png')} style={styles.logo} />
                         <Text style={styles.header}>Gotò</Text>
                     </View>
