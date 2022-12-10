@@ -135,14 +135,14 @@ function MapScreen() {
                 <Text>{errorMsg}</Text> :
                 <ActivityIndicator size="large" color="#0000ff" style={{flex: 3, width: '100%'}} />) :
                 <MapView initialRegion={{
-                    latitude: location?.coords?.latitude || 48.99007834363359,
-                    longitude: location?.coords?.longitude || 2.76576986365421,
+                    latitude: 0,
+                    longitude: 0,
                     latitudeDelta: 0.00922,
                     longitudeDelta: 0.00421,
                 }} 
                 region={{
-                    latitude: location?.coords?.latitude,
-                    longitude: location?.coords?.longitude,
+                    latitude: parseFloat(location?.coords?.latitude),
+                    longitude: parseFloat(location?.coords?.longitude),
                     latitudeDelta: 0.00922,
                     longitudeDelta: 0.00421,
                 }}
