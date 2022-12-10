@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import stylesheet from './style';
 import {
     KeyboardAvoidingView,
@@ -7,8 +7,6 @@ import {
     Platform,
     SafeAreaView,
     ActivityIndicator,
-    FlatList,
-    TouchableOpacity,
     Image,
     StatusBar,
 } from 'react-native';
@@ -16,12 +14,11 @@ import { Button } from 'react-native-elements';
 import { AuthContext } from '../context/AuthContext';
 import { logout } from '../services/auth.service';
 import { useTheme } from '@react-navigation/native';
-import { useApolloClient, gql, useQuery } from '@apollo/client';
+import { useApolloClient, gql } from '@apollo/client';
 import KeyboardDismissView from '../KeyboardDismissView/KeyboardDismissView';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import MapView, { Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
-import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 const Tab = createBottomTabNavigator();
@@ -105,7 +102,7 @@ function ProfilScreen({navigation}) {
     );
 }
 
-function MapScreen({navigation}) {
+function MapScreen() {
     const { colors } = useTheme();
     const styles = stylesheet(colors);
 

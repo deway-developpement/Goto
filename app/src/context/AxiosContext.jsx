@@ -11,11 +11,11 @@ const AxiosProvider = ({ children }) => {
     const authContext = useContext(AuthContext);
 
     const authAxios = axios.create({
-        baseURL: 'http://192.168.0.42:3000/',
+        baseURL: 'http://deway.fr:3000/',
     });
 
     const publicAxios = axios.create({
-        baseURL: 'http://192.168.0.42:3000/',
+        baseURL: 'http://deway.fr:3000/',
     });
 
     authAxios.interceptors.request.use(
@@ -34,7 +34,7 @@ const AxiosProvider = ({ children }) => {
     const refreshAuthLogic = (failedRequest) => {
         const options = {
             method: 'GET',
-            url: 'http://192.168.0.42:3000/auth/refresh',
+            url: 'http://deway.fr:3000/auth/refresh',
             headers: {
                 refresh_token: authContext.authState.refreshToken,
             },
