@@ -2,7 +2,8 @@ import React, { createContext, useContext } from 'react';
 import axios from 'axios';
 import { AuthContext } from './AuthContext';
 import createAuthRefreshInterceptor from 'axios-auth-refresh';
-import { storeAuth } from '../store/authStore';
+import { default as config } from '../config.json';
+import { refreshAuth } from '../services/auth.service';
 
 const AxiosContext = createContext(null);
 const { Provider } = AxiosContext;
@@ -11,11 +12,11 @@ const AxiosProvider = ({ children }) => {
     const authContext = useContext(AuthContext);
 
     const authAxios = axios.create({
-        baseURL: 'http://deway.fr:3000/',
+        baseURL: config.baseLink,
     });
 
     const publicAxios = axios.create({
-        baseURL: 'http://deway.fr:3000/',
+        baseURL: config.baseLink,
     });
 
     authAxios.interceptors.request.use(
@@ -32,38 +33,11 @@ const AxiosProvider = ({ children }) => {
     );
 
     const refreshAuthLogic = (failedRequest) => {
-        const options = {
-            method: 'GET',
-            url: 'http://deway.fr:3000/auth/refresh',
-            headers: {
-                refresh_token: authContext.authState.refreshToken,
-            },
-        };
-
-        return axios(options)
-            .then(async (tokenRefreshResponse) => {
-                failedRequest.response.config.headers.Authorization =
-                    'Bearer ' + tokenRefreshResponse.data.access_token;
-
-                authContext.setAuthState({
-                    ...authContext.authState,
-                    accessToken: tokenRefreshResponse.data.access_token,
-                    refreshToken: tokenRefreshResponse.data.refresh_token,
-                });
-
-                storeAuth(
-                    tokenRefreshResponse.data.access_token,
-                    tokenRefreshResponse.data.refresh_token
-                );
-
-                return Promise.resolve();
-            })
-            .catch(() => {
-                authContext.setAuthState({
-                    accessToken: null,
-                    refreshToken: null,
-                });
-            });
+        console.log('refreshing token with axios');
+        return refreshAuth(authContext).then(() => {
+            failedRequest.response.config.headers.Authorization = `Bearer ${authContext.getAccessToken()}`;
+            return Promise.resolve();
+        });
     };
 
     createAuthRefreshInterceptor(authAxios, refreshAuthLogic, {});

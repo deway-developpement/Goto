@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect, useContext } from 'react';
 import stylesheet from './style';
 import {
-    Keyboard,
     KeyboardAvoidingView,
     Text,
     TextInput,
@@ -11,21 +10,21 @@ import {
     Image,
 } from 'react-native';
 import { Button } from 'react-native-elements';
-import { useNavigation } from '@react-navigation/native';
 import { AuthContext } from '../context/AuthContext';
 import { AxiosContext } from '../context/AxiosContext';
-import { login } from '../services/auth.service';
 import { useTheme } from '@react-navigation/native';
+import { useApolloClient, gql } from '@apollo/client';
+import KeyboardDismissView from '../KeyboardDismissView/KeyboardDismissView';
 
-export default function RegisterScreen(ctx) {
-    const [email, setEmail] = useState(ctx.route.params.email);
+
+export default function RegisterScreen({navigation, route}) {
+    const [email, setEmail] = useState(route.params.email);
     const [password, setPassword] = useState('');
     const [pseudo, setPseudo] = useState('');
     const [vPassword, setVPassword] = useState('');
     const authContext = useContext(AuthContext);
     const { publicAxios } = useContext(AxiosContext);
-    const nav = useNavigation();
-
+    const client = useApolloClient();
 
     const { colors } = useTheme();
     const styles = stylesheet(colors);
@@ -47,24 +46,16 @@ export default function RegisterScreen(ctx) {
         // check if user exists here
         const checkEmail = async () => {
             try {
-                const query = `query exists($email : String!) {
-                    exist(email: $email)
-                }`;
-                const response = await fetch('http://deway.fr:3000/graphQL', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Accept: 'application/json',
+                const response = await client.query({
+                    query: gql`
+                    query exists($email : String!) {
+                        exist(email: $email)
+                        }`,
+                    variables: {
+                        email: email,
                     },
-                    body: JSON.stringify({
-                        query,
-                        variables: {
-                            email: email,
-                        },
-                    }),
                 });
-                const json = await response.json();
-                return json.data.exist;
+                return response.data.exist;
             } catch (error) {
                 console.error(error);
             }
@@ -87,8 +78,9 @@ export default function RegisterScreen(ctx) {
             vPassword == password
         ) {
             try {
-                const response = await publicAxios.post('graphQL', {
-                    query: `mutation newUser($email : String!, $password : String!, $pseudo : String!) {
+                const response = await client.mutate({
+                    mutation: gql`
+                        mutation newUser($email : String!, $password : String!, $pseudo : String!) {
                             newUser(input: {
                                 email: $email,
                                 password: $password,
@@ -104,7 +96,7 @@ export default function RegisterScreen(ctx) {
                         pseudo: pseudo,
                     },
                 });
-                if (response.data.data.newUser) {
+                if (response.data.newUser) {
                     const response = await publicAxios.post('/auth/login', {
                         email,
                         password,
@@ -112,8 +104,12 @@ export default function RegisterScreen(ctx) {
 
                     const { access_token, refresh_token } = response.data;
 
-                    await login(authContext, access_token, refresh_token);
-                    nav.navigate('Login');
+                    authContext.setAuthState({
+                        accessToken: access_token,
+                        refreshToken: refresh_token,
+                    });
+                    
+                    navigation.navigate('Home');
                 }
             } catch (error) {
                 console.error(error);
@@ -126,12 +122,7 @@ export default function RegisterScreen(ctx) {
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
             style={styles.container}
         >
-            <TouchableWithoutFeedback
-                onPress={Platform.select({
-                    native: Keyboard.dismiss,
-                    web: () => null,
-                })}
-            >
+            <KeyboardDismissView>
                 <View style={styles.inner}>
                     <View style={{flexDirection: 'row', alignItems:'flex-start'}}>
                         <Image source={require('../../assets/images/logo.png')} style={styles.logo} />
@@ -195,14 +186,14 @@ export default function RegisterScreen(ctx) {
                             onPress={() => register()}
                         />
                         <TouchableWithoutFeedback
-                            onPress={() => nav.navigate('Login')}
+                            onPress={() => navigation.navigate('Login')}
                             style={styles.textBtn}
                         >
                             <Text style={styles.textBtn_text}>Cancel</Text>
                         </TouchableWithoutFeedback>
                     </View>
                 </View>
-            </TouchableWithoutFeedback>
+            </KeyboardDismissView>
         </KeyboardAvoidingView>
     );
 }

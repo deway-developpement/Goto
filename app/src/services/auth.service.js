@@ -1,78 +1,27 @@
-import { storeAuth, getAuth, removeAuth } from '../store/authStore';
+import axios from 'axios';
+import { default as config } from '../config.json';
 
-async function login(authContext, accessToken = null, refreshToken = null) {
-    if (accessToken && refreshToken) {
-        await storeAuth(accessToken, refreshToken);
-        authContext.setAuthState({
-            accessToken,
-            refreshToken,
-            authenticated: true,
-        });
-        return true;
-    } else {
-        const auth = await getAuth();
-        if (auth) {
-            authContext.setAuthState({
-                accessToken: auth.accessToken,
-                refreshToken: auth.refreshToken,
-                authenticated: true,
-            });
-            return true;
-        }
-        return false;
+async function refreshAuth(authContext) {
+    if (!authContext.authState.refreshToken) {
+        return null;
     }
-}
-
-async function logout(authContext) {
-    await removeAuth();
-    authContext.logout();
-    return true;
-}
-
-async function refresh(publicAxios, authContext) {
-    const data = await getAuth();
-    if (data) {
-        const res = await publicAxios.get('/auth/refresh', {
+    return axios
+        .get(config.refreshLink, {
             headers: {
-                refresh_token: data.refreshToken,
+                refresh_token: authContext.authState.refreshToken,
             },
-        });
-        if (res.status === 200) {
-            return await login(
-                authContext,
-                res.data.access_token,
-                res.data.refresh_token
-            );
-        } else {
-            logout(authContext);
-            return false;
-        }
-    }
-    return false;
-}
-
-async function refreshCustom(publicAxios, authContext) {
-    const data = await getAuth();
-    if (data) {
-        const res = await publicAxios.get('/auth/refresh', {
-            headers: {
-                refresh_token: data.refreshToken,
-            },
-        });
-        if (res.status === 200) {
-            await storeAuth(res.data.access_token, res.data.refresh_token);
+        })
+        .then((response) => {
             authContext.setAuthState({
-                accessToken: res.data.access_token,
-                refreshToken: res.data.refresh_token,
-                authenticated: true,
+                accessToken: response.data.access_token,
+                refreshToken: response.data.refresh_token,
             });
-            return res.data.access_token;
-        } else {
-            logout(authContext);
-            return false;
-        }
-    }
-    return false;
+
+            return response.data.access_token;
+        })
+        .catch(() => {
+            return null;
+        });
 }
 
-export { login, logout, refresh, refreshCustom };
+export { refreshAuth };

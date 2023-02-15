@@ -6,10 +6,10 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { AuthProvider } from './src/context/AuthContext';
 import { AxiosProvider } from './src/context/AxiosContext';
 import React from 'react';
+// @ts-ignore
 import { useColorScheme } from 'react-native';
 import { Classic, Dark } from './src/theme/theme';
 import AuthApolloProvider from './src/context/ApolloProvider';
-
 
 const Stack = createNativeStackNavigator();
 

@@ -15,8 +15,6 @@ import { useTheme } from '@react-navigation/native';
 import { useIsFocused } from '@react-navigation/native';
 import { AuthContext } from '../context/AuthContext';
 import { AxiosContext } from '../context/AxiosContext';
-import { login, refresh } from '../services/auth.service';
-// Import everything needed to use the `useQuery` hook
 import { gql, useApolloClient } from '@apollo/client';
 
 export default function LoginScreen({navigation}) {
@@ -41,13 +39,14 @@ export default function LoginScreen({navigation}) {
             setEmail('');
             setPassword('');
             setAppState({email_valid: null, password_valid: null});
-            refresh(publicAxios, authContext).then((state) => {
-                if (state) {
-                    navigation.navigate('Home');
-                }
-            });
         }
     }, [isFocused]);
+
+    useEffect(() => {
+        if (authContext.getAccessToken()) {
+            navigation.navigate('Home');
+        }
+    }, [authContext]);
 
     async function isRegister() {
         // check if user exists here
@@ -56,11 +55,10 @@ export default function LoginScreen({navigation}) {
          */
         const checkEmail = async () => {
             try {
-                const query = gql`query exists($email : String!) {
-                    exist(email: $email)
-                }`;
                 const response = await client.query({
-                    query,
+                    query: gql`query exists($email : String!) {
+                        exist(email: $email)
+                    }`,
                     variables: {
                         email,
                     },
@@ -78,7 +76,7 @@ export default function LoginScreen({navigation}) {
         }
     }
 
-    async function loginReq() {
+    async function login() {
         try {
             const response = await publicAxios.post('/auth/login', {
                 email,
@@ -87,7 +85,12 @@ export default function LoginScreen({navigation}) {
 
             const { access_token, refresh_token } = response.data;
 
-            await login(authContext, access_token, refresh_token);
+            authContext.setAuthState({
+                accessToken: access_token,
+                refreshToken: refresh_token,
+            });
+            
+            console.log('login success');
 
             navigation.navigate('Home');
         } catch (error) {
@@ -151,7 +154,7 @@ export default function LoginScreen({navigation}) {
                             ]}
                             secureTextEntry={true}
                             autoFocus={true}
-                            onSubmitEditing={() => loginReq()}
+                            onSubmitEditing={() => login()}
                             onChangeText={(text) => setPassword(text)}
                             value={password}
                         />
@@ -161,7 +164,7 @@ export default function LoginScreen({navigation}) {
                             buttonStyle={styles.btn}
                             disabled={appState.email_valid ? password == '' : email == ''}
                             title={appState.email_valid ? 'Sign in' : 'Next'}
-                            onPress={() => (appState.email_valid ? loginReq() : isRegister())}
+                            onPress={() => (appState.email_valid ? login() : isRegister())}
                         />
                     </View>
                 </View>

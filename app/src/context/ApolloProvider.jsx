@@ -4,7 +4,6 @@ import {
     from,
     HttpLink,
     ApolloProvider,
-    split,
 } from '@apollo/client';
 import { onError } from '@apollo/client/link/error';
 import { fromPromise } from 'apollo-link';
@@ -12,12 +11,11 @@ import { setContext } from '@apollo/client/link/context';
 import { AuthContext } from './AuthContext';
 import { AxiosContext } from './AxiosContext';
 import React, { useContext } from 'react';
-import { refreshCustom } from '../services/auth.service';
-import { getMainDefinition } from '@apollo/client/utilities';
-import { GraphQLWsLink } from '@apollo/client/link/subscriptions';
-import { createClient } from 'graphql-ws';
+import { refreshAuth } from '../services/auth.service';
+import { default as config } from '../config.json';
+import apolloLogger from 'apollo-link-logger';
 
-function createApolloClient(authContext, publicAxios) {
+function createApolloClient(authContext) {
     const authLink = setContext(() => {
         return {
             headers: {
@@ -29,17 +27,20 @@ function createApolloClient(authContext, publicAxios) {
     let isRefreshing = false;
     let pendingRequests = [];
 
-    const refreshLink = onError(({ graphQLErrors, operation, forward }) => {
+    // @ts-ignore
+    const refreshLink = onError(({ graphQLErrors, networkError, operation, forward }) => {
         if (graphQLErrors) {
             for (let err of graphQLErrors) {
                 switch (err.extensions.code) {
                 case 'UNAUTHENTICATED': {
+                    // Here we create a new Promise that will be resolved when the token refresh is complete
                     let _forward;
                     if (!isRefreshing) {
                         isRefreshing = true;
                         _forward = fromPromise(
-                            refreshCustom(publicAxios, authContext)
+                            refreshAuth(authContext)
                                 .then((token) => {
+                                    // Once the token refresh is complete, we update the pending requests with the new token
                                     operation.setContext({
                                         headers: {
                                             Authorization: `Bearer ${token}`,
@@ -48,11 +49,13 @@ function createApolloClient(authContext, publicAxios) {
                                     return token;
                                 })
                                 .catch(() => {
+                                    // If the token refresh fails, we remove the pending requests and log the user out
                                     pendingRequests = [];
                                     authContext.logout();
                                     return;
                                 })
                                 .finally(() => {
+                                    // Finally, we send the requests that were pending and reset the isRefreshing flag
                                     isRefreshing = false;
                                 })
                         ).filter(value => Boolean(value));
@@ -61,43 +64,26 @@ function createApolloClient(authContext, publicAxios) {
                         _forward = fromPromise(
                             new Promise(resolve => {
                                 pendingRequests.push(() => resolve());
-                            })
+                            }) // this line create a Promise and add its resolve function to the pendingRequests array
                         );
                     }
+                    // We return the Observable that will be fetched once the token refresh is complete
                     return _forward.flatMap(() => forward(operation));
                 }
                 }  
             }
         }
+        if (networkError) {
+            console.log(`[Network error]: ${networkError}`);
+        }
     });
     
     const httpLink = new HttpLink({
-        uri: 'http://deway.fr:3000/graphql',
+        uri: config.graphQLLink,
     });
 
-
-    const wsLink = new GraphQLWsLink(createClient({
-        url: 'ws://deway.fr:3000/graphql',
-        shouldRetry: true,
-        keepAlive: true,
-        connectionParams: {
-            Authorization: `Bearer ${authContext.getAccessToken()}`,
-        },
-    }));
-
-    const splitLink = split( ({ query }) => {
-        const definition = getMainDefinition(query);
-        return (
-            definition.kind === 'OperationDefinition' &&
-            definition.operation === 'subscription'
-        );
-    },
-    wsLink,
-    authLink,
-    );
-    
     const client = new ApolloClient({
-        link: from([ splitLink, refreshLink , httpLink ]),
+        link: from([ apolloLogger, authLink, refreshLink, httpLink ]),
         cache: new InMemoryCache(),
     });
 

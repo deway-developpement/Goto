@@ -1,18 +1,17 @@
 import React, { useContext, useEffect, useState } from 'react';
 import stylesheet from './style';
 import {
+    SafeAreaView,
     KeyboardAvoidingView,
     Text,
     View,
     Platform,
-    SafeAreaView,
     ActivityIndicator,
     Image,
     StatusBar,
 } from 'react-native';
 import { Button } from 'react-native-elements';
 import { AuthContext } from '../context/AuthContext';
-import { logout } from '../services/auth.service';
 import { useTheme } from '@react-navigation/native';
 import { useApolloClient, gql } from '@apollo/client';
 import KeyboardDismissView from '../KeyboardDismissView/KeyboardDismissView';
@@ -23,7 +22,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 const Tab = createBottomTabNavigator();
 
-function ProfilScreen({navigation}) {
+function ProfilScreen() {
     const authContext = useContext(AuthContext);
     const { colors } = useTheme();
     const styles = stylesheet(colors);
@@ -42,24 +41,19 @@ function ProfilScreen({navigation}) {
                     _id,
                     pseudo,
                     email,
-                    publicKey
+                    publicKey,
+                    password,
                 }
             }`,
-            options: {
-                context: {
-                    headers: {
-                        'Authorization': `Bearer ${authContext.getAccessToken()}`,
-                    },
-                },
-            },
         });
         if (response) {
             setProfil(response.data.whoami);
         }
     }
+    
     useEffect(() => {
         getUser();
-    } , [authContext.authState]);
+    } , []);
 
     return (
         <KeyboardAvoidingView style={styles.container}>
@@ -78,8 +72,7 @@ function ProfilScreen({navigation}) {
                                 <Button
                                     title="Logout"
                                     onPress={() => {
-                                        logout(authContext);
-                                        navigation.navigate('Login');
+                                        authContext.logout();
                                     }}
                                     buttonStyle={styles.btn}
                                 />
@@ -88,9 +81,26 @@ function ProfilScreen({navigation}) {
                                     size={30}
                                     color={colors.link}
                                     onPress={() => {
-                                        logout(authContext);
-                                        navigation.navigate('Login');
+                                        authContext.logout();
                                     }}
+                                    style={{alignSelf: 'center'}}
+                                />
+                            </View>
+                        </View>
+                        <View style={styles.btnContainer}>
+                            <View style={styles.btn}>
+                                <Button
+                                    title="Actualize"
+                                    onPress={() => 
+                                        getUser()
+                                    }
+                                    buttonStyle={styles.btn}
+                                />
+                                <MaterialIcon
+                                    name="refresh"
+                                    size={30}
+                                    color={colors.link}
+                                    onPress={() => getUser()}
                                     style={{alignSelf: 'center'}}
                                 />
                             </View>
@@ -118,8 +128,7 @@ function MapScreen() {
                 return;
             }
 
-            let templocation = await (await Location.getCurrentPositionAsync({}));
-            console.log(templocation);
+            let templocation = await Location.getCurrentPositionAsync({});
             setLocation(templocation);
         })();
     }, []);
@@ -177,6 +186,15 @@ function HomeScreen({navigation}) {
     const { colors } = useTheme();
     const styles = stylesheet(colors);
 
+    const authContext = useContext(AuthContext);
+
+    // return to login if not logged in
+    useEffect(() => {
+        if (!authContext.getAccessToken()) {
+            navigation.navigate('Login');
+        }
+    }, [authContext]);
+
     return (
         <KeyboardAvoidingView
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -195,7 +213,7 @@ function HomeScreen({navigation}) {
                                     key={key}
                                     name={name}
                                     component={component}
-                                    initialParams={{ navigation }}
+                                    //initialParams={{ navigation }}
                                     options={{
                                         tabBarLabel: label,
                                     }}
