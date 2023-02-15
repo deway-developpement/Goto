@@ -9,7 +9,6 @@ import { onError } from '@apollo/client/link/error';
 import { fromPromise } from 'apollo-link';
 import { setContext } from '@apollo/client/link/context';
 import { AuthContext } from './AuthContext';
-import { AxiosContext } from './AxiosContext';
 import React, { useContext } from 'react';
 import { refreshAuth } from '../services/auth.service';
 import { default as config } from '../config.json';
@@ -92,8 +91,7 @@ function createApolloClient(authContext) {
 
 const AuthApolloProvider = ({ children }) => {
     const authContext = useContext(AuthContext);
-    const { publicAxios } = useContext(AxiosContext);
-    const client = createApolloClient(authContext, publicAxios);
+    const client = createApolloClient(authContext);
     return <ApolloProvider client={client}>
         {children}
     </ApolloProvider>;

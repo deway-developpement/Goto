@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect, useContext } from 'react';
 import stylesheet from './style';
 import {
-    Keyboard,
     KeyboardAvoidingView,
     Text,
     TextInput,
@@ -16,6 +15,7 @@ import { useIsFocused } from '@react-navigation/native';
 import { AuthContext } from '../context/AuthContext';
 import { AxiosContext } from '../context/AxiosContext';
 import { gql, useApolloClient } from '@apollo/client';
+import KeyboardDismissView from '../KeyboardDismissView/KeyboardDismissView';
 
 export default function LoginScreen({navigation}) {
     const [email, setEmail] = useState('');
@@ -103,12 +103,7 @@ export default function LoginScreen({navigation}) {
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
             style={styles.container}
         >
-            <TouchableWithoutFeedback
-                onPress={Platform.select({
-                    native: Keyboard.dismiss,
-                    web: () => null,
-                })}
-            >
+            <KeyboardDismissView>
                 <View style={styles.inner}>
                     <View style={{flexDirection: 'row', alignItems:'flex-start'}}>
                         <Image source={require('../../assets/images/logo.png')} style={styles.logo} />
@@ -168,7 +163,7 @@ export default function LoginScreen({navigation}) {
                         />
                     </View>
                 </View>
-            </TouchableWithoutFeedback>
+            </KeyboardDismissView>
         </KeyboardAvoidingView>
     );
 }
