@@ -16,7 +16,7 @@ import { useTheme } from '@react-navigation/native';
 import { useApolloClient, gql } from '@apollo/client';
 import KeyboardDismissView from '../KeyboardDismissView/KeyboardDismissView';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
-import MapView, { Marker } from 'react-native-maps';
+import MapView, { Marker, UrlTile } from 'react-native-maps';
 import * as Location from 'expo-location';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
@@ -155,7 +155,15 @@ function MapScreen() {
                     latitudeDelta: 0.00922,
                     longitudeDelta: 0.00421,
                 }}
+                showsPointsOfInterest={false}
                 style={{flex: 1, width: '100%'}} >
+                    <UrlTile
+                        urlTemplate="http://a.tile.openstreetmap.de/tiles/osmde/{z}/{x}/{y}.png"
+                        maximumZ={19}
+                        tileCachePath={Platform.OS === 'android' ? '/assets/maps' : 'assets/maps'}
+                        tileMaxCacheSize={100000}
+                        shouldReplaceMapContent={true}
+                    />
                     <Marker coordinate={{
                         latitude: location?.coords?.latitude,
                         longitude: location?.coords?.longitude,

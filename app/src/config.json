@@ -1,5 +1,5 @@
 {
-    "refreshLink": "http://127.0.0.1:3000/auth/refresh",
-    "baseLink": "http://127.0.0.1:3000/",
-    "graphQLLink": "http://localhost:3000/graphql"
+    "refreshLink": "http://192.168.0.13:3000/auth/refresh",
+    "baseLink": "http://192.168.0.13:3000/",
+    "graphQLLink": "http://192.168.0.13:3000/graphql"
 }
