@@ -13,7 +13,7 @@ import {
 import { Button } from 'react-native-elements';
 import { AuthContext } from '../../providers/AuthContext';
 import { useTheme } from '@react-navigation/native';
-import { useApolloClient, gql } from '@apollo/client';
+import { gql, useQuery } from '@apollo/client';
 import KeyboardDismissView from '../KeyboardDismissView/KeyboardDismissView';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import MapView, { Marker, UrlTile } from 'react-native-maps';
@@ -26,34 +26,15 @@ function ProfilScreen() {
     const authContext = useContext(AuthContext);
     const { colors } = useTheme();
     const styles = stylesheet(colors);
-    const client = useApolloClient();
 
-    const [profil, setProfil] = useState({
-        pseudo: '',
-        email: '',
-        publicKey: '',
-    });
-
-    async function getUser() {
-        const response = await client.query({
-            query: gql`query whoami {
-                whoami {
-                    _id,
-                    pseudo,
-                    email,
-                    publicKey,
-                    password,
-                }
-            }`,
-        });
-        if (response) {
-            setProfil(response.data.whoami);
-        }
-    }
-    
-    useEffect(() => {
-        getUser();
-    } , []);
+    const { data:profil, refetch } = useQuery(gql`query whoami {
+        whoami {
+            pseudo,
+            email,
+            publicKey,
+            }
+            }`
+    );
 
     return (
         <KeyboardAvoidingView style={styles.container}>
@@ -65,8 +46,8 @@ function ProfilScreen() {
                     </View>
                     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
                         <Text>This is your profil :</Text>
-                        <Text>{profil.pseudo}#{profil.publicKey}</Text>
-                        <Text>{profil.email}</Text>
+                        <Text>{profil?.whoami?.pseudo}#{profil?.whoami?.publicKey}</Text>
+                        <Text>{profil?.whoami?.email}</Text>
                         <View style={styles.btnContainer}>
                             <View style={styles.btn}>
                                 <Button
@@ -92,7 +73,7 @@ function ProfilScreen() {
                                 <Button
                                     title="Actualize"
                                     onPress={() => 
-                                        getUser()
+                                        refetch()
                                     }
                                     buttonStyle={styles.btn}
                                 />
@@ -100,7 +81,7 @@ function ProfilScreen() {
                                     name="refresh"
                                     size={30}
                                     color={colors.link}
-                                    onPress={() => getUser()}
+                                    onPress={() => refetch()}
                                     style={{alignSelf: 'center'}}
                                 />
                             </View>
@@ -120,17 +101,14 @@ function MapScreen() {
     const [errorMsg, setErrorMsg] = useState(null);
 
     useEffect(() => {
-        (async () => {
-      
-            let { status } = await Location.requestForegroundPermissionsAsync();
-            if (status !== 'granted') {
+        Location.requestForegroundPermissionsAsync().then((response) => {
+            if (response.status !== 'granted') {
                 setErrorMsg('Permission to access location was denied');
-                return;
-            }
-
-            let templocation = await Location.getCurrentPositionAsync({});
-            setLocation(templocation);
-        })();
+            } else
+                Location.getCurrentPositionAsync({}).then((response) => {
+                    setLocation(response);
+                });
+        });
     }, []);
 
     useEffect(() => {
@@ -198,10 +176,10 @@ function HomeScreen({navigation}) {
 
     // return to login if not logged in
     useEffect(() => {
-        if (!authContext.getAccessToken()) {
+        if (!authContext.authState.connected) {
             navigation.navigate('Login');
         }
-    }, [authContext]);
+    }, [authContext.authState.connected]);
 
     return (
         <KeyboardAvoidingView

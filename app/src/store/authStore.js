@@ -23,8 +23,8 @@ async function getAuth() {
 async function removeAuth() {
     try {
         await AsyncStorage.removeItem('auth');
-    } catch (err) {
-        console.log(err);
+    } catch (error) {
+        console.log(error);
     }
 }
 

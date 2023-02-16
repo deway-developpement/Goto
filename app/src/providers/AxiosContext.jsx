@@ -33,7 +33,6 @@ const AxiosProvider = ({ children }) => {
     );
 
     const refreshAuthLogic = (failedRequest) => {
-        console.log('refreshing token with axios');
         return refreshAuth(authContext).then(() => {
             failedRequest.response.config.headers.Authorization = `Bearer ${authContext.getAccessToken()}`;
             return Promise.resolve();
