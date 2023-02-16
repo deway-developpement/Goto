@@ -1,15 +1,15 @@
-import HomeScreen from './src/home/home';
-import LoginScreen from './src/login/login';
-import RegisterScreen from './src/register/register';
+import HomeScreen from './src/components/home/home';
+import LoginScreen from './src/components/login/login';
+import RegisterScreen from './src/components/register/register';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { AuthProvider } from './src/context/AuthContext';
-import { AxiosProvider } from './src/context/AxiosContext';
+import { AuthProvider } from './src/providers/AuthContext';
+import { AxiosProvider } from './src/providers/AxiosContext';
 import React from 'react';
 // @ts-ignore
 import { useColorScheme } from 'react-native';
 import { Classic, Dark } from './src/theme/theme';
-import AuthApolloProvider from './src/context/ApolloProvider';
+import AuthApolloProvider from './src/providers/ApolloProvider';
 
 const Stack = createNativeStackNavigator();
 

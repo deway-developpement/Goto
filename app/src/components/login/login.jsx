@@ -12,8 +12,8 @@ import {
 import { Button } from 'react-native-elements';
 import { useTheme } from '@react-navigation/native';
 import { useIsFocused } from '@react-navigation/native';
-import { AuthContext } from '../context/AuthContext';
-import { AxiosContext } from '../context/AxiosContext';
+import { AuthContext } from '../../providers/AuthContext';
+import { AxiosContext } from '../../providers/AxiosContext';
 import { gql, useApolloClient } from '@apollo/client';
 import KeyboardDismissView from '../KeyboardDismissView/KeyboardDismissView';
 
@@ -106,7 +106,7 @@ export default function LoginScreen({navigation}) {
             <KeyboardDismissView>
                 <View style={styles.inner}>
                     <View style={{flexDirection: 'row', alignItems:'flex-start'}}>
-                        <Image source={require('../../assets/images/logo.png')} style={styles.logo} />
+                        <Image source={require('../../../assets/images/logo.png')} style={styles.logo} />
                         <Text style={styles.header}>Gotò</Text>
                     </View>
                     <View>

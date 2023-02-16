@@ -1,5 +1,5 @@
 import { TouchableWithoutFeedback, Keyboard } from 'react-native';
-import { useKeyboardVisible } from '../services/keyboard.service';
+import { useKeyboardVisible } from '../../services/keyboard.service';
 import React from 'react';
 
 export default function KeyboardDismissView(props) {

@@ -10,8 +10,8 @@ import {
     Image,
 } from 'react-native';
 import { Button } from 'react-native-elements';
-import { AuthContext } from '../context/AuthContext';
-import { AxiosContext } from '../context/AxiosContext';
+import { AuthContext } from '../../providers/AuthContext';
+import { AxiosContext } from '../../providers/AxiosContext';
 import { useTheme } from '@react-navigation/native';
 import { useApolloClient, gql } from '@apollo/client';
 import KeyboardDismissView from '../KeyboardDismissView/KeyboardDismissView';
@@ -125,7 +125,7 @@ export default function RegisterScreen({navigation, route}) {
             <KeyboardDismissView>
                 <View style={styles.inner}>
                     <View style={{flexDirection: 'row', alignItems:'flex-start'}}>
-                        <Image source={require('../../assets/images/logo.png')} style={styles.logo} />
+                        <Image source={require('../../../assets/images/logo.png')} style={styles.logo} />
                         <Text style={styles.header}>Gotò</Text>
                     </View>
                     <View>

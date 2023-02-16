@@ -11,7 +11,7 @@ import {
     StatusBar,
 } from 'react-native';
 import { Button } from 'react-native-elements';
-import { AuthContext } from '../context/AuthContext';
+import { AuthContext } from '../../providers/AuthContext';
 import { useTheme } from '@react-navigation/native';
 import { useApolloClient, gql } from '@apollo/client';
 import KeyboardDismissView from '../KeyboardDismissView/KeyboardDismissView';
@@ -60,7 +60,7 @@ function ProfilScreen() {
             <KeyboardDismissView >
                 <SafeAreaView style={styles.container}>
                     <View style={{flexDirection: 'row', alignItems:'flex-start'}}>
-                        <Image source={require('../../assets/images/logo.png')} style={styles.logo} />
+                        <Image source={require('../../../assets/images/logo.png')} style={styles.logo} />
                         <Text style={styles.header}>Gotò</Text>
                     </View>
                     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
