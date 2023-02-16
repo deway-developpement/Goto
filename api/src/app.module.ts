@@ -149,7 +149,7 @@ console.log = function (...args) {
                 password: configService.get('database.password'),
                 database: 'Goto',
                 entities: ['dist/**/*.entity.js'],
-                synchronize: true,
+                synchronize: false,
                 charset: 'utf8mb4',
             }),
             inject: [ConfigService],
