@@ -16,6 +16,7 @@ import { AuthContext } from '../../providers/AuthContext';
 import { AxiosContext } from '../../providers/AxiosContext';
 import { gql, useApolloClient } from '@apollo/client';
 import KeyboardDismissView from '../KeyboardDismissView/KeyboardDismissView';
+import { refreshAuth } from '../../services/auth.service';
 
 export default function LoginScreen({navigation}) {
     const [email, setEmail] = useState('');
@@ -43,8 +44,14 @@ export default function LoginScreen({navigation}) {
     }, [isFocused]);
 
     useEffect(() => {
-        if (authContext.getAccessToken()) {
+        console.log('authContext.authState.connected', authContext.authState);
+        if (authContext.authState.connected) {
             navigation.navigate('Home');
+        } else if (authContext.authState.refreshToken !== null) {
+            console.log('refreshing token');
+            refreshAuth(authContext).catch(() => {
+                authContext.logout();
+            });
         }
     }, [authContext]);
 
@@ -88,6 +95,7 @@ export default function LoginScreen({navigation}) {
             authContext.setAuthState({
                 accessToken: access_token,
                 refreshToken: refresh_token,
+                connected: true,
             });
             
             console.log('login success');

@@ -107,6 +107,7 @@ export default function RegisterScreen({navigation, route}) {
                     authContext.setAuthState({
                         accessToken: access_token,
                         refreshToken: refresh_token,
+                        connected: true,
                     });
                     
                     navigation.navigate('Home');

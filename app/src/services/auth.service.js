@@ -15,12 +15,10 @@ async function refreshAuth(authContext) {
             authContext.setAuthState({
                 accessToken: response.data.access_token,
                 refreshToken: response.data.refresh_token,
+                connected: true,
             });
 
             return response.data.access_token;
-        })
-        .catch(() => {
-            return null;
         });
 }
 
