@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { GraphQLModule } from '@nestjs/graphql';
@@ -17,6 +17,7 @@ import { AuthService } from './auth/auth.service';
 import { UsersService } from './users/users.service';
 import { PubSubModule } from './pubsub/pubsub.module';
 import { PubSubEngine } from 'type-graphql';
+import { LoggerMiddleware } from './logger/logger.middleware';
 
 const armor = new ApolloArmor();
 const protection = armor.protect();
@@ -161,4 +162,8 @@ console.log = function (...args) {
     controllers: [AppController],
     providers: [AppService],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+    configure(consumer: MiddlewareConsumer) {
+        consumer.apply(LoggerMiddleware).forRoutes('*');
+    }
+}

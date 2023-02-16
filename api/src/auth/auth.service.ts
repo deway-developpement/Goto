@@ -2,10 +2,15 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { compare } from 'bcrypt';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
-    constructor(private usersService: UsersService, private jwtService: JwtService) {}
+    constructor(
+        private usersService: UsersService,
+        private jwtService: JwtService,
+        private configService: ConfigService
+    ) {}
 
     async validateUser(email: string, pass: string): Promise<any> {
         const user = await this.usersService.findOne(email, 'email');
@@ -17,7 +22,10 @@ export class AuthService {
 
     async login(user: any) {
         const payload = { username: user.email, sub: user._id, credidential: user.credidential };
-        const refresh_token = this.jwtService.sign({ sub: user._id }, { expiresIn: '7d' });
+        const refresh_token = this.jwtService.sign(
+            { sub: user._id },
+            { expiresIn: this.configService.get<number>('jwt.refreshExpiresIn') }
+        );
         await this.usersService.update(user._id, { refresh_token: refresh_token });
         return {
             access_token: this.jwtService.sign(payload),
@@ -31,7 +39,9 @@ export class AuthService {
         }
         const decoded = this.jwtService.decode(req.headers.refresh_token);
         const user = await this.usersService.findOne(decoded.sub);
-        if (
+        if (!user) {
+            throw new UnauthorizedException();
+        } else if (
             req.headers.refresh_token == user.refresh_token &&
             this.jwtService.verify(req.headers.refresh_token)
         ) {
