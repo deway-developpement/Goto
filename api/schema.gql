@@ -24,6 +24,19 @@ type User {
   isConnected: Boolean!
 }
 
+type Message {
+  _id: ID!
+
+  """sender of the message"""
+  sender: User!
+
+  """Content of the message"""
+  content: String!
+
+  """Date of the message"""
+  date: String!
+}
+
 type Query {
   User(id: String, email: String, input: SearchUserInput): User
   whoami: User
@@ -106,8 +119,4 @@ input UpdateUserInput {
 
   """access of the user : bin rwrw"""
   credidential: Float
-}
-
-type Subscription {
-  connectedUser: User!
 }
