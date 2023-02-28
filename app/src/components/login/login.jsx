@@ -202,7 +202,7 @@ export default function LoginScreen({navigation}) {
             <KeyboardDismissView>
                 <View style={styles.inner}>
                     {
-                        loadignState ? <SplashScreen /> : <LoginComponent />
+                        loadignState ? <SplashScreen /> : <LoginComponent navigation={navigation}/>
                     }
                 </View>
             </KeyboardDismissView>
