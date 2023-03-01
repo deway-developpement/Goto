@@ -113,7 +113,8 @@ function Map({ location}) {
             longitudeDelta: 0.00421,
         }}
         showsPointsOfInterest={false}
-        style={{flex: 1, width: '100%'}} >
+        style={{flex: 1, width: '100%'}}
+        maxZoomLevel={17} >
             <UrlTile
                 urlTemplate="http://a.tile.openstreetmap.de/tiles/osmde/{z}/{x}/{y}.png"
                 maximumZ={19}
