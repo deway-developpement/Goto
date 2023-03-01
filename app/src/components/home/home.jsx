@@ -8,7 +8,6 @@ import {
     Platform,
     ActivityIndicator,
     Image,
-    StatusBar,
 } from 'react-native';
 import { Button } from 'react-native-elements';
 import { AuthContext } from '../../providers/AuthContext';
@@ -134,19 +133,26 @@ function MapScreen() {
     const { colors } = useTheme();
     const styles = stylesheet(colors);
 
+    const [permission, request] = Location.useForegroundPermissions();
     const [location, setLocation] = useState(null);
     const [errorMsg, setErrorMsg] = useState(null);
 
     useEffect(() => {
-        Location.requestForegroundPermissionsAsync().then((response) => {
-            if (response.status !== 'granted') {
-                setErrorMsg('Permission to access location was denied');
-            } else
-                Location.getCurrentPositionAsync({}).then((response) => {
-                    setLocation(response);
-                });
-        });
-    }, []);
+        if (permission === null) {
+            request();
+        } else if (permission.granted === false && permission.canAskAgain === false) {
+            setErrorMsg('Permission to access location was denied');
+        } else if (permission.granted === false && permission.canAskAgain === true) {
+            request();
+        } else if (permission.granted === true) {
+            Location.getLastKnownPositionAsync({}).then((response) => {
+                setLocation(response);
+            });
+            Location.watchPositionAsync({}, (response) => {
+                setLocation(response);
+            });
+        }
+    }, [permission]);
 
     useEffect(() => {
         console.log(location?.coords?.latitude);
@@ -159,7 +165,7 @@ function MapScreen() {
                 (() => {
                     if (location == null) {
                         if (errorMsg != null) {
-                            return <Text>{errorMsg}</Text>;
+                            return <Text style={{alignSelf:'center'}}>{errorMsg}</Text>;
                         } else {
                             return <ActivityIndicator size="large" color="#0000ff" style={{flex: 3, width: '100%'}} />;
                         }
@@ -171,17 +177,6 @@ function MapScreen() {
         </View>
     );
 }
-
-const Tabs = {
-    Map: {
-        component: MapScreen,
-        label: 'Map',
-    },
-    Profil: {
-        component: ProfilScreen,
-        label: 'Profil',
-    },
-};
 
 function HomeScreen({navigation}) {
     const { colors } = useTheme();
@@ -203,24 +198,12 @@ function HomeScreen({navigation}) {
             <KeyboardDismissView>
                 <View style={styles.inner}>
                     <SafeAreaView />
-                    <StatusBar animated={true} />
                     <Tab.Navigator
-                        initialRouteName={Object.entries(Tabs)[0].name}
+                        initialRouteName={'Map'}
                         screenOptions={{ headerShown: false }}
                     >
-                        {Object.entries(Tabs).map(
-                            ([name, { component, label }], key) => (
-                                <Tab.Screen
-                                    key={key}
-                                    name={name}
-                                    component={component}
-                                    //initialParams={{ navigation }}
-                                    options={{
-                                        tabBarLabel: label,
-                                    }}
-                                />
-                            )
-                        )}
+                        <Tab.Screen name="Map" component={MapScreen} />
+                        <Tab.Screen name="Profil" component={ProfilScreen} />
                     </Tab.Navigator>
                 </View>
             </KeyboardDismissView>
