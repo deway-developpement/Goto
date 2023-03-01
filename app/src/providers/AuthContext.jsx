@@ -40,7 +40,19 @@ const AuthProvider = ({ children }) => {
                     refreshToken: auth.refreshToken,
                     connected: false,
                 });
+            } else {
+                setAuthState({
+                    accessToken: null,
+                    refreshToken: null,
+                    connected: false,
+                });
             }
+        }).catch(() => {
+            setAuthState({
+                accessToken: null,
+                refreshToken: null,
+                connected: false,
+            });
         });
     }, []);
 
