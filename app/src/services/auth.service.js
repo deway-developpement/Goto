@@ -13,10 +13,10 @@ async function refreshAuth(authContext) {
         })
         .then((response) => {
             authContext.setAuthState({
+                ...authContext.authState,
                 accessToken: response.data.access_token,
                 refreshToken: response.data.refresh_token,
                 connected: true,
-                ...authContext.authState,
             });
 
             return response.data.access_token;

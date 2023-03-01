@@ -83,10 +83,10 @@ function LoginComponent({ navigation}) {
             const { access_token, refresh_token } = response.data;
 
             authContext.setAuthState({
+                ...authContext.authState,
                 accessToken: access_token,
                 refreshToken: refresh_token,
                 connected: true,
-                ...authContext.authState,
             });
             
             console.log('login success');

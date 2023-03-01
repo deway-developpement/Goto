@@ -23,7 +23,7 @@ export default function SplashScreen() {
                 <Text style={[styles.header, { marginBottom: 10 }]}>Gotò</Text>
             </View>
             <Text style={{ fontSize: 20, marginBottom: 10 }}>Loading...</Text>
-            <ActivityIndicator size={'large'} />
+            <ActivityIndicator size={'large'} color={colors.primary} />
         </SafeAreaView>
     );
 }

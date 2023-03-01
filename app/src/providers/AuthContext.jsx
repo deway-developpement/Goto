@@ -14,10 +14,10 @@ const AuthProvider = ({ children }) => {
 
     const logout = async () => {
         setAuthState({
+            ...authState,
             accessToken: null,
             refreshToken: null,
             connected: false,
-            ...authState,
         });
         storeAuth(null, null); // force update local storage
     };
@@ -38,18 +38,18 @@ const AuthProvider = ({ children }) => {
         getAuth().then((auth) => {
             if (auth) {
                 setAuthState({
+                    ...authState,
                     accessToken: auth.accessToken,
                     refreshToken: auth.refreshToken,
                     loading: false,
-                    ...authState,
                 });
             }
         }).catch(() => {
             setAuthState({
+                ...authState,
                 accessToken: null,
                 refreshToken: null,
                 loading: false,
-                ...authState,
             });
         });
     }, []);

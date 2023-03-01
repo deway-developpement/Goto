@@ -27,7 +27,7 @@ function ProfilScreen() {
     const { colors } = useTheme();
     const styles = stylesheet(colors);
 
-    const { data:profil, refetch } = useQuery(gql`query whoami {
+    const { data:profil,loading, refetch } = useQuery(gql`query whoami {
         whoami {
             pseudo,
             email,
@@ -46,8 +46,14 @@ function ProfilScreen() {
                     </View>
                     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
                         <Text>This is your profil :</Text>
-                        <Text>{profil?.whoami?.pseudo}#{profil?.whoami?.publicKey}</Text>
-                        <Text>{profil?.whoami?.email}</Text>
+                        {
+                            loading ? 
+                                <ActivityIndicator size="large" color={colors.primary} style={{flex: 3, width: '100%'}} /> : 
+                                <>
+                                    <Text>{ profil.whoami.pseudo}#{ profil.whoami.publicKey}</Text>
+                                    <Text>{ profil.whoami.email}</Text>
+                                </>
+                        }
                         <View style={styles.btnContainer}>
                             <View style={styles.btn}>
                                 <Button
@@ -93,6 +99,37 @@ function ProfilScreen() {
     );
 }
 
+function Map({ location}) {
+    return (
+        <MapView initialRegion={{
+            latitude: 0,
+            longitude: 0,
+            latitudeDelta: 0.00922,
+            longitudeDelta: 0.00421,
+        }}
+        region={{
+            latitude: parseFloat(location?.coords?.latitude),
+            longitude: parseFloat(location?.coords?.longitude),
+            latitudeDelta: 0.00922,
+            longitudeDelta: 0.00421,
+        }}
+        showsPointsOfInterest={false}
+        style={{flex: 1, width: '100%'}} >
+            <UrlTile
+                urlTemplate="http://a.tile.openstreetmap.de/tiles/osmde/{z}/{x}/{y}.png"
+                maximumZ={19}
+                tileCachePath={Platform.OS === 'android' ? '/assets/maps' : 'assets/maps'}
+                tileMaxCacheSize={100000}
+                shouldReplaceMapContent={true}
+            />
+            <Marker coordinate={{
+                latitude: parseFloat(location?.coords?.latitude),
+                longitude: parseFloat(location?.coords?.longitude),
+            }} />
+        </MapView>
+    );
+}
+
 function MapScreen() {
     const { colors } = useTheme();
     const styles = stylesheet(colors);
@@ -118,40 +155,18 @@ function MapScreen() {
     return (
         <View style={styles.container}>
             <SafeAreaView />
-            {location == null ? (errorMsg != null ? 
-                <Text>{errorMsg}</Text> :
-                <ActivityIndicator size="large" color="#0000ff" style={{flex: 3, width: '100%'}} />) :
-                <MapView initialRegion={{
-                    latitude: 0,
-                    longitude: 0,
-                    latitudeDelta: 0.00922,
-                    longitudeDelta: 0.00421,
-                }} 
-                region={{
-                    latitude: parseFloat(location?.coords?.latitude),
-                    longitude: parseFloat(location?.coords?.longitude),
-                    latitudeDelta: 0.00922,
-                    longitudeDelta: 0.00421,
-                }}
-                showsPointsOfInterest={false}
-                style={{flex: 1, width: '100%'}} >
-                    <UrlTile
-                        urlTemplate="http://a.tile.openstreetmap.de/tiles/osmde/{z}/{x}/{y}.png"
-                        maximumZ={19}
-                        tileCachePath={Platform.OS === 'android' ? '/assets/maps' : 'assets/maps'}
-                        tileMaxCacheSize={100000}
-                        shouldReplaceMapContent={true}
-                    />
-                    <Marker coordinate={{
-                        latitude: location?.coords?.latitude,
-                        longitude: location?.coords?.longitude,
-                    }}
-                    title="Position"
-                    description="You are here"
-                    pinColor="blue"
-                    flat={true}
-                    />
-                </MapView>
+            {
+                (() => {
+                    if (location == null) {
+                        if (errorMsg != null) {
+                            return <Text>{errorMsg}</Text>;
+                        } else {
+                            return <ActivityIndicator size="large" color="#0000ff" style={{flex: 3, width: '100%'}} />;
+                        }
+                    } else {
+                        return <Map location={location}/>;
+                    }
+                })()
             }
         </View>
     );
