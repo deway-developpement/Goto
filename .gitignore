@@ -117,7 +117,7 @@ web-build/
 
 # macOS
 .DS_Store
-.vscode
+#.vscode
 typings/
 
 # compiled output
