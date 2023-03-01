@@ -86,6 +86,7 @@ function LoginComponent({ navigation}) {
                 accessToken: access_token,
                 refreshToken: refresh_token,
                 connected: true,
+                ...authContext.authState,
             });
             
             console.log('login success');
@@ -188,7 +189,7 @@ export default function LoginScreen({navigation}) {
                 authContext.logout();
                 setLoadingState(false);
             });
-        } else if (authContext.authState.connected !== null) {
+        } else if (authContext.authState.loading === false) {
             // if authState is not loading and we are not connected, hide splash screen
             setLoadingState(false);
         }

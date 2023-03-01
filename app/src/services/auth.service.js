@@ -16,6 +16,7 @@ async function refreshAuth(authContext) {
                 accessToken: response.data.access_token,
                 refreshToken: response.data.refresh_token,
                 connected: true,
+                ...authContext.authState,
             });
 
             return response.data.access_token;
