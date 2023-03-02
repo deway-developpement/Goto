@@ -46,10 +46,10 @@ export class UsersResolver {
         return (await this.usersService.findOne(_email, 'email')) != null;
     }
 
-    @UseGuards(GqlAuthGuard)
+    //@UseGuards(GqlAuthGuard)
     @Query(() => [User])
     async Users(@Args('filter', { nullable: true }) filter: FilterUserInput): Promise<User[]> {
-        return this.usersService.findAll(filter);
+        return this.usersService.findAll(filter || {});
     }
 
     @UseGuards(GqlAuthGuard)

@@ -57,14 +57,15 @@ export class UsersService {
         }
         return await this.userRepository.findOne({ where: { _id: input } });
     }
+
     async findAll(filter: FilterUserInput): Promise<User[]> {
         return await this.userRepository.find({
-            where: filter || {}, //TODO correct filter format here
+            where: filter, //TODO correct filter format here
         });
     }
 
     async delete(id: string): Promise<User> {
-        const user = await this.userRepository.findOne(id);
+        const user = await this.userRepository.findOne({ where: { _id: id } });
         await this.userRepository.delete(id);
         return user;
     }
@@ -74,10 +75,10 @@ export class UsersService {
             const salt = await genSalt(10);
             input.password = await hash(input.password, salt);
         }
-        let user = await this.userRepository.findOne(id);
+        let user = await this.userRepository.findOne({ where: { _id: id } });
         user = { ...user, ...input };
         await this.userRepository.update(id, user);
-        return this.userRepository.findOne(id);
+        return this.userRepository.findOne({ where: { _id: id } });
     }
 
     async addConnectedUser(user: User) {

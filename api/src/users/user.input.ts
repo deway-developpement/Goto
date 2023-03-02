@@ -68,17 +68,23 @@ export class UpdateUserInput {
 
 @InputType()
 export class FilterUserInput {
-    @FilterableField(() => [String], { nullable: true, description: 'Pseudo of the user' })
+    @IsOptional()
+    @FilterableField(() => String, { nullable: true, description: 'Pseudo of the user' })
     readonly pseudo?: string;
-    @FilterableField(() => [String], { nullable: true, description: 'E-mail of the user' })
-    readonly email?: [string];
-    @FilterableField(() => [String], { nullable: true, description: 'Password of the user' })
-    readonly password?: [string];
-    @FilterableField(() => [String], { nullable: true, description: 'Public key of the user' })
-    readonly publicKey?: [string];
-    @FilterableField(() => [Number], {
+    @IsEmail()
+    @IsOptional()
+    @FilterableField(() => String, { nullable: true, description: 'E-mail of the user' })
+    readonly email?: string;
+    @IsOptional()
+    @FilterableField(() => String, { nullable: true, description: 'Password of the user' })
+    readonly password?: string;
+    @IsOptional()
+    @FilterableField(() => String, { nullable: true, description: 'Public key of the user' })
+    readonly publicKey?: string;
+    @IsOptional()
+    @FilterableField(() => Number, {
         nullable: true,
         description: 'access of the user : bin rwrw',
     })
-    readonly credidential?: [number];
+    readonly credidential?: number;
 }
