@@ -29,5 +29,6 @@ jobs:
           VALIDATE_ALL_CODEBASE: true
           VALIDATE_JAVASCRIPT_ES: true
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          LINTER_RULES_PATH: /
           JAVASCRIPT_ES_CONFIG_FILE: app/.eslintrc.js
           FILTER_REGEX_INCLUDE: app/*
