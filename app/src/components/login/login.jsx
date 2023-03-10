@@ -161,7 +161,7 @@ function LoginComponent({ navigation}) {
 }
 
 export default function LoginScreen({navigation}) {
-    const [loadignState, setLoadingState] = useState(true);
+    const [loadingState, setLoadingState] = useState(true);
 
     const authContext = useContext(AuthContext);
     
@@ -203,7 +203,7 @@ export default function LoginScreen({navigation}) {
             <KeyboardDismissView>
                 <View style={styles.inner}>
                     {
-                        loadignState ? <SplashScreen /> : <LoginComponent navigation={navigation}/>
+                        loadingState ? <SplashScreen /> : <LoginComponent navigation={navigation}/>
                     }
                 </View>
             </KeyboardDismissView>
