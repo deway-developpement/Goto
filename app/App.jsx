@@ -1,6 +1,6 @@
 import HomeScreen from './src/components/home/home';
-import LoginScreen from './src/components/login/login';
-import RegisterScreen from './src/components/register/register';
+import LoginScreen from './src/components/login/login2';
+import RegisterScreen from './src/components/register/register2';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { AuthProvider } from './src/providers/AuthContext';
