@@ -10,12 +10,18 @@ import React from 'react';
 import { useColorScheme } from 'react-native';
 import { Classic, Dark } from './src/theme/theme';
 import AuthApolloProvider from './src/providers/ApolloProvider';
+import { StatusBar } from 'react-native';
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
 
     const theme = useColorScheme();
+
+    // pass status bar color to black
+    (() => {
+        StatusBar.setBarStyle('dark-content');
+    })();
 
     return (
         <AuthProvider>

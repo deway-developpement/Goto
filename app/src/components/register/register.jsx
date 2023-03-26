@@ -10,7 +10,7 @@ import {
     Image,
     ScrollView,
     Dimensions,
-    StyleSheet
+    StyleSheet,
 } from 'react-native';
 import { Button } from 'react-native-elements';
 import { AuthContext } from '../../providers/AuthContext';
@@ -19,7 +19,6 @@ import { useTheme } from '@react-navigation/native';
 import { useApolloClient, gql } from '@apollo/client';
 import KeyboardDismissView from '../KeyboardDismissView/KeyboardDismissView';
 import { BlurView } from 'expo-blur';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function RegisterScreen({navigation, route}) {
     const [email, setEmail] = useState(route.params.email);
@@ -132,7 +131,7 @@ export default function RegisterScreen({navigation, route}) {
             style={{flex:1}}
         >
             <KeyboardDismissView>
-                <SafeAreaView style={{flex:1}}>
+                <View style={{flex:1}}>
                     <Image source={require('../../../assets/images/Dalle_background.png')} style={[StyleSheet.absoluteFill, {width:windowWidth, height:windowHeight}]}/>
                     <ScrollView style={{flex:1}}>
                         <BlurView style={styles.containerLogin} intensity={100} tint='light'>
@@ -210,7 +209,7 @@ export default function RegisterScreen({navigation, route}) {
                             </View>
                         </BlurView>
                     </ScrollView>
-                </SafeAreaView>
+                </View>
             </KeyboardDismissView>
         </KeyboardAvoidingView>
     );

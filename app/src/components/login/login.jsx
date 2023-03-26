@@ -26,7 +26,6 @@ import KeyboardDismissView from '../KeyboardDismissView/KeyboardDismissView';
 import { refreshAuth } from '../../services/auth.service';
 import SplashScreen from '../SlashScreen/SlashScreen';
 import { BlurView } from 'expo-blur';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
 
 function LoginComponent({ navigation}) {
@@ -110,9 +109,8 @@ function LoginComponent({ navigation}) {
     }
 
     return (
-        <SafeAreaView style={{flex:1}}>
-            <Image source={require('../../../assets/images/Dalle_background.png')} style={[StyleSheet.absoluteFill, {width:windowWidth, height:windowHeight}]}/>
-            
+        <View style={{flex:1}}>
+            <Image source={require('../../../assets/images/Dalle_background.png')} style={[StyleSheet.absoluteFill, {width:windowWidth, height:windowHeight + 10}]}/>
             <ScrollView style={{flex:1}}>
                 <BlurView style={styles.containerLogin} intensity={100} tint='light'>
                     <View style={styles.header}>
@@ -201,7 +199,7 @@ function LoginComponent({ navigation}) {
                 
                 </BlurView>
             </ScrollView>
-        </SafeAreaView>
+        </View>
     );
 }
 
