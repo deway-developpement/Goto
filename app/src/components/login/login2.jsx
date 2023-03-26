@@ -3,7 +3,7 @@ import React, {
     useRef, 
     useEffect, 
     useContext } from 'react';
-import stylesheet from './style2';
+import stylesheet from './style';
 import {
     KeyboardAvoidingView,
     Text,
