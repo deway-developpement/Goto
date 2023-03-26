@@ -24,6 +24,9 @@ const stylesheet = (colors) =>
             marginBottom: 10,
             paddingLeft: 15,
         },
+        textInputInvalid: {
+            borderColor: 'red',
+        },
         btnContainer: {
             backgroundColor: 'white',
             marginTop: 12,

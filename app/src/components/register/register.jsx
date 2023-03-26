@@ -29,18 +29,21 @@ export default function RegisterScreen({navigation, route}) {
     const { colors } = useTheme();
     const styles = stylesheet(colors);
 
-    let emailInput = useRef(null);
-    let pseudoInput = useRef(null);
-    let passwordInput = useRef(null);
-    let vPasswordInput = useRef(null);
+    const [emailInvalid, setEmailInvalid] = useState(false);
+    const [passwordsInvalid, setPasswordsInvalid] = useState(false);
+
+    const emailInput = useRef(null);
+    const pseudoInput = useRef(null);
+    const passwordInput = useRef(null);
+    const vPasswordInput = useRef(null);
 
     useEffect(() => {
-        if (vPassword == password) {
-            vPasswordInput.current.style = styles.textInput;
-        } else {
-            vPasswordInput.current.style.borderColor = 'red';
-        }
-    }, [password, vPassword]);
+        pseudoInput.current.focus();
+    }, []);
+
+    useEffect(() => {
+        setPasswordsInvalid(vPassword != password && vPassword != '' && !vPasswordInput.current.isFocused());
+    }, [vPassword, password]);
 
     async function isRegister() {
         // check if user exists here
@@ -61,10 +64,10 @@ export default function RegisterScreen({navigation, route}) {
             }
         };
         if (!/\S+@\S+\.\S+/.test(email) || (await checkEmail())) {
-            emailInput.current.style.borderColor = 'red';
+            setEmailInvalid(true);
             return true;
         } else {
-            emailInput.current.style = styles.textInput;
+            setEmailInvalid(false);
             return false;
         }
     }
@@ -133,7 +136,7 @@ export default function RegisterScreen({navigation, route}) {
                     <View>
                         <TextInput
                             placeholder="email"
-                            style={styles.textInput}
+                            style={[styles.textInput, emailInvalid && styles.textInputInvalid]}
                             onSubmitEditing={() => {
                                 isRegister();
                                 pseudoInput.current.focus();
@@ -167,11 +170,14 @@ export default function RegisterScreen({navigation, route}) {
                             ref={vPasswordInput}
                             placeholder="Confirm Password"
                             placeholderColor="#c4c3cb"
-                            style={[styles.textInput]}
+                            style={[styles.textInput, passwordsInvalid && styles.textInputInvalid]}
                             secureTextEntry={true}
                             onChangeText={(text) => setVPassword(text)}
                             onSubmitEditing={() => {
-                                register();
+                                if (vPassword == password && vPassword != '')
+                                    register();
+                                else
+                                    setPasswordsInvalid(true);
                             }}
                         />
                     </View>
