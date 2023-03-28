@@ -23,7 +23,7 @@ import { AxiosContext } from '../../providers/AxiosContext';
 import { gql, useApolloClient } from '@apollo/client';
 import KeyboardDismissView from '../KeyboardDismissView/KeyboardDismissView';
 import { refreshAuth } from '../../services/auth.service';
-import SplashScreen from '../SlashScreen/SlashScreen';
+import SplashScreen from '../SplashScreen/SplashScreen';
 import { BlurView } from 'expo-blur';
 
 function LoginComponent({ navigation }) {
