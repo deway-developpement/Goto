@@ -206,7 +206,6 @@ function MapScreen() {
 
     return (
         <View style={styles.container}>
-            <SafeAreaView />
             {(() => {
                 if (location == null) {
                     if (errorMsg != null) {
