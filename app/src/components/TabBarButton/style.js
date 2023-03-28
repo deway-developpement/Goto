@@ -5,8 +5,8 @@ const stylesheet = () =>
         wrapper: {
             marginVertical: 10,
             marginHorizontal: 40,
-            backgroundColor: '#1D343E',
             borderRadius: 12,
+            minHeight: 50,
             flex: 1,
             justifyContent: 'center',
             alignItems: 'center',
@@ -15,7 +15,9 @@ const stylesheet = () =>
             flex: 1,
             alignItems: 'center',
             justifyContent: 'space-evenly',
-            borderRadius: 12,
+        },
+        selected: {
+            backgroundColor: '#1D343E',
         },
     });
 export default stylesheet;

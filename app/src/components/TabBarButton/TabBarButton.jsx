@@ -4,6 +4,7 @@ import { View, TouchableOpacity } from 'react-native';
 import * as Font from 'expo-font';
 import SplashScreen from '../SplashScreen/SplashScreen';
 import { createIconSetFromFontello } from 'react-native-vector-icons';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 
 const Icon = createIconSetFromFontello(
     require('../../../assets/font/config.json'),
@@ -22,43 +23,25 @@ export default function TabBarButton({ icon, accessibilityState, onPress }) {
         return <SplashScreen />;
     }
 
-    if (accessibilityState.selected) {
-        return (
-            <View style={{ flex: 1 }}>
-                <View style={styles.wrapper}>
-                    <TouchableOpacity
-                        activeOpacity={1}
-                        onPress={onPress}
-                        style={styles.tabBarButton}
-                    >
-                        <Icon
-                            name={icon}
-                            size={35}
-                            color={'#EEEFEF'}
-                            style={{
-                                alignSelf: 'center',
-                            }}
-                        />
-                    </TouchableOpacity>
-                </View>
-            </View>
-        );
-    } else {
-        return (
-            <TouchableOpacity
-                activeOpacity={1}
-                onPress={onPress}
-                style={styles.tabBarButton}
-            >
-                <Icon
-                    name={icon}
-                    size={35}
-                    color={'#EEEFEF'}
-                    style={{
-                        alignSelf: 'center',
-                    }}
-                />
-            </TouchableOpacity>
-        );
-    }
+    return (
+        <View style={[styles.wrapper, accessibilityState.selected && styles.selected]}>
+            <SafeAreaProvider>
+                <TouchableOpacity
+                    activeOpacity={1}
+                    onPress={onPress}
+                    style={styles.tabBarButton}
+                >
+                    <Icon
+                        name={icon}
+                        size={35}
+                        color={'#EEEFEF'}
+                        style={{
+                            alignSelf: 'center',
+                        }}
+                    />
+                </TouchableOpacity>
+                <SafeAreaView />
+            </SafeAreaProvider>
+        </View>
+    );
 }
