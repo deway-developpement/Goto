@@ -111,7 +111,7 @@ function LoginComponent({ navigation}) {
     return (
         <View style={{flex:1}}>
             <Image source={require('../../../assets/images/Dalle_background.png')} style={[StyleSheet.absoluteFill, {width:windowWidth, height:windowHeight + 10}]}/>
-            <ScrollView style={{flex:1}}>
+            <ScrollView style={{flex:1}} keyboardShouldPersistTaps={'handled'}>
                 <BlurView style={styles.containerLogin} intensity={100} tint='light'>
                     <View style={styles.header}>
                         <Image source={require('../../../assets/images/logo.png')} style={styles.logo} />
