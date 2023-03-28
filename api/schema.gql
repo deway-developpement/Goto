@@ -21,6 +21,9 @@ type User {
 
   """access of the user : bin rwrw"""
   credidential: Float!
+
+  """List of friends of the user"""
+  friends: [User!]!
   isConnected: Boolean!
 }
 
