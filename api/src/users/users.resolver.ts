@@ -23,27 +23,18 @@ export class UsersResolver {
         @Args('input', { type: () => SearchUserInput, nullable: true })
         input: any
     ): Promise<User> {
-        if (id) {
-            return this.usersService.findOne(id);
-        }
-        if (email) {
-            return this.usersService.findOne(email, 'email');
-        }
-        if (input) {
-            return this.usersService.findOne(input, 'input');
-        }
-        return null;
+        return this.usersService.findOne({ id, email, input });
     }
 
     @UseGuards(GqlAuthGuard)
     @Query(() => User, { nullable: true })
     async whoami(@CurrentUser() user: User): Promise<User> {
-        return this.usersService.findOne(user._id);
+        return this.usersService.findOne({ id: user._id });
     }
 
     @Query(() => Boolean)
     async exist(@Args('email', { type: () => String }) _email: string): Promise<boolean> {
-        return (await this.usersService.findOne(_email, 'email')) != null;
+        return (await this.usersService.findOne({ email: _email })) != null;
     }
 
     //@UseGuards(GqlAuthGuard)

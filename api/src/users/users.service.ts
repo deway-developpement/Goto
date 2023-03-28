@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { FilterUserInput } from './user.input';
+import { FilterUserInput, SearchUserInput } from './user.input';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './interfaces/user.entity';
@@ -46,16 +46,27 @@ export class UsersService {
         return createdUser;
     }
 
-    async findOne(input: any, type = 'id'): Promise<User> {
-        if (type == 'email') {
-            return await this.userRepository.findOne({ where: { email: input } });
+    async findOne({
+        email,
+        input,
+        id,
+    }: {
+        email?: string;
+        input?: SearchUserInput;
+        id?: string;
+    }): Promise<User> {
+        const filter = {};
+        if (email) {
+            filter['email'] = email;
         }
-        if (type == 'input') {
-            return await this.userRepository.findOne({
-                where: { pseudo: input.pseudo, publicKey: input.publicKey },
-            });
+        if (id) {
+            filter['_id'] = id;
         }
-        return await this.userRepository.findOne({ where: { _id: input } });
+        if (input) {
+            filter['pseudo'] = input?.pseudo;
+            filter['publicKey'] = input?.publicKey;
+        }
+        return await this.userRepository.findOne({ where: filter, relations: ['friends'] });
     }
 
     async findAll(filter: FilterUserInput): Promise<User[]> {

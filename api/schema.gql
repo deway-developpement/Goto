@@ -27,6 +27,19 @@ type User {
   isConnected: Boolean!
 }
 
+type Message {
+  _id: ID!
+
+  """sender of the message"""
+  sender: User!
+
+  """Content of the message"""
+  content: String!
+
+  """Date of the message"""
+  date: String!
+}
+
 type Query {
   User(id: String, email: String, input: SearchUserInput): User
   whoami: User
@@ -57,6 +70,9 @@ input FilterUserInput {
 
   """access of the user : bin rwrw"""
   credidential: Float
+
+  """List of friends of the user"""
+  friends: [FilterUserInput!]
 }
 
 type Mutation {
