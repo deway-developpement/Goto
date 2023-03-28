@@ -87,4 +87,10 @@ export class FilterUserInput {
         description: 'access of the user : bin rwrw',
     })
     readonly credidential?: number;
+    @IsOptional()
+    @FilterableField(() => [FilterUserInput], {
+        nullable: true,
+        description: 'List of friends of the user',
+    })
+    readonly friends?: FilterUserInput[];
 }

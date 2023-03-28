@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryGeneratedColumn, Unique } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn, Unique, ManyToMany, JoinTable } from 'typeorm';
 import { ObjectType, Field, ID, HideField } from '@nestjs/graphql';
 import { IsEmail, IsString, IsNotEmpty } from 'class-validator';
 import { pwdMiddleware, idMiddleware, credidentialMiddleware } from '../../auth/auth.middleware';
@@ -44,6 +44,12 @@ export class User {
     @IsNotEmpty()
     @Column()
     credidential: number;
+
+    // friend relation M2M
+    @Field(() => [User], { description: 'List of friends of the user' })
+    @ManyToMany(() => User, (user) => user.friends)
+    @JoinTable()
+    friends: User[];
 
     @HideField()
     @Column({ nullable: true })

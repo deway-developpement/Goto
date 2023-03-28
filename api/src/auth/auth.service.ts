@@ -13,8 +13,8 @@ export class AuthService {
     ) {}
 
     async validateUser(email: string, pass: string): Promise<any> {
-        const user = await this.usersService.findOne(email, 'email');
-        if (user && await compare(pass, user.password)) {
+        const user = await this.usersService.findOne({ email });
+        if (user && (await compare(pass, user.password))) {
             return user;
         }
         return null;
@@ -38,7 +38,7 @@ export class AuthService {
             throw new UnauthorizedException();
         }
         const decoded = this.jwtService.decode(req.headers.refresh_token);
-        const user = await this.usersService.findOne(decoded.sub);
+        const user = await this.usersService.findOne({ id: decoded.sub });
         if (!user) {
             throw new UnauthorizedException();
         } else if (
@@ -55,7 +55,7 @@ export class AuthService {
     async verifyToken(token: string) {
         try {
             const payload = this.jwtService.verify(token);
-            return this.usersService.findOne(payload.sub, '_id');
+            return this.usersService.findOne({ id: payload.sub });
         } catch (err) {
             return null;
         }

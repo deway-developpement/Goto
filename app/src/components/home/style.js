@@ -7,7 +7,6 @@ const stylesheet = (colors) =>
             backgroundColor: colors.background,
         },
         inner: {
-            padding: 24,
             flex: 1,
             justifyContent: 'space-around',
         },
@@ -43,6 +42,14 @@ const stylesheet = (colors) =>
         logo: {
             width: 36,
             height: 36,
+        },
+        tabBar: {
+            backgroundColor: '#264653',
+            borderTopEndRadius: 12,
+            borderTopStartRadius: 12,
+            height: '9%',
+            minHeight: 70,
+            position: 'absolute',
         },
     });
 export default stylesheet;

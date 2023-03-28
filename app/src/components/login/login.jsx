@@ -26,11 +26,13 @@ import { refreshAuth } from '../../services/auth.service';
 import SplashScreen from '../SlashScreen/SlashScreen';
 import { BlurView } from 'expo-blur';
 
-
-function LoginComponent({ navigation}) {
+function LoginComponent({ navigation }) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [appState, setAppState] = useState({ email_valid: null, password_valid: null });
+    const [appState, setAppState] = useState({
+        email_valid: null,
+        password_valid: null,
+    });
 
     const isFocused = useIsFocused();
 
@@ -60,9 +62,11 @@ function LoginComponent({ navigation}) {
         const checkEmail = async () => {
             try {
                 const response = await client.query({
-                    query: gql`query exists($email : String!) {
-                        exist(email: $email)
-                    }`,
+                    query: gql`
+                        query exists($email: String!) {
+                            exist(email: $email)
+                        }
+                    `,
                     variables: {
                         email,
                     },
@@ -73,10 +77,10 @@ function LoginComponent({ navigation}) {
             }
         };
         if (/\S+@\S+\.\S+/.test(email) && (await checkEmail())) {
-            setAppState({...appState, email_valid: true});
+            setAppState({ ...appState, email_valid: true });
             passwordRef.current.focus();
         } else {
-            setAppState({...appState, email_valid: false});
+            setAppState({ ...appState, email_valid: false });
         }
     }
 
@@ -95,12 +99,12 @@ function LoginComponent({ navigation}) {
                 refreshToken: refresh_token,
                 connected: true,
             });
-            
+
             console.log('login success');
 
             navigation.navigate('Home');
         } catch (error) {
-            setAppState({...appState, password_valid: false});
+            setAppState({ ...appState, password_valid: false });
         }
     }
 
@@ -199,11 +203,11 @@ function LoginComponent({ navigation}) {
     );
 }
 
-export default function LoginScreen({navigation}) {
+export default function LoginScreen({ navigation }) {
     const [loadingState, setLoadingState] = useState(true);
 
     const authContext = useContext(AuthContext);
-    
+
     const isFocused = useIsFocused();
 
     // force reload on focus of screen

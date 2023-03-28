@@ -57,6 +57,9 @@ const stylesheet = (colors) =>
             alignSelf:'stretch',
             fontSize:16
         },
+        textInputInvalid: {
+            borderColor: 'red',
+        },
         btnContainer: {
             flex:1,
             alignItems:'center',

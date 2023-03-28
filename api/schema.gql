@@ -21,7 +21,23 @@ type User {
 
   """access of the user : bin rwrw"""
   credidential: Float!
+
+  """List of friends of the user"""
+  friends: [User!]!
   isConnected: Boolean!
+}
+
+type Message {
+  _id: ID!
+
+  """sender of the message"""
+  sender: User!
+
+  """Content of the message"""
+  content: String!
+
+  """Date of the message"""
+  date: String!
 }
 
 type Query {
@@ -54,6 +70,9 @@ input FilterUserInput {
 
   """access of the user : bin rwrw"""
   credidential: Float
+
+  """List of friends of the user"""
+  friends: [FilterUserInput!]
 }
 
 type Mutation {
