@@ -47,8 +47,7 @@ const stylesheet = (colors) =>
             backgroundColor: '#264653',
             borderTopEndRadius: 12,
             borderTopStartRadius: 12,
-            height: '9%',
-            minHeight: 115,
+            minHeight: '9%',
             position: 'absolute',
         },
     });
