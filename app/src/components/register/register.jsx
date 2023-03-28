@@ -8,6 +8,8 @@ import {
     View,
     Platform,
     Image,
+    ScrollView,
+    StyleSheet,
 } from 'react-native';
 import { Button } from 'react-native-elements';
 import { AuthContext } from '../../providers/AuthContext';
@@ -15,7 +17,7 @@ import { AxiosContext } from '../../providers/AxiosContext';
 import { useTheme } from '@react-navigation/native';
 import { useApolloClient, gql } from '@apollo/client';
 import KeyboardDismissView from '../KeyboardDismissView/KeyboardDismissView';
-
+import { BlurView } from 'expo-blur';
 
 export default function RegisterScreen({navigation, route}) {
     const [email, setEmail] = useState(route.params.email);
@@ -125,81 +127,87 @@ export default function RegisterScreen({navigation, route}) {
     return (
         <KeyboardAvoidingView
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-            style={styles.container}
+            style={{flex:1}}
         >
             <KeyboardDismissView>
-                <View style={styles.inner}>
-                    <View style={{flexDirection: 'row', alignItems:'flex-start'}}>
-                        <Image source={require('../../../assets/images/logo.png')} style={styles.logo} />
-                        <Text style={styles.header}>Gotò</Text>
-                    </View>
-                    <View>
-                        <TextInput
-                            placeholder="email"
-                            style={[styles.textInput, emailInvalid && styles.textInputInvalid]}
-                            onSubmitEditing={() => {
-                                isRegister();
-                                pseudoInput.current.focus();
-                            }}
-                            onChangeText={(text) => setEmail(text)}
-                            ref={emailInput}
-                            value={email}
-                        />
-                        <TextInput
-                            placeholder="Pseudo"
-                            placeholderColor="#c4c3cb"
-                            style={[styles.textInput]}
-                            onChangeText={(text) => setPseudo(text)}
-                            onSubmitEditing={() => {
-                                passwordInput.current.focus();
-                            }}
-                            ref={pseudoInput}
-                        />
-                        <TextInput
-                            placeholder="Password"
-                            placeholderColor="#c4c3cb"
-                            style={[styles.textInput]}
-                            secureTextEntry={true}
-                            onChangeText={(text) => setPassword(text)}
-                            onSubmitEditing={() => {
-                                vPasswordInput.current.focus();
-                            }}
-                            ref={passwordInput}
-                        />
-                        <TextInput
-                            ref={vPasswordInput}
-                            placeholder="Confirm Password"
-                            placeholderColor="#c4c3cb"
-                            style={[styles.textInput, passwordsInvalid && styles.textInputInvalid]}
-                            secureTextEntry={true}
-                            onChangeText={(text) => setVPassword(text)}
-                            onSubmitEditing={() => {
-                                if (vPassword == password && vPassword != '')
-                                    register();
-                                else
-                                    setPasswordsInvalid(true);
-                            }}
-                        />
-                    </View>
-                    <View style={styles.btnContainer}>
-                        <Button
-                            buttonStyle={styles.btn}
-                            disabled={
-                                email == '' ||
-                                password == '' ||
-                                pseudo == '' ||
-                                vPassword != password
-                            }
-                            title={'Sign up'}
-                            onPress={() => register()}
-                        />
-                        <TouchableWithoutFeedback
-                            onPress={() => navigation.navigate('Login')}
-                            style={styles.textBtn}
-                        >
-                            <Text style={styles.textBtn_text}>Cancel</Text>
-                        </TouchableWithoutFeedback>
-                    </View>
+                <View style={{flex:1}}>
+                    <Image source={require('../../../assets/images/Dalle_background.png')} style={[StyleSheet.absoluteFill]}/>
+                    <ScrollView style={{flex:1}}>
+                        <BlurView style={styles.containerLogin} intensity={100} tint='light'>
+                            <View style={styles.header}>
+                                <Image source={require('../../../assets/images/logo.png')} style={styles.logo} />
+                                <Text style={styles.textHeader}>Register</Text>
+                            </View>
+                            <View style={styles.loginMiddle}>
+                                <Text style={styles.textLoginMiddle}>Adresse email</Text>
+                                <TextInput
+                                    placeholder="email"
+                                    style={styles.textInput}
+                                    onSubmitEditing={() => {
+                                        isRegister();
+                                        pseudoInput.current.focus();
+                                    }}
+                                    onChangeText={(text) => setEmail(text)}
+                                    ref={emailInput}
+                                    value={email}
+                                />
+                                <Text style={styles.textLoginMiddle}>Pseudo</Text>
+                                <TextInput
+                                    placeholder="Pseudo"
+                                    placeholderColor="#c4c3cb"
+                                    style={[styles.textInput]}
+                                    onChangeText={(text) => setPseudo(text)}
+                                    onSubmitEditing={() => {
+                                        passwordInput.current.focus();
+                                    }}
+                                    ref={pseudoInput}
+                                />
+                                <Text style={styles.textLoginMiddle}>Password</Text>
+                                <TextInput
+                                    placeholder="Password"
+                                    placeholderColor="#c4c3cb"
+                                    style={[styles.textInput]}
+                                    secureTextEntry={true}
+                                    onChangeText={(text) => setPassword(text)}
+                                    onSubmitEditing={() => {
+                                        vPasswordInput.current.focus();
+                                    }}
+                                    ref={passwordInput}
+                                />
+                                <Text style={styles.textLoginMiddle}>Confirm Password</Text>
+                                <TextInput
+                                    ref={vPasswordInput}
+                                    placeholder="Confirm Password"
+                                    placeholderColor="#c4c3cb"
+                                    style={[styles.textInput]}
+                                    secureTextEntry={true}
+                                    onChangeText={(text) => setVPassword(text)}
+                                    onSubmitEditing={() => {
+                                        register();
+                                    }}
+                                />
+                            </View>
+                            <View style={styles.btnContainer}>
+                                <Button
+                                    buttonStyle={styles.btn}
+                                    disabled={
+                                        email == '' ||
+                                        password == '' ||
+                                        pseudo == '' ||
+                                        vPassword != password
+                                    }
+                                    title={'Sign up'}
+                                    onPress={() => register()}
+                                />
+                                <TouchableWithoutFeedback
+                                    onPress={() => navigation.navigate('Login')}
+                                    style={styles.textBtn}
+                                >
+                                    <Text style={{fontSize:16, fontWeight:'600', paddingVertical:'3%'}}>Cancel</Text>
+                                </TouchableWithoutFeedback>
+                            </View>
+                        </BlurView>
+                    </ScrollView>
                 </View>
             </KeyboardDismissView>
         </KeyboardAvoidingView>

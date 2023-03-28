@@ -1,13 +1,19 @@
-import React, { useState, useRef, useEffect, useContext } from 'react';
+import React, { 
+    useState, 
+    useRef, 
+    useEffect, 
+    useContext } from 'react';
 import stylesheet from './style';
 import {
     KeyboardAvoidingView,
     Text,
+    Image,
     TextInput,
     TouchableWithoutFeedback,
     View,
     Platform,
-    Image,
+    StyleSheet,
+    ScrollView,
 } from 'react-native';
 import { Button } from 'react-native-elements';
 import { useTheme } from '@react-navigation/native';
@@ -17,7 +23,8 @@ import { AxiosContext } from '../../providers/AxiosContext';
 import { gql, useApolloClient } from '@apollo/client';
 import KeyboardDismissView from '../KeyboardDismissView/KeyboardDismissView';
 import { refreshAuth } from '../../services/auth.service';
-import SplashScreen from '../SplashScreen/SplashScreen';
+import SplashScreen from '../SlashScreen/SlashScreen';
+import { BlurView } from 'expo-blur';
 
 function LoginComponent({ navigation }) {
     const [email, setEmail] = useState('');
@@ -102,80 +109,96 @@ function LoginComponent({ navigation }) {
     }
 
     return (
-        <View style={styles.inner}>
-            <View style={{ flexDirection: 'row', alignItems: 'flex-start' }}>
-                <Image
-                    source={require('../../../assets/images/logo.png')}
-                    style={styles.logo}
-                />
-                <Text style={styles.header}>Gotò</Text>
-            </View>
-            <View>
-                <TextInput
-                    textContentType="username"
-                    autoCorrect={false}
-                    autoCapitalize="none"
-                    placeholder="email"
-                    placeholderTextColor={colors.border}
-                    style={[
-                        styles.textInput,
-                        {
-                            borderColor:
-                                appState.email_valid === false
-                                    ? colors.accent
-                                    : colors.border,
-                        },
-                    ]}
-                    onSubmitEditing={() => isRegister()}
-                    onChangeText={(text) => setEmail(text)}
-                    value={email}
-                />
-                {appState.email_valid === false && email != '' ? (
-                    <TouchableWithoutFeedback
-                        onPress={() =>
-                            navigation.navigate('Register', { email: email })
+        <View style={{flex:1}}>
+            <Image source={require('../../../assets/images/Dalle_background.png')} style={[StyleSheet.absoluteFill]}/>
+            <ScrollView style={{flex:1}}>
+                <BlurView style={styles.containerLogin} intensity={100} tint='light'>
+                    <View style={styles.header}>
+                        <Image source={require('../../../assets/images/logo.png')} style={styles.logo} />
+                        { appState.email_valid ?
+                            <Text style={styles.textHeader}> Loggin</Text> :
+                            <Text style={styles.textHeader}> Enter your email</Text>
                         }
-                        style={styles.textBtn}
-                    >
-                        <Text style={styles.textBtn_text}>
-                            Create Account ?
-                        </Text>
-                    </TouchableWithoutFeedback>
-                ) : null}
-                <TextInput
-                    textContentType="password"
-                    ref={passwordRef}
-                    placeholder="Password"
-                    placeholderTextColor={colors.border}
-                    style={[
-                        styles.textInput,
+                    </View>
+                    <View style={styles.loginMiddle}>
+                        <Text style={styles.textLoginMiddle}>Adresse email</Text>
+                        <TextInput
+                            textContentType='username'
+                            autoCorrect={false}
+                            autoCapitalize='none'
+                            placeholder="email"
+                            placeholderTextColor={colors.border}
+                            style={[styles.textInput, {
+                                borderColor: appState.email_valid === false ? colors.accent : colors.border,
+                            }]}
+                            onSubmitEditing={() => isRegister()}
+                            onChangeText={(text) => setEmail(text)}
+                            value={email}
+                        />
                         {
-                            display: appState.email_valid ? 'flex' : 'none',
-                            borderColor:
-                                appState.password_valid === false
-                                    ? colors.accent
-                                    : colors.border,
-                        },
-                    ]}
-                    secureTextEntry={true}
-                    autoFocus={true}
-                    onSubmitEditing={() => login()}
-                    onChangeText={(text) => setPassword(text)}
-                    value={password}
-                />
-            </View>
-            <View style={styles.btnContainer}>
-                <Button
-                    buttonStyle={styles.btn}
-                    disabled={
-                        appState.email_valid ? password == '' : email == ''
-                    }
-                    title={appState.email_valid ? 'Sign in' : 'Next'}
-                    onPress={() =>
-                        appState.email_valid ? login() : isRegister()
-                    }
-                />
-            </View>
+                            appState.email_valid === false && email != '' ? <TouchableWithoutFeedback
+                                onPress={() =>
+                                    navigation.navigate('Register', { email: email })
+                                }
+                                style={styles.textBtn}
+                            >
+                                <Text style={styles.textBtn_text}>
+                                    Create Account ?
+                                </Text>
+                            </TouchableWithoutFeedback>: null
+                        }
+                        {
+                            appState.email_valid && <Text style={styles.textLoginMiddle}>Password</Text>
+                        }
+                        <TextInput
+                            textContentType='password'
+                            ref={passwordRef}
+                            placeholder="Password"
+                            placeholderTextColor={colors.border}
+                            style={[
+                                styles.textInput,
+                                { 
+                                    display: appState.email_valid ? 'flex' : 'none',
+                                    borderColor: appState.password_valid === false ? colors.accent : colors.border, 
+                                    paddingLeft:12
+                                },
+                            ]}
+                            secureTextEntry={true}
+                            autoFocus={true}
+                            onSubmitEditing={() => login()}
+                            onChangeText={(text) => setPassword(text)}
+                            value={password}
+                        />
+                        {
+                            appState.email_valid && appState.password_valid === false ? <TouchableWithoutFeedback
+                                onPress={() =>
+                                    console.log('forgot password')
+                                }
+                                style={styles.textBtn}
+                            >
+                                <Text style={styles.textBtn_text}>
+                                    Forgot password ?
+                                </Text>
+                            </TouchableWithoutFeedback>: null
+                        }
+                    </View>
+                    <View style={styles.btnContainer}>
+                        <Button
+                            buttonStyle={[styles.btn, {width: appState.email_valid ? 200 : 100}]}
+                            titleStyle={styles.btnText}
+                            disabled={appState.email_valid ? password == '' : email == ''}
+                            title={appState.email_valid ? 'Sign in' : 'Next'}
+                            onPress={() => (appState.email_valid ? login() : isRegister())}
+                        />
+                        <TouchableWithoutFeedback onPress={() => (navigation.navigate('Register', { email: email }))} style={{flex:1}}>
+                            <Text style={{fontSize:16, fontWeight:'600', paddingVertical:'3%'}}>
+                                Register
+                            </Text>
+                        </TouchableWithoutFeedback>
+                    </View>
+                
+                </BlurView>
+            </ScrollView>
         </View>
     );
 }
@@ -186,9 +209,6 @@ export default function LoginScreen({ navigation }) {
     const authContext = useContext(AuthContext);
 
     const isFocused = useIsFocused();
-
-    const { colors } = useTheme();
-    const styles = stylesheet(colors);
 
     // force reload on focus of screen
     useEffect(() => {
@@ -218,15 +238,13 @@ export default function LoginScreen({ navigation }) {
     return (
         <KeyboardAvoidingView
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-            style={styles.container}
+            style={{flex: 1}}
         >
             <KeyboardDismissView>
-                <View style={styles.inner}>
-                    {loadingState ? (
-                        <SplashScreen />
-                    ) : (
-                        <LoginComponent navigation={navigation} />
-                    )}
+                <View style={{flex:1}}>
+                    {
+                        loadingState ? <SplashScreen /> : <LoginComponent navigation={navigation}/>
+                    }
                 </View>
             </KeyboardDismissView>
         </KeyboardAvoidingView>
