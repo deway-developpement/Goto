@@ -14,7 +14,6 @@ import {
     Platform,
     StyleSheet,
     ScrollView,
-    Dimensions
 } from 'react-native';
 import { Button } from 'react-native-elements';
 import { useTheme } from '@react-navigation/native';
@@ -44,9 +43,6 @@ function LoginComponent({ navigation}) {
     const styles = stylesheet(colors);
 
     const client = useApolloClient();
-
-    const windowWidth = Dimensions.get('window').width;
-    const windowHeight = Dimensions.get('window').height;
 
     useEffect(() => {
         if (isFocused) {
@@ -110,8 +106,8 @@ function LoginComponent({ navigation}) {
 
     return (
         <View style={{flex:1}}>
-            <Image source={require('../../../assets/images/Dalle_background.png')} style={[StyleSheet.absoluteFill, {width:windowWidth, height:windowHeight + 10}]}/>
-            <ScrollView style={{flex:1}} keyboardShouldPersistTaps={'handled'}>
+            <Image source={require('../../../assets/images/Dalle_background.png')} style={[StyleSheet.absoluteFill]}/>
+            <ScrollView style={{flex:1}}>
                 <BlurView style={styles.containerLogin} intensity={100} tint='light'>
                     <View style={styles.header}>
                         <Image source={require('../../../assets/images/logo.png')} style={styles.logo} />
@@ -210,9 +206,6 @@ export default function LoginScreen({navigation}) {
     
     const isFocused = useIsFocused();
 
-    const { colors } = useTheme();
-    const styles = stylesheet(colors);
-
     // force reload on focus of screen
     useEffect(() => {
         if (isFocused) {
@@ -241,10 +234,10 @@ export default function LoginScreen({navigation}) {
     return (
         <KeyboardAvoidingView
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-            style={styles.container}
+            style={{flex: 1}}
         >
             <KeyboardDismissView>
-                <View style={styles.inner}>
+                <View style={{flex:1}}>
                     {
                         loadingState ? <SplashScreen /> : <LoginComponent navigation={navigation}/>
                     }

@@ -9,7 +9,6 @@ import {
     Platform,
     Image,
     ScrollView,
-    Dimensions,
     StyleSheet,
 } from 'react-native';
 import { Button } from 'react-native-elements';
@@ -36,9 +35,6 @@ export default function RegisterScreen({navigation, route}) {
     let pseudoInput = useRef(null);
     let passwordInput = useRef(null);
     let vPasswordInput = useRef(null);
-
-    const windowWidth = Dimensions.get('window').width;
-    const windowHeight = Dimensions.get('window').height;
 
     useEffect(() => {
         if (vPassword == password) {
@@ -132,8 +128,8 @@ export default function RegisterScreen({navigation, route}) {
         >
             <KeyboardDismissView>
                 <View style={{flex:1}}>
-                    <Image source={require('../../../assets/images/Dalle_background.png')} style={[StyleSheet.absoluteFill, {width:windowWidth, height:windowHeight}]}/>
-                    <ScrollView style={{flex:1}} keyboardShouldPersistTaps={'handled'}>
+                    <Image source={require('../../../assets/images/Dalle_background.png')} style={[StyleSheet.absoluteFill]}/>
+                    <ScrollView style={{flex:1}}>
                         <BlurView style={styles.containerLogin} intensity={100} tint='light'>
                             <View style={styles.header}>
                                 <Image source={require('../../../assets/images/logo.png')} style={styles.logo} />
