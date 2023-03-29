@@ -131,7 +131,7 @@ export default function RegisterScreen({navigation, route}) {
         >
             <KeyboardDismissView>
                 <View style={{flex:1}}>
-                    <Image source={require('../../../assets/images/Dalle_background.png')} style={[StyleSheet.absoluteFill]}/>
+                    <Image source={require('../../../assets/images/Dalle_background.png')} style={[StyleSheet.absoluteFill, {width:'100%', height:'100%'}]}/>
                     <ScrollView style={{flex:1}}>
                         <BlurView style={styles.containerLogin} intensity={100} tint='light'>
                             <View style={styles.header}>
