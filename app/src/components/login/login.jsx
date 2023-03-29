@@ -136,18 +136,6 @@ function LoginComponent({ navigation }) {
                             value={email}
                         />
                         {
-                            appState.email_valid === false && email != '' ? <TouchableWithoutFeedback
-                                onPress={() =>
-                                    navigation.navigate('Register', { email: email })
-                                }
-                                style={styles.textBtn}
-                            >
-                                <Text style={styles.textBtn_text}>
-                                    Create Account ?
-                                </Text>
-                            </TouchableWithoutFeedback>: null
-                        }
-                        {
                             appState.email_valid && <Text style={styles.textLoginMiddle}>Password</Text>
                         }
                         <TextInput
@@ -158,9 +146,12 @@ function LoginComponent({ navigation }) {
                             style={[
                                 styles.textInput,
                                 { 
-                                    display: appState.email_valid ? 'flex' : 'none',
+                                    width: appState.email_valid ? styles.textInput.width : 0,
+                                    height: appState.email_valid ? styles.textInput.height : 0,
+                                    marginBottom: appState.email_valid ? styles.textInput.marginBottom : 0,
+                                    paddingLeft: appState.email_valid ? styles.textInput.paddingLeft : 0,
+                                    borderWidth: appState.email_valid ? styles.textInput.borderWidth : 0,
                                     borderColor: appState.password_valid === false ? colors.accent : colors.border, 
-                                    paddingLeft:12
                                 },
                             ]}
                             secureTextEntry={true}

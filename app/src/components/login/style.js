@@ -66,7 +66,7 @@ const stylesheet = (colors) =>
             marginBottom: '4%',
             paddingLeft: 15,
             color: colors.text,
-            backgroundColor:'#FFFFFF',
+            backgroundColor:colors.backgroundTextInput,
             alignSelf:'stretch',
             fontSize:16
         },
@@ -77,7 +77,7 @@ const stylesheet = (colors) =>
             marginTop: '5%',
         },
         btn: {
-            backgroundColor: '#264653',
+            backgroundColor: colors.backgroundButton,
             borderRadius: 6,
             padding: 10,
             
