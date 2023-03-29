@@ -116,7 +116,7 @@ function LoginComponent({ navigation }) {
                     <View style={styles.header}>
                         <Image source={require('../../../assets/images/logo.png')} style={styles.logo} />
                         { appState.email_valid ?
-                            <Text style={styles.textHeader}> Loggin</Text> :
+                            <Text style={styles.textHeader}> Login</Text> :
                             <Text style={styles.textHeader}> Enter your email</Text>
                         }
                     </View>
