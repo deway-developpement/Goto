@@ -142,7 +142,7 @@ export default function RegisterScreen({navigation, route}) {
                                 <Text style={styles.textLoginMiddle}>Adress email</Text>
                                 <TextInput
                                     placeholder="email"
-                                    style={styles.textInput}
+                                    style={[styles.textInput, emailInvalid && {borderColor:'red'}]}
                                     onSubmitEditing={() => {
                                         isRegister();
                                         pseudoInput.current.focus();
@@ -179,11 +179,14 @@ export default function RegisterScreen({navigation, route}) {
                                     ref={vPasswordInput}
                                     placeholder="Confirm Password"
                                     placeholderColor="#c4c3cb"
-                                    style={[styles.textInput]}
+                                    style={[styles.textInput, passwordsInvalid && {borderColor:'red'}]}
                                     secureTextEntry={true}
                                     onChangeText={(text) => setVPassword(text)}
                                     onSubmitEditing={() => {
-                                        register();
+                                        if (vPassword == password && vPassword != '')
+                                            register();
+                                        else
+                                            setPasswordsInvalid(true);
                                     }}
                                 />
                             </View>
