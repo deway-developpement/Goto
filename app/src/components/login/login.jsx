@@ -138,25 +138,23 @@ function LoginComponent({ navigation }) {
                         {
                             appState.email_valid && <Text style={styles.textLoginMiddle}>Password</Text>
                         }
-                        <View style={{display: appState.email_valid ? 'flex' : 'none'}}>
-                            <TextInput
-                                textContentType='password'
-                                ref={passwordRef}
-                                placeholder="Password"
-                                placeholderTextColor={colors.border}
-                                style={[
-                                    styles.textInput,
-                                    {
-                                        borderColor: appState.password_valid === false ? colors.accent : colors.border, 
-                                    },
-                                ]}
-                                secureTextEntry={true}
-                                autoFocus={true}
-                                onSubmitEditing={() => login()}
-                                onChangeText={(text) => setPassword(text)}
-                                value={password}
-                            />
-                        </View>
+                        <TextInput
+                            textContentType='password'
+                            ref={passwordRef}
+                            placeholder="Password"
+                            placeholderTextColor={colors.border}
+                            style={appState.email_valid ?  [
+                                styles.textInput,
+                                {
+                                    borderColor: appState.password_valid === false ? colors.accent : colors.border, 
+                                },
+                            ] : {display:'none'}}
+                            secureTextEntry={true}
+                            autoFocus={true}
+                            onSubmitEditing={() => login()}
+                            onChangeText={(text) => setPassword(text)}
+                            value={password}
+                        />
                         {
                             appState.email_valid && appState.password_valid === false ? <TouchableWithoutFeedback
                                 onPress={() =>
