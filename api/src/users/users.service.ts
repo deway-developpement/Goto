@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { FilterUserInput, SearchUserInput } from './user.input';
+import { SearchUserInput } from './user.input';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Brackets, Repository } from 'typeorm';
 import { User } from './interfaces/user.entity';
 import { UnauthorizedException } from '@nestjs/common';
 import { genSalt, hash } from 'bcrypt';
@@ -69,10 +69,11 @@ export class UsersService {
         return await this.userRepository.findOne({ where: filter, relations: ['friends'] });
     }
 
-    async findAll(filter: FilterUserInput): Promise<User[]> {
-        return await this.userRepository.find({
-            where: filter, //TODO correct filter format here
-        });
+    async findAll(filter: Brackets, orderBy: any): Promise<User[]> {
+        const qb = this.userRepository.createQueryBuilder('u').where(filter);
+        const users = qb.getMany();
+        console.log(users);
+        return users;
     }
 
     async delete(id: string): Promise<User> {

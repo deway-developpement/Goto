@@ -3,13 +3,22 @@ import { UsersService } from './users.service';
 import {
     UserInput,
     NewUserInput,
-    FilterUserInput,
     SearchUserInput,
     UpdateUserInput,
+    FilterUserInput,
 } from './user.input';
 import { User } from './interfaces/user.entity';
 import { GqlAuthGuard, CurrentUser, GqlSkipFieldGuard } from '../auth/graphql-auth.guard';
 import { UseGuards, UnauthorizedException } from '@nestjs/common';
+import {
+    Filter,
+    GraphqlFilter,
+    GraphqlLoader,
+    GraphqlSorting,
+    SortArgs,
+    Sorting,
+} from 'nestjs-graphql-tools';
+import { Brackets } from 'typeorm';
 
 @Resolver(() => User)
 export class UsersResolver {
@@ -37,11 +46,15 @@ export class UsersResolver {
         return (await this.usersService.findOne({ email: _email })) != null;
     }
 
-    //@UseGuards(GqlAuthGuard)
-    @Query(() => [User])
-    async Users(@Args('filter', { nullable: true }) filter: FilterUserInput): Promise<User[]> {
-        return this.usersService.findAll(filter || {});
-    }
+    // @UseGuards(GqlAuthGuard)
+    // @Query(() => [User])
+    // @GraphqlLoader()
+    // async Users(): //@Filter(() => [User, FilterUserInput], { sqlAlias: 'u' }) where: Brackets,
+    // //@Sorting(() => User, { sqlAlias: 'u' }) orderBy: SortArgs<User>
+    // Promise<User[]> {
+    //     //console.log(where);
+    //     //return this.usersService.findAll(where, orderBy);
+    // }
 
     @UseGuards(GqlAuthGuard)
     @Mutation(() => User)

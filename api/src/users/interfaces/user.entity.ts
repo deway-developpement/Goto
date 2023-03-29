@@ -2,10 +2,12 @@ import { Column, Entity, PrimaryGeneratedColumn, Unique, ManyToMany, JoinTable }
 import { ObjectType, Field, ID, HideField } from '@nestjs/graphql';
 import { IsEmail, IsString, IsNotEmpty } from 'class-validator';
 import { pwdMiddleware, idMiddleware, credidentialMiddleware } from '../../auth/auth.middleware';
+import { InheritedModel } from 'nestjs-graphql-tools';
 
 @Entity('users')
 @Unique(['pseudo', 'publicKey'])
 @ObjectType()
+@InheritedModel()
 export class User {
     @Field(() => ID, { middleware: [idMiddleware] })
     @IsString()

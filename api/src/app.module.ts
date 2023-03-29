@@ -14,6 +14,7 @@ import { ApolloArmor } from '@escape.tech/graphql-armor';
 import { regexDirectiveTransformer } from './directives/constraints.graphql';
 import { DirectiveLocation, GraphQLDirective, GraphQLString } from 'graphql';
 import { LoggerMiddleware } from './logger/logger.middleware';
+import { HikeModule } from './hike/hike.module';
 
 const armor = new ApolloArmor();
 const protection = armor.protect();
@@ -83,6 +84,7 @@ console.log = function (...args) {
         }),
         UsersModule,
         AuthModule,
+        HikeModule,
     ],
     controllers: [AppController],
     providers: [AppService],

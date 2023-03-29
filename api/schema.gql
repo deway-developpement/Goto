@@ -27,6 +27,69 @@ type User {
   isConnected: Boolean!
 }
 
+type Hike {
+  id: ID!
+  name: String!
+  distance: Float!
+}
+
+type DeleteManyResponse {
+  """The number of records deleted."""
+  deletedCount: Int!
+}
+
+type HikeDeleteResponse {
+  id: ID
+  name: String
+  distance: Float
+}
+
+type UpdateManyResponse {
+  """The number of records updated."""
+  updatedCount: Int!
+}
+
+type HikeAggregateGroupBy {
+  id: ID
+  name: String
+  distance: Float
+}
+
+type HikeCountAggregate {
+  id: Int
+  name: Int
+  distance: Int
+}
+
+type HikeSumAggregate {
+  distance: Float
+}
+
+type HikeAvgAggregate {
+  distance: Float
+}
+
+type HikeMinAggregate {
+  id: ID
+  name: String
+  distance: Float
+}
+
+type HikeMaxAggregate {
+  id: ID
+  name: String
+  distance: Float
+}
+
+type HikeAggregateResponse {
+  groupBy: HikeAggregateGroupBy
+  count: HikeCountAggregate
+  sum: HikeSumAggregate
+  avg: HikeAvgAggregate
+  min: HikeMinAggregate
+  max: HikeMaxAggregate
+}
+
 type Message {
   _id: ID!
 
@@ -44,7 +107,21 @@ type Query {
   User(id: String, email: String, input: SearchUserInput): User
   whoami: User
   exist(email: String!): Boolean!
-  Users(filter: FilterUserInput): [User!]!
+  hikeAggregate(
+    """Filter to find records to aggregate on"""
+    filter: HikeAggregateFilter
+  ): [HikeAggregateResponse!]!
+  hike(
+    """The id of the record to find."""
+    id: ID!
+  ): Hike
+  hikes(
+    """Specify to filter the records returned."""
+    filter: HikeFilter = {}
+
+    """Specify to sort results."""
+    sorting: [HikeSort!] = []
+  ): [Hike!]!
 }
 
 input SearchUserInput {
@@ -55,24 +132,98 @@ input SearchUserInput {
   publicKey: String!
 }
 
-input FilterUserInput {
-  """Pseudo of the user"""
-  pseudo: String
+input HikeAggregateFilter {
+  and: [HikeAggregateFilter!]
+  or: [HikeAggregateFilter!]
+  id: IDFilterComparison
+  name: StringFieldComparison
+  distance: NumberFieldComparison
+}
 
-  """E-mail of the user"""
-  email: String
+input IDFilterComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: ID
+  neq: ID
+  gt: ID
+  gte: ID
+  lt: ID
+  lte: ID
+  like: ID
+  notLike: ID
+  iLike: ID
+  notILike: ID
+  in: [ID!]
+  notIn: [ID!]
+}
 
-  """Password of the user"""
-  password: String
+input StringFieldComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: String
+  neq: String
+  gt: String
+  gte: String
+  lt: String
+  lte: String
+  like: String
+  notLike: String
+  iLike: String
+  notILike: String
+  in: [String!]
+  notIn: [String!]
+}
 
-  """Public key of the user"""
-  publicKey: String
+input NumberFieldComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: Float
+  neq: Float
+  gt: Float
+  gte: Float
+  lt: Float
+  lte: Float
+  in: [Float!]
+  notIn: [Float!]
+  between: NumberFieldComparisonBetween
+  notBetween: NumberFieldComparisonBetween
+}
 
-  """access of the user : bin rwrw"""
-  credidential: Float
+input NumberFieldComparisonBetween {
+  lower: Float!
+  upper: Float!
+}
 
-  """List of friends of the user"""
-  friends: [FilterUserInput!]
+input HikeFilter {
+  and: [HikeFilter!]
+  or: [HikeFilter!]
+  id: IDFilterComparison
+  name: StringFieldComparison
+  distance: NumberFieldComparison
+}
+
+input HikeSort {
+  field: HikeSortFields!
+  direction: SortDirection!
+  nulls: SortNulls
+}
+
+enum HikeSortFields {
+  id
+  name
+  distance
+}
+
+"""Sort Directions"""
+enum SortDirection {
+  ASC
+  DESC
+}
+
+"""Sort Nulls Options"""
+enum SortNulls {
+  NULLS_FIRST
+  NULLS_LAST
 }
 
 type Mutation {
@@ -125,4 +276,35 @@ input UpdateUserInput {
 
   """access of the user : bin rwrw"""
   credidential: Float
+}
+
+type Subscription {
+  createdHike(input: CreateHikeSubscriptionFilterInput): Hike!
+  updatedOneHike(input: UpdateOneHikeSubscriptionFilterInput): Hike!
+  updatedManyHikes: UpdateManyResponse!
+  deletedOneHike(input: DeleteOneHikeSubscriptionFilterInput): HikeDeleteResponse!
+  deletedManyHikes: DeleteManyResponse!
+}
+
+input CreateHikeSubscriptionFilterInput {
+  """Specify to filter the records returned."""
+  filter: HikeSubscriptionFilter!
+}
+
+input HikeSubscriptionFilter {
+  and: [HikeSubscriptionFilter!]
+  or: [HikeSubscriptionFilter!]
+  id: IDFilterComparison
+  name: StringFieldComparison
+  distance: NumberFieldComparison
+}
+
+input UpdateOneHikeSubscriptionFilterInput {
+  """Specify to filter the records returned."""
+  filter: HikeSubscriptionFilter!
+}
+
+input DeleteOneHikeSubscriptionFilterInput {
+  """Specify to filter the records returned."""
+  filter: HikeSubscriptionFilter!
 }
