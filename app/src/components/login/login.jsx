@@ -146,11 +146,8 @@ function LoginComponent({ navigation }) {
                             style={[
                                 styles.textInput,
                                 { 
-                                    width: appState.email_valid ? styles.textInput.width : 0,
-                                    height: appState.email_valid ? styles.textInput.height : 0,
-                                    marginBottom: appState.email_valid ? styles.textInput.marginBottom : 0,
-                                    paddingLeft: appState.email_valid ? styles.textInput.paddingLeft : 0,
-                                    borderWidth: appState.email_valid ? styles.textInput.borderWidth : 0,
+                                    display: appState.email_valid ? 'flex' : 'none',
+                                    flexGrow: appState.email_valid ? 1 : 0,
                                     borderColor: appState.password_valid === false ? colors.accent : colors.border, 
                                 },
                             ]}
@@ -186,8 +183,7 @@ function LoginComponent({ navigation }) {
                                 Register
                             </Text>
                         </TouchableWithoutFeedback>
-                    </View>
-                
+                    </View>    
                 </BlurView>
             </ScrollView>
         </View>

@@ -7,28 +7,29 @@ const stylesheet = (colors) =>
             top: 0,
             left: 0,
             bottom: 0,
-            right: 0
+            right: 0,
         },
-        containerLogin : {
-            flex:1,
-            marginTop:'28%',
-            marginHorizontal:'7%',
-            justifyContent:'center',
-            paddingHorizontal:'5%',
-            paddingVertical:'5%',
-            borderRadius:12
+        containerLogin: {
+            flex: 1,
+            marginTop: '28%',
+            marginHorizontal: '7%',
+            justifyContent: 'center',
+            paddingHorizontal: '5%',
+            paddingVertical: '5%',
+            borderRadius: 12,
+            overflow: 'hidden',
         },
-        loginMiddle : {
-            marginTop:'6%',
-            flex:2.5,
-            height:'46%',
-            justifyContent:'flex-start'
+        loginMiddle: {
+            marginTop: '6%',
+            flex: 2.5,
+            height: '46%',
+            justifyContent: 'flex-start',
         },
-        textLoginMiddle : {
-            fontWeight:'600',
+        textLoginMiddle: {
+            fontWeight: '600',
             fontSize: 20,
-            paddingBottom:10,
-            paddingTop:10,
+            paddingBottom: 10,
+            paddingTop: 10,
             color: colors.text,
         },
         container: {
@@ -41,18 +42,17 @@ const stylesheet = (colors) =>
             justifyContent: 'space-around',
         },
         header: {
-            flex:1,
-            paddingTop:'3%',
-            paddingHorizontal:'5.8%',
-            height:'24%',
-            alignItems:'center'
+            flex: 1,
+            paddingTop: '3%',
+            paddingHorizontal: '5.8%',
+            height: '24%',
+            alignItems: 'center',
         },
-        textHeader : {
-            marginTop:'5%',
+        textHeader: {
+            marginTop: '5%',
             color: colors.text,
             fontSize: 36,
             fontWeight: '800',
-            
         },
         logo: {
             width: 150,
@@ -66,26 +66,24 @@ const stylesheet = (colors) =>
             marginBottom: '4%',
             paddingLeft: 15,
             color: colors.text,
-            backgroundColor:colors.backgroundTextInput,
-            alignSelf:'stretch',
-            fontSize:16
+            backgroundColor: colors.backgroundTextInput,
+            alignSelf: 'stretch',
+            fontSize: 16,
         },
         btnContainer: {
-            flex:1,
-            alignItems:'center',
-            width:'100%',
+            flex: 1,
+            alignItems: 'center',
+            width: '100%',
             marginTop: '5%',
         },
         btn: {
-            backgroundColor: colors.backgroundButton,
+            backgroundColor: colors.link,
             borderRadius: 6,
             padding: 10,
-            
         },
-        btnText:{
-            fontWeight:'600',
+        btnText: {
+            fontWeight: '600',
             fontSize: 18,
-            
         },
         textBtn: {
             display: 'none',
