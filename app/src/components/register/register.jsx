@@ -139,7 +139,7 @@ export default function RegisterScreen({navigation, route}) {
                                 <Text style={styles.textHeader}>Register</Text>
                             </View>
                             <View style={styles.loginMiddle}>
-                                <Text style={styles.textLoginMiddle}>Adresse email</Text>
+                                <Text style={styles.textLoginMiddle}>Adress email</Text>
                                 <TextInput
                                     placeholder="email"
                                     style={styles.textInput}

@@ -121,7 +121,7 @@ function LoginComponent({ navigation }) {
                         }
                     </View>
                     <View style={styles.loginMiddle}>
-                        <Text style={styles.textLoginMiddle}>Adresse email</Text>
+                        <Text style={styles.textLoginMiddle}>Adress email</Text>
                         <TextInput
                             textContentType='username'
                             autoCorrect={false}
