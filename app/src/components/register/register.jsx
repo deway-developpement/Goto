@@ -131,7 +131,7 @@ export default function RegisterScreen({navigation, route}) {
         >
             <KeyboardDismissView>
                 <View style={{flex:1}}>
-                    <Image source={require('../../../assets/images/Dalle_background.png')} style={[StyleSheet.absoluteFill]}/>
+                    <Image source={require('../../../assets/images/Dalle_background.png')} style={[StyleSheet.absoluteFill, {width:'100%', height:'100%'}]}/>
                     <ScrollView style={{flex:1}}>
                         <BlurView style={styles.containerLogin} intensity={100} tint='light'>
                             <View style={styles.header}>
@@ -139,10 +139,10 @@ export default function RegisterScreen({navigation, route}) {
                                 <Text style={styles.textHeader}>Register</Text>
                             </View>
                             <View style={styles.loginMiddle}>
-                                <Text style={styles.textLoginMiddle}>Adresse email</Text>
+                                <Text style={styles.textLoginMiddle}>Adress email</Text>
                                 <TextInput
                                     placeholder="email"
-                                    style={styles.textInput}
+                                    style={[styles.textInput, emailInvalid && {borderColor:'red'}]}
                                     onSubmitEditing={() => {
                                         isRegister();
                                         pseudoInput.current.focus();
@@ -179,11 +179,14 @@ export default function RegisterScreen({navigation, route}) {
                                     ref={vPasswordInput}
                                     placeholder="Confirm Password"
                                     placeholderColor="#c4c3cb"
-                                    style={[styles.textInput]}
+                                    style={[styles.textInput, passwordsInvalid && {borderColor:'red'}]}
                                     secureTextEntry={true}
                                     onChangeText={(text) => setVPassword(text)}
                                     onSubmitEditing={() => {
-                                        register();
+                                        if (vPassword == password && vPassword != '')
+                                            register();
+                                        else
+                                            setPasswordsInvalid(true);
                                     }}
                                 />
                             </View>

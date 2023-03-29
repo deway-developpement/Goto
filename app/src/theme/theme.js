@@ -5,8 +5,9 @@ export const Classic = {
     colors: {
         ...DefaultTheme.colors,
         background: '#FDFEFE',
+        backgroundTextInput: '#FFFFFF',
         text: '#201F30',
-        link: '#5B774B',
+        link: '#264653',
         primary: '#DFE17B',
         secondary: '#80C8D2',
         accent: '#D1406C',
