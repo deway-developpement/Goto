@@ -40,7 +40,7 @@ export class User {
     publicKey: string;
 
     @Field(() => Number, {
-        description: 'access of the user : bin rwrw',
+        description: 'level of the user : admin = 2, user = 0',
         middleware: [credidentialMiddleware],
     })
     @IsNotEmpty()
