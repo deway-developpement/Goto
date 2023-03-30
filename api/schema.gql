@@ -346,6 +346,7 @@ enum HikeSortFields {
 type Mutation {
   createUser(input: UserInput!): User!
   updateUser(id: String!, input: UserUpdateInput!): User!
+  addFriend(id: String!): User!
   createHike(input: HikeInput!): Hike!
 }
 

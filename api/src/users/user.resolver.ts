@@ -5,8 +5,8 @@ import { UserDTO } from './interfaces/user.dto';
 import { UserInput, UserUpdateInput } from './interfaces/user.input';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import * as _ from '@nestjs-query/query-graphql/node_modules/@nestjs-query/core';
-import { Inject } from '@nestjs/common';
-import { GqlAuthGuard } from '../auth/graphql-auth.guard';
+import { Inject, UseGuards } from '@nestjs/common';
+import { CurrentUser, GqlAuthGuard } from '../auth/graphql-auth.guard';
 
 const guards = [GqlAuthGuard];
 
@@ -39,5 +39,11 @@ export class UserResolver extends CRUDResolver(UserDTO, {
     @Query(() => Boolean)
     async exist(@Args('email', { type: () => String }) _email: string): Promise<boolean> {
         return this.usersService.exists(_email);
+    }
+
+    @UseGuards(GqlAuthGuard)
+    @Mutation(() => UserDTO)
+    async addFriend(@Args('id') friendId: string, @CurrentUser() user: UserDTO): Promise<UserDTO> {
+        return this.usersService.addFriend(user.id, friendId);
     }
 }

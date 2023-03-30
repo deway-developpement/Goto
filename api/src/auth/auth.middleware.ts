@@ -64,8 +64,6 @@ export const credidentialMiddleware: FieldMiddleware = async (
         const id = ctx.context.req.user.id;
         const creditential = ctx.context.req.user.credidential;
 
-        console.log('credidentialMiddleware', creditential, id, ctx.source.id);
-
         if (creditential >= 2 || (creditential >= 0 && ctx.source.id == id)) {
             return value;
         }

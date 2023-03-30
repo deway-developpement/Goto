@@ -1,7 +1,7 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserEntity } from './interfaces/user.entity';
-import { UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, UnauthorizedException } from '@nestjs/common';
 import { genSalt, hash } from 'bcrypt';
 import { TypeOrmQueryService } from '@nestjs-query/query-typeorm';
 import { UserInput } from './interfaces/user.input';
@@ -76,5 +76,21 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
 
     async exists(email: string): Promise<boolean> {
         return !!(await this.userRepository.findOne({ where: { email } }));
+    }
+
+    async addFriend(id: string, friendId: string): Promise<UserEntity> {
+        if (id === friendId) {
+            throw new BadRequestException('You can not add yourself as a friend');
+        }
+        const user = await this.userRepository.findOne({ where: { id } });
+        if (!user.friends) {
+            user.friends = [];
+        }
+        const friend = await this.userRepository.findOne({ where: { id: friendId } });
+        if (!friend) {
+            throw new BadRequestException('Friend not found');
+        }
+        user.friends.push(friend);
+        return await this.userRepository.save(user);
     }
 }

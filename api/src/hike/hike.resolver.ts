@@ -30,7 +30,6 @@ export class HikeResolver extends CRUDResolver(HikeDTO, {
         @Args('input') query: HikeInput,
         @CurrentUser() user: UserDTO
     ): Promise<HikeDTO> {
-        console.log('createHike', query, user);
         return this.service.create(query, user);
     }
 }

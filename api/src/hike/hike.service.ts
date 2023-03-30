@@ -15,8 +15,6 @@ export class HikeService extends TypeOrmQueryService<HikeEntity> {
     async create(hike: HikeInput, user: UserEntity): Promise<HikeEntity> {
         const newHike = this.repo.create(hike);
         newHike.owner = user;
-        const hikeEntity = this.repo.save(newHike);
-        console.log('createHike', hikeEntity);
-        return hikeEntity;
+        return await this.repo.save(newHike);
     }
 }

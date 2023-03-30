@@ -1,4 +1,4 @@
-import { Injectable, OnApplicationBootstrap } from '@nestjs/common';
+import { BeforeApplicationShutdown, Injectable, OnApplicationBootstrap } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserEntity } from './interfaces/user.entity';
@@ -54,7 +54,55 @@ export class DataInit implements OnApplicationBootstrap {
                 publicKey: '00000',
             })
             .then(() => {
-                console.log('Admin user created');
+                console.log('<Admin user created>');
             });
+        await this.userRepository
+            .save({
+                pseudo: 'user',
+                email: 'user@localhost',
+                password: await hash('user', salt),
+                credidential: 1,
+                publicKey: '00000',
+            })
+            .then(() => {
+                console.log('<User created>');
+            });
+    }
+}
+
+@Injectable()
+export class DataCleanUp implements BeforeApplicationShutdown {
+    constructor(
+        @InjectRepository(UserEntity) private userRepository: Repository<UserEntity>,
+        private readonly connection: Connection
+    ) {}
+
+    async emptyTables() {
+        // make a copy of the entities array
+        const entities = this.connection.entityMetadatas.slice();
+        let entity = null;
+        let i = 0;
+        do {
+            entity = entities.shift();
+            if (entity) {
+                const repository = await this.connection.getRepository(entity.name);
+                // drop all tables
+                try {
+                    await repository.query(`DROP TABLE ${repository.metadata.tableName}`);
+                } catch (e) {
+                    entities.push(entity);
+                }
+            }
+        } while (entity && i++ < 10);
+    }
+
+    async beforeApplicationShutdown() {
+        // check if running in production
+        if (process.env.NODE_ENV !== 'development') {
+            return;
+        }
+        // remove everything in the database
+        console.log('Clearing database');
+        await this.emptyTables();
     }
 }

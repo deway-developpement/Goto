@@ -2,13 +2,13 @@ import { Module } from '@nestjs/common';
 import { UserResolver } from './user.resolver';
 import { UserService } from './user.service';
 import { UserEntity } from './interfaces/user.entity';
-import { DataInit } from './user.init';
+import { DataCleanUp, DataInit } from './user.init';
 import { NestjsQueryGraphQLModule } from '@nestjs-query/query-graphql';
 import { NestjsQueryTypeOrmModule } from '@nestjs-query/query-typeorm';
 import { UserDTO } from './interfaces/user.dto';
 
 @Module({
-    providers: [UserResolver, UserService, DataInit],
+    providers: [UserResolver, UserService, DataInit, DataCleanUp],
     imports: [
         NestjsQueryGraphQLModule.forFeature({
             imports: [NestjsQueryTypeOrmModule.forFeature([UserEntity])],

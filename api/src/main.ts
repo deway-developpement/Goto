@@ -8,6 +8,8 @@ async function bootstrap() {
     });
     app.useGlobalPipes(new ValidationPipe());
     app.enableCors(); //! to remove after testing
+    // allow hook at shutdown
+    app.enableShutdownHooks();
     await app.listen(3000);
 }
 bootstrap();
