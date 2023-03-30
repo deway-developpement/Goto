@@ -14,7 +14,7 @@ import { ApolloArmor } from '@escape.tech/graphql-armor';
 import { regexDirectiveTransformer } from './directives/constraints.graphql';
 import { DirectiveLocation, GraphQLDirective, GraphQLString } from 'graphql';
 import { LoggerMiddleware } from './logger/logger.middleware';
-import { HikeModule } from './hike/hike.module';
+import { HikeModule } from './hike/hikes.module';
 
 const armor = new ApolloArmor();
 const protection = armor.protect();
@@ -79,6 +79,7 @@ console.log = function (...args) {
                 entities: ['dist/**/*.entity.js'],
                 synchronize: true,
                 charset: 'utf8mb4',
+                // load default values into the database
             }),
             inject: [ConfigService],
         }),

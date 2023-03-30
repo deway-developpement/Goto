@@ -1,6 +1,8 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, Unique } from 'typeorm';
+import { UserEntity } from '../../users/interfaces/user.entity';
 
-@Entity('Hike')
+@Entity('hike')
+@Unique(['name'])
 export class HikeEntity {
     @PrimaryGeneratedColumn()
     id: string;
@@ -10,4 +12,7 @@ export class HikeEntity {
 
     @Column()
     distance: number;
+
+    @ManyToOne(() => UserEntity)
+    owner: UserEntity;
 }

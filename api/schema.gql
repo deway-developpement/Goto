@@ -5,139 +5,34 @@
 directive @constraint(pattern: String) on FIELD_DEFINITION
 
 type User {
-  _id: ID!
-
-  """Pseudo of the user"""
-  pseudo: String!
-
-  """E-mail of the user"""
-  email: String!
-
-  """Password of the user"""
-  password: String!
-
-  """Public key of the user"""
-  publicKey: String!
-
-  """access of the user : bin rwrw"""
-  credidential: Float!
-
-  """List of friends of the user"""
-  friends: [User!]!
-  isConnected: Boolean!
-}
-
-type Hike {
   id: ID!
-  name: String!
-  distance: Float!
-}
-
-type DeleteManyResponse {
-  """The number of records deleted."""
-  deletedCount: Int!
-}
-
-type HikeDeleteResponse {
-  id: ID
-  name: String
-  distance: Float
-}
-
-type UpdateManyResponse {
-  """The number of records updated."""
-  updatedCount: Int!
-}
-
-type HikeAggregateGroupBy {
-  id: ID
-  name: String
-  distance: Float
-}
-
-type HikeCountAggregate {
-  id: Int
-  name: Int
-  distance: Int
-}
-
-type HikeSumAggregate {
-  distance: Float
-}
-
-type HikeAvgAggregate {
-  distance: Float
-}
-
-type HikeMinAggregate {
-  id: ID
-  name: String
-  distance: Float
-}
-
-type HikeMaxAggregate {
-  id: ID
-  name: String
-  distance: Float
-}
-
-type HikeAggregateResponse {
-  groupBy: HikeAggregateGroupBy
-  count: HikeCountAggregate
-  sum: HikeSumAggregate
-  avg: HikeAvgAggregate
-  min: HikeMinAggregate
-  max: HikeMaxAggregate
-}
-
-type Message {
-  _id: ID!
-
-  """sender of the message"""
-  sender: User!
-
-  """Content of the message"""
-  content: String!
-
-  """Date of the message"""
-  date: String!
-}
-
-type Query {
-  User(id: String, email: String, input: SearchUserInput): User
-  whoami: User
-  exist(email: String!): Boolean!
-  hikeAggregate(
+  pseudo: String!
+  email: String!
+  password: String!
+  publicKey: String!
+  credidential: Float!
+  friendsAggregate(
     """Filter to find records to aggregate on"""
-    filter: HikeAggregateFilter
-  ): [HikeAggregateResponse!]!
-  hike(
-    """The id of the record to find."""
-    id: ID!
-  ): Hike
-  hikes(
+    filter: UserAggregateFilter
+  ): [UserFriendsAggregateResponse!]!
+  friends(
     """Specify to filter the records returned."""
-    filter: HikeFilter = {}
+    filter: UserFilter = {}
 
     """Specify to sort results."""
-    sorting: [HikeSort!] = []
-  ): [Hike!]!
+    sorting: [UserSort!] = []
+  ): [User!]!
 }
 
-input SearchUserInput {
-  """Pseudo of the user"""
-  pseudo: String!
-
-  """Public key of the user"""
-  publicKey: String!
-}
-
-input HikeAggregateFilter {
-  and: [HikeAggregateFilter!]
-  or: [HikeAggregateFilter!]
+input UserAggregateFilter {
+  and: [UserAggregateFilter!]
+  or: [UserAggregateFilter!]
   id: IDFilterComparison
-  name: StringFieldComparison
-  distance: NumberFieldComparison
+  pseudo: StringFieldComparison
+  email: StringFieldComparison
+  password: StringFieldComparison
+  publicKey: StringFieldComparison
+  credidential: NumberFieldComparison
 }
 
 input IDFilterComparison {
@@ -194,6 +89,240 @@ input NumberFieldComparisonBetween {
   upper: Float!
 }
 
+input UserFilter {
+  and: [UserFilter!]
+  or: [UserFilter!]
+  id: IDFilterComparison
+  pseudo: StringFieldComparison
+  email: StringFieldComparison
+  password: StringFieldComparison
+  publicKey: StringFieldComparison
+  credidential: NumberFieldComparison
+}
+
+input UserSort {
+  field: UserSortFields!
+  direction: SortDirection!
+  nulls: SortNulls
+}
+
+enum UserSortFields {
+  id
+  pseudo
+  email
+  password
+  publicKey
+  credidential
+}
+
+"""Sort Directions"""
+enum SortDirection {
+  ASC
+  DESC
+}
+
+"""Sort Nulls Options"""
+enum SortNulls {
+  NULLS_FIRST
+  NULLS_LAST
+}
+
+type UserAggregateGroupBy {
+  id: ID
+  pseudo: String
+  email: String
+  password: String
+  publicKey: String
+  credidential: Float
+}
+
+type UserCountAggregate {
+  id: Int
+  pseudo: Int
+  email: Int
+  password: Int
+  publicKey: Int
+  credidential: Int
+}
+
+type UserSumAggregate {
+  credidential: Float
+}
+
+type UserAvgAggregate {
+  credidential: Float
+}
+
+type UserMinAggregate {
+  id: ID
+  pseudo: String
+  email: String
+  password: String
+  publicKey: String
+  credidential: Float
+}
+
+type UserMaxAggregate {
+  id: ID
+  pseudo: String
+  email: String
+  password: String
+  publicKey: String
+  credidential: Float
+}
+
+type UserAggregateResponse {
+  groupBy: UserAggregateGroupBy
+  count: UserCountAggregate
+  sum: UserSumAggregate
+  avg: UserAvgAggregate
+  min: UserMinAggregate
+  max: UserMaxAggregate
+}
+
+type UserFriendsAggregateGroupBy {
+  id: ID
+  pseudo: String
+  email: String
+  password: String
+  publicKey: String
+  credidential: Float
+}
+
+type UserFriendsCountAggregate {
+  id: Int
+  pseudo: Int
+  email: Int
+  password: Int
+  publicKey: Int
+  credidential: Int
+}
+
+type UserFriendsSumAggregate {
+  credidential: Float
+}
+
+type UserFriendsAvgAggregate {
+  credidential: Float
+}
+
+type UserFriendsMinAggregate {
+  id: ID
+  pseudo: String
+  email: String
+  password: String
+  publicKey: String
+  credidential: Float
+}
+
+type UserFriendsMaxAggregate {
+  id: ID
+  pseudo: String
+  email: String
+  password: String
+  publicKey: String
+  credidential: Float
+}
+
+type UserFriendsAggregateResponse {
+  groupBy: UserFriendsAggregateGroupBy
+  count: UserFriendsCountAggregate
+  sum: UserFriendsSumAggregate
+  avg: UserFriendsAvgAggregate
+  min: UserFriendsMinAggregate
+  max: UserFriendsMaxAggregate
+}
+
+type Hike {
+  id: ID!
+  name: String!
+  distance: Float!
+  owner: User!
+}
+
+type HikeAggregateGroupBy {
+  id: ID
+  name: String
+  distance: Float
+}
+
+type HikeCountAggregate {
+  id: Int
+  name: Int
+  distance: Int
+}
+
+type HikeSumAggregate {
+  distance: Float
+}
+
+type HikeAvgAggregate {
+  distance: Float
+}
+
+type HikeMinAggregate {
+  id: ID
+  name: String
+  distance: Float
+}
+
+type HikeMaxAggregate {
+  id: ID
+  name: String
+  distance: Float
+}
+
+type HikeAggregateResponse {
+  groupBy: HikeAggregateGroupBy
+  count: HikeCountAggregate
+  sum: HikeSumAggregate
+  avg: HikeAvgAggregate
+  min: HikeMinAggregate
+  max: HikeMaxAggregate
+}
+
+type Query {
+  userAggregate(
+    """Filter to find records to aggregate on"""
+    filter: UserAggregateFilter
+  ): [UserAggregateResponse!]!
+  user(
+    """The id of the record to find."""
+    id: ID!
+  ): User
+  users(
+    """Specify to filter the records returned."""
+    filter: UserFilter = {}
+
+    """Specify to sort results."""
+    sorting: [UserSort!] = []
+  ): [User!]!
+  exist(email: String!): Boolean!
+  hikeAggregate(
+    """Filter to find records to aggregate on"""
+    filter: HikeAggregateFilter
+  ): [HikeAggregateResponse!]!
+  hike(
+    """The id of the record to find."""
+    id: ID!
+  ): Hike
+  hikes(
+    """Specify to filter the records returned."""
+    filter: HikeFilter = {}
+
+    """Specify to sort results."""
+    sorting: [HikeSort!] = []
+  ): [Hike!]!
+}
+
+input HikeAggregateFilter {
+  and: [HikeAggregateFilter!]
+  or: [HikeAggregateFilter!]
+  id: IDFilterComparison
+  name: StringFieldComparison
+  distance: NumberFieldComparison
+}
+
 input HikeFilter {
   and: [HikeFilter!]
   or: [HikeFilter!]
@@ -214,23 +343,10 @@ enum HikeSortFields {
   distance
 }
 
-"""Sort Directions"""
-enum SortDirection {
-  ASC
-  DESC
-}
-
-"""Sort Nulls Options"""
-enum SortNulls {
-  NULLS_FIRST
-  NULLS_LAST
-}
-
 type Mutation {
   createUser(input: UserInput!): User!
-  newUser(input: NewUserInput!): User!
-  deleteUser(id: String!): User
-  updateUser(id: String!, input: UpdateUserInput!): User
+  updateUser(id: String!, input: UserUpdateInput!): User!
+  createHike(input: HikeInput!): Hike!
 }
 
 input UserInput {
@@ -242,69 +358,20 @@ input UserInput {
 
   """Password of the user"""
   password: String!
-
-  """Public key of the user"""
-  publicKey: String!
-
-  """access of the user : bin rwrw"""
-  credidential: Float!
 }
 
-input NewUserInput {
+input UserUpdateInput {
   """Pseudo of the user"""
-  pseudo: String!
+  pseudo: String
 
-  """E-mail of the user"""
-  email: String!
-
-  """Password of the user"""
-  password: String!
-}
-
-input UpdateUserInput {
   """E-mail of the user"""
   email: String
 
-  """pseudo of the user"""
-  pseudo: String
-
   """Password of the user"""
   password: String
-
-  """Public key of the user"""
-  publicKey: String
-
-  """access of the user : bin rwrw"""
-  credidential: Float
 }
 
-type Subscription {
-  createdHike(input: CreateHikeSubscriptionFilterInput): Hike!
-  updatedOneHike(input: UpdateOneHikeSubscriptionFilterInput): Hike!
-  updatedManyHikes: UpdateManyResponse!
-  deletedOneHike(input: DeleteOneHikeSubscriptionFilterInput): HikeDeleteResponse!
-  deletedManyHikes: DeleteManyResponse!
-}
-
-input CreateHikeSubscriptionFilterInput {
-  """Specify to filter the records returned."""
-  filter: HikeSubscriptionFilter!
-}
-
-input HikeSubscriptionFilter {
-  and: [HikeSubscriptionFilter!]
-  or: [HikeSubscriptionFilter!]
-  id: IDFilterComparison
-  name: StringFieldComparison
-  distance: NumberFieldComparison
-}
-
-input UpdateOneHikeSubscriptionFilterInput {
-  """Specify to filter the records returned."""
-  filter: HikeSubscriptionFilter!
-}
-
-input DeleteOneHikeSubscriptionFilterInput {
-  """Specify to filter the records returned."""
-  filter: HikeSubscriptionFilter!
+input HikeInput {
+  name: String!
+  distance: Float!
 }

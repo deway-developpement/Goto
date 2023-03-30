@@ -1,5 +1,5 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { UsersService } from '../users/users.service';
+import { UserService } from '../users/user.service';
 import { JwtService } from '@nestjs/jwt';
 import { compare } from 'bcrypt';
 import { ConfigService } from '@nestjs/config';
@@ -7,13 +7,13 @@ import { ConfigService } from '@nestjs/config';
 @Injectable()
 export class AuthService {
     constructor(
-        private usersService: UsersService,
+        private usersService: UserService,
         private jwtService: JwtService,
         private configService: ConfigService
     ) {}
 
     async validateUser(email: string, pass: string): Promise<any> {
-        const user = await this.usersService.findOne({ email });
+        const user = await this.usersService.findByEmail(email);
         if (user && (await compare(pass, user.password))) {
             return user;
         }
@@ -21,12 +21,12 @@ export class AuthService {
     }
 
     async login(user: any) {
-        const payload = { username: user.email, sub: user._id, credidential: user.credidential };
+        const payload = { username: user.email, sub: user.id, credidential: user.credidential };
         const refresh_token = this.jwtService.sign(
-            { sub: user._id },
+            { sub: user.id },
             { expiresIn: this.configService.get<number>('jwt.refreshExpiresIn') }
         );
-        await this.usersService.update(user._id, { refresh_token: refresh_token });
+        await this.usersService.update(user.id, { refresh_token: refresh_token });
         return {
             access_token: this.jwtService.sign(payload),
             refresh_token: refresh_token,
@@ -38,7 +38,7 @@ export class AuthService {
             throw new UnauthorizedException();
         }
         const decoded = this.jwtService.decode(req.headers.refresh_token);
-        const user = await this.usersService.findOne({ id: decoded.sub });
+        const user = await this.usersService.findById(decoded.sub);
         if (!user) {
             throw new UnauthorizedException();
         } else if (
@@ -47,7 +47,7 @@ export class AuthService {
         ) {
             return this.login(user);
         } else {
-            await this.usersService.update(user._id, { refresh_token: null });
+            await this.usersService.update(user.id, { refresh_token: null });
             throw new UnauthorizedException();
         }
     }
@@ -55,7 +55,7 @@ export class AuthService {
     async verifyToken(token: string) {
         try {
             const payload = this.jwtService.verify(token);
-            return this.usersService.findOne({ id: payload.sub });
+            return this.usersService.findById(payload.sub);
         } catch (err) {
             return null;
         }

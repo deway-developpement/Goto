@@ -1,14 +1,22 @@
 import { Module } from '@nestjs/common';
-import { UsersResolver } from './users.resolver';
-import { UsersService } from './users.service';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from './interfaces/user.entity';
+import { UserResolver } from './user.resolver';
+import { UserService } from './user.service';
+import { UserEntity } from './interfaces/user.entity';
 import { DataInit } from './user.init';
+import { NestjsQueryGraphQLModule } from '@nestjs-query/query-graphql';
+import { NestjsQueryTypeOrmModule } from '@nestjs-query/query-typeorm';
+import { UserDTO } from './interfaces/user.dto';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([User])],
-    controllers: [],
-    providers: [UsersResolver, UsersService, DataInit],
-    exports: [UsersService],
+    providers: [UserResolver, UserService, DataInit],
+    imports: [
+        NestjsQueryGraphQLModule.forFeature({
+            imports: [NestjsQueryTypeOrmModule.forFeature([UserEntity])],
+            services: [UserService],
+            resolvers: [],
+            dtos: [{ DTOClass: UserDTO, CreateDTOClass: UserDTO, UpdateDTOClass: UserDTO }],
+        }),
+    ],
+    exports: [UserService],
 })
 export class UsersModule {}

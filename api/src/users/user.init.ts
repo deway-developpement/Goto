@@ -1,14 +1,14 @@
 import { Injectable, OnApplicationBootstrap } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { User } from './interfaces/user.entity';
+import { UserEntity } from './interfaces/user.entity';
 import { genSalt, hash } from 'bcrypt';
 import { Connection } from 'typeorm';
 
 @Injectable()
 export class DataInit implements OnApplicationBootstrap {
     constructor(
-        @InjectRepository(User) private userRepository: Repository<User>,
+        @InjectRepository(UserEntity) private userRepository: Repository<UserEntity>,
         private readonly connection: Connection
     ) {}
 
@@ -50,7 +50,7 @@ export class DataInit implements OnApplicationBootstrap {
                 pseudo: 'admin',
                 email: 'admin@localhost',
                 password: await hash('admin', salt),
-                credidential: 8,
+                credidential: 2,
                 publicKey: '00000',
             })
             .then(() => {
