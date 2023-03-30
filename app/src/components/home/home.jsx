@@ -25,6 +25,7 @@ import TabBarButton from '../TabBarButton/TabBarButton';
 function HikeScreen() {
     return (
         <View>
+            <SafeAreaView />
             <Text>Hike</Text>
         </View>
     );
@@ -153,10 +154,10 @@ function Map({ location }) {
             <UrlTile
                 urlTemplate="http://a.tile.openstreetmap.de/tiles/osmde/{z}/{x}/{y}.png"
                 maximumZ={19}
-                tileCachePath={
-                    Platform.OS === 'android' ? '/assets/maps' : 'assets/maps'
-                }
-                tileMaxCacheSize={100000}
+                // tileCachePath={
+                //     Platform.OS === 'android' ? '/assets/maps' : 'assets/maps'
+                // }
+                // tileMaxCacheSize={100000}
                 shouldReplaceMapContent={true}
             />
             <Marker
@@ -253,7 +254,6 @@ function HomeScreen({ navigation }) {
         >
             <KeyboardDismissView>
                 <View style={styles.inner}>
-                    <SafeAreaView />
                     <Tab.Navigator
                         initialRouteName={'Map'}
                         screenOptions={{
