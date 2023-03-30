@@ -44,10 +44,11 @@ const stylesheet = (colors) =>
             height: 36,
         },
         tabBar: {
-            backgroundColor: '#264653',
+            backgroundColor: colors.link,
             borderTopEndRadius: 12,
             borderTopStartRadius: 12,
-            minHeight: '9%',
+            flex: 1,
+            height: 'auto',
             position: 'absolute',
         },
     });

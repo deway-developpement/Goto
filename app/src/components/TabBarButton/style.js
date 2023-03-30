@@ -1,10 +1,11 @@
 import { StyleSheet } from 'react-native';
 
-const stylesheet = () =>
+const stylesheet = (colors) =>
     StyleSheet.create({
         wrapper: {
             marginVertical: 10,
             marginHorizontal: 40,
+            marginBottom: 10,
             borderRadius: 12,
             minHeight: 50,
             flex: 1,
@@ -17,7 +18,7 @@ const stylesheet = () =>
             justifyContent: 'space-evenly',
         },
         selected: {
-            backgroundColor: '#1D343E',
+            backgroundColor: colors.accentuated,
         },
     });
 export default stylesheet;

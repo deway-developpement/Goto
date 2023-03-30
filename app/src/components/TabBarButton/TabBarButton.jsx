@@ -5,6 +5,7 @@ import * as Font from 'expo-font';
 import SplashScreen from '../SplashScreen/SplashScreen';
 import { createIconSetFromFontello } from 'react-native-vector-icons';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import { useTheme } from '@react-navigation/native';
 
 const Icon = createIconSetFromFontello(
     require('../../../assets/font/config.json'),
@@ -13,7 +14,8 @@ const Icon = createIconSetFromFontello(
 );
 
 export default function TabBarButton({ icon, accessibilityState, onPress }) {
-    const styles = stylesheet();
+    const { colors } = useTheme();
+    const styles = stylesheet(colors);
 
     const [fontsLoaded] = Font.useFonts({
         goto: require('../../../assets/font/goto.ttf'),
@@ -24,7 +26,12 @@ export default function TabBarButton({ icon, accessibilityState, onPress }) {
     }
 
     return (
-        <View style={[styles.wrapper, accessibilityState.selected && styles.selected]}>
+        <View
+            style={[
+                styles.wrapper,
+                accessibilityState.selected && styles.selected,
+            ]}
+        >
             <SafeAreaProvider>
                 <TouchableOpacity
                     activeOpacity={1}
