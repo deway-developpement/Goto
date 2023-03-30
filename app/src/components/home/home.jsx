@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState, useRef } from 'react';
 import stylesheet from './style';
 import {
     SafeAreaView,
@@ -8,7 +8,6 @@ import {
     Platform,
     ActivityIndicator,
     Image,
-    TouchableOpacity
 } from 'react-native';
 import { Button } from 'react-native-elements';
 import { AuthContext } from '../../providers/AuthContext';
@@ -21,8 +20,9 @@ import * as Location from 'expo-location';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import TabBarButton from '../TabBarButton/TabBarButton';
 import { Camera, CameraType } from 'expo-camera';
-
+import { useFocusEffect } from '@react-navigation/native';
 // const Tab = createBottomTabNavigator();
+
 
 function HikeScreen() {
     return (
@@ -133,12 +133,59 @@ function ProfilScreen() {
     );
 }
 
-function CameraComp({ setIsCamera}){
+function CameraCompComp({setType, type, setIsCamera, styles}) {
+
+    const renderCounter  = useRef(0);
+    renderCounter.current = renderCounter.current + 1;
+
+    useFocusEffect(
+        () => {
+            renderCounter.current = renderCounter.current + 1;
+            return () => {
+                if (renderCounter.current==4) 
+                {
+                    setIsCamera(false);
+                }
+            };
+        },
+    );
+
+    function toggleCameraType() {
+        setType(current => (current === CameraType.back ? CameraType.front : CameraType.back));
+    }
+
+    return (
+        <Camera style={{width:'100%', height:'100%', flex:1}} type={type} zoom={1}>
+            <View style={[styles.btnContainer, {backgroundColor: '', position:'absolute', top:0, right:10}]}>
+                <Button
+                    buttonStyle={[styles.btn, {width:200}]}
+                    titleStyle={styles.btnText}
+                    title={'Close your camera'}
+                    
+                    onPress={() => {
+                        setIsCamera(false);
+                    }}
+                />
+                <Button
+                    buttonStyle={[styles.btn, {width:200}]}
+                    titleStyle={styles.btnText}
+                    title={'Toggle'}
+                    onPress={() => toggleCameraType()}
+                />
+            </View>
+        </Camera>
+    );
+}
+
+function CameraComp({setIsCamera}){
+
     const { colors } = useTheme();
     const styles = stylesheet(colors);
 
     const [type, setType] = useState(CameraType.back);
     const [permission, requestPermission] = Camera.useCameraPermissions();
+
+
 
     if (!permission) {
         requestPermission();
@@ -151,28 +198,12 @@ function CameraComp({ setIsCamera}){
         return <View/>;
     }
 
-    function toggleCameraType() {
-        setType(current => (current === CameraType.back ? CameraType.front : CameraType.back));
-    }
+    
 
+    
     return (
         <View style={{flex:1, width:'100%', height:'100%'}}>
-            <Camera style={{width:'100%', height:'100%', flex:1}} type={type}>
-                <View style={[styles.btnContainer, {backgroundColor: '', position:'absolute', top:0, right:10}]}>
-                    <Button
-                        buttonStyle={[styles.btn, {width:200}]}
-                        titleStyle={styles.btnText}
-                        title={'Close your camera'}
-                        onPress={() => setIsCamera(false)}
-                    />
-                    <Button
-                        buttonStyle={[styles.btn, {width:200}]}
-                        titleStyle={styles.btnText}
-                        title={'Toggle'}
-                        onPress={() => toggleCameraType()}
-                    />
-                </View>
-            </Camera>
+            <CameraCompComp setType={setType} type={type} setIsCamera={setIsCamera} styles={styles}/>
         </View>
     );
 }
@@ -180,7 +211,7 @@ function CameraComp({ setIsCamera}){
 function Map({ location, setIsCamera}) {
     const { colors } = useTheme();
     const styles = stylesheet(colors);
-
+    
     return (
         <View style={{width:'100%', height:'100%'}}>
             <MapView
@@ -221,7 +252,9 @@ function Map({ location, setIsCamera}) {
                     buttonStyle={[styles.btn, {width:200}]}
                     titleStyle={styles.btnText}
                     title={'Open your camera'}
-                    onPress={() => setIsCamera(true)}
+                    onPress={() => {
+                        setIsCamera(true);
+                    }}
                 />
             </View>
         </View>
@@ -229,9 +262,6 @@ function Map({ location, setIsCamera}) {
 }
 
 function MapScreen() {
-    const { colors } = useTheme();
-    const styles = stylesheet(colors);
-
     const [permission, request] = Location.useForegroundPermissions();
     const [location, setLocation] = useState(null);
     const [errorMsg, setErrorMsg] = useState(null);
@@ -263,7 +293,6 @@ function MapScreen() {
     useEffect(() => {
         console.log(location?.coords?.latitude);
     }, [location]);
-
     return (
         <View style={{width:'100%', height:'100%', flex:1}}>
             
@@ -286,11 +315,11 @@ function MapScreen() {
                         );
                     }
                 } else {
-                    return <Map location={location} setIsCamera = {setIsCamera}/>;
+                    return <Map location={location} setIsCamera={setIsCamera}/>;
                 }
             })()}
 
-            { isCamera == true && <CameraComp setIsCamera = {setIsCamera}/>}
+            { isCamera == true && <CameraComp setIsCamera={setIsCamera}/>}
             
             
         </View>
