@@ -8,6 +8,7 @@ import {
     Platform,
     ActivityIndicator,
     Image,
+    TouchableOpacity
 } from 'react-native';
 import { Button } from 'react-native-elements';
 import { AuthContext } from '../../providers/AuthContext';
@@ -19,6 +20,7 @@ import MapView, { Marker, UrlTile } from 'react-native-maps';
 import * as Location from 'expo-location';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import TabBarButton from '../TabBarButton/TabBarButton';
+import { Camera, CameraType } from 'expo-camera';
 
 // const Tab = createBottomTabNavigator();
 
@@ -131,41 +133,98 @@ function ProfilScreen() {
     );
 }
 
-function Map({ location }) {
+function CameraComp({ setIsCamera}){
+    const { colors } = useTheme();
+    const styles = stylesheet(colors);
+
+    const [type, setType] = useState(CameraType.back);
+    const [permission, requestPermission] = Camera.useCameraPermissions();
+
+    if (!permission) {
+        requestPermission();
+        return <View/>;
+    } 
+
+    if (!permission.granted){
+        console.log('Permission not granted');
+        setIsCamera(false);
+        return <View/>;
+    }
+
+    function toggleCameraType() {
+        setType(current => (current === CameraType.back ? CameraType.front : CameraType.back));
+    }
+
     return (
-        <MapView
-            initialRegion={{
-                latitude: 0,
-                longitude: 0,
-                latitudeDelta: 0.00922,
-                longitudeDelta: 0.00421,
-            }}
-            region={{
-                latitude: parseFloat(location?.coords?.latitude),
-                longitude: parseFloat(location?.coords?.longitude),
-                latitudeDelta: 0.00922,
-                longitudeDelta: 0.00421,
-            }}
-            showsPointsOfInterest={false}
-            style={{ flex: 1, width: '100%' }}
-            maxZoomLevel={17}
-        >
-            <UrlTile
-                urlTemplate="http://a.tile.openstreetmap.de/tiles/osmde/{z}/{x}/{y}.png"
-                maximumZ={19}
-                tileCachePath={
-                    Platform.OS === 'android' ? '/assets/maps' : 'assets/maps'
-                }
-                tileMaxCacheSize={100000}
-                shouldReplaceMapContent={true}
-            />
-            <Marker
-                coordinate={{
+        <View style={{flex:1, width:'100%', height:'100%'}}>
+            <Camera style={{width:'100%', height:'100%', flex:1}} type={type}>
+                <View style={[styles.btnContainer, {backgroundColor: '', position:'absolute', top:0, right:10}]}>
+                    <Button
+                        buttonStyle={[styles.btn, {width:200}]}
+                        titleStyle={styles.btnText}
+                        title={'Close your camera'}
+                        onPress={() => setIsCamera(false)}
+                    />
+                    <Button
+                        buttonStyle={[styles.btn, {width:200}]}
+                        titleStyle={styles.btnText}
+                        title={'Toggle'}
+                        onPress={() => toggleCameraType()}
+                    />
+                </View>
+            </Camera>
+        </View>
+    );
+}
+
+function Map({ location, setIsCamera}) {
+    const { colors } = useTheme();
+    const styles = stylesheet(colors);
+
+    return (
+        <View style={{width:'100%', height:'100%'}}>
+            <MapView
+                initialRegion={{
+                    latitude: 0,
+                    longitude: 0,
+                    latitudeDelta: 0.00922,
+                    longitudeDelta: 0.00421,
+                }}
+                region={{
                     latitude: parseFloat(location?.coords?.latitude),
                     longitude: parseFloat(location?.coords?.longitude),
+                    latitudeDelta: 0.00922,
+                    longitudeDelta: 0.00421,
                 }}
-            />
-        </MapView>
+                showsPointsOfInterest={false}
+                style={{ flex: 1, width: '100%' }}
+                maxZoomLevel={17}
+            >
+                <UrlTile
+                    urlTemplate="http://a.tile.openstreetmap.de/tiles/osmde/{z}/{x}/{y}.png"
+                    maximumZ={19}
+                    tileCachePath={
+                        Platform.OS === 'android' ? '/assets/maps' : 'assets/maps'
+                    }
+                    tileMaxCacheSize={100000}
+                    shouldReplaceMapContent={true}
+                />
+                <Marker
+                    coordinate={{
+                        latitude: parseFloat(location?.coords?.latitude),
+                        longitude: parseFloat(location?.coords?.longitude),
+                    }}
+                />
+            </MapView>
+            <View style={[styles.btnContainer, {position:'absolute', top:0, right:10}]}>
+                <Button
+                    buttonStyle={[styles.btn, {width:200}]}
+                    titleStyle={styles.btnText}
+                    title={'Open your camera'}
+                    onPress={() => setIsCamera(true)}
+                />
+            </View>
+        </View>
     );
 }
 
@@ -176,6 +235,7 @@ function MapScreen() {
     const [permission, request] = Location.useForegroundPermissions();
     const [location, setLocation] = useState(null);
     const [errorMsg, setErrorMsg] = useState(null);
+    const [isCamera, setIsCamera] = useState(false);
 
     useEffect(() => {
         if (permission === null) {
@@ -205,8 +265,10 @@ function MapScreen() {
     }, [location]);
 
     return (
-        <View style={styles.container}>
-            {(() => {
+        <View style={{width:'100%', height:'100%', flex:1}}>
+            
+            <SafeAreaView />
+            { isCamera == false && (() => {
                 if (location == null) {
                     if (errorMsg != null) {
                         return (
@@ -224,9 +286,13 @@ function MapScreen() {
                         );
                     }
                 } else {
-                    return <Map location={location} />;
+                    return <Map location={location} setIsCamera = {setIsCamera}/>;
                 }
             })()}
+
+            { isCamera == true && <CameraComp setIsCamera = {setIsCamera}/>}
+            
+            
         </View>
     );
 }

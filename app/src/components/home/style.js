@@ -27,11 +27,6 @@ const stylesheet = (colors) =>
             backgroundColor: 'white',
             marginTop: 12,
         },
-        btn: {
-            backgroundColor: colors.primary,
-            flexDirection: 'row',
-            justifyContent: 'center',
-        },
         textBtn: {
             display: 'none',
         },
@@ -50,6 +45,15 @@ const stylesheet = (colors) =>
             flex: 1,
             height: 'auto',
             position: 'absolute',
+        },
+        btn: {
+            backgroundColor: colors.link,
+            borderRadius: 6,
+            padding: 10,
+        },
+        btnText: {
+            fontWeight: '600',
+            fontSize: 18,
         },
     });
 export default stylesheet;
