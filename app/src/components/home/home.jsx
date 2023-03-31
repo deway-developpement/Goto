@@ -19,8 +19,7 @@ import MapView, { Marker, UrlTile } from 'react-native-maps';
 import * as Location from 'expo-location';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import TabBarButton from '../TabBarButton/TabBarButton';
-
-// const Tab = createBottomTabNavigator();
+import CameraScreen from '../Camera/CameraScreen';
 
 function HikeScreen() {
     return (
@@ -132,16 +131,20 @@ function ProfilScreen() {
     );
 }
 
-function Map({ location }) {
+function Map({ location, setIsCamera }) {
+    const { colors } = useTheme();
+    const styles = stylesheet(colors);
+
     return (
-        <MapView
-            initialRegion={{
-                latitude: 0,
-                longitude: 0,
-                latitudeDelta: 0.00922,
-                longitudeDelta: 0.00421,
-            }}
-            region={{
+        <View style={{ width: '100%', height: '100%' }}>
+            <MapView
+                initialRegion={{
+                    latitude: 0,
+                    longitude: 0,
+                    latitudeDelta: 0.00922,
+                    longitudeDelta: 0.00421,
+                }}
+                region={{
                 latitude: parseFloat(location?.coords?.latitude),
                 longitude: parseFloat(location?.coords?.longitude),
                 latitudeDelta: 0.00922,
@@ -164,19 +167,55 @@ function Map({ location }) {
                 coordinate={{
                     latitude: parseFloat(location?.coords?.latitude),
                     longitude: parseFloat(location?.coords?.longitude),
+                    latitudeDelta: 0.00922,
+                    longitudeDelta: 0.00421,
                 }}
-            />
-        </MapView>
+                showsPointsOfInterest={false}
+                style={{ flex: 1, width: '100%' }}
+                maxZoomLevel={17}
+            >
+                <UrlTile
+                    urlTemplate="http://a.tile.openstreetmap.de/tiles/osmde/{z}/{x}/{y}.png"
+                    maximumZ={19}
+                    tileCachePath={
+                        Platform.OS === 'android'
+                            ? '/assets/maps'
+                            : 'assets/maps'
+                    }
+                    tileMaxCacheSize={100000}
+                    shouldReplaceMapContent={true}
+                />
+                <Marker
+                    coordinate={{
+                        latitude: parseFloat(location?.coords?.latitude),
+                        longitude: parseFloat(location?.coords?.longitude),
+                    }}
+                />
+            </MapView>
+            <View
+                style={[
+                    styles.btnContainer,
+                    { position: 'absolute', top: 0, right: 10 },
+                ]}
+            >
+                <Button
+                    buttonStyle={[styles.btn, { width: 200 }]}
+                    titleStyle={styles.btnText}
+                    title={'Open your camera'}
+                    onPress={() => {
+                        setIsCamera(true);
+                    }}
+                />
+            </View>
+        </View>
     );
 }
 
 function MapScreen() {
-    const { colors } = useTheme();
-    const styles = stylesheet(colors);
-
     const [permission, request] = Location.useForegroundPermissions();
     const [location, setLocation] = useState(null);
     const [errorMsg, setErrorMsg] = useState(null);
+    const [isCamera, setIsCamera] = useState(false);
 
     useEffect(() => {
         if (permission === null) {
@@ -204,11 +243,13 @@ function MapScreen() {
     useEffect(() => {
         console.log(location?.coords?.latitude);
     }, [location]);
-
     return (
-        <View style={styles.container}>
+        <View style={{ width: '100%', height: '100%', flex: 1 }}>
+            <SafeAreaView />
             {(() => {
-                if (location == null) {
+                if (isCamera) {
+                    return <CameraScreen setIsCamera={setIsCamera} />;
+                } else if (location == null) {
                     if (errorMsg != null) {
                         return (
                             <Text style={{ alignSelf: 'center' }}>
@@ -225,7 +266,9 @@ function MapScreen() {
                         );
                     }
                 } else {
-                    return <Map location={location} />;
+                    return (
+                        <Map location={location} setIsCamera={setIsCamera} />
+                    );
                 }
             })()}
         </View>
