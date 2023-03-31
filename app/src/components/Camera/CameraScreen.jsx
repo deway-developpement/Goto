@@ -4,10 +4,14 @@ import { View } from 'react-native';
 import { Button } from 'react-native-elements';
 import { useIsFocused, useTheme } from '@react-navigation/native';
 import { Camera, CameraType } from 'expo-camera';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function CameraScreen({ setIsCamera }) {
     const { colors } = useTheme();
     const styles = stylesheet(colors);
+
+    // safe area insets
+    const insets = useSafeAreaInsets();
 
     const [type, setType] = useState(CameraType.back);
     const [permission, requestPermission] = Camera.useCameraPermissions();
@@ -51,7 +55,7 @@ export default function CameraScreen({ setIsCamera }) {
                         {
                             backgroundColor: '',
                             position: 'absolute',
-                            top: 0,
+                            top: 0 + insets.top,
                             right: 10,
                         },
                     ]}

@@ -1,8 +1,4 @@
-import React, { 
-    useState, 
-    useRef, 
-    useEffect, 
-    useContext } from 'react';
+import React, { useState, useRef, useEffect, useContext } from 'react';
 import stylesheet from './style';
 import {
     KeyboardAvoidingView,
@@ -109,54 +105,89 @@ function LoginComponent({ navigation }) {
     }
 
     return (
-        <View style={{flex:1}}>
-            <Image source={require('../../../assets/images/Dalle_background.png')} style={[StyleSheet.absoluteFill, {width:'100%', height:'100%'}]}/>
-            <ScrollView style={{flex:1}}>
-                <BlurView style={styles.containerLogin} intensity={100} tint='light'>
+        <View style={{ flex: 1 }}>
+            <Image
+                source={require('../../../assets/images/Dalle_background.png')}
+                style={[
+                    StyleSheet.absoluteFill,
+                    { width: '100%', height: '100%' },
+                ]}
+            />
+            <ScrollView
+                style={{ flex: 1 }}
+                keyboardShouldPersistTaps={'handled'}
+            >
+                <BlurView
+                    style={styles.containerLogin}
+                    intensity={100}
+                    tint="light"
+                >
                     <View style={styles.header}>
-                        <Image source={require('../../../assets/images/logo.png')} style={styles.logo} />
-                        { appState.email_valid ?
-                            <Text style={styles.textHeader}> Login</Text> :
-                            <Text style={styles.textHeader}> Enter your email</Text>
-                        }
+                        <Image
+                            source={require('../../../assets/images/logo.png')}
+                            style={styles.logo}
+                        />
+                        {appState.email_valid ? (
+                            <Text style={styles.textHeader}> Login</Text>
+                        ) : (
+                            <Text style={styles.textHeader}>
+                                {' '}
+                                Enter your email
+                            </Text>
+                        )}
                     </View>
                     <View style={styles.loginMiddle}>
                         <Text style={styles.textLoginMiddle}>Adress email</Text>
                         <TextInput
-                            textContentType='username'
+                            textContentType="username"
                             autoCorrect={false}
-                            autoCapitalize='none'
+                            autoCapitalize="none"
                             placeholder="email"
                             placeholderTextColor={colors.border}
-                            style={[styles.textInput, {
-                                borderColor: appState.email_valid === false ? colors.accent : colors.border,
-                            }]}
+                            style={[
+                                styles.textInput,
+                                {
+                                    borderColor:
+                                        appState.email_valid === false
+                                            ? colors.accent
+                                            : colors.border,
+                                },
+                            ]}
                             onSubmitEditing={() => isRegister()}
                             onChangeText={(text) => setEmail(text)}
                             value={email}
                         />
-                        {
-                            appState.email_valid && <Text style={styles.textLoginMiddle}>Password</Text>
-                        }
+                        {appState.email_valid && (
+                            <Text style={styles.textLoginMiddle}>Password</Text>
+                        )}
                         <TextInput
-                            textContentType='password'
+                            textContentType="password"
                             ref={passwordRef}
                             placeholder="Password"
                             placeholderTextColor={colors.border}
-                            style={appState.email_valid ?  [
-                                styles.textInput,
-                                {
-                                    borderColor: appState.password_valid === false ? colors.accent : colors.border, 
-                                },
-                            ] : {display:'none'}}
+                            style={
+                                appState.email_valid
+                                    ? [
+                                        styles.textInput,
+                                        {
+                                            borderColor:
+                                                  appState.password_valid ===
+                                                  false
+                                                      ? colors.accent
+                                                      : colors.border,
+                                        },
+                                    ]
+                                    : { display: 'none' }
+                            }
                             secureTextEntry={true}
                             autoFocus={true}
                             onSubmitEditing={() => login()}
                             onChangeText={(text) => setPassword(text)}
                             value={password}
                         />
-                        {
-                            appState.email_valid && appState.password_valid === false ? <TouchableWithoutFeedback
+                        {appState.email_valid &&
+                            appState.password_valid === false && (
+                            <TouchableWithoutFeedback
                                 onPress={() =>
                                     console.log('forgot password')
                                 }
@@ -165,23 +196,45 @@ function LoginComponent({ navigation }) {
                                 <Text style={styles.textBtn_text}>
                                     Forgot password ?
                                 </Text>
-                            </TouchableWithoutFeedback>: null
-                        }
+                            </TouchableWithoutFeedback>
+                        )}
                     </View>
                     <View style={styles.btnContainer}>
                         <Button
-                            buttonStyle={[styles.btn, {width: appState.email_valid ? 200 : 100}]}
+                            buttonStyle={[
+                                styles.btn,
+                                { width: appState.email_valid ? 200 : 100 },
+                            ]}
                             titleStyle={styles.btnText}
-                            disabled={appState.email_valid ? password == '' : email == ''}
+                            disabled={
+                                appState.email_valid
+                                    ? password == ''
+                                    : email == ''
+                            }
                             title={appState.email_valid ? 'Sign in' : 'Next'}
-                            onPress={() => (appState.email_valid ? login() : isRegister())}
+                            onPress={() =>
+                                appState.email_valid ? login() : isRegister()
+                            }
                         />
-                        <TouchableWithoutFeedback onPress={() => (navigation.navigate('Register', { email: email }))} style={{flex:1}}>
-                            <Text style={{fontSize:16, fontWeight:'600', paddingVertical:'3%'}}>
+                        <TouchableWithoutFeedback
+                            onPress={() =>
+                                navigation.navigate('Register', {
+                                    email: email,
+                                })
+                            }
+                            style={{ flex: 1 }}
+                        >
+                            <Text
+                                style={{
+                                    fontSize: 16,
+                                    fontWeight: '600',
+                                    paddingVertical: '3%',
+                                }}
+                            >
                                 Register
                             </Text>
                         </TouchableWithoutFeedback>
-                    </View>    
+                    </View>
                 </BlurView>
             </ScrollView>
         </View>
@@ -223,13 +276,15 @@ export default function LoginScreen({ navigation }) {
     return (
         <KeyboardAvoidingView
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-            style={{flex: 1}}
+            style={{ flex: 1 }}
         >
             <KeyboardDismissView>
-                <View style={{flex:1}}>
-                    {
-                        loadingState ? <SplashScreen /> : <LoginComponent navigation={navigation}/>
-                    }
+                <View style={{ flex: 1 }}>
+                    {loadingState ? (
+                        <SplashScreen />
+                    ) : (
+                        <LoginComponent navigation={navigation} />
+                    )}
                 </View>
             </KeyboardDismissView>
         </KeyboardAvoidingView>

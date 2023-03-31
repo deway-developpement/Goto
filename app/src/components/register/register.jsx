@@ -19,7 +19,7 @@ import { useApolloClient, gql } from '@apollo/client';
 import KeyboardDismissView from '../KeyboardDismissView/KeyboardDismissView';
 import { BlurView } from 'expo-blur';
 
-export default function RegisterScreen({navigation, route}) {
+export default function RegisterScreen({ navigation, route }) {
     const [email, setEmail] = useState(route.params.email);
     const [password, setPassword] = useState('');
     const [pseudo, setPseudo] = useState('');
@@ -44,7 +44,11 @@ export default function RegisterScreen({navigation, route}) {
     }, []);
 
     useEffect(() => {
-        setPasswordsInvalid(vPassword != password && vPassword != '' && !vPasswordInput.current.isFocused());
+        setPasswordsInvalid(
+            vPassword != password &&
+                vPassword != '' &&
+                !vPasswordInput.current.isFocused()
+        );
     }, [vPassword, password]);
 
     async function isRegister() {
@@ -53,9 +57,10 @@ export default function RegisterScreen({navigation, route}) {
             try {
                 const response = await client.query({
                     query: gql`
-                    query exists($email : String!) {
-                        exist(email: $email)
-                        }`,
+                        query exists($email: String!) {
+                            exist(email: $email)
+                        }
+                    `,
                     variables: {
                         email: email,
                     },
@@ -85,15 +90,21 @@ export default function RegisterScreen({navigation, route}) {
             try {
                 const response = await client.mutate({
                     mutation: gql`
-                        mutation newUser($email : String!, $password : String!, $pseudo : String!) {
-                            newUser(input: {
-                                email: $email,
-                                password: $password,
-                                pseudo: $pseudo,
-                            }) {
-                                _id,
+                        mutation newUser(
+                            $email: String!
+                            $password: String!
+                            $pseudo: String!
+                        ) {
+                            newUser(
+                                input: {
+                                    email: $email
+                                    password: $password
+                                    pseudo: $pseudo
+                                }
+                            ) {
+                                _id
                             }
-                        } 
+                        }
                     `,
                     variables: {
                         email: email,
@@ -115,7 +126,7 @@ export default function RegisterScreen({navigation, route}) {
                         refreshToken: refresh_token,
                         connected: true,
                     });
-                    
+
                     navigation.navigate('Home');
                 }
             } catch (error) {
@@ -127,22 +138,43 @@ export default function RegisterScreen({navigation, route}) {
     return (
         <KeyboardAvoidingView
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-            style={{flex:1}}
+            style={{ flex: 1 }}
         >
             <KeyboardDismissView>
-                <View style={{flex:1}}>
-                    <Image source={require('../../../assets/images/Dalle_background.png')} style={[StyleSheet.absoluteFill, {width:'100%', height:'100%'}]}/>
-                    <ScrollView style={{flex:1}}>
-                        <BlurView style={styles.containerLogin} intensity={100} tint='light'>
+                <View style={{ flex: 1 }}>
+                    <Image
+                        source={require('../../../assets/images/Dalle_background.png')}
+                        style={[
+                            StyleSheet.absoluteFill,
+                            { width: '100%', height: '100%' },
+                        ]}
+                    />
+                    <ScrollView
+                        style={{ flex: 1 }}
+                        keyboardShouldPersistTaps={'handled'}
+                    >
+                        <BlurView
+                            style={styles.containerLogin}
+                            intensity={100}
+                            tint="light"
+                        >
                             <View style={styles.header}>
-                                <Image source={require('../../../assets/images/logo.png')} style={styles.logo} />
+                                <Image
+                                    source={require('../../../assets/images/logo.png')}
+                                    style={styles.logo}
+                                />
                                 <Text style={styles.textHeader}>Register</Text>
                             </View>
                             <View style={styles.loginMiddle}>
-                                <Text style={styles.textLoginMiddle}>Adress email</Text>
+                                <Text style={styles.textLoginMiddle}>
+                                    Adress email
+                                </Text>
                                 <TextInput
                                     placeholder="email"
-                                    style={[styles.textInput, emailInvalid && {borderColor:'red'}]}
+                                    style={[
+                                        styles.textInput,
+                                        emailInvalid && { borderColor: 'red' },
+                                    ]}
                                     onSubmitEditing={() => {
                                         isRegister();
                                         pseudoInput.current.focus();
@@ -151,7 +183,9 @@ export default function RegisterScreen({navigation, route}) {
                                     ref={emailInput}
                                     value={email}
                                 />
-                                <Text style={styles.textLoginMiddle}>Pseudo</Text>
+                                <Text style={styles.textLoginMiddle}>
+                                    Pseudo
+                                </Text>
                                 <TextInput
                                     placeholder="Pseudo"
                                     placeholderColor="#c4c3cb"
@@ -162,7 +196,9 @@ export default function RegisterScreen({navigation, route}) {
                                     }}
                                     ref={pseudoInput}
                                 />
-                                <Text style={styles.textLoginMiddle}>Password</Text>
+                                <Text style={styles.textLoginMiddle}>
+                                    Password
+                                </Text>
                                 <TextInput
                                     placeholder="Password"
                                     placeholderColor="#c4c3cb"
@@ -174,19 +210,28 @@ export default function RegisterScreen({navigation, route}) {
                                     }}
                                     ref={passwordInput}
                                 />
-                                <Text style={styles.textLoginMiddle}>Confirm Password</Text>
+                                <Text style={styles.textLoginMiddle}>
+                                    Confirm Password
+                                </Text>
                                 <TextInput
                                     ref={vPasswordInput}
                                     placeholder="Confirm Password"
                                     placeholderColor="#c4c3cb"
-                                    style={[styles.textInput, passwordsInvalid && {borderColor:'red'}]}
+                                    style={[
+                                        styles.textInput,
+                                        passwordsInvalid && {
+                                            borderColor: 'red',
+                                        },
+                                    ]}
                                     secureTextEntry={true}
                                     onChangeText={(text) => setVPassword(text)}
                                     onSubmitEditing={() => {
-                                        if (vPassword == password && vPassword != '')
+                                        if (
+                                            vPassword == password &&
+                                            vPassword != ''
+                                        )
                                             register();
-                                        else
-                                            setPasswordsInvalid(true);
+                                        else setPasswordsInvalid(true);
                                     }}
                                 />
                             </View>
@@ -206,7 +251,15 @@ export default function RegisterScreen({navigation, route}) {
                                     onPress={() => navigation.navigate('Login')}
                                     style={styles.textBtn}
                                 >
-                                    <Text style={{fontSize:16, fontWeight:'600', paddingVertical:'3%'}}>Cancel</Text>
+                                    <Text
+                                        style={{
+                                            fontSize: 16,
+                                            fontWeight: '600',
+                                            paddingVertical: '3%',
+                                        }}
+                                    >
+                                        Cancel
+                                    </Text>
                                 </TouchableWithoutFeedback>
                             </View>
                         </BlurView>
