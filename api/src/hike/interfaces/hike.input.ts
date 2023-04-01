@@ -10,4 +10,14 @@ export class HikeInput {
     @Field(() => Number)
     @IsNumber()
     distance: number;
+
+    @Field(() => Number)
+    @IsNumber()
+    elevation: number;
+
+    @Field(() => String)
+    description: string;
+
+    @Field(() => String)
+    difficulty: string;
 }

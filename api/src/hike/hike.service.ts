@@ -13,7 +13,7 @@ export class HikeService extends TypeOrmQueryService<HikeEntity> {
     }
 
     async create(hike: HikeInput, user: UserEntity): Promise<HikeEntity> {
-        const newHike = this.repo.create(hike);
+        const newHike = this.repo.create(hike as HikeEntity);
         newHike.owner = user;
         return await this.repo.save(newHike);
     }

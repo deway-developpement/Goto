@@ -237,39 +237,64 @@ type Hike {
   id: ID!
   name: String!
   distance: Float!
+  elevation: Float!
+  description: String!
+  difficulty: Difficulty!
+  createdAt: DateTime!
   owner: User!
 }
+
+enum Difficulty {
+  EASY
+  MEDIUM
+  HARD
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
 
 type HikeAggregateGroupBy {
   id: ID
   name: String
   distance: Float
+  elevation: Float
+  createdAt: DateTime
 }
 
 type HikeCountAggregate {
   id: Int
   name: Int
   distance: Int
+  elevation: Int
+  createdAt: Int
 }
 
 type HikeSumAggregate {
   distance: Float
+  elevation: Float
 }
 
 type HikeAvgAggregate {
   distance: Float
+  elevation: Float
 }
 
 type HikeMinAggregate {
   id: ID
   name: String
   distance: Float
+  elevation: Float
+  createdAt: DateTime
 }
 
 type HikeMaxAggregate {
   id: ID
   name: String
   distance: Float
+  elevation: Float
+  createdAt: DateTime
 }
 
 type HikeAggregateResponse {
@@ -321,6 +346,28 @@ input HikeAggregateFilter {
   id: IDFilterComparison
   name: StringFieldComparison
   distance: NumberFieldComparison
+  elevation: NumberFieldComparison
+  createdAt: DateFieldComparison
+}
+
+input DateFieldComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: DateTime
+  neq: DateTime
+  gt: DateTime
+  gte: DateTime
+  lt: DateTime
+  lte: DateTime
+  in: [DateTime!]
+  notIn: [DateTime!]
+  between: DateFieldComparisonBetween
+  notBetween: DateFieldComparisonBetween
+}
+
+input DateFieldComparisonBetween {
+  lower: DateTime!
+  upper: DateTime!
 }
 
 input HikeFilter {
@@ -329,6 +376,8 @@ input HikeFilter {
   id: IDFilterComparison
   name: StringFieldComparison
   distance: NumberFieldComparison
+  elevation: NumberFieldComparison
+  createdAt: DateFieldComparison
 }
 
 input HikeSort {
@@ -341,6 +390,8 @@ enum HikeSortFields {
   id
   name
   distance
+  elevation
+  createdAt
 }
 
 type Mutation {
@@ -375,4 +426,7 @@ input UserUpdateInput {
 input HikeInput {
   name: String!
   distance: Float!
+  elevation: Float!
+  description: String!
+  difficulty: String!
 }

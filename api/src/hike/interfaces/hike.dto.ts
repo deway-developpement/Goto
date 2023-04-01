@@ -5,9 +5,10 @@ import {
     QueryOptions,
     Relation,
 } from '@nestjs-query/query-graphql';
-import { ObjectType, ID } from '@nestjs/graphql';
+import { ObjectType, ID, Field } from '@nestjs/graphql';
 import { pwdMiddleware } from '../../auth/auth.middleware';
 import { UserDTO } from '../../users/interfaces/user.dto';
+import { Difficulty } from './difficulty.dto';
 
 @ObjectType('Hike')
 @QueryOptions({ pagingStrategy: PagingStrategies.NONE })
@@ -19,6 +20,18 @@ export class HikeDTO {
     @FilterableField({ middleware: [pwdMiddleware] })
     name!: string;
 
-    @FilterableField()
+    @FilterableField(() => Number)
     distance!: number;
+
+    @FilterableField(() => Number)
+    elevation!: number;
+
+    @Field(() => String)
+    description!: string;
+
+    @Field(() => Difficulty)
+    difficulty!: Difficulty;
+
+    @FilterableField(() => Date)
+    createdAt!: Date;
 }
