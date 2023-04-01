@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect } from 'react';
 import stylesheet from './style';
 import {
     SafeAreaView,
@@ -15,10 +15,9 @@ import { useTheme } from '@react-navigation/native';
 import { gql, useQuery } from '@apollo/client';
 import KeyboardDismissView from '../KeyboardDismissView/KeyboardDismissView';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
-import MapView, { Marker, UrlTile } from 'react-native-maps';
-import * as Location from 'expo-location';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import TabBarButton from '../TabBarButton/TabBarButton';
+import MapScreen from '../map/map';
 
 // const Tab = createBottomTabNavigator();
 
@@ -129,106 +128,6 @@ function ProfilScreen() {
                 </SafeAreaView>
             </KeyboardDismissView>
         </KeyboardAvoidingView>
-    );
-}
-
-function Map({ location }) {
-    return (
-        <MapView
-            initialRegion={{
-                latitude: 0,
-                longitude: 0,
-                latitudeDelta: 0.00922,
-                longitudeDelta: 0.00421,
-            }}
-            region={{
-                latitude: parseFloat(location?.coords?.latitude),
-                longitude: parseFloat(location?.coords?.longitude),
-                latitudeDelta: 0.00922,
-                longitudeDelta: 0.00421,
-            }}
-            showsPointsOfInterest={false}
-            style={{ flex: 1, width: '100%' }}
-            maxZoomLevel={17}
-        >
-            <UrlTile
-                urlTemplate="http://a.tile.openstreetmap.de/tiles/osmde/{z}/{x}/{y}.png"
-                maximumZ={19}
-                // tileCachePath={
-                //     Platform.OS === 'android' ? '/assets/maps' : 'assets/maps'
-                // }
-                // tileMaxCacheSize={100000}
-                shouldReplaceMapContent={true}
-            />
-            <Marker
-                coordinate={{
-                    latitude: parseFloat(location?.coords?.latitude),
-                    longitude: parseFloat(location?.coords?.longitude),
-                }}
-            />
-        </MapView>
-    );
-}
-
-function MapScreen() {
-    const { colors } = useTheme();
-    const styles = stylesheet(colors);
-
-    const [permission, request] = Location.useForegroundPermissions();
-    const [location, setLocation] = useState(null);
-    const [errorMsg, setErrorMsg] = useState(null);
-
-    useEffect(() => {
-        if (permission === null) {
-            request();
-        } else if (
-            permission.granted === false &&
-            permission.canAskAgain === false
-        ) {
-            setErrorMsg('Permission to access location was denied');
-        } else if (
-            permission.granted === false &&
-            permission.canAskAgain === true
-        ) {
-            request();
-        } else if (permission.granted === true) {
-            Location.getLastKnownPositionAsync({}).then((response) => {
-                setLocation(response);
-            });
-            Location.watchPositionAsync({}, (response) => {
-                setLocation(response);
-            });
-        }
-    }, [permission]);
-
-    useEffect(() => {
-        console.log(location?.coords?.latitude);
-    }, [location]);
-
-    return (
-        <View style={styles.container}>
-            {(() => {
-                if (location == null) {
-                    if (errorMsg != null) {
-                        return (
-                            <Text style={{ alignSelf: 'center' }}>
-                                {errorMsg}
-                            </Text>
-                        );
-                    } else {
-                        return (
-                            <ActivityIndicator
-                                size="large"
-                                color="#0000ff"
-                                style={{ flex: 3, width: '100%' }}
-                            />
-                        );
-                    }
-                } else {
-                    return <Map location={location} />;
-                }
-            })()}
-        </View>
     );
 }
 
