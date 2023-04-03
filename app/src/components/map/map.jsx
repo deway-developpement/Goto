@@ -9,6 +9,8 @@ import { DOMParser } from 'xmldom';
 
 function Map({ location }) {
     const { colors } = useTheme();
+    let [trkptsArrayLatLon, setTrkptsArrayLatLon] = useState([]);
+    let [passed, setPassed] = useState([]);
 
     const doc = new DOMParser().parseFromString(CONTENTGPX, 'text/xml');
     const trkpts = doc.getElementsByTagName('trkpt');
@@ -19,13 +21,29 @@ function Map({ location }) {
     const trkptsArrayLon = trkptsArray.map((trkpt) =>
         trkpt.getAttribute('lon')
     );
-    const trkptsArrayLatLon = trkptsArrayLat.map((lat, index) => {
+    const gpxconverted = trkptsArrayLat.map((lat, index) => {
         return {
             latitude: parseFloat(lat),
             longitude: parseFloat(trkptsArrayLon[index]),
         };
     });
 
+    useEffect(() => {
+        setTrkptsArrayLatLon(gpxconverted);
+    }, []);
+
+    console.log(passed);
+    function advance() {
+        console.log('advance');
+        if (passed.length == 0) {
+            setPassed([trkptsArrayLatLon[0]]);
+        } else {
+            setPassed(gpxconverted.slice(0, passed.length + 1));
+        }
+        setTrkptsArrayLatLon(trkptsArrayLatLon.slice(1));
+        console.log('length trkptsArrayLatLon: ', trkptsArrayLatLon.length);
+        console.log('length passed: ', passed.length);
+    }
     return (
         <MapView
             initialRegion={{
@@ -45,19 +63,32 @@ function Map({ location }) {
             maxZoomLevel={17}
         >
             <Polyline
+                coordinates={passed}
+                strokeColor={colors.borderlinesecondary}
+                strokeWidth={6}
+            />
+            <Polyline
+                coordinates={passed}
+                strokeColor={colors.linesecondary}
+                strokeWidth={4}
+            />
+            <Polyline
                 coordinates={trkptsArrayLatLon}
-                strokeColor={colors.line}
+                strokeColor={colors.borderlineprimary}
                 strokeWidth={6}
             />
             <Polyline
                 coordinates={trkptsArrayLatLon}
-                strokeColor={colors.secondary}
+                strokeColor={colors.lineprimary}
                 strokeWidth={4}
             />
             <Marker
                 coordinate={{
                     latitude: parseFloat(location?.coords?.latitude),
                     longitude: parseFloat(location?.coords?.longitude),
+                }}
+                onPress={() => {
+                    advance();
                 }}
             />
         </MapView>

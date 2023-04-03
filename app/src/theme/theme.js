@@ -13,7 +13,10 @@ export const Classic = {
         accent: '#D1406C',
         border: '#A49DAA',
         accentuated: '#1D343E',
-        line: '#00B0FF',
+        lineprimary: '#00B0FF',
+        borderlineprimary: '#1c68d1',
+        linesecondary: '#bbbdbf',
+        borderlinesecondary: '#8c8f91',
     },
 };
 
