@@ -15,6 +15,7 @@ export default function CameraScreen({ setIsCamera }) {
 
     const [type, setType] = useState(CameraType.back);
     const [permission, requestPermission] = Camera.useCameraPermissions();
+    
     //TODO: make the same as for map permission
 
     const isFocused = useIsFocused();
@@ -46,8 +47,9 @@ export default function CameraScreen({ setIsCamera }) {
     return (
         <View style={{ flex: 1, width: '100%', height: '100%' }}>
             <Camera
-                style={{ width: '100%', height: '100%', flex: 1 }}
+                style={{flex: 1 }}
                 type={type}
+                ratio={'16:9'}
             >
                 <View
                     style={[
