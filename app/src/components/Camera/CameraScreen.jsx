@@ -51,6 +51,7 @@ export default function CameraScreen({ setIsCamera }) {
                 style={{
                     flex:1,
                     overflow: 'hidden',
+                    alignSelf:'center'
                 }}
                 type={type}
                 aspectRatio={3/4}
