@@ -22,11 +22,14 @@ import CameraScreen from '../Camera/CameraScreen';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Map from '../Map/Map';
 
-function HikeScreen() {
+function HikeScreen({route}) {
+    console.log('hike screen');
+    if (route.params) console.log(route.params.img);
     return (
         <View>
             <SafeAreaView />
             <Text>Hike</Text>
+            { route.params && route.params.img && <Image source={route.params.img} style={{width:'100%', height:'100%'}}/>}
         </View>
     );
 }
