@@ -9,8 +9,8 @@ import { DOMParser } from 'xmldom';
 
 function Map({ location }) {
     const { colors } = useTheme();
-    let [trkptsArrayLatLon, setTrkptsArrayLatLon] = useState([]);
-    let [passed, setPassed] = useState([]);
+    let [leftPoints, setLeftPoints] = useState([]);
+    let [passedPoints, setPassedPoints] = useState([]);
 
     function parseFile() {
         const doc = new DOMParser().parseFromString(CONTENTGPX, 'text/xml');
@@ -31,20 +31,19 @@ function Map({ location }) {
     }
 
     useEffect(() => {
-        const gpxconverted = parseFile();
-        setTrkptsArrayLatLon(gpxconverted);
+        setLeftPoints(parseFile());
     }, []);
 
     function advance() {
-        if (trkptsArrayLatLon.length == 0) {
+        if (leftPoints.length == 0) {
             return;
         }
-        const gpxPathLeft = trkptsArrayLatLon.slice();
-        const gpxPathPassed = passed.slice();
-        gpxPathPassed.push(gpxPathLeft.shift());
-        gpxPathPassed.push(gpxPathLeft[0]);
-        setPassed(gpxPathPassed);
-        setTrkptsArrayLatLon(gpxPathLeft);
+        const gpxPathLeft = leftPoints.slice();
+        const gpxPathpassedPoints = passedPoints.slice();
+        gpxPathpassedPoints.push(gpxPathLeft.shift());
+        gpxPathpassedPoints.push(gpxPathLeft[0]);
+        setPassedPoints(gpxPathpassedPoints);
+        setLeftPoints(gpxPathLeft);
     }
 
     return (
@@ -66,22 +65,22 @@ function Map({ location }) {
             maxZoomLevel={17}
         >
             <Polyline
-                coordinates={passed}
+                coordinates={passedPoints}
                 strokeColor={colors.borderlinesecondary}
                 strokeWidth={6}
             />
             <Polyline
-                coordinates={passed}
+                coordinates={passedPoints}
                 strokeColor={colors.linesecondary}
                 strokeWidth={4}
             />
             <Polyline
-                coordinates={trkptsArrayLatLon}
+                coordinates={leftPoints}
                 strokeColor={colors.borderlineprimary}
                 strokeWidth={6}
             />
             <Polyline
-                coordinates={trkptsArrayLatLon}
+                coordinates={leftPoints}
                 strokeColor={colors.lineprimary}
                 strokeWidth={4}
             />
