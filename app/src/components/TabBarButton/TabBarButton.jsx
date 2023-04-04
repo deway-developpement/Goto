@@ -2,7 +2,6 @@ import React from 'react';
 import stylesheet from './style';
 import { View, TouchableOpacity } from 'react-native';
 import * as Font from 'expo-font';
-import SplashScreen from '../SplashScreen/SplashScreen';
 import { createIconSetFromFontello } from 'react-native-vector-icons';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '@react-navigation/native';
@@ -22,7 +21,7 @@ export default function TabBarButton({ icon, accessibilityState, onPress }) {
     });
 
     if (!fontsLoaded) {
-        return <SplashScreen />;
+        return <View />;
     }
 
     return (
