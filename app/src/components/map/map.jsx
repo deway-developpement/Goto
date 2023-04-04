@@ -12,38 +12,41 @@ function Map({ location }) {
     let [trkptsArrayLatLon, setTrkptsArrayLatLon] = useState([]);
     let [passed, setPassed] = useState([]);
 
-    const doc = new DOMParser().parseFromString(CONTENTGPX, 'text/xml');
-    const trkpts = doc.getElementsByTagName('trkpt');
-    const trkptsArray = Array.from(trkpts);
-    const trkptsArrayLat = trkptsArray.map((trkpt) =>
-        trkpt.getAttribute('lat')
-    );
-    const trkptsArrayLon = trkptsArray.map((trkpt) =>
-        trkpt.getAttribute('lon')
-    );
-    const gpxconverted = trkptsArrayLat.map((lat, index) => {
-        return {
-            latitude: parseFloat(lat),
-            longitude: parseFloat(trkptsArrayLon[index]),
-        };
-    });
+    function parseFile() {
+        const doc = new DOMParser().parseFromString(CONTENTGPX, 'text/xml');
+        const trkpts = doc.getElementsByTagName('trkpt');
+        const trkptsArray = Array.from(trkpts);
+        const trkptsArrayLat = trkptsArray.map((trkpt) =>
+            trkpt.getAttribute('lat')
+        );
+        const trkptsArrayLon = trkptsArray.map((trkpt) =>
+            trkpt.getAttribute('lon')
+        );
+        return trkptsArrayLat.map((lat, index) => {
+            return {
+                latitude: parseFloat(lat),
+                longitude: parseFloat(trkptsArrayLon[index]),
+            };
+        });
+    }
 
     useEffect(() => {
+        const gpxconverted = parseFile();
         setTrkptsArrayLatLon(gpxconverted);
     }, []);
 
-    console.log(passed);
     function advance() {
-        console.log('advance');
-        if (passed.length == 0) {
-            setPassed([trkptsArrayLatLon[0]]);
-        } else {
-            setPassed(gpxconverted.slice(0, passed.length + 1));
+        if (trkptsArrayLatLon.length == 0) {
+            return;
         }
-        setTrkptsArrayLatLon(trkptsArrayLatLon.slice(1));
-        console.log('length trkptsArrayLatLon: ', trkptsArrayLatLon.length);
-        console.log('length passed: ', passed.length);
+        const gpxPathLeft = trkptsArrayLatLon.slice();
+        const gpxPathPassed = passed.slice();
+        gpxPathPassed.push(gpxPathLeft.shift());
+        gpxPathPassed.push(gpxPathLeft[0]);
+        setPassed(gpxPathPassed);
+        setTrkptsArrayLatLon(gpxPathLeft);
     }
+
     return (
         <MapView
             initialRegion={{
