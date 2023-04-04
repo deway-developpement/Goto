@@ -50,10 +50,10 @@ export default function CameraScreen({ setIsCamera }) {
     const takePicture = async () => {
         if (cameraRef.current) {
             //const options = { quality: 0.5, base64: true, skipProcessing: true };
-            const data = await cameraRef.current.takePictureAsync();
-            const source = data.uri;
+            const data = await cameraRef.current.takePictureAsync({base64:true});
+            const source = data;
             if (source) {
-                navigation.navigate('Hikes', {img:source});
+                navigation.navigate('Hikes', {dataImg:data});
                 
             }
         }

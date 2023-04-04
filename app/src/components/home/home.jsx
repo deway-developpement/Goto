@@ -8,6 +8,7 @@ import {
     Platform,
     ActivityIndicator,
     Image,
+    Dimensions
 } from 'react-native';
 import { Button } from 'react-native-elements';
 import { AuthContext } from '../../providers/AuthContext';
@@ -23,13 +24,13 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Map from '../Map/Map';
 
 function HikeScreen({route}) {
-    console.log('hike screen');
-    if (route.params) console.log(route.params.img);
+    const windowWidth = Dimensions.get('window').width;
     return (
-        <View>
-            <SafeAreaView />
-            <Text>Hike</Text>
-            { route.params && route.params.img && <Image source={route.params.img} style={{width:'100%', height:'100%'}}/>}
+        <View style={{flex:1}}>
+            <SafeAreaView/>
+            <Text>{route.params?.dataImg ? 'This should display a photo '  : 'Hikes'}</Text>
+            { route.params?.dataImg && <Image style={{width:windowWidth, height:(windowWidth*route.params.dataImg.height)/route.params.dataImg.width}} source={{uri:'data:image/jpg;base64,' + route.params.dataImg.base64}}/>}
+
         </View>
     );
 }
