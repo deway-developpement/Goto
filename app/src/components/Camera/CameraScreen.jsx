@@ -44,16 +44,16 @@ export default function CameraScreen({ setIsCamera }) {
         return <View />;
     }
 
+
     return (
         <View style={{ flex: 1, width: '100%', height: '100%' }}>
             <Camera
                 style={{
-                    height: '100%',
-                    aspectRatio: 9 / 16,
+                    flex:1,
                     overflow: 'hidden',
                 }}
                 type={type}
-                ratio={'9:16'}
+                aspectRatio={3/4}
             ></Camera>
             <View
                 style={[
