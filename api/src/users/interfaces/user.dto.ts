@@ -29,4 +29,7 @@ export class UserDTO {
 
     @FilterableField({ middleware: [credidentialMiddleware] })
     credidential!: number;
+
+    @FilterableField(() => Date)
+    createdAt!: Date;
 }

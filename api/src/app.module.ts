@@ -15,6 +15,7 @@ import { regexDirectiveTransformer } from './directives/constraints.graphql';
 import { DirectiveLocation, GraphQLDirective, GraphQLString } from 'graphql';
 import { LoggerMiddleware } from './logger/logger.middleware';
 import { HikeModule } from './hike/hikes.module';
+import { TagModule } from './tags/tags.module';
 
 const armor = new ApolloArmor();
 const protection = armor.protect();
@@ -45,8 +46,8 @@ console.log = function (...args) {
         GraphQLModule.forRoot({
             driver: ApolloDriver,
             imports: [AuthModule, UsersModule],
-
             autoSchemaFile: 'schema.gql',
+            uploads: false,
             transformSchema: (schema) => regexDirectiveTransformer(schema, 'constraint'),
             buildSchemaOptions: {
                 directives: [
@@ -86,6 +87,7 @@ console.log = function (...args) {
         UsersModule,
         AuthModule,
         HikeModule,
+        TagModule,
     ],
     controllers: [AppController],
     providers: [AppService],

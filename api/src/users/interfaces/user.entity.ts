@@ -28,4 +28,7 @@ export class UserEntity {
 
     @Column({ nullable: true })
     readonly refresh_token?: string;
+
+    @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+    createdAt: Date;
 }

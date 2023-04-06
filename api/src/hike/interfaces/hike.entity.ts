@@ -1,6 +1,7 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, Unique } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, Unique, ManyToMany } from 'typeorm';
 import { UserEntity } from '../../users/interfaces/user.entity';
 import { Difficulty } from './difficulty.dto';
+import { TagEntity } from '../../tags/interfaces/tag.entity';
 
 @Entity('hike')
 @Unique(['name'])
@@ -28,6 +29,15 @@ export class HikeEntity {
         default: Difficulty.EASY,
     })
     difficulty: Difficulty;
+
+    @Column()
+    duration: number;
+
+    @Column()
+    track: string;
+
+    @ManyToMany(() => TagEntity, (tag) => tag.hikes)
+    tags: TagEntity[];
 
     @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
     createdAt: Date;

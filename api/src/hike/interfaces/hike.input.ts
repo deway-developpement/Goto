@@ -1,6 +1,15 @@
 import { Field, InputType } from '@nestjs/graphql';
 import { IsNumber, Matches } from 'class-validator';
+import * as GraphQLUpload from 'graphql-upload/GraphQLUpload.js';
+import { Stream } from 'stream';
+import { Difficulty } from './difficulty.dto';
 
+export interface FileUpload {
+    filename: string;
+    mimetype: string;
+    encoding: string;
+    createReadStream: () => Stream;
+}
 @InputType()
 export class HikeInput {
     @Field(() => String)
@@ -18,6 +27,12 @@ export class HikeInput {
     @Field(() => String)
     description: string;
 
-    @Field(() => String)
-    difficulty: string;
+    @Field(() => Difficulty)
+    difficulty: Difficulty;
+
+    @Field(() => GraphQLUpload)
+    track: Promise<FileUpload>;
+
+    @Field(() => [String])
+    tagsId: string[];
 }
