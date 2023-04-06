@@ -19,8 +19,6 @@ export class TagResolver extends CRUDResolver(TagDTO, {
     create: { disabled: true },
     update: { disabled: true },
     delete: { disabled: true },
-    enableTotalCount: true,
-    enableAggregate: true,
 }) {
     constructor(@Inject(TagService) readonly service: TagService) {
         super(service);
@@ -33,5 +31,14 @@ export class TagResolver extends CRUDResolver(TagDTO, {
             throw new UnauthorizedError();
         }
         return this.service.create(query as TagEntity);
+    }
+
+    @UseGuards(GqlAuthGuard)
+    @Mutation(() => TagDTO)
+    async removeTag(@Args('id') id: string, @CurrentUser() user: UserDTO): Promise<TagDTO> {
+        if (user.credidential < 2) {
+            throw new UnauthorizedError();
+        }
+        return this.service.remove(id);
     }
 }

@@ -17,4 +17,10 @@ export class TagService extends TypeOrmQueryService<TagEntity> {
     async findOne(id: string): Promise<TagEntity> {
         return await this.repo.findOne({ where: { id } });
     }
+
+    async remove(id: string): Promise<TagEntity> {
+        const tag = await this.repo.findOne({ where: { id } });
+        await this.repo.delete(id);
+        return tag;
+    }
 }

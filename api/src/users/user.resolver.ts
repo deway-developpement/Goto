@@ -46,4 +46,19 @@ export class UserResolver extends CRUDResolver(UserDTO, {
     async addFriend(@Args('id') friendId: string, @CurrentUser() user: UserDTO): Promise<UserDTO> {
         return this.usersService.addFriend(user.id, friendId);
     }
+
+    @UseGuards(GqlAuthGuard)
+    @Mutation(() => UserDTO)
+    async removeFriend(
+        @Args('id') friendId: string,
+        @CurrentUser() user: UserDTO
+    ): Promise<UserDTO> {
+        return this.usersService.removeFriend(user.id, friendId);
+    }
+
+    @UseGuards(GqlAuthGuard)
+    @Mutation(() => UserDTO)
+    async deleteAccount(@CurrentUser() user: UserDTO): Promise<UserDTO> {
+        return this.usersService.delete(user.id);
+    }
 }

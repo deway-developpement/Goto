@@ -1,6 +1,6 @@
 import {
     FilterableField,
-    FilterableRelation,
+    FilterableUnPagedRelation,
     IDField,
     PagingStrategies,
     QueryOptions,
@@ -14,7 +14,12 @@ import { TagDTO } from '../../tags/interfaces/tag.dto';
 @ObjectType('Hike')
 @QueryOptions({ pagingStrategy: PagingStrategies.NONE })
 @Relation('owner', () => UserDTO, { disableRemove: true, disableUpdate: true })
-@FilterableRelation('tags', () => TagDTO, { nullable: true })
+@FilterableUnPagedRelation('tags', () => TagDTO, {
+    nullable: true,
+    disableRemove: true,
+    disableUpdate: true,
+    enableAggregate: false,
+})
 export class HikeDTO {
     @IDField(() => ID)
     id!: string;

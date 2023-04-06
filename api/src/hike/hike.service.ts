@@ -27,6 +27,10 @@ export class HikeService extends TypeOrmQueryService<HikeEntity> {
         sequenceBits: 12,
     });
 
+    async findOne(id: string): Promise<HikeEntity> {
+        return await this.repo.findOne({ where: { id } });
+    }
+
     async create(hike: HikeInput, user: UserEntity): Promise<HikeEntity> {
         const { createReadStream, filename } = await hike.track;
         const filetype = filename.split('.').pop();
@@ -74,5 +78,29 @@ export class HikeService extends TypeOrmQueryService<HikeEntity> {
         const totalTime = walkingTime * diffFactor + breakTime;
         // return time in hours at 30 minutes precision
         return Math.round(totalTime * 2) / 2;
+    }
+
+    async addTag(hikeId: string, tagId: string): Promise<HikeEntity> {
+        const hike = await this.repo.findOne({ where: { id: hikeId } });
+        const tag = await this.tagService.findOne(tagId);
+        if (hike.tags.includes(tag)) {
+            throw new HttpException('Tag already exists', HttpStatus.BAD_REQUEST);
+        }
+        hike.tags.push(tag);
+        return await this.repo.save(hike);
+    }
+
+    async removeTag(hikeId: string, tagId: string): Promise<HikeEntity> {
+        const hike = await this.repo.findOne({ where: { id: hikeId } });
+        if (!hike.tags.map((tag) => tag.id).includes(tagId)) {
+            throw new HttpException('Tag does not exist', HttpStatus.BAD_REQUEST);
+        }
+        hike.tags = hike.tags.filter((tag) => tag.id !== tagId);
+        return await this.repo.save(hike);
+    }
+
+    async remove(id: string): Promise<HikeEntity> {
+        const hike = await this.repo.findOne({ where: { id } });
+        return await this.repo.remove(hike);
     }
 }

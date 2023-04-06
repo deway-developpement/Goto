@@ -93,4 +93,17 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
         user.friends.push(friend);
         return await this.userRepository.save(user);
     }
+
+    async removeFriend(id: string, friendId: string): Promise<UserEntity> {
+        const user = await this.userRepository.findOne({ where: { id } });
+        if (!user.friends) {
+            user.friends = [];
+        }
+        const friend = await this.userRepository.findOne({ where: { id: friendId } });
+        if (!friend || !user.friends.find((f) => f.id === friend?.id)) {
+            throw new BadRequestException('Friend not found');
+        }
+        user.friends = user.friends.filter((f) => f.id !== friend.id);
+        return await this.userRepository.save(user);
+    }
 }

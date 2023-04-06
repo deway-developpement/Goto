@@ -274,7 +274,73 @@ type tag {
   id: ID!
   name: String!
   createdAt: DateTime!
-  hikes: Hike
+  hikes(
+    """Specify to filter the records returned."""
+    filter: HikeFilter = {}
+
+    """Specify to sort results."""
+    sorting: [HikeSort!] = []
+  ): [Hike!]
+}
+
+input HikeFilter {
+  and: [HikeFilter!]
+  or: [HikeFilter!]
+  id: IDFilterComparison
+  name: StringFieldComparison
+  distance: NumberFieldComparison
+  elevation: NumberFieldComparison
+  difficulty: DifficultyFilterComparison
+  duration: NumberFieldComparison
+  createdAt: DateFieldComparison
+  tags: HikeFiltertagFilter
+}
+
+input DifficultyFilterComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: Difficulty
+  neq: Difficulty
+  gt: Difficulty
+  gte: Difficulty
+  lt: Difficulty
+  lte: Difficulty
+  like: Difficulty
+  notLike: Difficulty
+  iLike: Difficulty
+  notILike: Difficulty
+  in: [Difficulty!]
+  notIn: [Difficulty!]
+}
+
+enum Difficulty {
+  EASY
+  MEDIUM
+  HARD
+}
+
+input HikeFiltertagFilter {
+  and: [HikeFiltertagFilter!]
+  or: [HikeFiltertagFilter!]
+  id: IDFilterComparison
+  name: StringFieldComparison
+  createdAt: DateFieldComparison
+}
+
+input HikeSort {
+  field: HikeSortFields!
+  direction: SortDirection!
+  nulls: SortNulls
+}
+
+enum HikeSortFields {
+  id
+  name
+  distance
+  elevation
+  difficulty
+  duration
+  createdAt
 }
 
 type Hike {
@@ -288,13 +354,34 @@ type Hike {
   track: String!
   createdAt: DateTime!
   owner: User!
-  tags: tag
+  tags(
+    """Specify to filter the records returned."""
+    filter: tagFilter = {}
+
+    """Specify to sort results."""
+    sorting: [tagSort!] = []
+  ): [tag!]
+  photos: [String!]!
 }
 
-enum Difficulty {
-  EASY
-  MEDIUM
-  HARD
+input tagFilter {
+  and: [tagFilter!]
+  or: [tagFilter!]
+  id: IDFilterComparison
+  name: StringFieldComparison
+  createdAt: DateFieldComparison
+}
+
+input tagSort {
+  field: tagSortFields!
+  direction: SortDirection!
+  nulls: SortNulls
+}
+
+enum tagSortFields {
+  id
+  name
+  createdAt
 }
 
 type HikeAggregateGroupBy {
@@ -382,13 +469,6 @@ type tagMaxAggregate {
   createdAt: DateTime
 }
 
-type tagAggregateResponse {
-  groupBy: tagAggregateGroupBy
-  count: tagCountAggregate
-  min: tagMinAggregate
-  max: tagMaxAggregate
-}
-
 type Query {
   userAggregate(
     """Filter to find records to aggregate on"""
@@ -421,10 +501,6 @@ type Query {
     """Specify to sort results."""
     sorting: [HikeSort!] = []
   ): [Hike!]!
-  tagAggregate(
-    """Filter to find records to aggregate on"""
-    filter: tagAggregateFilter
-  ): [tagAggregateResponse!]!
   tag(
     """The id of the record to find."""
     id: ID!
@@ -450,98 +526,18 @@ input HikeAggregateFilter {
   createdAt: DateFieldComparison
 }
 
-input DifficultyFilterComparison {
-  is: Boolean
-  isNot: Boolean
-  eq: Difficulty
-  neq: Difficulty
-  gt: Difficulty
-  gte: Difficulty
-  lt: Difficulty
-  lte: Difficulty
-  like: Difficulty
-  notLike: Difficulty
-  iLike: Difficulty
-  notILike: Difficulty
-  in: [Difficulty!]
-  notIn: [Difficulty!]
-}
-
-input HikeFilter {
-  and: [HikeFilter!]
-  or: [HikeFilter!]
-  id: IDFilterComparison
-  name: StringFieldComparison
-  distance: NumberFieldComparison
-  elevation: NumberFieldComparison
-  difficulty: DifficultyFilterComparison
-  duration: NumberFieldComparison
-  createdAt: DateFieldComparison
-  tags: HikeFiltertagFilter
-}
-
-input HikeFiltertagFilter {
-  and: [HikeFiltertagFilter!]
-  or: [HikeFiltertagFilter!]
-  id: IDFilterComparison
-  name: StringFieldComparison
-  createdAt: DateFieldComparison
-}
-
-input HikeSort {
-  field: HikeSortFields!
-  direction: SortDirection!
-  nulls: SortNulls
-}
-
-enum HikeSortFields {
-  id
-  name
-  distance
-  elevation
-  difficulty
-  duration
-  createdAt
-}
-
-input tagAggregateFilter {
-  and: [tagAggregateFilter!]
-  or: [tagAggregateFilter!]
-  id: IDFilterComparison
-  name: StringFieldComparison
-  createdAt: DateFieldComparison
-}
-
-input tagFilter {
-  and: [tagFilter!]
-  or: [tagFilter!]
-  id: IDFilterComparison
-  name: StringFieldComparison
-  createdAt: DateFieldComparison
-}
-
-input tagSort {
-  field: tagSortFields!
-  direction: SortDirection!
-  nulls: SortNulls
-}
-
-enum tagSortFields {
-  id
-  name
-  createdAt
-}
-
 type Mutation {
   createUser(input: UserInput!): User!
   updateUser(id: String!, input: UserUpdateInput!): User!
   addFriend(id: String!): User!
-  setTagsOnHike(input: SetTagsOnHikeInput!): Hike!
-  removeTagsFromHike(input: RemoveTagsFromHikeInput!): Hike!
+  removeFriend(id: String!): User!
+  deleteAccount: User!
   createHike(input: HikeInput!): Hike!
-  setHikesOnTag(input: SetHikesOnTagInput!): tag!
-  removeHikesFromTag(input: RemoveHikesFromTagInput!): tag!
+  addTagToHike(hikeId: String!, tagId: String!): Hike!
+  removeTagFromHike(hikeId: String!, tagId: String!): Hike!
+  removeHike(id: String!): Hike!
   createTag(input: TagInput!): tag!
+  removeTag(id: String!): tag!
 }
 
 input UserInput {
@@ -566,22 +562,6 @@ input UserUpdateInput {
   password: String
 }
 
-input SetTagsOnHikeInput {
-  """The id of the record."""
-  id: ID!
-
-  """The id of relation."""
-  relationId: ID!
-}
-
-input RemoveTagsFromHikeInput {
-  """The id of the record."""
-  id: ID!
-
-  """The id of relation."""
-  relationId: ID!
-}
-
 input HikeInput {
   name: String!
   distance: Float!
@@ -594,22 +574,6 @@ input HikeInput {
 
 """The `Upload` scalar type represents a file upload."""
 scalar Upload
-
-input SetHikesOnTagInput {
-  """The id of the record."""
-  id: ID!
-
-  """The id of relation."""
-  relationId: ID!
-}
-
-input RemoveHikesFromTagInput {
-  """The id of the record."""
-  id: ID!
-
-  """The id of relation."""
-  relationId: ID!
-}
 
 input TagInput {
   name: String!
