@@ -53,7 +53,8 @@ export default function CameraScreen({ setIsCamera }) {
             const data = await cameraRef.current.takePictureAsync({base64:true});
             const source = data;
             if (source) {
-                navigation.navigate('Hikes', {dataImg:data});
+                setIsCamera(false);
+                navigation.navigate('Map', {dataImg:data});
                 
             }
         }

@@ -24,13 +24,18 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Map from '../Map/Map';
 
 function HikeScreen({route}) {
+    const [image, setImage] = useState(null);
+
     const windowWidth = Dimensions.get('window').width;
+
+    if (route.params?.dataImg && (image == null || image.paraUri != route.params.dataImg.uri)){
+        setImage({paraUri:route.params?.dataImg.uri, uri:'data:image/jpg;base64,' + route.params.dataImg.base64});
+    }
     return (
-        <View style={{flex:1}}>
+        <View style={{flex:1, backgroundColor:''}}>
             <SafeAreaView/>
             <Text>{route.params?.dataImg ? 'This should display a photo '  : 'Hikes'}</Text>
-            { route.params?.dataImg && <Image style={{width:windowWidth, height:(windowWidth*route.params.dataImg.height)/route.params.dataImg.width}} source={{uri:'data:image/jpg;base64,' + route.params.dataImg.base64}}/>}
-
+            { image!=null && <Image style={{transform: [{rotate: '45deg'}],width:windowWidth, height:(windowWidth*route.params.dataImg.height)/route.params.dataImg.width, backgroundColor:''}} source={{uri:image.uri}}/>}
         </View>
     );
 }
@@ -136,7 +141,7 @@ function ProfilScreen() {
     );
 }
 
-function MapScreen() {
+function MapScreen({route}) {
     const [permission, request] = Location.useForegroundPermissions();
     const [location, setLocation] = useState(null);
     const [errorMsg, setErrorMsg] = useState(null);
@@ -146,6 +151,14 @@ function MapScreen() {
     const styles = stylesheet(colors);
 
     const insets = useSafeAreaInsets();
+
+    const [image, setImage] = useState(null);
+
+    const windowWidth = Dimensions.get('window').width;
+
+    if (route.params?.dataImg && (image == null || image.paraUri != route.params.dataImg.uri)){
+        setImage({paraUri:route.params?.dataImg.uri, uri:'data:image/jpg;base64,' + route.params.dataImg.base64});
+    }
 
     useEffect(() => {
         if (permission === null) {
@@ -173,6 +186,7 @@ function MapScreen() {
     useEffect(() => {
         console.log(location?.coords?.latitude);
     }, [location]);
+
     return (
         <View style={{ width: '100%', height: '100%', flex: 1 }}>
             {(() => {
@@ -207,7 +221,22 @@ function MapScreen() {
                                     {
                                         position: 'absolute',
                                         top: 0 + insets.top,
+                                        right: 0,
+                                        backgroundColor: 'transparent',
+                                    },
+                                ]}
+                            >
+                                { image!=null && <Image style={[styles.imageMap, {width:windowWidth, height:(windowWidth*route.params.dataImg.height)/route.params.dataImg.width, }]} source={{uri:image.uri}}/>}
+                                
+                            </View>
+                            <View
+                                style={[
+                                    styles.btnContainer,
+                                    {
+                                        position: 'absolute',
+                                        top: 0 + insets.top,
                                         right: 10,
+                                        backgroundColor: 'transparent',
                                     },
                                 ]}
                             >
@@ -219,6 +248,7 @@ function MapScreen() {
                                         setIsCamera(true);
                                     }}
                                 />
+                                
                             </View>
                         </View>
                     );
