@@ -154,7 +154,7 @@ function MapScreen({route}) {
 
     const [image, setImage] = useState(null);
 
-    const windowWidth = Dimensions.get('window').width;
+    //const windowWidth = Dimensions.get('window').width;
 
     if (route.params?.dataImg && (image == null || image.paraUri != route.params.dataImg.uri)){
         setImage({paraUri:route.params?.dataImg.uri, uri:'data:image/jpg;base64,' + route.params.dataImg.base64});
@@ -187,6 +187,21 @@ function MapScreen({route}) {
         console.log(location?.coords?.latitude);
     }, [location]);
 
+    //     <View
+    //     style={[
+    //         styles.btnContainer,
+    //         {
+    //             position: 'absolute',
+    //             top: 0 + insets.top,
+    //             right: 0,
+    //             backgroundColor: 'transparent',
+    //         },
+    //     ]}
+    // >
+    //     { image!=null && <Image style={[styles.imageMap, {width:windowWidth, height:(windowWidth*route.params.dataImg.height)/route.params.dataImg.width, }]} source={{uri:image.uri}}/>}
+        
+    // </View>
+
     return (
         <View style={{ width: '100%', height: '100%', flex: 1 }}>
             {(() => {
@@ -214,21 +229,10 @@ function MapScreen({route}) {
                             <Map
                                 location={location}
                                 setIsCamera={setIsCamera}
+                                image={image}
+                                styles={styles}
                             />
-                            <View
-                                style={[
-                                    styles.btnContainer,
-                                    {
-                                        position: 'absolute',
-                                        top: 0 + insets.top,
-                                        right: 0,
-                                        backgroundColor: 'transparent',
-                                    },
-                                ]}
-                            >
-                                { image!=null && <Image style={[styles.imageMap, {width:windowWidth, height:(windowWidth*route.params.dataImg.height)/route.params.dataImg.width, }]} source={{uri:image.uri}}/>}
-                                
-                            </View>
+                           
                             <View
                                 style={[
                                     styles.btnContainer,

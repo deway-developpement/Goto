@@ -3,9 +3,7 @@ import { StyleSheet } from 'react-native';
 const stylesheet = (colors) =>
     StyleSheet.create({
         imageMap:{
-            transform: [{rotate: '0deg'}],
             backgroundColor:'',
-            opacity:0.2
         },
         container: {
             flex: 1,

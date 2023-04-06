@@ -1,7 +1,7 @@
 import React from 'react';
-import MapView, { Marker, UrlTile } from 'react-native-maps';
+import MapView, { Marker, UrlTile, Overlay } from 'react-native-maps';
 
-export default function Map({ location }) {
+export default function Map({ location, image }) {
     return (
         <MapView
             initialRegion={{
@@ -35,6 +35,14 @@ export default function Map({ location }) {
                     longitude: parseFloat(location?.coords?.longitude),
                 }}
             />
+            {image && <Overlay
+                bounds={[
+                    [parseFloat(location?.coords?.latitude), parseFloat(location?.coords?.longitude)],
+                    [parseFloat(location?.coords?.latitude)+0.01, parseFloat(location?.coords?.longitude)+0.01]
+                ]}
+                image={{uri:image.uri}}
+                opacity={0.5}
+            />}
         </MapView>
     );
 }
