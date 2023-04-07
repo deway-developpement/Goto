@@ -5,16 +5,24 @@ import {
     PagingStrategies,
     QueryOptions,
     Relation,
+    UnPagedRelation,
 } from '@nestjs-query/query-graphql';
 import { ObjectType, ID, Field } from '@nestjs/graphql';
 import { UserDTO } from '../../users/interfaces/user.dto';
 import { Difficulty } from './difficulty.dto';
 import { TagDTO } from '../../tags/interfaces/tag.dto';
+import { PhotoDTO } from '../../photos/interfaces/photo.dto';
 
 @ObjectType('Hike')
 @QueryOptions({ pagingStrategy: PagingStrategies.NONE })
 @Relation('owner', () => UserDTO, { disableRemove: true, disableUpdate: true })
 @FilterableUnPagedRelation('tags', () => TagDTO, {
+    nullable: true,
+    disableRemove: true,
+    disableUpdate: true,
+    enableAggregate: false,
+})
+@UnPagedRelation('photos', () => PhotoDTO, {
     nullable: true,
     disableRemove: true,
     disableUpdate: true,

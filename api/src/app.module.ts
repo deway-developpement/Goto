@@ -16,6 +16,7 @@ import { DirectiveLocation, GraphQLDirective, GraphQLString } from 'graphql';
 import { LoggerMiddleware } from './logger/logger.middleware';
 import { HikeModule } from './hike/hikes.module';
 import { TagModule } from './tags/tags.module';
+import { PhotoModule } from './photos/photos.module';
 
 const armor = new ApolloArmor();
 const protection = armor.protect();
@@ -88,6 +89,7 @@ console.log = function (...args) {
         AuthModule,
         HikeModule,
         TagModule,
+        PhotoModule,
     ],
     controllers: [AppController],
     providers: [AppService],

@@ -1,6 +1,6 @@
 import { CRUDResolver } from '@nestjs-query/query-graphql';
 import { Inject, UseGuards } from '@nestjs/common';
-import { Mutation, Resolver, Args, ResolveField, Parent } from '@nestjs/graphql';
+import { Mutation, Resolver, Args } from '@nestjs/graphql';
 import { HikeService } from './hike.service';
 import { CurrentUser, GqlAuthGuard } from '../auth/graphql-auth.guard';
 import { HikeDTO } from './interfaces/hike.dto';
@@ -56,15 +56,10 @@ export class HikeResolver extends CRUDResolver(HikeDTO, {
     @Mutation(() => HikeDTO)
     async removeHike(@Args('id') id: string, @CurrentUser() user: UserDTO): Promise<HikeDTO> {
         const hike = await this.service.findOne(id);
-        if (hike.owner !== user || user.credidential < 2) {
+        if (hike.owner !== user && user.credidential < 2) {
+            console.log(hike.owner, user);
             throw new UnauthorizedError();
         }
         return this.service.remove(id);
-    }
-
-    @ResolveField(() => [String])
-    async photos(@Parent() hike: HikeDTO): Promise<string[]> {
-        //return this.service.getPhotos(hike);
-        return [];
     }
 }

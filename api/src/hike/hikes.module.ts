@@ -10,7 +10,7 @@ import { TagService } from '../tags/tag.service';
 import { TagEntity } from '../tags/interfaces/tag.entity';
 
 @Module({
-    providers: [HikeResolver],
+    providers: [HikeResolver, HikeService],
     imports: [
         NestjsQueryGraphQLModule.forFeature({
             imports: [
@@ -22,5 +22,6 @@ import { TagEntity } from '../tags/interfaces/tag.entity';
             dtos: [{ DTOClass: HikeDTO, CreateDTOClass: HikeDTO, UpdateDTOClass: HikeDTO }],
         }),
     ],
+    exports: [HikeService],
 })
 export class HikeModule {}

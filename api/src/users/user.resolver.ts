@@ -38,7 +38,7 @@ export class UserResolver extends CRUDResolver(UserDTO, {
 
     @Query(() => Boolean)
     async exist(@Args('email', { type: () => String }) _email: string): Promise<boolean> {
-        return this.usersService.exists(_email);
+        return this.usersService.findByEmail(_email) !== undefined;
     }
 
     @UseGuards(GqlAuthGuard)

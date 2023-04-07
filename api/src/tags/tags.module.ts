@@ -8,7 +8,7 @@ import { TagDTO } from './interfaces/tag.dto';
 import { TagEntity } from './interfaces/tag.entity';
 
 @Module({
-    providers: [TagResolver],
+    providers: [TagResolver, TagService],
     imports: [
         NestjsQueryGraphQLModule.forFeature({
             imports: [NestjsQueryTypeOrmModule.forFeature([TagEntity])],
@@ -17,5 +17,6 @@ import { TagEntity } from './interfaces/tag.entity';
             dtos: [{ DTOClass: TagDTO, CreateDTOClass: TagDTO, UpdateDTOClass: TagDTO }],
         }),
     ],
+    exports: [TagService],
 })
 export class TagModule {}

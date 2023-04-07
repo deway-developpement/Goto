@@ -1,4 +1,13 @@
-import { Column, Entity, PrimaryGeneratedColumn, Unique, ManyToMany, JoinTable } from 'typeorm';
+import {
+    Column,
+    Entity,
+    PrimaryGeneratedColumn,
+    Unique,
+    ManyToMany,
+    JoinTable,
+    OneToOne,
+} from 'typeorm';
+import { PhotoEntity } from '../../photos/interfaces/photo.entity';
 
 @Entity('users')
 @Unique(['pseudo', 'publicKey'])
@@ -25,6 +34,9 @@ export class UserEntity {
     @ManyToMany(() => UserEntity, (user) => user.friends)
     @JoinTable()
     friends?: UserEntity[];
+
+    @OneToOne(() => PhotoEntity, (photo) => photo.user, { cascade: ['remove'] })
+    avatar?: PhotoEntity;
 
     @Column({ nullable: true })
     readonly refresh_token?: string;

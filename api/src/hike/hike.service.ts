@@ -28,7 +28,7 @@ export class HikeService extends TypeOrmQueryService<HikeEntity> {
     });
 
     async findOne(id: string): Promise<HikeEntity> {
-        return await this.repo.findOne({ where: { id } });
+        return await this.repo.findOne({ where: { id }, relations: ['tags', 'photos'] });
     }
 
     async create(hike: HikeInput, user: UserEntity): Promise<HikeEntity> {
@@ -83,8 +83,10 @@ export class HikeService extends TypeOrmQueryService<HikeEntity> {
     async addTag(hikeId: string, tagId: string): Promise<HikeEntity> {
         const hike = await this.repo.findOne({ where: { id: hikeId } });
         const tag = await this.tagService.findOne(tagId);
-        if (hike.tags.includes(tag)) {
+        if (hike.tags?.includes(tag)) {
             throw new HttpException('Tag already exists', HttpStatus.BAD_REQUEST);
+        } else if (!hike.tags) {
+            hike.tags = [];
         }
         hike.tags.push(tag);
         return await this.repo.save(hike);
@@ -101,6 +103,6 @@ export class HikeService extends TypeOrmQueryService<HikeEntity> {
 
     async remove(id: string): Promise<HikeEntity> {
         const hike = await this.repo.findOne({ where: { id } });
-        return await this.repo.remove(hike);
+        return await this.repo.remove(hike, {});
     }
 }
