@@ -140,6 +140,7 @@ function LoginComponent({ navigation }) {
                         <Text style={styles.textLoginMiddle}>Adress email</Text>
                         <TextInput
                             textContentType="username"
+                            keyboardType="email-address"
                             autoCorrect={false}
                             autoCapitalize="none"
                             placeholder="email"
@@ -180,7 +181,7 @@ function LoginComponent({ navigation }) {
                                     : { display: 'none' }
                             }
                             secureTextEntry={true}
-                            autoFocus={true}
+                            autoFocus={false}
                             onSubmitEditing={() => login()}
                             onChangeText={(text) => setPassword(text)}
                             value={password}

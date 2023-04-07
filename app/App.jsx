@@ -1,6 +1,6 @@
-import HomeScreen from './src/components/home/home';
-import LoginScreen from './src/components/login/login';
-import RegisterScreen from './src/components/register/register';
+import HomeScreen from './src/components/Home/home';
+import LoginScreen from './src/components/Login/login';
+import RegisterScreen from './src/components/Register/register';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { AuthProvider } from './src/providers/AuthContext';
@@ -15,7 +15,6 @@ import { StatusBar } from 'react-native';
 const Stack = createNativeStackNavigator();
 
 export default function App() {
-
     const theme = useColorScheme();
 
     // pass status bar color to black
@@ -27,7 +26,9 @@ export default function App() {
         <AuthProvider>
             <AxiosProvider>
                 <AuthApolloProvider>
-                    <NavigationContainer theme={theme !== 'dark' ? Classic : Dark}>
+                    <NavigationContainer
+                        theme={theme !== 'dark' ? Classic : Dark}
+                    >
                         <Stack.Navigator initialRouteName="Login">
                             <Stack.Screen
                                 name="Login"
@@ -37,12 +38,18 @@ export default function App() {
                             <Stack.Screen
                                 name="Home"
                                 component={HomeScreen}
-                                options={{ headerShown: false, gestureEnabled: false }}
+                                options={{
+                                    headerShown: false,
+                                    gestureEnabled: false,
+                                }}
                             />
                             <Stack.Screen
                                 name="Register"
                                 component={RegisterScreen}
-                                options={{ headerShown: false, gestureEnabled: false }}
+                                options={{
+                                    headerShown: false,
+                                    gestureEnabled: false,
+                                }}
                             />
                         </Stack.Navigator>
                     </NavigationContainer>

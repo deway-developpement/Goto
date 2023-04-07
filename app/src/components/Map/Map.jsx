@@ -1,8 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View, ActivityIndicator } from 'react-native';
-import MapView, { Marker, Polyline, UrlTile, Overlay } from 'react-native-maps';
-import * as Location from 'expo-location';
-import stylesheet from './style';
+import MapView, { Marker, Polyline, Overlay } from 'react-native-maps';
 import { useTheme } from '@react-navigation/native';
 import CONTENTGPX from './gpx';
 import { DOMParser } from 'xmldom';
@@ -45,7 +42,7 @@ export default function Map({ location, image }) {
         setPassedPoints(gpxPathpassedPoints);
         setLeftPoints(gpxPathLeft);
     }
-    
+
     return (
         <MapView
             initialRegion={{
@@ -93,76 +90,22 @@ export default function Map({ location, image }) {
                     advance();
                 }}
             />
-            {image && <Overlay
-                bounds={[
-                    [parseFloat(location?.coords?.latitude), parseFloat(location?.coords?.longitude)],
-                    [parseFloat(location?.coords?.latitude)+0.01, parseFloat(location?.coords?.longitude)+0.01]
-                ]}
-                image={{uri:image.uri}}
-                opacity={0.5}
-            />}
+            {image && (
+                <Overlay
+                    bounds={[
+                        [
+                            parseFloat(location?.coords?.latitude),
+                            parseFloat(location?.coords?.longitude),
+                        ],
+                        [
+                            parseFloat(location?.coords?.latitude) + 0.01,
+                            parseFloat(location?.coords?.longitude) + 0.01,
+                        ],
+                    ]}
+                    image={{ uri: image.uri }}
+                    opacity={0.5}
+                />
+            )}
         </MapView>
-    );
-}
-
-export default function MapScreen() {
-    const { colors } = useTheme();
-    const styles = stylesheet(colors);
-
-    const [permission, request] = Location.useForegroundPermissions();
-    const [location, setLocation] = useState(null);
-    const [errorMsg, setErrorMsg] = useState(null);
-
-    useEffect(() => {
-        if (permission === null) {
-            request();
-        } else if (
-            permission.granted === false &&
-            permission.canAskAgain === false
-        ) {
-            setErrorMsg('Permission to access location was denied');
-        } else if (
-            permission.granted === false &&
-            permission.canAskAgain === true
-        ) {
-            request();
-        } else if (permission.granted === true) {
-            Location.getLastKnownPositionAsync({}).then((response) => {
-                setLocation(response);
-            });
-            Location.watchPositionAsync({}, (response) => {
-                setLocation(response);
-            });
-        }
-    }, [permission]);
-
-    useEffect(() => {
-        console.log(location?.coords?.latitude);
-    }, [location]);
-
-    return (
-        <View style={styles.container}>
-            {(() => {
-                if (location == null) {
-                    if (errorMsg != null) {
-                        return (
-                            <Text style={{ alignSelf: 'center' }}>
-                                {errorMsg}
-                            </Text>
-                        );
-                    } else {
-                        return (
-                            <ActivityIndicator
-                                size="large"
-                                color="#0000ff"
-                                style={{ flex: 3, width: '100%' }}
-                            />
-                        );
-                    }
-                } else {
-                    return <Map location={location} />;
-                }
-            })()}
-        </View>
     );
 }
