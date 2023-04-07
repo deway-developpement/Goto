@@ -26,6 +26,7 @@
     "axios-auth-refresh": "^3.3.6",
     "expo": "^47.0.13",
     "expo-blur": "~12.0.1",
+    "expo-camera": "~13.1.0",
     "expo-location": "~15.0.1",
     "expo-secure-store": "~12.0.0",
     "expo-status-bar": "~1.4.2",
@@ -48,7 +49,8 @@
     "react-native-web": "0.18.12",
     "typings": "^2.1.1",
     "expo-camera": "~13.1.0",
-    "expo-image-manipulator": "~11.0.0"
+    "expo-image-manipulator": "~11.0.0",
+    "xmldom": "^0.6.0"
   },
   "devDependencies": {
     "@types/react": "^18.0.28",

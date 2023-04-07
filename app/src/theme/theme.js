@@ -12,7 +12,11 @@ export const Classic = {
         secondary: '#80C8D2',
         accent: '#D1406C',
         border: '#A49DAA',
-        accentuated: '#1D343E'
+        accentuated: '#1D343E',
+        lineprimary: '#00B0FF',
+        borderlineprimary: '#1c68d1',
+        linesecondary: '#bbbdbf',
+        borderlinesecondary: '#8c8f91',
     },
 };
 
@@ -27,6 +31,10 @@ export const Dark = {
         secondary: '#80C8D2',
         accent: '#D1406C',
         border: '#FDFEFE',
-        accentuated: '#1D343E'
+        accentuated: '#1D343E',
+        lineprimary: '#00B0FF',
+        borderlineprimary: '#1c68d1',
+        linesecondary: '#bbbdbf',
+        borderlinesecondary: '#8c8f91',
     },
 };
