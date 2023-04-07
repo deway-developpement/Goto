@@ -1,12 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import stylesheet from './style';
 import { View } from 'react-native';
 import { Button } from 'react-native-elements';
-import { useIsFocused, useTheme } from '@react-navigation/native';
+import { useIsFocused, useTheme, useNavigation  } from '@react-navigation/native';
 import { Camera, CameraType } from 'expo-camera';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function CameraScreen({ setIsCamera }) {
+    const navigation = useNavigation();
     const { colors } = useTheme();
     const styles = stylesheet(colors);
 
@@ -15,6 +16,9 @@ export default function CameraScreen({ setIsCamera }) {
 
     const [type, setType] = useState(CameraType.back);
     const [permission, requestPermission] = Camera.useCameraPermissions();
+
+    const cameraRef = useRef();
+
     //TODO: make the same as for map permission
 
     const isFocused = useIsFocused();
@@ -43,39 +47,63 @@ export default function CameraScreen({ setIsCamera }) {
         return <View />;
     }
 
+    const takePicture = async () => {
+        if (cameraRef.current) {
+            //const options = { quality: 0.5, base64: true, skipProcessing: true };
+            const data = await cameraRef.current.takePictureAsync({base64:true});
+            const source = data;
+            if (source) {
+                setIsCamera(false);
+                navigation.navigate('Map', {dataImg:data});
+                
+            }
+        }
+    };
+
     return (
         <View style={{ flex: 1, width: '100%', height: '100%' }}>
             <Camera
-                style={{ width: '100%', height: '100%', flex: 1 }}
+                ref={cameraRef}
+                style={{
+                    flex:1,
+                    overflow: 'hidden',
+                    alignSelf:'center'
+                }}
                 type={type}
+                aspectRatio={3/4}
+            ></Camera>
+            <View
+                style={[
+                    styles.btnContainer,
+                    {
+                        backgroundColor: '',
+                        position: 'absolute',
+                        top: 0 + insets.top,
+                        right: 10,
+                    },
+                ]}
             >
-                <View
-                    style={[
-                        styles.btnContainer,
-                        {
-                            backgroundColor: '',
-                            position: 'absolute',
-                            top: 0 + insets.top,
-                            right: 10,
-                        },
-                    ]}
-                >
-                    <Button
-                        buttonStyle={[styles.btn, { width: 200 }]}
-                        titleStyle={styles.btnText}
-                        title={'Close your camera'}
-                        onPress={() => {
-                            setIsCamera(false);
-                        }}
-                    />
-                    <Button
-                        buttonStyle={[styles.btn, { width: 200 }]}
-                        titleStyle={styles.btnText}
-                        title={'Toggle'}
-                        onPress={() => toggleCameraType()}
-                    />
-                </View>
-            </Camera>
+                <Button
+                    buttonStyle={[styles.btn, { width: 200 }]}
+                    titleStyle={styles.btnText}
+                    title={'Close your camera'}
+                    onPress={() => {
+                        setIsCamera(false);
+                    }}
+                />
+                <Button
+                    buttonStyle={[styles.btn, { width: 200 }]}
+                    titleStyle={styles.btnText}
+                    title={'Toggle'}
+                    onPress={() => toggleCameraType()}
+                />
+                <Button
+                    buttonStyle={[styles.btn, { width: 200 }]}
+                    titleStyle={styles.btnText}
+                    title={'Take a photo'}
+                    onPress={() => takePicture()}
+                />
+            </View>
         </View>
     );
 }

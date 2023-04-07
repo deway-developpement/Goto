@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Text, View, ActivityIndicator } from 'react-native';
-import MapView, { Marker, Polyline } from 'react-native-maps';
+import MapView, { Marker, Polyline, UrlTile, Overlay } from 'react-native-maps';
 import * as Location from 'expo-location';
 import stylesheet from './style';
 import { useTheme } from '@react-navigation/native';
 import CONTENTGPX from './gpx';
 import { DOMParser } from 'xmldom';
 
-function Map({ location }) {
+export default function Map({ location, image }) {
     const { colors } = useTheme();
     let [leftPoints, setLeftPoints] = useState([]);
     let [passedPoints, setPassedPoints] = useState([]);
@@ -45,7 +45,7 @@ function Map({ location }) {
         setPassedPoints(gpxPathpassedPoints);
         setLeftPoints(gpxPathLeft);
     }
-
+    
     return (
         <MapView
             initialRegion={{
@@ -93,6 +93,14 @@ function Map({ location }) {
                     advance();
                 }}
             />
+            {image && <Overlay
+                bounds={[
+                    [parseFloat(location?.coords?.latitude), parseFloat(location?.coords?.longitude)],
+                    [parseFloat(location?.coords?.latitude)+0.01, parseFloat(location?.coords?.longitude)+0.01]
+                ]}
+                image={{uri:image.uri}}
+                opacity={0.5}
+            />}
         </MapView>
     );
 }

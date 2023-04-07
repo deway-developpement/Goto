@@ -2,6 +2,9 @@ import { StyleSheet } from 'react-native';
 
 const stylesheet = (colors) =>
     StyleSheet.create({
+        imageMap:{
+            backgroundColor:'',
+        },
         container: {
             flex: 1,
             backgroundColor: colors.background,
