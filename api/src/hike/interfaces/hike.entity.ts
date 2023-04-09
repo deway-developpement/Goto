@@ -12,6 +12,7 @@ import { Difficulty } from './difficulty.dto';
 import { TagEntity } from '../../tag/interfaces/tag.entity';
 import { PhotoEntity } from '../../photo/interfaces/photo.entity';
 import { PointOfInterestEntity } from '../../PointOfInterest/interfaces/poi.entity';
+import { ReviewEntity } from '../../review/interfaces/review.entity';
 
 @Entity('hike')
 @Unique(['name'])
@@ -54,6 +55,9 @@ export class HikeEntity {
 
     @ManyToMany(() => PointOfInterestEntity, (poi) => poi.hikes)
     pointsOfInterest: PointOfInterestEntity[];
+
+    @OneToMany(() => ReviewEntity, (review) => review.hike, { cascade: ['remove'] })
+    reviews: ReviewEntity[];
 
     @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
     createdAt: Date;

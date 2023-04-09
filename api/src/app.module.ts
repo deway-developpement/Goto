@@ -19,6 +19,7 @@ import { TagModule } from './tag/tag.module';
 import { PhotoModule } from './photo/photo.module';
 import { PointOfInterestModule } from './PointOfInterest/poi.module';
 import { PerformanceModule } from './performance/performance.module';
+import { ReviewModule } from './review/review.module';
 
 const armor = new ApolloArmor();
 const protection = armor.protect();
@@ -94,6 +95,7 @@ console.log = function (...args) {
         PhotoModule,
         PointOfInterestModule,
         PerformanceModule,
+        ReviewModule,
     ],
     controllers: [AppController],
     providers: [AppService],

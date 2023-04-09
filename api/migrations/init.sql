@@ -313,3 +313,49 @@ VALUES (
             LIMIT 1
         )
     );
+
+# Add a review to a hike
+INSERT INTO
+    review (
+        id,
+        rating,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(), 5, now(), (
+            SELECT id
+            FROM hike
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'admin'
+            LIMIT 1
+        )
+    );
+
+# Add a review to a hike
+INSERT INTO
+    review (
+        id,
+        rating,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(), 4, now(), (
+            SELECT id
+            FROM hike
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'user'
+            LIMIT 1
+        )
+    );

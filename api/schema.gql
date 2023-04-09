@@ -37,6 +37,7 @@ input HikeFilter {
   difficulty: DifficultyFilterComparison
   duration: NumberFieldComparison
   createdAt: DateFieldComparison
+  reviews: HikeFilterReviewFilter
   pointsOfInterest: HikeFilterpointOfInterestFilter
   tags: HikeFiltertagFilter
 }
@@ -138,6 +139,14 @@ input DateFieldComparisonBetween {
   upper: DateTime!
 }
 
+input HikeFilterReviewFilter {
+  and: [HikeFilterReviewFilter!]
+  or: [HikeFilterReviewFilter!]
+  id: IDFilterComparison
+  rating: NumberFieldComparison
+  createdAt: DateFieldComparison
+}
+
 input HikeFilterpointOfInterestFilter {
   and: [HikeFilterpointOfInterestFilter!]
   or: [HikeFilterpointOfInterestFilter!]
@@ -184,6 +193,14 @@ enum SortNulls {
   NULLS_LAST
 }
 
+type Review {
+  id: ID!
+  rating: Float!
+  createdAt: DateTime!
+  user: User!
+  hike: Hike!
+}
+
 type Hike {
   id: ID!
   name: String!
@@ -194,6 +211,10 @@ type Hike {
   duration: Float
   track: String!
   createdAt: DateTime!
+  reviewsAggregate(
+    """Filter to find records to aggregate on"""
+    filter: ReviewAggregateFilter
+  ): [HikeReviewsAggregateResponse!]!
   owner: User!
   tags(
     """Specify to filter the records returned."""
@@ -216,6 +237,21 @@ type Hike {
     """Specify to sort results."""
     sorting: [pointOfInterestSort!] = []
   ): [pointOfInterest!]
+  reviews(
+    """Specify to filter the records returned."""
+    filter: ReviewFilter = {}
+
+    """Specify to sort results."""
+    sorting: [ReviewSort!] = []
+  ): [Review!]
+}
+
+input ReviewAggregateFilter {
+  and: [ReviewAggregateFilter!]
+  or: [ReviewAggregateFilter!]
+  id: IDFilterComparison
+  rating: NumberFieldComparison
+  createdAt: DateFieldComparison
 }
 
 input tagFilter {
@@ -292,6 +328,52 @@ enum pointOfInterestSortFields {
   name
   latitude
   longitude
+  createdAt
+}
+
+input ReviewFilter {
+  and: [ReviewFilter!]
+  or: [ReviewFilter!]
+  id: IDFilterComparison
+  rating: NumberFieldComparison
+  createdAt: DateFieldComparison
+  hike: ReviewFilterHikeFilter
+  user: ReviewFilterUserFilter
+}
+
+input ReviewFilterHikeFilter {
+  and: [ReviewFilterHikeFilter!]
+  or: [ReviewFilterHikeFilter!]
+  id: IDFilterComparison
+  name: StringFieldComparison
+  distance: NumberFieldComparison
+  elevation: NumberFieldComparison
+  difficulty: DifficultyFilterComparison
+  duration: NumberFieldComparison
+  createdAt: DateFieldComparison
+}
+
+input ReviewFilterUserFilter {
+  and: [ReviewFilterUserFilter!]
+  or: [ReviewFilterUserFilter!]
+  id: IDFilterComparison
+  pseudo: StringFieldComparison
+  email: StringFieldComparison
+  password: StringFieldComparison
+  publicKey: StringFieldComparison
+  credidential: NumberFieldComparison
+  createdAt: DateFieldComparison
+}
+
+input ReviewSort {
+  field: ReviewSortFields!
+  direction: SortDirection!
+  nulls: SortNulls
+}
+
+enum ReviewSortFields {
+  id
+  rating
   createdAt
 }
 
@@ -552,6 +634,47 @@ type HikeAggregateResponse {
   max: HikeMaxAggregate
 }
 
+type HikeReviewsAggregateGroupBy {
+  id: ID
+  rating: Float
+  createdAt: DateTime
+}
+
+type HikeReviewsCountAggregate {
+  id: Int
+  rating: Int
+  createdAt: Int
+}
+
+type HikeReviewsSumAggregate {
+  rating: Float
+}
+
+type HikeReviewsAvgAggregate {
+  rating: Float
+}
+
+type HikeReviewsMinAggregate {
+  id: ID
+  rating: Float
+  createdAt: DateTime
+}
+
+type HikeReviewsMaxAggregate {
+  id: ID
+  rating: Float
+  createdAt: DateTime
+}
+
+type HikeReviewsAggregateResponse {
+  groupBy: HikeReviewsAggregateGroupBy
+  count: HikeReviewsCountAggregate
+  sum: HikeReviewsSumAggregate
+  avg: HikeReviewsAvgAggregate
+  min: HikeReviewsMinAggregate
+  max: HikeReviewsMaxAggregate
+}
+
 type tagAggregateGroupBy {
   id: ID
   name: String
@@ -687,6 +810,47 @@ type PerformanceAggregateResponse {
   max: PerformanceMaxAggregate
 }
 
+type ReviewAggregateGroupBy {
+  id: ID
+  rating: Float
+  createdAt: DateTime
+}
+
+type ReviewCountAggregate {
+  id: Int
+  rating: Int
+  createdAt: Int
+}
+
+type ReviewSumAggregate {
+  rating: Float
+}
+
+type ReviewAvgAggregate {
+  rating: Float
+}
+
+type ReviewMinAggregate {
+  id: ID
+  rating: Float
+  createdAt: DateTime
+}
+
+type ReviewMaxAggregate {
+  id: ID
+  rating: Float
+  createdAt: DateTime
+}
+
+type ReviewAggregateResponse {
+  groupBy: ReviewAggregateGroupBy
+  count: ReviewCountAggregate
+  sum: ReviewSumAggregate
+  avg: ReviewAvgAggregate
+  min: ReviewMinAggregate
+  max: ReviewMaxAggregate
+}
+
 type Query {
   userAggregate(
     """Filter to find records to aggregate on"""
@@ -757,6 +921,21 @@ type Query {
     """Specify to sort results."""
     sorting: [PerformanceSort!] = []
   ): [Performance!]!
+  reviewAggregate(
+    """Filter to find records to aggregate on"""
+    filter: ReviewAggregateFilter
+  ): [ReviewAggregateResponse!]!
+  review(
+    """The id of the record to find."""
+    id: ID!
+  ): Review
+  reviews(
+    """Specify to filter the records returned."""
+    filter: ReviewFilter = {}
+
+    """Specify to sort results."""
+    sorting: [ReviewSort!] = []
+  ): [Review!]!
 }
 
 input HikeAggregateFilter {
@@ -851,6 +1030,9 @@ type Mutation {
   deletePointOfInterest(id: String!): pointOfInterest!
   createPerformance(input: PerformanceInput!): Performance!
   deletePerformance(id: String!): Performance!
+  addReview(input: ReviewInput!): Review!
+  updateReview(id: String!, input: ReviewInput!): Review!
+  deleteReview(id: String!): Review!
 }
 
 input UserInput {
@@ -918,5 +1100,10 @@ input PerformanceInput {
   distance: Float!
   elevation: Float!
   file: Upload!
+  hikeId: String!
+}
+
+input ReviewInput {
+  rating: Float!
   hikeId: String!
 }

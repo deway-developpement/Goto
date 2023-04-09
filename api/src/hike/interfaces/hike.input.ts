@@ -7,7 +7,7 @@ import { FileUpload } from '../../file/interfaces/fileupload.type';
 @InputType()
 export class HikeInput {
     @Field(() => String)
-    @Matches(RegExp(/^[\S\W]{2,10}$/), { message: "Name don't follow the rules" })
+    @Matches(RegExp(/^[\s\w:'?!$&%\-.]{2,25}$/), { message: "Name don't follow the rules" })
     name: string;
 
     @Field(() => Number)
