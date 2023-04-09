@@ -2,7 +2,7 @@ import { Field, InputType } from '@nestjs/graphql';
 import { IsNumber, Matches } from 'class-validator';
 import * as GraphQLUpload from 'graphql-upload/GraphQLUpload.js';
 import { Difficulty } from './difficulty.dto';
-import { FileUpload } from '../../files/interfaces/fileupload.type';
+import { FileUpload } from '../../file/interfaces/fileupload.type';
 
 @InputType()
 export class HikeInput {

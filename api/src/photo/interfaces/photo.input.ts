@@ -1,7 +1,7 @@
 import { Field, InputType, registerEnumType } from '@nestjs/graphql';
 import { IsString } from 'class-validator';
 import * as GraphQLUpload from 'graphql-upload/GraphQLUpload.js';
-import { FileUpload } from '../../files/interfaces/fileupload.type';
+import { FileUpload } from '../../file/interfaces/fileupload.type';
 
 export enum ObjType {
     HIKE,

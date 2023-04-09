@@ -8,7 +8,7 @@ import { PointOfInterestDTO } from './interfaces/poi.dto';
 import * as _ from '@nestjs-query/query-graphql/node_modules/@nestjs-query/core';
 import { PointOfInterestEntity } from './interfaces/poi.entity';
 import { PointOfInterestInput } from './interfaces/poi.input';
-import { UserDTO } from '../users/interfaces/user.dto';
+import { UserDTO } from '../user/interfaces/user.dto';
 import { UnauthorizedError } from 'type-graphql';
 
 const guards = [GqlAuthGuard];

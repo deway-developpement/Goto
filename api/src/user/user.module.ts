@@ -19,4 +19,4 @@ import { UserDTO } from './interfaces/user.dto';
     ],
     exports: [UserService],
 })
-export class UsersModule {}
+export class UserModule {}

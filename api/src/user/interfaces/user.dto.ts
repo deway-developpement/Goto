@@ -8,7 +8,7 @@ import {
 } from '@nestjs-query/query-graphql';
 import { ObjectType, ID } from '@nestjs/graphql';
 import { credidentialMiddleware, idMiddleware, pwdMiddleware } from '../../auth/auth.middleware';
-import { PhotoDTO } from '../../photos/interfaces/photo.dto';
+import { PhotoDTO } from '../../photo/interfaces/photo.dto';
 
 @ObjectType('User')
 @QueryOptions({ pagingStrategy: PagingStrategies.NONE })

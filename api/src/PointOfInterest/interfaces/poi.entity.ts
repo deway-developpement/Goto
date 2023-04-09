@@ -8,7 +8,7 @@ import {
     OneToOne,
 } from 'typeorm';
 import { HikeEntity } from '../../hike/interfaces/hike.entity';
-import { PhotoEntity } from '../../photos/interfaces/photo.entity';
+import { PhotoEntity } from '../../photo/interfaces/photo.entity';
 
 @Entity('pointOfInterest')
 @Unique(['name'])

@@ -247,3 +247,69 @@ VALUES ( (
             LIMIT 1
         )
     );
+
+# Add a performance to a hike
+INSERT INTO
+    performance (
+        id,
+        date,
+        distance,
+        duration,
+        elevation,
+        track,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(),
+        now(),
+        40,
+        11,
+        500,
+        'track1.gpx',
+        now(), (
+            SELECT id
+            FROM hike
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'admin'
+            LIMIT 1
+        )
+    );
+
+# Add a performance to a hike
+INSERT INTO
+    performance (
+        id,
+        date,
+        distance,
+        duration,
+        elevation,
+        track,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(),
+        now(),
+        45,
+        13.5,
+        600,
+        'track2.gpx',
+        now(), (
+            SELECT id
+            FROM hike
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'user'
+            LIMIT 1
+        )
+    );

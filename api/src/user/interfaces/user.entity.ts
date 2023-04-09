@@ -7,7 +7,7 @@ import {
     JoinTable,
     OneToOne,
 } from 'typeorm';
-import { PhotoEntity } from '../../photos/interfaces/photo.entity';
+import { PhotoEntity } from '../../photo/interfaces/photo.entity';
 
 @Entity('user')
 @Unique(['pseudo', 'publicKey'])

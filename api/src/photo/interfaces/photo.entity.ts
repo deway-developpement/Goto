@@ -8,9 +8,9 @@ import {
     OneToOne,
 } from 'typeorm';
 import { HikeEntity } from '../../hike/interfaces/hike.entity';
-import { UserEntity } from '../../users/interfaces/user.entity';
-import { TagEntity } from '../../tags/interfaces/tag.entity';
-import { PointOfInterestEntity } from '../../PointOfInterests/interfaces/poi.entity';
+import { UserEntity } from '../../user/interfaces/user.entity';
+import { TagEntity } from '../../tag/interfaces/tag.entity';
+import { PointOfInterestEntity } from '../../PointOfInterest/interfaces/poi.entity';
 
 @Entity('photo')
 @Unique(['filename'])

@@ -8,7 +8,7 @@ import { TagDTO } from './interfaces/tag.dto';
 import * as _ from '@nestjs-query/query-graphql/node_modules/@nestjs-query/core';
 import { TagEntity } from './interfaces/tag.entity';
 import { TagInput } from './interfaces/tag.input';
-import { UserDTO } from '../users/interfaces/user.dto';
+import { UserDTO } from '../user/interfaces/user.dto';
 import { UnauthorizedError } from 'type-graphql';
 
 const guards = [GqlAuthGuard];

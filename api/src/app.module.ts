@@ -3,7 +3,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UsersModule } from './users/users.module';
+import { UserModule } from './user/user.module';
 import { ApolloDriver } from '@nestjs/apollo';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
@@ -14,10 +14,11 @@ import { ApolloArmor } from '@escape.tech/graphql-armor';
 import { regexDirectiveTransformer } from './directives/constraints.graphql';
 import { DirectiveLocation, GraphQLDirective, GraphQLString } from 'graphql';
 import { LoggerMiddleware } from './logger/logger.middleware';
-import { HikeModule } from './hike/hikes.module';
-import { TagModule } from './tags/tags.module';
-import { PhotoModule } from './photos/photos.module';
-import { PointOfInterestModule } from './PointOfInterests/pois.module';
+import { HikeModule } from './hike/hike.module';
+import { TagModule } from './tag/tag.module';
+import { PhotoModule } from './photo/photo.module';
+import { PointOfInterestModule } from './PointOfInterest/poi.module';
+import { PerformanceModule } from './performance/performance.module';
 
 const armor = new ApolloArmor();
 const protection = armor.protect();
@@ -47,7 +48,7 @@ console.log = function (...args) {
         }),
         GraphQLModule.forRoot({
             driver: ApolloDriver,
-            imports: [AuthModule, UsersModule],
+            imports: [AuthModule, UserModule],
             autoSchemaFile: 'schema.gql',
             uploads: false,
             transformSchema: (schema) => regexDirectiveTransformer(schema, 'constraint'),
@@ -86,12 +87,13 @@ console.log = function (...args) {
             }),
             inject: [ConfigService],
         }),
-        UsersModule,
+        UserModule,
         AuthModule,
         HikeModule,
         TagModule,
         PhotoModule,
         PointOfInterestModule,
+        PerformanceModule,
     ],
     controllers: [AppController],
     providers: [AppService],

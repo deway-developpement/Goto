@@ -7,11 +7,11 @@ import {
     ManyToMany,
     OneToMany,
 } from 'typeorm';
-import { UserEntity } from '../../users/interfaces/user.entity';
+import { UserEntity } from '../../user/interfaces/user.entity';
 import { Difficulty } from './difficulty.dto';
-import { TagEntity } from '../../tags/interfaces/tag.entity';
-import { PhotoEntity } from '../../photos/interfaces/photo.entity';
-import { PointOfInterestEntity } from '../../PointOfInterests/interfaces/poi.entity';
+import { TagEntity } from '../../tag/interfaces/tag.entity';
+import { PhotoEntity } from '../../photo/interfaces/photo.entity';
+import { PointOfInterestEntity } from '../../PointOfInterest/interfaces/poi.entity';
 
 @Entity('hike')
 @Unique(['name'])

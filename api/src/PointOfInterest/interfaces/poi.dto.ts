@@ -8,7 +8,7 @@ import {
 } from '@nestjs-query/query-graphql';
 import { ObjectType, ID, Field } from '@nestjs/graphql';
 import { HikeDTO } from '../../hike/interfaces/hike.dto';
-import { PhotoDTO } from '../../photos/interfaces/photo.dto';
+import { PhotoDTO } from '../../photo/interfaces/photo.dto';
 
 @ObjectType('pointOfInterest')
 @QueryOptions({ pagingStrategy: PagingStrategies.NONE })

@@ -6,9 +6,9 @@ import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { createWriteStream } from 'fs';
 import { join } from 'path';
 import { HikeService } from '../hike/hike.service';
-import { UserService } from '../users/user.service';
-import { TagService } from '../tags/tag.service';
-import { FilesService } from '../files/files.service';
+import { UserService } from '../user/user.service';
+import { TagService } from '../tag/tag.service';
+import { FilesService } from '../file/file.service';
 
 @Injectable()
 export class PhotoService {

@@ -6,7 +6,7 @@ import { PhotoDTO } from './interfaces/photo.dto';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import * as _ from '@nestjs-query/query-graphql/node_modules/@nestjs-query/core';
 import { PhotoInput } from './interfaces/photo.input';
-import { UserDTO } from '../users/interfaces/user.dto';
+import { UserDTO } from '../user/interfaces/user.dto';
 import { UnauthorizedError } from 'type-graphql';
 
 @Resolver(() => PhotoDTO)

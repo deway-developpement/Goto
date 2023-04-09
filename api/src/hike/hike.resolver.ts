@@ -7,7 +7,7 @@ import { HikeDTO } from './interfaces/hike.dto';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import * as _ from '@nestjs-query/query-graphql/node_modules/@nestjs-query/core';
 import { HikeInput } from './interfaces/hike.input';
-import { UserDTO } from '../users/interfaces/user.dto';
+import { UserDTO } from '../user/interfaces/user.dto';
 import { UnauthorizedError } from 'type-graphql';
 
 const guards = [GqlAuthGuard];
@@ -57,7 +57,6 @@ export class HikeResolver extends CRUDResolver(HikeDTO, {
     async deleteHike(@Args('id') id: string, @CurrentUser() user: UserDTO): Promise<HikeDTO> {
         const hike = await this.service.findById(id);
         if (hike.owner !== user && user.credidential < 2) {
-            console.log(hike.owner, user);
             throw new UnauthorizedError();
         }
         return this.service.deleteOne(id);

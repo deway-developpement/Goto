@@ -8,11 +8,11 @@ import {
     UnPagedRelation,
 } from '@nestjs-query/query-graphql';
 import { ObjectType, ID, Field } from '@nestjs/graphql';
-import { UserDTO } from '../../users/interfaces/user.dto';
+import { UserDTO } from '../../user/interfaces/user.dto';
 import { Difficulty } from './difficulty.dto';
-import { TagDTO } from '../../tags/interfaces/tag.dto';
-import { PhotoDTO } from '../../photos/interfaces/photo.dto';
-import { PointOfInterestDTO } from '../../PointOfInterests/interfaces/poi.dto';
+import { TagDTO } from '../../tag/interfaces/tag.dto';
+import { PhotoDTO } from '../../photo/interfaces/photo.dto';
+import { PointOfInterestDTO } from '../../PointOfInterest/interfaces/poi.dto';
 
 @ObjectType('Hike')
 @QueryOptions({ pagingStrategy: PagingStrategies.NONE })

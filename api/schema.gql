@@ -618,6 +618,75 @@ type pointOfInterestMaxAggregate {
   createdAt: DateTime
 }
 
+type Performance {
+  id: ID!
+  date: DateTime!
+  distance: Float!
+  elevation: Float!
+  duration: Float!
+  track: String!
+  createdAt: DateTime!
+  user: User!
+  hike: Hike!
+}
+
+type PerformanceAggregateGroupBy {
+  id: ID
+  date: DateTime
+  distance: Float
+  elevation: Float
+  duration: Float
+  createdAt: DateTime
+}
+
+type PerformanceCountAggregate {
+  id: Int
+  date: Int
+  distance: Int
+  elevation: Int
+  duration: Int
+  createdAt: Int
+}
+
+type PerformanceSumAggregate {
+  distance: Float
+  elevation: Float
+  duration: Float
+}
+
+type PerformanceAvgAggregate {
+  distance: Float
+  elevation: Float
+  duration: Float
+}
+
+type PerformanceMinAggregate {
+  id: ID
+  date: DateTime
+  distance: Float
+  elevation: Float
+  duration: Float
+  createdAt: DateTime
+}
+
+type PerformanceMaxAggregate {
+  id: ID
+  date: DateTime
+  distance: Float
+  elevation: Float
+  duration: Float
+  createdAt: DateTime
+}
+
+type PerformanceAggregateResponse {
+  groupBy: PerformanceAggregateGroupBy
+  count: PerformanceCountAggregate
+  sum: PerformanceSumAggregate
+  avg: PerformanceAvgAggregate
+  min: PerformanceMinAggregate
+  max: PerformanceMaxAggregate
+}
+
 type Query {
   userAggregate(
     """Filter to find records to aggregate on"""
@@ -673,6 +742,21 @@ type Query {
     """Specify to sort results."""
     sorting: [pointOfInterestSort!] = []
   ): [pointOfInterest!]!
+  performanceAggregate(
+    """Filter to find records to aggregate on"""
+    filter: PerformanceAggregateFilter
+  ): [PerformanceAggregateResponse!]!
+  performance(
+    """The id of the record to find."""
+    id: ID!
+  ): Performance
+  performances(
+    """Specify to filter the records returned."""
+    filter: PerformanceFilter = {}
+
+    """Specify to sort results."""
+    sorting: [PerformanceSort!] = []
+  ): [Performance!]!
 }
 
 input HikeAggregateFilter {
@@ -685,6 +769,69 @@ input HikeAggregateFilter {
   difficulty: DifficultyFilterComparison
   duration: NumberFieldComparison
   createdAt: DateFieldComparison
+}
+
+input PerformanceAggregateFilter {
+  and: [PerformanceAggregateFilter!]
+  or: [PerformanceAggregateFilter!]
+  id: IDFilterComparison
+  date: DateFieldComparison
+  distance: NumberFieldComparison
+  elevation: NumberFieldComparison
+  duration: NumberFieldComparison
+  createdAt: DateFieldComparison
+}
+
+input PerformanceFilter {
+  and: [PerformanceFilter!]
+  or: [PerformanceFilter!]
+  id: IDFilterComparison
+  date: DateFieldComparison
+  distance: NumberFieldComparison
+  elevation: NumberFieldComparison
+  duration: NumberFieldComparison
+  createdAt: DateFieldComparison
+  hike: PerformanceFilterHikeFilter
+  user: PerformanceFilterUserFilter
+}
+
+input PerformanceFilterHikeFilter {
+  and: [PerformanceFilterHikeFilter!]
+  or: [PerformanceFilterHikeFilter!]
+  id: IDFilterComparison
+  name: StringFieldComparison
+  distance: NumberFieldComparison
+  elevation: NumberFieldComparison
+  difficulty: DifficultyFilterComparison
+  duration: NumberFieldComparison
+  createdAt: DateFieldComparison
+}
+
+input PerformanceFilterUserFilter {
+  and: [PerformanceFilterUserFilter!]
+  or: [PerformanceFilterUserFilter!]
+  id: IDFilterComparison
+  pseudo: StringFieldComparison
+  email: StringFieldComparison
+  password: StringFieldComparison
+  publicKey: StringFieldComparison
+  credidential: NumberFieldComparison
+  createdAt: DateFieldComparison
+}
+
+input PerformanceSort {
+  field: PerformanceSortFields!
+  direction: SortDirection!
+  nulls: SortNulls
+}
+
+enum PerformanceSortFields {
+  id
+  date
+  distance
+  elevation
+  duration
+  createdAt
 }
 
 type Mutation {
@@ -702,6 +849,8 @@ type Mutation {
   createPhoto(input: PhotoInput!): photo!
   createPointOfInterest(input: PointOfInterestInput!): pointOfInterest!
   deletePointOfInterest(id: String!): pointOfInterest!
+  createPerformance(input: PerformanceInput!): Performance!
+  deletePerformance(id: String!): Performance!
 }
 
 input UserInput {
@@ -761,4 +910,13 @@ input PointOfInterestInput {
   latitude: Float!
   longitude: Float!
   url: String
+}
+
+input PerformanceInput {
+  date: DateTime!
+  duration: Float!
+  distance: Float!
+  elevation: Float!
+  file: Upload!
+  hikeId: String!
 }

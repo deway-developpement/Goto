@@ -5,12 +5,12 @@ import { HttpException, HttpStatus, Inject } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { createWriteStream } from 'fs';
 import { join } from 'path';
-import { UserEntity } from '../users/interfaces/user.entity';
+import { UserEntity } from '../user/interfaces/user.entity';
 import { HikeEntity } from './interfaces/hike.entity';
 import { HikeInput } from './interfaces/hike.input';
 import { Difficulty } from './interfaces/difficulty.dto';
-import { TagService } from '../tags/tag.service';
-import { FilesService } from '../files/files.service';
+import { TagService } from '../tag/tag.service';
+import { FilesService } from '../file/file.service';
 
 @QueryService(HikeEntity)
 export class HikeService extends TypeOrmQueryService<HikeEntity> {
