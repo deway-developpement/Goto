@@ -11,6 +11,7 @@ import { UserEntity } from '../../users/interfaces/user.entity';
 import { Difficulty } from './difficulty.dto';
 import { TagEntity } from '../../tags/interfaces/tag.entity';
 import { PhotoEntity } from '../../photos/interfaces/photo.entity';
+import { PointOfInterestEntity } from '../../PointOfInterests/interfaces/poi.entity';
 
 @Entity('hike')
 @Unique(['name'])
@@ -24,7 +25,7 @@ export class HikeEntity {
     @Column()
     distance: number;
 
-    @ManyToOne(() => UserEntity)
+    @ManyToOne(() => UserEntity, { onDelete: 'CASCADE' })
     owner: UserEntity;
 
     @Column()
@@ -50,6 +51,9 @@ export class HikeEntity {
 
     @OneToMany(() => PhotoEntity, (photo) => photo.hike, { cascade: ['remove'] })
     photos: PhotoEntity[];
+
+    @ManyToMany(() => PointOfInterestEntity, (poi) => poi.hikes)
+    pointsOfInterest: PointOfInterestEntity[];
 
     @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
     createdAt: Date;

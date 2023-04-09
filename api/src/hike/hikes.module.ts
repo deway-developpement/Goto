@@ -6,18 +6,15 @@ import { HikeService } from './hike.service';
 //import { HikeResolver } from './hike.resolver';
 import { HikeDTO } from './interfaces/hike.dto';
 import { HikeEntity } from './interfaces/hike.entity';
-import { TagService } from '../tags/tag.service';
-import { TagEntity } from '../tags/interfaces/tag.entity';
+import { TagModule } from '../tags/tags.module';
+import { FilesModule } from '../files/files.module';
 
 @Module({
     providers: [HikeResolver, HikeService],
     imports: [
         NestjsQueryGraphQLModule.forFeature({
-            imports: [
-                NestjsQueryTypeOrmModule.forFeature([HikeEntity]),
-                NestjsQueryTypeOrmModule.forFeature([TagEntity]),
-            ],
-            services: [HikeService, TagService],
+            imports: [NestjsQueryTypeOrmModule.forFeature([HikeEntity]), TagModule, FilesModule],
+            services: [HikeService],
             resolvers: [],
             dtos: [{ DTOClass: HikeDTO, CreateDTOClass: HikeDTO, UpdateDTOClass: HikeDTO }],
         }),

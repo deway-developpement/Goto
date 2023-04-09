@@ -9,7 +9,7 @@ import {
 } from 'typeorm';
 import { PhotoEntity } from '../../photos/interfaces/photo.entity';
 
-@Entity('users')
+@Entity('user')
 @Unique(['pseudo', 'publicKey'])
 export class UserEntity {
     @PrimaryGeneratedColumn('uuid')
@@ -32,7 +32,7 @@ export class UserEntity {
 
     // friend relation M2M
     @ManyToMany(() => UserEntity, (user) => user.friends)
-    @JoinTable()
+    @JoinTable({ name: 'users_friends' })
     friends?: UserEntity[];
 
     @OneToOne(() => PhotoEntity, (photo) => photo.user, { cascade: ['remove'] })

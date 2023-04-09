@@ -45,28 +45,28 @@ export class DataInit implements OnApplicationBootstrap {
         console.log('Clearing database');
         await this.emptyTables();
         const salt = await genSalt(10);
-        await this.userRepository
-            .save({
-                pseudo: 'admin',
-                email: 'admin@localhost',
-                password: await hash('admin', salt),
-                credidential: 2,
-                publicKey: '00000',
-            })
-            .then(() => {
-                console.log('<Admin user created>');
-            });
-        await this.userRepository
-            .save({
-                pseudo: 'user',
-                email: 'user@localhost',
-                password: await hash('user', salt),
-                credidential: 1,
-                publicKey: '00000',
-            })
-            .then(() => {
-                console.log('<User created>');
-            });
+        // await this.userRepository
+        //     .save({
+        //         pseudo: 'admin',
+        //         email: 'admin@localhost',
+        //         password: await hash('admin', salt),
+        //         credidential: 2,
+        //         publicKey: '00000',
+        //     })
+        //     .then(() => {
+        //         console.log('<Admin user created>');
+        //     });
+        // await this.userRepository
+        //     .save({
+        //         pseudo: 'user',
+        //         email: 'user@localhost',
+        //         password: await hash('user', salt),
+        //         credidential: 1,
+        //         publicKey: '00000',
+        //     })
+        //     .then(() => {
+        //         console.log('<User created>');
+        //     });
     }
 }
 
@@ -82,6 +82,9 @@ export class DataCleanUp implements BeforeApplicationShutdown {
         const entities = this.connection.entityMetadatas.slice();
         let entity = null;
         let i = 0;
+        // max number of combinaison is the number of entities factorial but we will assume that a square of the number of entities is enough
+        const maxCombinaison = entities.length * entities.length;
+        console.log('maxCombinaison', maxCombinaison);
         do {
             entity = entities.shift();
             if (entity) {
@@ -93,7 +96,7 @@ export class DataCleanUp implements BeforeApplicationShutdown {
                     entities.push(entity);
                 }
             }
-        } while (entity && i++ < 10);
+        } while (entity && i++ < maxCombinaison);
     }
 
     async beforeApplicationShutdown() {

@@ -54,12 +54,12 @@ export class HikeResolver extends CRUDResolver(HikeDTO, {
 
     @UseGuards(GqlAuthGuard)
     @Mutation(() => HikeDTO)
-    async removeHike(@Args('id') id: string, @CurrentUser() user: UserDTO): Promise<HikeDTO> {
-        const hike = await this.service.findOne(id);
+    async deleteHike(@Args('id') id: string, @CurrentUser() user: UserDTO): Promise<HikeDTO> {
+        const hike = await this.service.findById(id);
         if (hike.owner !== user && user.credidential < 2) {
             console.log(hike.owner, user);
             throw new UnauthorizedError();
         }
-        return this.service.remove(id);
+        return this.service.deleteOne(id);
     }
 }

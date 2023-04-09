@@ -1,41 +1,47 @@
 import { CRUDResolver } from '@nestjs-query/query-graphql';
 import { Inject, UseGuards } from '@nestjs/common';
 import { Mutation, Resolver, Args } from '@nestjs/graphql';
-import { TagService } from './tag.service';
+import { PointOfInterestService } from './poi.service';
 import { CurrentUser, GqlAuthGuard } from '../auth/graphql-auth.guard';
-import { TagDTO } from './interfaces/tag.dto';
+import { PointOfInterestDTO } from './interfaces/poi.dto';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import * as _ from '@nestjs-query/query-graphql/node_modules/@nestjs-query/core';
-import { TagEntity } from './interfaces/tag.entity';
-import { TagInput } from './interfaces/tag.input';
+import { PointOfInterestEntity } from './interfaces/poi.entity';
+import { PointOfInterestInput } from './interfaces/poi.input';
 import { UserDTO } from '../users/interfaces/user.dto';
 import { UnauthorizedError } from 'type-graphql';
 
 const guards = [GqlAuthGuard];
 
-@Resolver(() => TagDTO)
-export class TagResolver extends CRUDResolver(TagDTO, {
+@Resolver(() => PointOfInterestDTO)
+export class PointOfInterestResolver extends CRUDResolver(PointOfInterestDTO, {
     read: { guards },
     create: { disabled: true },
     update: { disabled: true },
     delete: { disabled: true },
 }) {
-    constructor(@Inject(TagService) readonly service: TagService) {
+    constructor(@Inject(PointOfInterestService) readonly service: PointOfInterestService) {
         super(service);
     }
 
     @UseGuards(GqlAuthGuard)
-    @Mutation(() => TagDTO)
-    async createTag(@Args('input') query: TagInput, @CurrentUser() user: UserDTO): Promise<TagDTO> {
+    @Mutation(() => PointOfInterestDTO)
+    async createPointOfInterest(
+        @Args('input') query: PointOfInterestInput,
+        @CurrentUser() user: UserDTO
+    ): Promise<PointOfInterestDTO> {
         if (user.credidential < 2) {
             throw new UnauthorizedError();
         }
-        return this.service.createOne(query as TagEntity);
+        return this.service.createOne(query as PointOfInterestEntity);
     }
 
     @UseGuards(GqlAuthGuard)
-    @Mutation(() => TagDTO)
-    async deleteTag(@Args('id') id: string, @CurrentUser() user: UserDTO): Promise<TagDTO> {
+    @Mutation(() => PointOfInterestDTO)
+    async deletePointOfInterest(
+        @Args('id') id: string,
+        @CurrentUser() user: UserDTO
+    ): Promise<PointOfInterestDTO> {
         if (user.credidential < 2) {
             throw new UnauthorizedError();
         }

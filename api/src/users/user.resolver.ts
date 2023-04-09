@@ -38,7 +38,14 @@ export class UserResolver extends CRUDResolver(UserDTO, {
 
     @Query(() => Boolean)
     async exist(@Args('email', { type: () => String }) _email: string): Promise<boolean> {
-        return this.usersService.findByEmail(_email) !== undefined;
+        const user = await this.usersService.findByEmail(_email);
+        return user !== null;
+    }
+
+    @UseGuards(GqlAuthGuard)
+    @Query(() => UserDTO)
+    async whoami(@CurrentUser() user: UserDTO): Promise<UserDTO> {
+        return this.usersService.findById(user.id);
     }
 
     @UseGuards(GqlAuthGuard)

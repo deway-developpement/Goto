@@ -9,18 +9,4 @@ export class TagService extends TypeOrmQueryService<TagEntity> {
     constructor(@InjectRepository(TagEntity) repo: Repository<TagEntity>) {
         super(repo);
     }
-
-    async create(tag: TagEntity): Promise<TagEntity> {
-        return await this.repo.save(tag);
-    }
-
-    async findOne(id: string): Promise<TagEntity> {
-        return await this.repo.findOne({ where: { id } });
-    }
-
-    async remove(id: string): Promise<TagEntity> {
-        const tag = await this.repo.findOne({ where: { id } });
-        await this.repo.delete(id);
-        return tag;
-    }
 }

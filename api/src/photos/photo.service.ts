@@ -8,6 +8,7 @@ import { join } from 'path';
 import { HikeService } from '../hike/hike.service';
 import { UserService } from '../users/user.service';
 import { TagService } from '../tags/tag.service';
+import { FilesService } from '../files/files.service';
 
 @Injectable()
 export class PhotoService {
@@ -15,7 +16,8 @@ export class PhotoService {
         @InjectRepository(PhotoEntity) private photoRepository: Repository<PhotoEntity>,
         @Inject(HikeService) private readonly hikeService: HikeService,
         @Inject(UserService) private readonly userService: UserService,
-        @Inject(TagService) private readonly tagService: TagService
+        @Inject(TagService) private readonly tagService: TagService,
+        @Inject(FilesService) private readonly filesService: FilesService
     ) {}
 
     async create(query: PhotoInput): Promise<PhotoEntity> {
@@ -44,7 +46,7 @@ export class PhotoService {
             console.log(filetype);
             throw new HttpException('Only photo files are allowed', HttpStatus.BAD_REQUEST);
         }
-        const localfilename = this.hikeService.worker.nextId().toString() + '.' + filetype;
+        const localfilename = this.filesService.worker.nextId().toString() + '.' + filetype;
         await new Promise(async (resolve) => {
             createReadStream()
                 .pipe(createWriteStream(join(process.cwd(), `./data/photos/${localfilename}`)))

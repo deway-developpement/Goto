@@ -5,30 +5,21 @@ import { HttpException, HttpStatus, Inject } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { createWriteStream } from 'fs';
 import { join } from 'path';
-import { Worker } from 'snowflake-uuid';
 import { UserEntity } from '../users/interfaces/user.entity';
 import { HikeEntity } from './interfaces/hike.entity';
 import { HikeInput } from './interfaces/hike.input';
 import { Difficulty } from './interfaces/difficulty.dto';
 import { TagService } from '../tags/tag.service';
+import { FilesService } from '../files/files.service';
 
 @QueryService(HikeEntity)
 export class HikeService extends TypeOrmQueryService<HikeEntity> {
     constructor(
         @InjectRepository(HikeEntity) repo: Repository<HikeEntity>,
-        @Inject(TagService) private readonly tagService: TagService
+        @Inject(TagService) private readonly tagService: TagService,
+        @Inject(FilesService) private readonly filesService: FilesService
     ) {
         super(repo);
-    }
-
-    worker = new Worker(0, 1, {
-        workerIdBits: 5,
-        datacenterIdBits: 5,
-        sequenceBits: 12,
-    });
-
-    async findOne(id: string): Promise<HikeEntity> {
-        return await this.repo.findOne({ where: { id }, relations: ['tags', 'photos'] });
     }
 
     async create(hike: HikeInput, user: UserEntity): Promise<HikeEntity> {
@@ -38,7 +29,7 @@ export class HikeService extends TypeOrmQueryService<HikeEntity> {
             console.log(filetype);
             throw new HttpException('Only GPX files are allowed', HttpStatus.BAD_REQUEST);
         }
-        const localfilename = this.worker.nextId().toString() + '.' + filetype;
+        const localfilename = this.filesService.worker.nextId().toString() + '.' + filetype;
         await new Promise(async (resolve) => {
             createReadStream()
                 .pipe(createWriteStream(join(process.cwd(), `./data/tracks/${localfilename}`)))
@@ -49,7 +40,7 @@ export class HikeService extends TypeOrmQueryService<HikeEntity> {
         });
         const tags = await Promise.all(
             hike.tagsId.map(async (tagId) => {
-                return await this.tagService.findOne(tagId);
+                return await this.tagService.findById(tagId);
             })
         );
         const newHike = this.repo.create({
@@ -82,7 +73,7 @@ export class HikeService extends TypeOrmQueryService<HikeEntity> {
 
     async addTag(hikeId: string, tagId: string): Promise<HikeEntity> {
         const hike = await this.repo.findOne({ where: { id: hikeId } });
-        const tag = await this.tagService.findOne(tagId);
+        const tag = await this.tagService.findById(tagId);
         if (hike.tags?.includes(tag)) {
             throw new HttpException('Tag already exists', HttpStatus.BAD_REQUEST);
         } else if (!hike.tags) {
@@ -99,10 +90,5 @@ export class HikeService extends TypeOrmQueryService<HikeEntity> {
         }
         hike.tags = hike.tags.filter((tag) => tag.id !== tagId);
         return await this.repo.save(hike);
-    }
-
-    async remove(id: string): Promise<HikeEntity> {
-        const hike = await this.repo.findOne({ where: { id } });
-        return await this.repo.remove(hike, {});
     }
 }
