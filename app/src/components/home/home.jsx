@@ -320,7 +320,7 @@ function HomeScreen({ navigation }) {
             <KeyboardDismissView>
                 <View style={styles.inner}>
                     <Tab.Navigator
-                        initialRouteName={'Map'}
+                        initialRouteName={'Directions'}
                         screenOptions={{
                             tabBarStyle: styles.tabBar,
                             headerShown: false,

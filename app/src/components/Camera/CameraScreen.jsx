@@ -2,7 +2,11 @@ import React, { useEffect, useState, useRef } from 'react';
 import stylesheet from './style';
 import { View } from 'react-native';
 import { Button } from 'react-native-elements';
-import { useIsFocused, useTheme, useNavigation  } from '@react-navigation/native';
+import {
+    useIsFocused,
+    useTheme,
+    useNavigation,
+} from '@react-navigation/native';
 import { Camera, CameraType } from 'expo-camera';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -50,12 +54,13 @@ export default function CameraScreen({ setIsCamera }) {
     const takePicture = async () => {
         if (cameraRef.current) {
             //const options = { quality: 0.5, base64: true, skipProcessing: true };
-            const data = await cameraRef.current.takePictureAsync({base64:true});
+            const data = await cameraRef.current.takePictureAsync({
+                base64: true,
+            });
             const source = data;
             if (source) {
                 setIsCamera(false);
-                navigation.navigate('Map', {dataImg:data});
-                
+                navigation.navigate('Directions', { dataImg: data });
             }
         }
     };
@@ -65,12 +70,12 @@ export default function CameraScreen({ setIsCamera }) {
             <Camera
                 ref={cameraRef}
                 style={{
-                    flex:1,
+                    flex: 1,
                     overflow: 'hidden',
-                    alignSelf:'center'
+                    alignSelf: 'center',
                 }}
                 type={type}
-                aspectRatio={3/4}
+                aspectRatio={3 / 4}
             ></Camera>
             <View
                 style={[
