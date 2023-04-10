@@ -18,10 +18,11 @@ import KeyboardDismissView from '../KeyboardDismissView/KeyboardDismissView';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import * as Location from 'expo-location';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import TabBarButton from '../TabBarButton/TabBarButton';
 import CameraScreen from '../Camera/CameraScreen';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Map from '../Map/Map';
+import { createIconSetFromFontello } from '@expo/vector-icons';
+import { useFonts } from 'expo-font';
 
 function HikeScreen({ route }) {
     const [image, setImage] = useState(null);
@@ -58,6 +59,128 @@ function HikeScreen({ route }) {
                     source={{ uri: image.uri }}
                 />
             )}
+        </View>
+    );
+}
+
+function SearchScreen() {
+    return (
+        <View style={{ flex: 1, backgroundColor: '' }}>
+            <SafeAreaView />
+            <Text>Search</Text>
+        </View>
+    );
+}
+
+function MapScreen({ route }) {
+    const [permission, request] = Location.useForegroundPermissions();
+    const [location, setLocation] = useState(null);
+    const [errorMsg, setErrorMsg] = useState(null);
+    const [isCamera, setIsCamera] = useState(false);
+
+    const { colors } = useTheme();
+    const styles = stylesheet(colors);
+
+    const insets = useSafeAreaInsets();
+
+    const [image, setImage] = useState(null);
+
+    if (
+        route.params?.dataImg &&
+        (image == null || image.paraUri != route.params.dataImg.uri)
+    ) {
+        setImage({
+            paraUri: route.params?.dataImg.uri,
+            uri: 'data:image/jpg;base64,' + route.params.dataImg.base64,
+        });
+    }
+
+    useEffect(() => {
+        if (permission === null) {
+            request();
+        } else if (
+            permission.granted === false &&
+            permission.canAskAgain === false
+        ) {
+            setErrorMsg('Permission to access location was denied');
+        } else if (
+            permission.granted === false &&
+            permission.canAskAgain === true
+        ) {
+            request();
+        } else if (permission.granted === true) {
+            Location.getLastKnownPositionAsync({}).then((response) => {
+                setLocation(response);
+            });
+            Location.watchPositionAsync({}, (response) => {
+                setLocation(response);
+            });
+        }
+    }, [permission]);
+
+    return (
+        <View style={{ width: '100%', height: '100%', flex: 1 }}>
+            {(() => {
+                if (isCamera) {
+                    return <CameraScreen setIsCamera={setIsCamera} />;
+                } else if (location == null) {
+                    if (errorMsg != null) {
+                        return (
+                            <Text style={{ alignSelf: 'center' }}>
+                                {errorMsg}
+                            </Text>
+                        );
+                    } else {
+                        return (
+                            <ActivityIndicator
+                                size="large"
+                                color={colors.primary}
+                                style={{ flex: 3, width: '100%' }}
+                            />
+                        );
+                    }
+                } else {
+                    return (
+                        <View style={{ width: '100%', height: '100%' }}>
+                            <Map
+                                location={location}
+                                setIsCamera={setIsCamera}
+                                image={image}
+                                styles={styles}
+                            />
+                            <View
+                                style={[
+                                    styles.btnContainer,
+                                    {
+                                        position: 'absolute',
+                                        top: 0 + insets.top,
+                                        right: 10,
+                                        backgroundColor: 'transparent',
+                                    },
+                                ]}
+                            >
+                                <Button
+                                    buttonStyle={[styles.btn, { width: 200 }]}
+                                    titleStyle={styles.btnText}
+                                    title={'Open your camera'}
+                                    onPress={() => {
+                                        setIsCamera(true);
+                                    }}
+                                />
+                            </View>
+                        </View>
+                    );
+                }
+            })()}
+        </View>
+    );
+}
+
+function FavoritesScreen() {
+    return (
+        <View style={{ flex: 1, backgroundColor: '' }}>
+            <SafeAreaView />
+            <Text>Favorites</Text>
         </View>
     );
 }
@@ -163,113 +286,17 @@ function ProfilScreen() {
     );
 }
 
-function MapScreen({ route }) {
-    const [permission, request] = Location.useForegroundPermissions();
-    const [location, setLocation] = useState(null);
-    const [errorMsg, setErrorMsg] = useState(null);
-    const [isCamera, setIsCamera] = useState(false);
-
-    const { colors } = useTheme();
-    const styles = stylesheet(colors);
-
-    const insets = useSafeAreaInsets();
-
-    const [image, setImage] = useState(null);
-
-    if (
-        route.params?.dataImg &&
-        (image == null || image.paraUri != route.params.dataImg.uri)
-    ) {
-        setImage({
-            paraUri: route.params?.dataImg.uri,
-            uri: 'data:image/jpg;base64,' + route.params.dataImg.base64,
-        });
-    }
-
-    useEffect(() => {
-        if (permission === null) {
-            request();
-        } else if (
-            permission.granted === false &&
-            permission.canAskAgain === false
-        ) {
-            setErrorMsg('Permission to access location was denied');
-        } else if (
-            permission.granted === false &&
-            permission.canAskAgain === true
-        ) {
-            request();
-        } else if (permission.granted === true) {
-            Location.getLastKnownPositionAsync({}).then((response) => {
-                setLocation(response);
-            });
-            Location.watchPositionAsync({}, (response) => {
-                setLocation(response);
-            });
-        }
-    }, [permission]);
-
-    return (
-        <View style={{ width: '100%', height: '100%', flex: 1 }}>
-            {(() => {
-                if (isCamera) {
-                    return <CameraScreen setIsCamera={setIsCamera} />;
-                } else if (location == null) {
-                    if (errorMsg != null) {
-                        return (
-                            <Text style={{ alignSelf: 'center' }}>
-                                {errorMsg}
-                            </Text>
-                        );
-                    } else {
-                        return (
-                            <ActivityIndicator
-                                size="large"
-                                color="#0000ff"
-                                style={{ flex: 3, width: '100%' }}
-                            />
-                        );
-                    }
-                } else {
-                    return (
-                        <View style={{ width: '100%', height: '100%' }}>
-                            <Map
-                                location={location}
-                                setIsCamera={setIsCamera}
-                                image={image}
-                                styles={styles}
-                            />
-                            <View
-                                style={[
-                                    styles.btnContainer,
-                                    {
-                                        position: 'absolute',
-                                        top: 0 + insets.top,
-                                        right: 10,
-                                        backgroundColor: 'transparent',
-                                    },
-                                ]}
-                            >
-                                <Button
-                                    buttonStyle={[styles.btn, { width: 200 }]}
-                                    titleStyle={styles.btnText}
-                                    title={'Open your camera'}
-                                    onPress={() => {
-                                        setIsCamera(true);
-                                    }}
-                                />
-                            </View>
-                        </View>
-                    );
-                }
-            })()}
-        </View>
-    );
-}
-
 const Tab = createBottomTabNavigator();
+const Icon = createIconSetFromFontello(
+    require('../../../assets/font/config.json'),
+    'goto',
+    'goto.ttf'
+);
 
 function HomeScreen({ navigation }) {
+    const [fontsLoaded] = useFonts({
+        goto: require('../../../assets/font/goto.ttf'),
+    });
     const { colors } = useTheme();
     const styles = stylesheet(colors);
 
@@ -282,6 +309,9 @@ function HomeScreen({ navigation }) {
         }
     }, [authContext.authState.connected]);
 
+    if (!fontsLoaded) {
+        return <View />;
+    }
     return (
         <KeyboardAvoidingView
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -294,38 +324,75 @@ function HomeScreen({ navigation }) {
                         screenOptions={{
                             tabBarStyle: styles.tabBar,
                             headerShown: false,
+                            tabBarIconStyle: styles.tabBarIcon,
+                            tabBarLabelStyle: styles.tabBarLabel,
+                            tabBarActiveTintColor: colors.iconprimary,
+                            tabBarInactiveTintColor: colors.label,
                         }}
                     >
                         <Tab.Screen
-                            name="Hikes"
+                            name="Discover"
                             component={HikeScreen}
                             options={{
-                                tabBarButton: (props) => (
-                                    <TabBarButton icon="list" {...props} />
+                                tabBarIcon: (props) => (
+                                    <Icon
+                                        name="list"
+                                        size={30}
+                                        color={props.color}
+                                    />
                                 ),
-                                tabBarShowLabel: false,
                             }}
                         />
                         <Tab.Screen
-                            name="Map"
+                            name="Search"
+                            component={SearchScreen}
+                            options={{
+                                tabBarIcon: (props) => (
+                                    <Icon
+                                        name="search"
+                                        size={30}
+                                        color={props.color}
+                                    />
+                                ),
+                            }}
+                        />
+                        <Tab.Screen
+                            name="Directions"
                             component={MapScreen}
                             options={{
-                                tabBarButton: (props) => (
-                                    <TabBarButton icon="position" {...props} />
+                                tabBarIcon: (props) => (
+                                    <Icon
+                                        name="position"
+                                        size={30}
+                                        color={props.color}
+                                    />
                                 ),
-                                tabBarShowLabel: false,
                             }}
                         />
                         <Tab.Screen
-                            name="Profil"
+                            name="My Hikes"
+                            component={FavoritesScreen}
+                            options={{
+                                tabBarIcon: (props) => (
+                                    <Icon
+                                        name="hiker"
+                                        size={30}
+                                        color={props.color}
+                                    />
+                                ),
+                            }}
+                        />
+                        <Tab.Screen
+                            name="Profile"
                             component={ProfilScreen}
                             options={{
-                                tabBarButton: (props) => {
-                                    return (
-                                        <TabBarButton icon="user" {...props} />
-                                    );
-                                },
-                                tabBarShowLabel: false,
+                                tabBarIcon: (props) => (
+                                    <Icon
+                                        name="user"
+                                        size={props.size}
+                                        color={props.color}
+                                    />
+                                ),
                             }}
                         />
                     </Tab.Navigator>

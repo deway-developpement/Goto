@@ -17,6 +17,8 @@ export const Classic = {
         borderlineprimary: '#1c68d1',
         linesecondary: '#bbbdbf',
         borderlinesecondary: '#8c8f91',
+        iconprimary: '#78DBC8',
+        label: '#F2F7F9'
     },
 };
 
@@ -36,5 +38,7 @@ export const Dark = {
         borderlineprimary: '#1c68d1',
         linesecondary: '#bbbdbf',
         borderlinesecondary: '#8c8f91',
+        iconprimary: '#78DBC8',
+        label: '#F2F7F9'
     },
 };

@@ -49,6 +49,18 @@ const stylesheet = (colors) =>
             height: 'auto',
             position: 'absolute',
         },
+        tabBarIcon: {
+            width: 30,
+            height: 30,
+            marginTop: 18,
+            marginBottom: 10,
+        },
+        tabBarLabel: {
+            fontSize: 12,
+            fontWeight: '500',
+            lineHeight: 20,
+            marginBottom: 10,
+        },
         btn: {
             backgroundColor: colors.link,
             borderRadius: 6,
