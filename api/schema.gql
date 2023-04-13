@@ -37,6 +37,7 @@ input HikeFilter {
   difficulty: DifficultyFilterComparison
   duration: NumberFieldComparison
   createdAt: DateFieldComparison
+  alerts: HikeFilteralertFilter
   reviews: HikeFilterReviewFilter
   pointsOfInterest: HikeFilterpointOfInterestFilter
   tags: HikeFiltertagFilter
@@ -139,6 +140,43 @@ input DateFieldComparisonBetween {
   upper: DateTime!
 }
 
+input HikeFilteralertFilter {
+  and: [HikeFilteralertFilter!]
+  or: [HikeFilteralertFilter!]
+  id: IDFilterComparison
+  latitude: NumberFieldComparison
+  longitude: NumberFieldComparison
+  type: AlertTypeFilterComparison
+  createdAt: DateFieldComparison
+}
+
+input AlertTypeFilterComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: AlertType
+  neq: AlertType
+  gt: AlertType
+  gte: AlertType
+  lt: AlertType
+  lte: AlertType
+  like: AlertType
+  notLike: AlertType
+  iLike: AlertType
+  notILike: AlertType
+  in: [AlertType!]
+  notIn: [AlertType!]
+}
+
+enum AlertType {
+  TRACK_CHANGE
+  BLOCKED_PATH
+  DANGER
+  ANIMAL
+  SLIPPERY_PATH
+  DANGEROUS_ROAD
+  FLOOD
+}
+
 input HikeFilterReviewFilter {
   and: [HikeFilterReviewFilter!]
   or: [HikeFilterReviewFilter!]
@@ -201,6 +239,16 @@ type Review {
   hike: Hike!
 }
 
+type alert {
+  id: ID!
+  latitude: Float!
+  longitude: Float!
+  type: AlertType!
+  createdAt: DateTime!
+  hike: Hike!
+  author: User!
+}
+
 type Hike {
   id: ID!
   name: String!
@@ -215,6 +263,10 @@ type Hike {
     """Filter to find records to aggregate on"""
     filter: ReviewAggregateFilter
   ): [HikeReviewsAggregateResponse!]!
+  alertsAggregate(
+    """Filter to find records to aggregate on"""
+    filter: alertAggregateFilter
+  ): [HikeAlertsAggregateResponse!]!
   owner: User!
   tags(
     """Specify to filter the records returned."""
@@ -244,6 +296,13 @@ type Hike {
     """Specify to sort results."""
     sorting: [ReviewSort!] = []
   ): [Review!]
+  alerts(
+    """Specify to filter the records returned."""
+    filter: alertFilter = {}
+
+    """Specify to sort results."""
+    sorting: [alertSort!] = []
+  ): [alert!]
 }
 
 input ReviewAggregateFilter {
@@ -251,6 +310,16 @@ input ReviewAggregateFilter {
   or: [ReviewAggregateFilter!]
   id: IDFilterComparison
   rating: NumberFieldComparison
+  createdAt: DateFieldComparison
+}
+
+input alertAggregateFilter {
+  and: [alertAggregateFilter!]
+  or: [alertAggregateFilter!]
+  id: IDFilterComparison
+  latitude: NumberFieldComparison
+  longitude: NumberFieldComparison
+  type: AlertTypeFilterComparison
   createdAt: DateFieldComparison
 }
 
@@ -374,6 +443,56 @@ input ReviewSort {
 enum ReviewSortFields {
   id
   rating
+  createdAt
+}
+
+input alertFilter {
+  and: [alertFilter!]
+  or: [alertFilter!]
+  id: IDFilterComparison
+  latitude: NumberFieldComparison
+  longitude: NumberFieldComparison
+  type: AlertTypeFilterComparison
+  createdAt: DateFieldComparison
+  author: alertFilterUserFilter
+  hike: alertFilterHikeFilter
+}
+
+input alertFilterUserFilter {
+  and: [alertFilterUserFilter!]
+  or: [alertFilterUserFilter!]
+  id: IDFilterComparison
+  pseudo: StringFieldComparison
+  email: StringFieldComparison
+  password: StringFieldComparison
+  publicKey: StringFieldComparison
+  credidential: NumberFieldComparison
+  createdAt: DateFieldComparison
+}
+
+input alertFilterHikeFilter {
+  and: [alertFilterHikeFilter!]
+  or: [alertFilterHikeFilter!]
+  id: IDFilterComparison
+  name: StringFieldComparison
+  distance: NumberFieldComparison
+  elevation: NumberFieldComparison
+  difficulty: DifficultyFilterComparison
+  duration: NumberFieldComparison
+  createdAt: DateFieldComparison
+}
+
+input alertSort {
+  field: alertSortFields!
+  direction: SortDirection!
+  nulls: SortNulls
+}
+
+enum alertSortFields {
+  id
+  latitude
+  longitude
+  type
   createdAt
 }
 
@@ -634,6 +753,57 @@ type HikeAggregateResponse {
   max: HikeMaxAggregate
 }
 
+type HikeAlertsAggregateGroupBy {
+  id: ID
+  latitude: Float
+  longitude: Float
+  type: AlertType
+  createdAt: DateTime
+}
+
+type HikeAlertsCountAggregate {
+  id: Int
+  latitude: Int
+  longitude: Int
+  type: Int
+  createdAt: Int
+}
+
+type HikeAlertsSumAggregate {
+  latitude: Float
+  longitude: Float
+}
+
+type HikeAlertsAvgAggregate {
+  latitude: Float
+  longitude: Float
+}
+
+type HikeAlertsMinAggregate {
+  id: ID
+  latitude: Float
+  longitude: Float
+  type: AlertType
+  createdAt: DateTime
+}
+
+type HikeAlertsMaxAggregate {
+  id: ID
+  latitude: Float
+  longitude: Float
+  type: AlertType
+  createdAt: DateTime
+}
+
+type HikeAlertsAggregateResponse {
+  groupBy: HikeAlertsAggregateGroupBy
+  count: HikeAlertsCountAggregate
+  sum: HikeAlertsSumAggregate
+  avg: HikeAlertsAvgAggregate
+  min: HikeAlertsMinAggregate
+  max: HikeAlertsMaxAggregate
+}
+
 type HikeReviewsAggregateGroupBy {
   id: ID
   rating: Float
@@ -851,6 +1021,48 @@ type ReviewAggregateResponse {
   max: ReviewMaxAggregate
 }
 
+type alertAggregateGroupBy {
+  id: ID
+  latitude: Float
+  longitude: Float
+  type: AlertType
+  createdAt: DateTime
+}
+
+type alertCountAggregate {
+  id: Int
+  latitude: Int
+  longitude: Int
+  type: Int
+  createdAt: Int
+}
+
+type alertSumAggregate {
+  latitude: Float
+  longitude: Float
+}
+
+type alertAvgAggregate {
+  latitude: Float
+  longitude: Float
+}
+
+type alertMinAggregate {
+  id: ID
+  latitude: Float
+  longitude: Float
+  type: AlertType
+  createdAt: DateTime
+}
+
+type alertMaxAggregate {
+  id: ID
+  latitude: Float
+  longitude: Float
+  type: AlertType
+  createdAt: DateTime
+}
+
 type Query {
   userAggregate(
     """Filter to find records to aggregate on"""
@@ -936,6 +1148,17 @@ type Query {
     """Specify to sort results."""
     sorting: [ReviewSort!] = []
   ): [Review!]!
+  alert(
+    """The id of the record to find."""
+    id: ID!
+  ): alert
+  alerts(
+    """Specify to filter the records returned."""
+    filter: alertFilter = {}
+
+    """Specify to sort results."""
+    sorting: [alertSort!] = []
+  ): [alert!]!
 }
 
 input HikeAggregateFilter {
@@ -1033,6 +1256,8 @@ type Mutation {
   addReview(input: ReviewInput!): Review!
   updateReview(id: String!, input: ReviewInput!): Review!
   deleteReview(id: String!): Review!
+  postAlert(input: AlertInput!): alert!
+  deleteAlert(id: String!): alert!
 }
 
 input UserInput {
@@ -1105,5 +1330,12 @@ input PerformanceInput {
 
 input ReviewInput {
   rating: Float!
+  hikeId: String!
+}
+
+input AlertInput {
+  latitude: Float!
+  longitude: Float!
+  type: AlertType!
   hikeId: String!
 }

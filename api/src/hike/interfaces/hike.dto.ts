@@ -12,8 +12,9 @@ import { UserDTO } from '../../user/interfaces/user.dto';
 import { Difficulty } from './difficulty.dto';
 import { TagDTO } from '../../tag/interfaces/tag.dto';
 import { PhotoDTO } from '../../photo/interfaces/photo.dto';
-import { PointOfInterestDTO } from '../../PointOfInterest/interfaces/poi.dto';
+import { PointOfInterestDTO } from '../../pointOfInterest/interfaces/poi.dto';
 import { ReviewDTO } from '../../review/interfaces/review.dto';
+import { AlertDTO } from '../../alert/interfaces/alert.dto';
 
 @ObjectType('Hike')
 @QueryOptions({ pagingStrategy: PagingStrategies.NONE })
@@ -42,6 +43,11 @@ import { ReviewDTO } from '../../review/interfaces/review.dto';
     disableRemove: true,
     disableUpdate: true,
     enableAggregate: true,
+})
+@FilterableUnPagedRelation('alerts', () => AlertDTO, {
+    nullable: true,
+    disableRemove: true,
+    disableUpdate: true,
 })
 export class HikeDTO {
     @IDField(() => ID)

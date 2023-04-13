@@ -11,8 +11,9 @@ import { UserEntity } from '../../user/interfaces/user.entity';
 import { Difficulty } from './difficulty.dto';
 import { TagEntity } from '../../tag/interfaces/tag.entity';
 import { PhotoEntity } from '../../photo/interfaces/photo.entity';
-import { PointOfInterestEntity } from '../../PointOfInterest/interfaces/poi.entity';
+import { PointOfInterestEntity } from '../../pointOfInterest/interfaces/poi.entity';
 import { ReviewEntity } from '../../review/interfaces/review.entity';
+import { AlertEntity } from '../../alert/interfaces/alert.entity';
 
 @Entity('hike')
 @Unique(['name'])
@@ -58,6 +59,9 @@ export class HikeEntity {
 
     @OneToMany(() => ReviewEntity, (review) => review.hike, { cascade: ['remove'] })
     reviews: ReviewEntity[];
+
+    @OneToMany(() => AlertEntity, (alert) => alert.hike, { cascade: ['remove'] })
+    alerts: AlertEntity[];
 
     @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
     createdAt: Date;

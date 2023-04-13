@@ -17,9 +17,10 @@ import { LoggerMiddleware } from './logger/logger.middleware';
 import { HikeModule } from './hike/hike.module';
 import { TagModule } from './tag/tag.module';
 import { PhotoModule } from './photo/photo.module';
-import { PointOfInterestModule } from './PointOfInterest/poi.module';
+import { PointOfInterestModule } from './pointOfInterest/poi.module';
 import { PerformanceModule } from './performance/performance.module';
 import { ReviewModule } from './review/review.module';
+import { AlertModule } from './alert/alert.module';
 
 const armor = new ApolloArmor();
 const protection = armor.protect();
@@ -96,6 +97,7 @@ console.log = function (...args) {
         PointOfInterestModule,
         PerformanceModule,
         ReviewModule,
+        AlertModule,
     ],
     controllers: [AppController],
     providers: [AppService],

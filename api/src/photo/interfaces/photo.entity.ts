@@ -10,7 +10,7 @@ import {
 import { HikeEntity } from '../../hike/interfaces/hike.entity';
 import { UserEntity } from '../../user/interfaces/user.entity';
 import { TagEntity } from '../../tag/interfaces/tag.entity';
-import { PointOfInterestEntity } from '../../PointOfInterest/interfaces/poi.entity';
+import { PointOfInterestEntity } from '../../pointOfInterest/interfaces/poi.entity';
 
 @Entity('photo')
 @Unique(['filename'])
