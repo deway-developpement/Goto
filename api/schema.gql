@@ -31,6 +31,8 @@ input HikeFilter {
   elevation: NumberFieldComparison
   difficulty: DifficultyFilterComparison
   duration: NumberFieldComparison
+  latitude: NumberFieldComparison
+  longitude: NumberFieldComparison
   createdAt: DateFieldComparison
   category: HikeFiltertagFilter
   alerts: HikeFilteralertFilter
@@ -212,6 +214,8 @@ enum HikeSortFields {
   elevation
   difficulty
   duration
+  latitude
+  longitude
   createdAt
 }
 
@@ -254,6 +258,8 @@ type Hike {
   difficulty: Difficulty!
   duration: Float
   track: String!
+  latitude: Float!
+  longitude: Float!
   createdAt: DateTime!
   reviewsAggregate(
     """Filter to find records to aggregate on"""
@@ -380,6 +386,8 @@ input pointOfInterestFilterHikeFilter {
   elevation: NumberFieldComparison
   difficulty: DifficultyFilterComparison
   duration: NumberFieldComparison
+  latitude: NumberFieldComparison
+  longitude: NumberFieldComparison
   createdAt: DateFieldComparison
 }
 
@@ -416,6 +424,8 @@ input ReviewFilterHikeFilter {
   elevation: NumberFieldComparison
   difficulty: DifficultyFilterComparison
   duration: NumberFieldComparison
+  latitude: NumberFieldComparison
+  longitude: NumberFieldComparison
   createdAt: DateFieldComparison
 }
 
@@ -476,6 +486,8 @@ input alertFilterHikeFilter {
   elevation: NumberFieldComparison
   difficulty: DifficultyFilterComparison
   duration: NumberFieldComparison
+  latitude: NumberFieldComparison
+  longitude: NumberFieldComparison
   createdAt: DateFieldComparison
 }
 
@@ -708,6 +720,8 @@ type HikeAggregateGroupBy {
   elevation: Float
   difficulty: Difficulty
   duration: Float
+  latitude: Float
+  longitude: Float
   createdAt: DateTime
 }
 
@@ -718,6 +732,8 @@ type HikeCountAggregate {
   elevation: Int
   difficulty: Int
   duration: Int
+  latitude: Int
+  longitude: Int
   createdAt: Int
 }
 
@@ -725,12 +741,16 @@ type HikeSumAggregate {
   distance: Float
   elevation: Float
   duration: Float
+  latitude: Float
+  longitude: Float
 }
 
 type HikeAvgAggregate {
   distance: Float
   elevation: Float
   duration: Float
+  latitude: Float
+  longitude: Float
 }
 
 type HikeMinAggregate {
@@ -740,6 +760,8 @@ type HikeMinAggregate {
   elevation: Float
   difficulty: Difficulty
   duration: Float
+  latitude: Float
+  longitude: Float
   createdAt: DateTime
 }
 
@@ -750,6 +772,8 @@ type HikeMaxAggregate {
   elevation: Float
   difficulty: Difficulty
   duration: Float
+  latitude: Float
+  longitude: Float
   createdAt: DateTime
 }
 
@@ -1129,6 +1153,13 @@ type Query {
     """Specify to sort results."""
     sorting: [HikeSort!] = []
   ): [Hike!]!
+  getHikeAround(
+    lat: Float!
+    lon: Float!
+
+    """Distance in kilometers"""
+    distance: Float = 50
+  ): [Hike!]!
   tag(
     """The id of the record to find."""
     id: ID!
@@ -1140,6 +1171,17 @@ type Query {
     """Specify to sort results."""
     sorting: [tagSort!] = []
   ): [tag!]!
+  category(
+    """The id of the record to find."""
+    id: ID!
+  ): category
+  categories(
+    """Specify to filter the records returned."""
+    filter: categoryFilter = {}
+
+    """Specify to sort results."""
+    sorting: [categorySort!] = []
+  ): [category!]!
   pointOfInterest(
     """The id of the record to find."""
     id: ID!
@@ -1192,17 +1234,6 @@ type Query {
     """Specify to sort results."""
     sorting: [alertSort!] = []
   ): [alert!]!
-  category(
-    """The id of the record to find."""
-    id: ID!
-  ): category
-  categories(
-    """Specify to filter the records returned."""
-    filter: categoryFilter = {}
-
-    """Specify to sort results."""
-    sorting: [categorySort!] = []
-  ): [category!]!
 }
 
 input HikeAggregateFilter {
@@ -1214,7 +1245,29 @@ input HikeAggregateFilter {
   elevation: NumberFieldComparison
   difficulty: DifficultyFilterComparison
   duration: NumberFieldComparison
+  latitude: NumberFieldComparison
+  longitude: NumberFieldComparison
   createdAt: DateFieldComparison
+}
+
+input categoryFilter {
+  and: [categoryFilter!]
+  or: [categoryFilter!]
+  id: IDFilterComparison
+  name: StringFieldComparison
+  createdAt: DateFieldComparison
+}
+
+input categorySort {
+  field: categorySortFields!
+  direction: SortDirection!
+  nulls: SortNulls
+}
+
+enum categorySortFields {
+  id
+  name
+  createdAt
 }
 
 input PerformanceAggregateFilter {
@@ -1250,6 +1303,8 @@ input PerformanceFilterHikeFilter {
   elevation: NumberFieldComparison
   difficulty: DifficultyFilterComparison
   duration: NumberFieldComparison
+  latitude: NumberFieldComparison
+  longitude: NumberFieldComparison
   createdAt: DateFieldComparison
 }
 
@@ -1280,26 +1335,6 @@ enum PerformanceSortFields {
   createdAt
 }
 
-input categoryFilter {
-  and: [categoryFilter!]
-  or: [categoryFilter!]
-  id: IDFilterComparison
-  name: StringFieldComparison
-  createdAt: DateFieldComparison
-}
-
-input categorySort {
-  field: categorySortFields!
-  direction: SortDirection!
-  nulls: SortNulls
-}
-
-enum categorySortFields {
-  id
-  name
-  createdAt
-}
-
 type Mutation {
   createUser(input: UserInput!): User!
   updateUser(id: String!, input: UserUpdateInput!): User!
@@ -1312,6 +1347,7 @@ type Mutation {
   deleteHike(id: String!): Hike!
   createTag(input: TagInput!): tag!
   deleteTag(id: String!): category!
+  createCategory(input: CategoryInput!): category!
   createPointOfInterest(input: PointOfInterestInput!): pointOfInterest!
   deletePointOfInterest(id: String!): pointOfInterest!
   createPerformance(input: PerformanceInput!): Performance!
@@ -1322,7 +1358,6 @@ type Mutation {
   postAlert(input: AlertInput!): alert!
   deleteAlert(id: String!): alert!
   createPhoto(input: PhotoInput!): photo!
-  createCategory(input: CategoryInput!): category!
 }
 
 input UserInput {
@@ -1355,12 +1390,17 @@ input HikeInput {
   difficulty: Difficulty!
   track: Upload!
   tagsId: [String!]!
+  categoryId: String!
 }
 
 """The `Upload` scalar type represents a file upload."""
 scalar Upload
 
 input TagInput {
+  name: String!
+}
+
+input CategoryInput {
   name: String!
 }
 
@@ -1404,8 +1444,4 @@ enum ObjType {
   USER
   CATEGORY
   POINTOFINTEREST
-}
-
-input CategoryInput {
-  name: String!
 }

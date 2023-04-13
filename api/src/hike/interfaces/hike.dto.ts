@@ -81,6 +81,12 @@ export class HikeDTO {
     @Field(() => String)
     track!: string;
 
+    @FilterableField(() => Number)
+    latitude!: number;
+
+    @FilterableField(() => Number)
+    longitude!: number;
+
     @FilterableField(() => Date)
     createdAt!: Date;
 }

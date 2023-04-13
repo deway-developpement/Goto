@@ -49,6 +49,20 @@ export class HikeEntity {
     @Column()
     track: string;
 
+    @Column({
+        type: 'decimal',
+        precision: 16,
+        scale: 5,
+    })
+    latitude: number;
+
+    @Column({
+        type: 'decimal',
+        precision: 16,
+        scale: 5,
+    })
+    longitude: number;
+
     @ManyToMany(() => TagEntity, (tag) => tag.hikes)
     tags: TagEntity[];
 

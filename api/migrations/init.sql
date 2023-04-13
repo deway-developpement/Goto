@@ -40,6 +40,16 @@ VALUES (
         now()
     );
 
+# Create a category
+INSERT INTO
+    category (id, name, createdAt)
+VALUES (uuid(), 'Category 1', now());
+
+# Create a category
+INSERT INTO
+    category (id, name, createdAt)
+VALUES (uuid(), 'Category 2', now());
+
 # Create a hike
 INSERT INTO
     hike (
@@ -52,7 +62,10 @@ INSERT INTO
         difficulty,
         track,
         createdAt,
-        ownerId
+        latitude,
+        longitude,
+        ownerId,
+        categoryId
     )
 VALUES (
         uuid(),
@@ -63,11 +76,17 @@ VALUES (
         'Hike 1 description',
         1,
         'track1.gpx',
-        now(), (
+        now(),
+        1.234567,
+        1.234567, (
             SELECT id
             FROM user
             WHERE
                 pseudo = 'admin'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM category
             LIMIT 1
         )
     );
@@ -84,7 +103,10 @@ INSERT INTO
         difficulty,
         track,
         createdAt,
-        ownerId
+        latitude,
+        longitude,
+        ownerId,
+        categoryId
     )
 VALUES (
         uuid(),
@@ -95,11 +117,17 @@ VALUES (
         'Hike 2 description',
         2,
         'track2.gpx',
-        now(), (
+        now(),
+        1.434567,
+        1.434567, (
             SELECT id
             FROM user
             WHERE
                 pseudo = 'user'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM category
             LIMIT 1
         )
     );
