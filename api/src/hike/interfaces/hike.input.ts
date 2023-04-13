@@ -29,4 +29,7 @@ export class HikeInput {
 
     @Field(() => [String])
     tagsId: string[];
+
+    @Field(() => String)
+    categoryId: string;
 }

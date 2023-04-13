@@ -11,13 +11,15 @@ import { HikeInput } from './interfaces/hike.input';
 import { Difficulty } from './interfaces/difficulty.dto';
 import { TagService } from '../tag/tag.service';
 import { FilesService } from '../file/file.service';
+import { CategoryService } from '../category/category.service';
 
 @QueryService(HikeEntity)
 export class HikeService extends TypeOrmQueryService<HikeEntity> {
     constructor(
         @InjectRepository(HikeEntity) repo: Repository<HikeEntity>,
         @Inject(TagService) private readonly tagService: TagService,
-        @Inject(FilesService) private readonly filesService: FilesService
+        @Inject(FilesService) private readonly filesService: FilesService,
+        @Inject(CategoryService) private readonly categoryModule: CategoryService
     ) {
         super(repo);
     }
@@ -43,12 +45,14 @@ export class HikeService extends TypeOrmQueryService<HikeEntity> {
                 return await this.tagService.findById(tagId);
             })
         );
+        const category = await this.categoryModule.findById(hike.categoryId);
         const newHike = this.repo.create({
             ...hike,
             track: localfilename,
             owner: user,
             duration: 0,
             tags: tags,
+            category: category,
         });
         newHike.duration = this.duration(newHike);
         return await this.repo.save(newHike);
@@ -90,5 +94,35 @@ export class HikeService extends TypeOrmQueryService<HikeEntity> {
         }
         hike.tags = hike.tags.filter((tag) => tag.id !== tagId);
         return await this.repo.save(hike);
+    }
+
+    async findByDistance(
+        latitude: number,
+        longitude: number,
+        distance: number
+    ): Promise<HikeEntity[]> {
+        //build query to find hikes within distance
+        // the harvesine formula is used to calculate the distance between two points on a sphere
+        // d = 2R × sin⁻¹(√[sin²((θ₂ - θ₁)/2) + cosθ₁ × cosθ₂ × sin²((φ₂ - φ₁)/2)]) where R is earth radius (6371 km), θ is latitude, φ is longitude
+        const hikesId = await this.repo
+            .createQueryBuilder('hikeQuery') // select all columns from hikeQuery
+            .select('hike.id') // select id from hikeQuery
+            .from(HikeEntity, 'hike')
+            .where(
+                '6371 * 2 * ASIN(SQRT(POWER(SIN((:latitude * PI()/180 - hike.latitude * PI()/180)/ 2), 2) + COS(:latitude * PI()/180) * COS(hike.latitude * PI()/180) * POWER(SIN((:longitude * PI()/180 - hike.longitude * PI()/180) / 2), 2))) < :distance',
+                {
+                    distance: distance,
+                    latitude: latitude,
+                    longitude: longitude,
+                }
+            )
+            .getMany();
+        // get all hikes from ids found
+        const hikes = await Promise.all(
+            hikesId.map(async (hike) => {
+                return await this.repo.findOne({ where: { id: hike.id } });
+            })
+        );
+        return hikes;
     }
 }
