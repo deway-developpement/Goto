@@ -13,6 +13,10 @@ export class AppService {
         if (!id.match(/^[0-9a-fA-F\-]{36}$/)) {
             throw new UnauthorizedException();
         }
+        // check that the category is safe
+        if (!category.match(/^[a-zA-Z]+$/)) {
+            throw new UnauthorizedException();
+        }
         // pipe file from local storage
         const file = createReadStream(join(process.cwd(), `./data/${category}/${id}`));
         return new StreamableFile(file);
