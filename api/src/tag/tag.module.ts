@@ -3,7 +3,6 @@ import { NestjsQueryTypeOrmModule } from '@nestjs-query/query-typeorm';
 import { Module } from '@nestjs/common';
 import { TagResolver } from './tag.resolver';
 import { TagService } from './tag.service';
-//import { HikeResolver } from './hike.resolver';
 import { TagDTO } from './interfaces/tag.dto';
 import { TagEntity } from './interfaces/tag.entity';
 

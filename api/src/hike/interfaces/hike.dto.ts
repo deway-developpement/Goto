@@ -1,5 +1,6 @@
 import {
     FilterableField,
+    FilterableRelation,
     FilterableUnPagedRelation,
     IDField,
     PagingStrategies,
@@ -48,6 +49,12 @@ import { AlertDTO } from '../../alert/interfaces/alert.dto';
     nullable: true,
     disableRemove: true,
     disableUpdate: true,
+})
+@FilterableRelation('category', () => TagDTO, {
+    nullable: true,
+    disableRemove: true,
+    disableUpdate: true,
+    enableAggregate: false,
 })
 export class HikeDTO {
     @IDField(() => ID)

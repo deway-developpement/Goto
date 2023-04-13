@@ -7,8 +7,9 @@ import { createWriteStream } from 'fs';
 import { join } from 'path';
 import { HikeService } from '../hike/hike.service';
 import { UserService } from '../user/user.service';
-import { TagService } from '../tag/tag.service';
 import { FilesService } from '../file/file.service';
+import { PointOfInterestService } from '../pointOfInterest/poi.service';
+import { CategoryService } from '../category/category.service';
 
 @Injectable()
 export class PhotoService {
@@ -16,7 +17,8 @@ export class PhotoService {
         @InjectRepository(PhotoEntity) private photoRepository: Repository<PhotoEntity>,
         @Inject(HikeService) private readonly hikeService: HikeService,
         @Inject(UserService) private readonly userService: UserService,
-        @Inject(TagService) private readonly tagService: TagService,
+        @Inject(CategoryService) private readonly categoryService: CategoryService,
+        @Inject(PointOfInterestService) private readonly poiService: PointOfInterestService,
         @Inject(FilesService) private readonly filesService: FilesService
     ) {}
 
@@ -27,17 +29,20 @@ export class PhotoService {
             if (!photo.user) {
                 throw new HttpException('User not found', HttpStatus.NOT_FOUND);
             }
-        }
-        if (query.objType === ObjType.HIKE) {
+        } else if (query.objType === ObjType.HIKE) {
             photo.hike = await this.hikeService.findById(query.objId);
             if (!photo.hike) {
                 throw new HttpException('Hike not found', HttpStatus.NOT_FOUND);
             }
-        }
-        if (query.objType === ObjType.TAG) {
-            photo.tag = await this.tagService.findById(query.objId);
-            if (!photo.tag) {
+        } else if (query.objType === ObjType.CATEGORY) {
+            photo.category = await this.categoryService.findById(query.objId);
+            if (!photo.category) {
                 throw new HttpException('Tag not found', HttpStatus.NOT_FOUND);
+            }
+        } else if (query.objType === ObjType.POINTOFINTEREST) {
+            photo.pointOfInterest = await this.poiService.findById(query.objId);
+            if (!photo.pointOfInterest) {
+                throw new HttpException('Point of interest not found', HttpStatus.NOT_FOUND);
             }
         }
         const { createReadStream, filename } = await query.file;

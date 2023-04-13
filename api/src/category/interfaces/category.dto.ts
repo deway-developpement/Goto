@@ -3,19 +3,25 @@ import {
     IDField,
     PagingStrategies,
     QueryOptions,
-    UnPagedRelation,
+    Relation,
 } from '@nestjs-query/query-graphql';
 import { ObjectType, ID } from '@nestjs/graphql';
 import { HikeDTO } from '../../hike/interfaces/hike.dto';
+import { PhotoDTO } from '../../photo/interfaces/photo.dto';
 
-@ObjectType('tag')
+@ObjectType('category')
 @QueryOptions({ pagingStrategy: PagingStrategies.NONE })
-@UnPagedRelation('hikes', () => HikeDTO, {
+@Relation('hikes', () => HikeDTO, {
     nullable: true,
     disableRemove: true,
     disableUpdate: true,
 })
-export class TagDTO {
+@Relation('defaultPhoto', () => PhotoDTO, {
+    nullable: true,
+    disableRemove: true,
+    disableUpdate: true,
+})
+export class CategoryDTO {
     @IDField(() => ID)
     id!: string;
 

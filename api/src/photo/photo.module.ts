@@ -6,17 +6,19 @@ import { PhotoEntity } from './interfaces/photo.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from '../user/user.module';
 import { HikeModule } from '../hike/hike.module';
-import { TagModule } from '../tag/tag.module';
 import { FilesModule } from '../file/file.module';
+import { CategoryModule } from '../category/category.module';
+import { PointOfInterestModule } from '../pointOfInterest/poi.module';
 
 @Module({
     providers: [PhotoResolver, PhotoService],
     imports: [
-        FilesModule,
         TypeOrmModule.forFeature([PhotoEntity]),
         UserModule,
+        PointOfInterestModule,
         HikeModule,
-        TagModule,
+        CategoryModule,
+        FilesModule,
     ],
 })
 export class PhotoModule {}

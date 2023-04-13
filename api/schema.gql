@@ -4,22 +4,17 @@
 
 directive @constraint(pattern: String) on FIELD_DEFINITION
 
-type pointOfInterest {
+type tag {
   id: ID!
   name: String!
-  description: String!
-  latitude: Float!
-  longitude: Float!
-  url: String
   createdAt: DateTime!
-  photo: photo
   hikes(
     """Specify to filter the records returned."""
     filter: HikeFilter = {}
 
     """Specify to sort results."""
     sorting: [HikeSort!] = []
-  ): [Hike!]!
+  ): [Hike!]
 }
 
 """
@@ -37,6 +32,7 @@ input HikeFilter {
   difficulty: DifficultyFilterComparison
   duration: NumberFieldComparison
   createdAt: DateFieldComparison
+  category: HikeFiltertagFilter
   alerts: HikeFilteralertFilter
   reviews: HikeFilterReviewFilter
   pointsOfInterest: HikeFilterpointOfInterestFilter
@@ -140,6 +136,14 @@ input DateFieldComparisonBetween {
   upper: DateTime!
 }
 
+input HikeFiltertagFilter {
+  and: [HikeFiltertagFilter!]
+  or: [HikeFiltertagFilter!]
+  id: IDFilterComparison
+  name: StringFieldComparison
+  createdAt: DateFieldComparison
+}
+
 input HikeFilteralertFilter {
   and: [HikeFilteralertFilter!]
   or: [HikeFilteralertFilter!]
@@ -192,14 +196,6 @@ input HikeFilterpointOfInterestFilter {
   name: StringFieldComparison
   latitude: NumberFieldComparison
   longitude: NumberFieldComparison
-  createdAt: DateFieldComparison
-}
-
-input HikeFiltertagFilter {
-  and: [HikeFiltertagFilter!]
-  or: [HikeFiltertagFilter!]
-  id: IDFilterComparison
-  name: StringFieldComparison
   createdAt: DateFieldComparison
 }
 
@@ -268,6 +264,7 @@ type Hike {
     filter: alertAggregateFilter
   ): [HikeAlertsAggregateResponse!]!
   owner: User!
+  category: tag
   tags(
     """Specify to filter the records returned."""
     filter: tagFilter = {}
@@ -496,18 +493,30 @@ enum alertSortFields {
   createdAt
 }
 
-type tag {
+type pointOfInterest {
   id: ID!
   name: String!
+  description: String!
+  latitude: Float!
+  longitude: Float!
+  url: String
   createdAt: DateTime!
-  defaultPhoto: photo
+  photo: photo
   hikes(
     """Specify to filter the records returned."""
     filter: HikeFilter = {}
 
     """Specify to sort results."""
     sorting: [HikeSort!] = []
-  ): [Hike!]
+  ): [Hike!]!
+}
+
+type category {
+  id: ID!
+  name: String!
+  createdAt: DateTime!
+  hikes: Hike
+  defaultPhoto: photo
 }
 
 type photo {
@@ -869,6 +878,30 @@ type tagMaxAggregate {
   createdAt: DateTime
 }
 
+type categoryAggregateGroupBy {
+  id: ID
+  name: String
+  createdAt: DateTime
+}
+
+type categoryCountAggregate {
+  id: Int
+  name: Int
+  createdAt: Int
+}
+
+type categoryMinAggregate {
+  id: ID
+  name: String
+  createdAt: DateTime
+}
+
+type categoryMaxAggregate {
+  id: ID
+  name: String
+  createdAt: DateTime
+}
+
 type pointOfInterestAggregateGroupBy {
   id: ID
   name: String
@@ -1159,6 +1192,17 @@ type Query {
     """Specify to sort results."""
     sorting: [alertSort!] = []
   ): [alert!]!
+  category(
+    """The id of the record to find."""
+    id: ID!
+  ): category
+  categories(
+    """Specify to filter the records returned."""
+    filter: categoryFilter = {}
+
+    """Specify to sort results."""
+    sorting: [categorySort!] = []
+  ): [category!]!
 }
 
 input HikeAggregateFilter {
@@ -1236,6 +1280,26 @@ enum PerformanceSortFields {
   createdAt
 }
 
+input categoryFilter {
+  and: [categoryFilter!]
+  or: [categoryFilter!]
+  id: IDFilterComparison
+  name: StringFieldComparison
+  createdAt: DateFieldComparison
+}
+
+input categorySort {
+  field: categorySortFields!
+  direction: SortDirection!
+  nulls: SortNulls
+}
+
+enum categorySortFields {
+  id
+  name
+  createdAt
+}
+
 type Mutation {
   createUser(input: UserInput!): User!
   updateUser(id: String!, input: UserUpdateInput!): User!
@@ -1247,8 +1311,7 @@ type Mutation {
   removeTagFromHike(hikeId: String!, tagId: String!): Hike!
   deleteHike(id: String!): Hike!
   createTag(input: TagInput!): tag!
-  deleteTag(id: String!): tag!
-  createPhoto(input: PhotoInput!): photo!
+  deleteTag(id: String!): category!
   createPointOfInterest(input: PointOfInterestInput!): pointOfInterest!
   deletePointOfInterest(id: String!): pointOfInterest!
   createPerformance(input: PerformanceInput!): Performance!
@@ -1258,6 +1321,8 @@ type Mutation {
   deleteReview(id: String!): Review!
   postAlert(input: AlertInput!): alert!
   deleteAlert(id: String!): alert!
+  createPhoto(input: PhotoInput!): photo!
+  createCategory(input: CategoryInput!): category!
 }
 
 input UserInput {
@@ -1299,18 +1364,6 @@ input TagInput {
   name: String!
 }
 
-input PhotoInput {
-  objId: String!
-  objType: ObjType!
-  file: Upload!
-}
-
-enum ObjType {
-  HIKE
-  USER
-  TAG
-}
-
 input PointOfInterestInput {
   name: String!
   description: String!
@@ -1338,4 +1391,21 @@ input AlertInput {
   longitude: Float!
   type: AlertType!
   hikeId: String!
+}
+
+input PhotoInput {
+  objId: String!
+  objType: ObjType!
+  file: Upload!
+}
+
+enum ObjType {
+  HIKE
+  USER
+  CATEGORY
+  POINTOFINTEREST
+}
+
+input CategoryInput {
+  name: String!
 }

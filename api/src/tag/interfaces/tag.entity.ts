@@ -1,14 +1,5 @@
-import {
-    Entity,
-    Column,
-    PrimaryGeneratedColumn,
-    Unique,
-    ManyToMany,
-    JoinTable,
-    OneToOne,
-} from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, Unique, ManyToMany, JoinTable } from 'typeorm';
 import { HikeEntity } from '../../hike/interfaces/hike.entity';
-import { PhotoEntity } from '../../photo/interfaces/photo.entity';
 
 @Entity('tag')
 @Unique(['name'])
@@ -18,9 +9,6 @@ export class TagEntity {
 
     @Column()
     name: string;
-
-    @OneToOne(() => PhotoEntity, (photo) => photo.tag, { cascade: ['remove'] })
-    defaultPhoto?: PhotoEntity;
 
     @ManyToMany(() => HikeEntity, (hike) => hike.tags)
     @JoinTable({ name: 'hikes_tags' })

@@ -9,8 +9,8 @@ import {
 } from 'typeorm';
 import { HikeEntity } from '../../hike/interfaces/hike.entity';
 import { UserEntity } from '../../user/interfaces/user.entity';
-import { TagEntity } from '../../tag/interfaces/tag.entity';
 import { PointOfInterestEntity } from '../../pointOfInterest/interfaces/poi.entity';
+import { CategoryEntity } from '../../category/interfaces/category.entity';
 
 @Entity('photo')
 @Unique(['filename'])
@@ -28,9 +28,9 @@ export class PhotoEntity {
     @JoinColumn()
     user?: UserEntity;
 
-    @OneToOne(() => TagEntity, (obj) => obj.defaultPhoto, { onDelete: 'CASCADE' })
+    @OneToOne(() => CategoryEntity, (obj) => obj.defaultPhoto, { onDelete: 'CASCADE' })
     @JoinColumn()
-    tag?: TagEntity;
+    category?: CategoryEntity;
 
     @OneToOne(() => PointOfInterestEntity, (obj) => obj.photo, { onDelete: 'CASCADE' })
     @JoinColumn()

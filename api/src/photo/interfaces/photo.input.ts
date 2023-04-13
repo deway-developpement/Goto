@@ -6,7 +6,8 @@ import { FileUpload } from '../../file/interfaces/fileupload.type';
 export enum ObjType {
     HIKE,
     USER,
-    TAG,
+    CATEGORY,
+    POINTOFINTEREST,
 }
 
 registerEnumType(ObjType, {

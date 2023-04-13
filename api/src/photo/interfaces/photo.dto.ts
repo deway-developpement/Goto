@@ -7,8 +7,8 @@ import {
 import { ObjectType, ID, HideField } from '@nestjs/graphql';
 import { UserDTO } from '../../user/interfaces/user.dto';
 import { HikeEntity } from '../../hike/interfaces/hike.entity';
-import { TagDTO } from '../../tag/interfaces/tag.dto';
 import { PointOfInterestDTO } from '../../pointOfInterest/interfaces/poi.dto';
+import { CategoryDTO } from '../../category/interfaces/category.dto';
 
 @ObjectType('photo')
 @QueryOptions({ pagingStrategy: PagingStrategies.NONE })
@@ -26,7 +26,7 @@ export class PhotoDTO {
     hike?: HikeEntity;
 
     @HideField()
-    tag?: TagDTO;
+    category?: CategoryDTO;
 
     @HideField()
     pointOfInterest?: PointOfInterestDTO;
