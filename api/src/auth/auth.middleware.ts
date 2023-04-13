@@ -6,10 +6,10 @@ export const pwdMiddleware: FieldMiddleware = async (ctx: MiddlewareContext, nex
 
     const errorValue = 'Unauthorized'; //TODO: change this
     try {
-        const _id = ctx.context.req.user._id;
-        const _creditential = ctx.context.req.user.credidential;
+        const id = ctx.context.req.user.id;
+        const creditential = ctx.context.req.user.credidential;
 
-        if (_creditential > 3 || (_creditential > 0 && ctx.source._id == _id)) {
+        if (creditential >= 2 || (creditential >= 0 && ctx.source.id == id)) {
             return value;
         }
 
@@ -32,10 +32,10 @@ export const idMiddleware: FieldMiddleware = async (ctx: MiddlewareContext, next
     const errorValue = 'Unauthorized';
 
     try {
-        const _id = ctx.context.req.user._id;
-        const _creditential = ctx.context.req.user.credidential;
+        const id = ctx.context.req.user.id;
+        const creditential = ctx.context.req.user.credidential;
 
-        if (_creditential > 3 || (_creditential > 0 && ctx.source._id == _id)) {
+        if (creditential >= 2 || (creditential >= 0 && ctx.source.id == id)) {
             return value;
         }
 
@@ -61,10 +61,10 @@ export const credidentialMiddleware: FieldMiddleware = async (
     const errorValue = 0;
 
     try {
-        const _id = ctx.context.req.user._id;
-        const _creditential = ctx.context.req.user.credidential;
+        const id = ctx.context.req.user.id;
+        const creditential = ctx.context.req.user.credidential;
 
-        if (_creditential > 3 || (_creditential > 0 && ctx.source._id == _id)) {
+        if (creditential >= 2 || (creditential >= 0 && ctx.source.id == id)) {
             return value;
         }
 

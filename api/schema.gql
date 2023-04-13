@@ -4,82 +4,1325 @@
 
 directive @constraint(pattern: String) on FIELD_DEFINITION
 
-type User {
-  _id: ID!
+type tag {
+  id: ID!
+  name: String!
+  createdAt: DateTime!
+  hikes(
+    """Specify to filter the records returned."""
+    filter: HikeFilter = {}
 
-  """Pseudo of the user"""
-  pseudo: String!
-
-  """E-mail of the user"""
-  email: String!
-
-  """Password of the user"""
-  password: String!
-
-  """Public key of the user"""
-  publicKey: String!
-
-  """access of the user : bin rwrw"""
-  credidential: Float!
-
-  """List of friends of the user"""
-  friends: [User!]!
-  isConnected: Boolean!
+    """Specify to sort results."""
+    sorting: [HikeSort!] = []
+  ): [Hike!]
 }
 
-type Message {
-  _id: ID!
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
 
-  """sender of the message"""
-  sender: User!
+input HikeFilter {
+  and: [HikeFilter!]
+  or: [HikeFilter!]
+  id: IDFilterComparison
+  name: StringFieldComparison
+  distance: NumberFieldComparison
+  elevation: NumberFieldComparison
+  difficulty: DifficultyFilterComparison
+  duration: NumberFieldComparison
+  createdAt: DateFieldComparison
+  category: HikeFiltertagFilter
+  alerts: HikeFilteralertFilter
+  reviews: HikeFilterReviewFilter
+  pointsOfInterest: HikeFilterpointOfInterestFilter
+  tags: HikeFiltertagFilter
+}
 
-  """Content of the message"""
-  content: String!
+input IDFilterComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: ID
+  neq: ID
+  gt: ID
+  gte: ID
+  lt: ID
+  lte: ID
+  like: ID
+  notLike: ID
+  iLike: ID
+  notILike: ID
+  in: [ID!]
+  notIn: [ID!]
+}
 
-  """Date of the message"""
-  date: String!
+input StringFieldComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: String
+  neq: String
+  gt: String
+  gte: String
+  lt: String
+  lte: String
+  like: String
+  notLike: String
+  iLike: String
+  notILike: String
+  in: [String!]
+  notIn: [String!]
+}
+
+input NumberFieldComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: Float
+  neq: Float
+  gt: Float
+  gte: Float
+  lt: Float
+  lte: Float
+  in: [Float!]
+  notIn: [Float!]
+  between: NumberFieldComparisonBetween
+  notBetween: NumberFieldComparisonBetween
+}
+
+input NumberFieldComparisonBetween {
+  lower: Float!
+  upper: Float!
+}
+
+input DifficultyFilterComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: Difficulty
+  neq: Difficulty
+  gt: Difficulty
+  gte: Difficulty
+  lt: Difficulty
+  lte: Difficulty
+  like: Difficulty
+  notLike: Difficulty
+  iLike: Difficulty
+  notILike: Difficulty
+  in: [Difficulty!]
+  notIn: [Difficulty!]
+}
+
+enum Difficulty {
+  EASY
+  MEDIUM
+  HARD
+}
+
+input DateFieldComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: DateTime
+  neq: DateTime
+  gt: DateTime
+  gte: DateTime
+  lt: DateTime
+  lte: DateTime
+  in: [DateTime!]
+  notIn: [DateTime!]
+  between: DateFieldComparisonBetween
+  notBetween: DateFieldComparisonBetween
+}
+
+input DateFieldComparisonBetween {
+  lower: DateTime!
+  upper: DateTime!
+}
+
+input HikeFiltertagFilter {
+  and: [HikeFiltertagFilter!]
+  or: [HikeFiltertagFilter!]
+  id: IDFilterComparison
+  name: StringFieldComparison
+  createdAt: DateFieldComparison
+}
+
+input HikeFilteralertFilter {
+  and: [HikeFilteralertFilter!]
+  or: [HikeFilteralertFilter!]
+  id: IDFilterComparison
+  latitude: NumberFieldComparison
+  longitude: NumberFieldComparison
+  type: AlertTypeFilterComparison
+  createdAt: DateFieldComparison
+}
+
+input AlertTypeFilterComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: AlertType
+  neq: AlertType
+  gt: AlertType
+  gte: AlertType
+  lt: AlertType
+  lte: AlertType
+  like: AlertType
+  notLike: AlertType
+  iLike: AlertType
+  notILike: AlertType
+  in: [AlertType!]
+  notIn: [AlertType!]
+}
+
+enum AlertType {
+  TRACK_CHANGE
+  BLOCKED_PATH
+  DANGER
+  ANIMAL
+  SLIPPERY_PATH
+  DANGEROUS_ROAD
+  FLOOD
+}
+
+input HikeFilterReviewFilter {
+  and: [HikeFilterReviewFilter!]
+  or: [HikeFilterReviewFilter!]
+  id: IDFilterComparison
+  rating: NumberFieldComparison
+  createdAt: DateFieldComparison
+}
+
+input HikeFilterpointOfInterestFilter {
+  and: [HikeFilterpointOfInterestFilter!]
+  or: [HikeFilterpointOfInterestFilter!]
+  id: IDFilterComparison
+  name: StringFieldComparison
+  latitude: NumberFieldComparison
+  longitude: NumberFieldComparison
+  createdAt: DateFieldComparison
+}
+
+input HikeSort {
+  field: HikeSortFields!
+  direction: SortDirection!
+  nulls: SortNulls
+}
+
+enum HikeSortFields {
+  id
+  name
+  distance
+  elevation
+  difficulty
+  duration
+  createdAt
+}
+
+"""Sort Directions"""
+enum SortDirection {
+  ASC
+  DESC
+}
+
+"""Sort Nulls Options"""
+enum SortNulls {
+  NULLS_FIRST
+  NULLS_LAST
+}
+
+type Review {
+  id: ID!
+  rating: Float!
+  createdAt: DateTime!
+  user: User!
+  hike: Hike!
+}
+
+type alert {
+  id: ID!
+  latitude: Float!
+  longitude: Float!
+  type: AlertType!
+  createdAt: DateTime!
+  hike: Hike!
+  author: User!
+}
+
+type Hike {
+  id: ID!
+  name: String!
+  distance: Float!
+  elevation: Float!
+  description: String!
+  difficulty: Difficulty!
+  duration: Float
+  track: String!
+  createdAt: DateTime!
+  reviewsAggregate(
+    """Filter to find records to aggregate on"""
+    filter: ReviewAggregateFilter
+  ): [HikeReviewsAggregateResponse!]!
+  alertsAggregate(
+    """Filter to find records to aggregate on"""
+    filter: alertAggregateFilter
+  ): [HikeAlertsAggregateResponse!]!
+  owner: User!
+  category: tag
+  tags(
+    """Specify to filter the records returned."""
+    filter: tagFilter = {}
+
+    """Specify to sort results."""
+    sorting: [tagSort!] = []
+  ): [tag!]
+  photos(
+    """Specify to filter the records returned."""
+    filter: photoFilter = {}
+
+    """Specify to sort results."""
+    sorting: [photoSort!] = []
+  ): [photo!]
+  pointsOfInterests(
+    """Specify to filter the records returned."""
+    filter: pointOfInterestFilter = {}
+
+    """Specify to sort results."""
+    sorting: [pointOfInterestSort!] = []
+  ): [pointOfInterest!]
+  reviews(
+    """Specify to filter the records returned."""
+    filter: ReviewFilter = {}
+
+    """Specify to sort results."""
+    sorting: [ReviewSort!] = []
+  ): [Review!]
+  alerts(
+    """Specify to filter the records returned."""
+    filter: alertFilter = {}
+
+    """Specify to sort results."""
+    sorting: [alertSort!] = []
+  ): [alert!]
+}
+
+input ReviewAggregateFilter {
+  and: [ReviewAggregateFilter!]
+  or: [ReviewAggregateFilter!]
+  id: IDFilterComparison
+  rating: NumberFieldComparison
+  createdAt: DateFieldComparison
+}
+
+input alertAggregateFilter {
+  and: [alertAggregateFilter!]
+  or: [alertAggregateFilter!]
+  id: IDFilterComparison
+  latitude: NumberFieldComparison
+  longitude: NumberFieldComparison
+  type: AlertTypeFilterComparison
+  createdAt: DateFieldComparison
+}
+
+input tagFilter {
+  and: [tagFilter!]
+  or: [tagFilter!]
+  id: IDFilterComparison
+  name: StringFieldComparison
+  createdAt: DateFieldComparison
+}
+
+input tagSort {
+  field: tagSortFields!
+  direction: SortDirection!
+  nulls: SortNulls
+}
+
+enum tagSortFields {
+  id
+  name
+  createdAt
+}
+
+input photoFilter {
+  and: [photoFilter!]
+  or: [photoFilter!]
+  id: IDFilterComparison
+  filename: StringFieldComparison
+  createdAt: DateFieldComparison
+}
+
+input photoSort {
+  field: photoSortFields!
+  direction: SortDirection!
+  nulls: SortNulls
+}
+
+enum photoSortFields {
+  id
+  filename
+  createdAt
+}
+
+input pointOfInterestFilter {
+  and: [pointOfInterestFilter!]
+  or: [pointOfInterestFilter!]
+  id: IDFilterComparison
+  name: StringFieldComparison
+  latitude: NumberFieldComparison
+  longitude: NumberFieldComparison
+  createdAt: DateFieldComparison
+  hikes: pointOfInterestFilterHikeFilter
+}
+
+input pointOfInterestFilterHikeFilter {
+  and: [pointOfInterestFilterHikeFilter!]
+  or: [pointOfInterestFilterHikeFilter!]
+  id: IDFilterComparison
+  name: StringFieldComparison
+  distance: NumberFieldComparison
+  elevation: NumberFieldComparison
+  difficulty: DifficultyFilterComparison
+  duration: NumberFieldComparison
+  createdAt: DateFieldComparison
+}
+
+input pointOfInterestSort {
+  field: pointOfInterestSortFields!
+  direction: SortDirection!
+  nulls: SortNulls
+}
+
+enum pointOfInterestSortFields {
+  id
+  name
+  latitude
+  longitude
+  createdAt
+}
+
+input ReviewFilter {
+  and: [ReviewFilter!]
+  or: [ReviewFilter!]
+  id: IDFilterComparison
+  rating: NumberFieldComparison
+  createdAt: DateFieldComparison
+  hike: ReviewFilterHikeFilter
+  user: ReviewFilterUserFilter
+}
+
+input ReviewFilterHikeFilter {
+  and: [ReviewFilterHikeFilter!]
+  or: [ReviewFilterHikeFilter!]
+  id: IDFilterComparison
+  name: StringFieldComparison
+  distance: NumberFieldComparison
+  elevation: NumberFieldComparison
+  difficulty: DifficultyFilterComparison
+  duration: NumberFieldComparison
+  createdAt: DateFieldComparison
+}
+
+input ReviewFilterUserFilter {
+  and: [ReviewFilterUserFilter!]
+  or: [ReviewFilterUserFilter!]
+  id: IDFilterComparison
+  pseudo: StringFieldComparison
+  email: StringFieldComparison
+  password: StringFieldComparison
+  publicKey: StringFieldComparison
+  credidential: NumberFieldComparison
+  createdAt: DateFieldComparison
+}
+
+input ReviewSort {
+  field: ReviewSortFields!
+  direction: SortDirection!
+  nulls: SortNulls
+}
+
+enum ReviewSortFields {
+  id
+  rating
+  createdAt
+}
+
+input alertFilter {
+  and: [alertFilter!]
+  or: [alertFilter!]
+  id: IDFilterComparison
+  latitude: NumberFieldComparison
+  longitude: NumberFieldComparison
+  type: AlertTypeFilterComparison
+  createdAt: DateFieldComparison
+  author: alertFilterUserFilter
+  hike: alertFilterHikeFilter
+}
+
+input alertFilterUserFilter {
+  and: [alertFilterUserFilter!]
+  or: [alertFilterUserFilter!]
+  id: IDFilterComparison
+  pseudo: StringFieldComparison
+  email: StringFieldComparison
+  password: StringFieldComparison
+  publicKey: StringFieldComparison
+  credidential: NumberFieldComparison
+  createdAt: DateFieldComparison
+}
+
+input alertFilterHikeFilter {
+  and: [alertFilterHikeFilter!]
+  or: [alertFilterHikeFilter!]
+  id: IDFilterComparison
+  name: StringFieldComparison
+  distance: NumberFieldComparison
+  elevation: NumberFieldComparison
+  difficulty: DifficultyFilterComparison
+  duration: NumberFieldComparison
+  createdAt: DateFieldComparison
+}
+
+input alertSort {
+  field: alertSortFields!
+  direction: SortDirection!
+  nulls: SortNulls
+}
+
+enum alertSortFields {
+  id
+  latitude
+  longitude
+  type
+  createdAt
+}
+
+type pointOfInterest {
+  id: ID!
+  name: String!
+  description: String!
+  latitude: Float!
+  longitude: Float!
+  url: String
+  createdAt: DateTime!
+  photo: photo
+  hikes(
+    """Specify to filter the records returned."""
+    filter: HikeFilter = {}
+
+    """Specify to sort results."""
+    sorting: [HikeSort!] = []
+  ): [Hike!]!
+}
+
+type category {
+  id: ID!
+  name: String!
+  createdAt: DateTime!
+  hikes: Hike
+  defaultPhoto: photo
+}
+
+type photo {
+  id: ID!
+  filename: String!
+  createdAt: DateTime!
+}
+
+type User {
+  id: ID!
+  pseudo: String!
+  email: String!
+  password: String!
+  publicKey: String!
+  credidential: Float!
+  createdAt: DateTime!
+  friendsAggregate(
+    """Filter to find records to aggregate on"""
+    filter: UserAggregateFilter
+  ): [UserFriendsAggregateResponse!]!
+  avatar: photo
+  friends(
+    """Specify to filter the records returned."""
+    filter: UserFilter = {}
+
+    """Specify to sort results."""
+    sorting: [UserSort!] = []
+  ): [User!]!
+}
+
+input UserAggregateFilter {
+  and: [UserAggregateFilter!]
+  or: [UserAggregateFilter!]
+  id: IDFilterComparison
+  pseudo: StringFieldComparison
+  email: StringFieldComparison
+  password: StringFieldComparison
+  publicKey: StringFieldComparison
+  credidential: NumberFieldComparison
+  createdAt: DateFieldComparison
+}
+
+input UserFilter {
+  and: [UserFilter!]
+  or: [UserFilter!]
+  id: IDFilterComparison
+  pseudo: StringFieldComparison
+  email: StringFieldComparison
+  password: StringFieldComparison
+  publicKey: StringFieldComparison
+  credidential: NumberFieldComparison
+  createdAt: DateFieldComparison
+}
+
+input UserSort {
+  field: UserSortFields!
+  direction: SortDirection!
+  nulls: SortNulls
+}
+
+enum UserSortFields {
+  id
+  pseudo
+  email
+  password
+  publicKey
+  credidential
+  createdAt
+}
+
+type UserAggregateGroupBy {
+  id: ID
+  pseudo: String
+  email: String
+  password: String
+  publicKey: String
+  credidential: Float
+  createdAt: DateTime
+}
+
+type UserCountAggregate {
+  id: Int
+  pseudo: Int
+  email: Int
+  password: Int
+  publicKey: Int
+  credidential: Int
+  createdAt: Int
+}
+
+type UserSumAggregate {
+  credidential: Float
+}
+
+type UserAvgAggregate {
+  credidential: Float
+}
+
+type UserMinAggregate {
+  id: ID
+  pseudo: String
+  email: String
+  password: String
+  publicKey: String
+  credidential: Float
+  createdAt: DateTime
+}
+
+type UserMaxAggregate {
+  id: ID
+  pseudo: String
+  email: String
+  password: String
+  publicKey: String
+  credidential: Float
+  createdAt: DateTime
+}
+
+type UserAggregateResponse {
+  groupBy: UserAggregateGroupBy
+  count: UserCountAggregate
+  sum: UserSumAggregate
+  avg: UserAvgAggregate
+  min: UserMinAggregate
+  max: UserMaxAggregate
+}
+
+type UserFriendsAggregateGroupBy {
+  id: ID
+  pseudo: String
+  email: String
+  password: String
+  publicKey: String
+  credidential: Float
+  createdAt: DateTime
+}
+
+type UserFriendsCountAggregate {
+  id: Int
+  pseudo: Int
+  email: Int
+  password: Int
+  publicKey: Int
+  credidential: Int
+  createdAt: Int
+}
+
+type UserFriendsSumAggregate {
+  credidential: Float
+}
+
+type UserFriendsAvgAggregate {
+  credidential: Float
+}
+
+type UserFriendsMinAggregate {
+  id: ID
+  pseudo: String
+  email: String
+  password: String
+  publicKey: String
+  credidential: Float
+  createdAt: DateTime
+}
+
+type UserFriendsMaxAggregate {
+  id: ID
+  pseudo: String
+  email: String
+  password: String
+  publicKey: String
+  credidential: Float
+  createdAt: DateTime
+}
+
+type UserFriendsAggregateResponse {
+  groupBy: UserFriendsAggregateGroupBy
+  count: UserFriendsCountAggregate
+  sum: UserFriendsSumAggregate
+  avg: UserFriendsAvgAggregate
+  min: UserFriendsMinAggregate
+  max: UserFriendsMaxAggregate
+}
+
+type HikeAggregateGroupBy {
+  id: ID
+  name: String
+  distance: Float
+  elevation: Float
+  difficulty: Difficulty
+  duration: Float
+  createdAt: DateTime
+}
+
+type HikeCountAggregate {
+  id: Int
+  name: Int
+  distance: Int
+  elevation: Int
+  difficulty: Int
+  duration: Int
+  createdAt: Int
+}
+
+type HikeSumAggregate {
+  distance: Float
+  elevation: Float
+  duration: Float
+}
+
+type HikeAvgAggregate {
+  distance: Float
+  elevation: Float
+  duration: Float
+}
+
+type HikeMinAggregate {
+  id: ID
+  name: String
+  distance: Float
+  elevation: Float
+  difficulty: Difficulty
+  duration: Float
+  createdAt: DateTime
+}
+
+type HikeMaxAggregate {
+  id: ID
+  name: String
+  distance: Float
+  elevation: Float
+  difficulty: Difficulty
+  duration: Float
+  createdAt: DateTime
+}
+
+type HikeAggregateResponse {
+  groupBy: HikeAggregateGroupBy
+  count: HikeCountAggregate
+  sum: HikeSumAggregate
+  avg: HikeAvgAggregate
+  min: HikeMinAggregate
+  max: HikeMaxAggregate
+}
+
+type HikeAlertsAggregateGroupBy {
+  id: ID
+  latitude: Float
+  longitude: Float
+  type: AlertType
+  createdAt: DateTime
+}
+
+type HikeAlertsCountAggregate {
+  id: Int
+  latitude: Int
+  longitude: Int
+  type: Int
+  createdAt: Int
+}
+
+type HikeAlertsSumAggregate {
+  latitude: Float
+  longitude: Float
+}
+
+type HikeAlertsAvgAggregate {
+  latitude: Float
+  longitude: Float
+}
+
+type HikeAlertsMinAggregate {
+  id: ID
+  latitude: Float
+  longitude: Float
+  type: AlertType
+  createdAt: DateTime
+}
+
+type HikeAlertsMaxAggregate {
+  id: ID
+  latitude: Float
+  longitude: Float
+  type: AlertType
+  createdAt: DateTime
+}
+
+type HikeAlertsAggregateResponse {
+  groupBy: HikeAlertsAggregateGroupBy
+  count: HikeAlertsCountAggregate
+  sum: HikeAlertsSumAggregate
+  avg: HikeAlertsAvgAggregate
+  min: HikeAlertsMinAggregate
+  max: HikeAlertsMaxAggregate
+}
+
+type HikeReviewsAggregateGroupBy {
+  id: ID
+  rating: Float
+  createdAt: DateTime
+}
+
+type HikeReviewsCountAggregate {
+  id: Int
+  rating: Int
+  createdAt: Int
+}
+
+type HikeReviewsSumAggregate {
+  rating: Float
+}
+
+type HikeReviewsAvgAggregate {
+  rating: Float
+}
+
+type HikeReviewsMinAggregate {
+  id: ID
+  rating: Float
+  createdAt: DateTime
+}
+
+type HikeReviewsMaxAggregate {
+  id: ID
+  rating: Float
+  createdAt: DateTime
+}
+
+type HikeReviewsAggregateResponse {
+  groupBy: HikeReviewsAggregateGroupBy
+  count: HikeReviewsCountAggregate
+  sum: HikeReviewsSumAggregate
+  avg: HikeReviewsAvgAggregate
+  min: HikeReviewsMinAggregate
+  max: HikeReviewsMaxAggregate
+}
+
+type tagAggregateGroupBy {
+  id: ID
+  name: String
+  createdAt: DateTime
+}
+
+type tagCountAggregate {
+  id: Int
+  name: Int
+  createdAt: Int
+}
+
+type tagMinAggregate {
+  id: ID
+  name: String
+  createdAt: DateTime
+}
+
+type tagMaxAggregate {
+  id: ID
+  name: String
+  createdAt: DateTime
+}
+
+type categoryAggregateGroupBy {
+  id: ID
+  name: String
+  createdAt: DateTime
+}
+
+type categoryCountAggregate {
+  id: Int
+  name: Int
+  createdAt: Int
+}
+
+type categoryMinAggregate {
+  id: ID
+  name: String
+  createdAt: DateTime
+}
+
+type categoryMaxAggregate {
+  id: ID
+  name: String
+  createdAt: DateTime
+}
+
+type pointOfInterestAggregateGroupBy {
+  id: ID
+  name: String
+  latitude: Float
+  longitude: Float
+  createdAt: DateTime
+}
+
+type pointOfInterestCountAggregate {
+  id: Int
+  name: Int
+  latitude: Int
+  longitude: Int
+  createdAt: Int
+}
+
+type pointOfInterestSumAggregate {
+  latitude: Float
+  longitude: Float
+}
+
+type pointOfInterestAvgAggregate {
+  latitude: Float
+  longitude: Float
+}
+
+type pointOfInterestMinAggregate {
+  id: ID
+  name: String
+  latitude: Float
+  longitude: Float
+  createdAt: DateTime
+}
+
+type pointOfInterestMaxAggregate {
+  id: ID
+  name: String
+  latitude: Float
+  longitude: Float
+  createdAt: DateTime
+}
+
+type Performance {
+  id: ID!
+  date: DateTime!
+  distance: Float!
+  elevation: Float!
+  duration: Float!
+  track: String!
+  createdAt: DateTime!
+  user: User!
+  hike: Hike!
+}
+
+type PerformanceAggregateGroupBy {
+  id: ID
+  date: DateTime
+  distance: Float
+  elevation: Float
+  duration: Float
+  createdAt: DateTime
+}
+
+type PerformanceCountAggregate {
+  id: Int
+  date: Int
+  distance: Int
+  elevation: Int
+  duration: Int
+  createdAt: Int
+}
+
+type PerformanceSumAggregate {
+  distance: Float
+  elevation: Float
+  duration: Float
+}
+
+type PerformanceAvgAggregate {
+  distance: Float
+  elevation: Float
+  duration: Float
+}
+
+type PerformanceMinAggregate {
+  id: ID
+  date: DateTime
+  distance: Float
+  elevation: Float
+  duration: Float
+  createdAt: DateTime
+}
+
+type PerformanceMaxAggregate {
+  id: ID
+  date: DateTime
+  distance: Float
+  elevation: Float
+  duration: Float
+  createdAt: DateTime
+}
+
+type PerformanceAggregateResponse {
+  groupBy: PerformanceAggregateGroupBy
+  count: PerformanceCountAggregate
+  sum: PerformanceSumAggregate
+  avg: PerformanceAvgAggregate
+  min: PerformanceMinAggregate
+  max: PerformanceMaxAggregate
+}
+
+type ReviewAggregateGroupBy {
+  id: ID
+  rating: Float
+  createdAt: DateTime
+}
+
+type ReviewCountAggregate {
+  id: Int
+  rating: Int
+  createdAt: Int
+}
+
+type ReviewSumAggregate {
+  rating: Float
+}
+
+type ReviewAvgAggregate {
+  rating: Float
+}
+
+type ReviewMinAggregate {
+  id: ID
+  rating: Float
+  createdAt: DateTime
+}
+
+type ReviewMaxAggregate {
+  id: ID
+  rating: Float
+  createdAt: DateTime
+}
+
+type ReviewAggregateResponse {
+  groupBy: ReviewAggregateGroupBy
+  count: ReviewCountAggregate
+  sum: ReviewSumAggregate
+  avg: ReviewAvgAggregate
+  min: ReviewMinAggregate
+  max: ReviewMaxAggregate
+}
+
+type alertAggregateGroupBy {
+  id: ID
+  latitude: Float
+  longitude: Float
+  type: AlertType
+  createdAt: DateTime
+}
+
+type alertCountAggregate {
+  id: Int
+  latitude: Int
+  longitude: Int
+  type: Int
+  createdAt: Int
+}
+
+type alertSumAggregate {
+  latitude: Float
+  longitude: Float
+}
+
+type alertAvgAggregate {
+  latitude: Float
+  longitude: Float
+}
+
+type alertMinAggregate {
+  id: ID
+  latitude: Float
+  longitude: Float
+  type: AlertType
+  createdAt: DateTime
+}
+
+type alertMaxAggregate {
+  id: ID
+  latitude: Float
+  longitude: Float
+  type: AlertType
+  createdAt: DateTime
 }
 
 type Query {
-  User(id: String, email: String, input: SearchUserInput): User
-  whoami: User
+  userAggregate(
+    """Filter to find records to aggregate on"""
+    filter: UserAggregateFilter
+  ): [UserAggregateResponse!]!
+  user(
+    """The id of the record to find."""
+    id: ID!
+  ): User
+  users(
+    """Specify to filter the records returned."""
+    filter: UserFilter = {}
+
+    """Specify to sort results."""
+    sorting: [UserSort!] = []
+  ): [User!]!
   exist(email: String!): Boolean!
-  Users(filter: FilterUserInput): [User!]!
+  whoami: User!
+  hikeAggregate(
+    """Filter to find records to aggregate on"""
+    filter: HikeAggregateFilter
+  ): [HikeAggregateResponse!]!
+  hike(
+    """The id of the record to find."""
+    id: ID!
+  ): Hike
+  hikes(
+    """Specify to filter the records returned."""
+    filter: HikeFilter = {}
+
+    """Specify to sort results."""
+    sorting: [HikeSort!] = []
+  ): [Hike!]!
+  tag(
+    """The id of the record to find."""
+    id: ID!
+  ): tag
+  tags(
+    """Specify to filter the records returned."""
+    filter: tagFilter = {}
+
+    """Specify to sort results."""
+    sorting: [tagSort!] = []
+  ): [tag!]!
+  pointOfInterest(
+    """The id of the record to find."""
+    id: ID!
+  ): pointOfInterest
+  pointOfInterests(
+    """Specify to filter the records returned."""
+    filter: pointOfInterestFilter = {}
+
+    """Specify to sort results."""
+    sorting: [pointOfInterestSort!] = []
+  ): [pointOfInterest!]!
+  performanceAggregate(
+    """Filter to find records to aggregate on"""
+    filter: PerformanceAggregateFilter
+  ): [PerformanceAggregateResponse!]!
+  performance(
+    """The id of the record to find."""
+    id: ID!
+  ): Performance
+  performances(
+    """Specify to filter the records returned."""
+    filter: PerformanceFilter = {}
+
+    """Specify to sort results."""
+    sorting: [PerformanceSort!] = []
+  ): [Performance!]!
+  reviewAggregate(
+    """Filter to find records to aggregate on"""
+    filter: ReviewAggregateFilter
+  ): [ReviewAggregateResponse!]!
+  review(
+    """The id of the record to find."""
+    id: ID!
+  ): Review
+  reviews(
+    """Specify to filter the records returned."""
+    filter: ReviewFilter = {}
+
+    """Specify to sort results."""
+    sorting: [ReviewSort!] = []
+  ): [Review!]!
+  alert(
+    """The id of the record to find."""
+    id: ID!
+  ): alert
+  alerts(
+    """Specify to filter the records returned."""
+    filter: alertFilter = {}
+
+    """Specify to sort results."""
+    sorting: [alertSort!] = []
+  ): [alert!]!
+  category(
+    """The id of the record to find."""
+    id: ID!
+  ): category
+  categories(
+    """Specify to filter the records returned."""
+    filter: categoryFilter = {}
+
+    """Specify to sort results."""
+    sorting: [categorySort!] = []
+  ): [category!]!
 }
 
-input SearchUserInput {
-  """Pseudo of the user"""
-  pseudo: String!
-
-  """Public key of the user"""
-  publicKey: String!
+input HikeAggregateFilter {
+  and: [HikeAggregateFilter!]
+  or: [HikeAggregateFilter!]
+  id: IDFilterComparison
+  name: StringFieldComparison
+  distance: NumberFieldComparison
+  elevation: NumberFieldComparison
+  difficulty: DifficultyFilterComparison
+  duration: NumberFieldComparison
+  createdAt: DateFieldComparison
 }
 
-input FilterUserInput {
-  """Pseudo of the user"""
-  pseudo: String
+input PerformanceAggregateFilter {
+  and: [PerformanceAggregateFilter!]
+  or: [PerformanceAggregateFilter!]
+  id: IDFilterComparison
+  date: DateFieldComparison
+  distance: NumberFieldComparison
+  elevation: NumberFieldComparison
+  duration: NumberFieldComparison
+  createdAt: DateFieldComparison
+}
 
-  """E-mail of the user"""
-  email: String
+input PerformanceFilter {
+  and: [PerformanceFilter!]
+  or: [PerformanceFilter!]
+  id: IDFilterComparison
+  date: DateFieldComparison
+  distance: NumberFieldComparison
+  elevation: NumberFieldComparison
+  duration: NumberFieldComparison
+  createdAt: DateFieldComparison
+  hike: PerformanceFilterHikeFilter
+  user: PerformanceFilterUserFilter
+}
 
-  """Password of the user"""
-  password: String
+input PerformanceFilterHikeFilter {
+  and: [PerformanceFilterHikeFilter!]
+  or: [PerformanceFilterHikeFilter!]
+  id: IDFilterComparison
+  name: StringFieldComparison
+  distance: NumberFieldComparison
+  elevation: NumberFieldComparison
+  difficulty: DifficultyFilterComparison
+  duration: NumberFieldComparison
+  createdAt: DateFieldComparison
+}
 
-  """Public key of the user"""
-  publicKey: String
+input PerformanceFilterUserFilter {
+  and: [PerformanceFilterUserFilter!]
+  or: [PerformanceFilterUserFilter!]
+  id: IDFilterComparison
+  pseudo: StringFieldComparison
+  email: StringFieldComparison
+  password: StringFieldComparison
+  publicKey: StringFieldComparison
+  credidential: NumberFieldComparison
+  createdAt: DateFieldComparison
+}
 
-  """access of the user : bin rwrw"""
-  credidential: Float
+input PerformanceSort {
+  field: PerformanceSortFields!
+  direction: SortDirection!
+  nulls: SortNulls
+}
 
-  """List of friends of the user"""
-  friends: [FilterUserInput!]
+enum PerformanceSortFields {
+  id
+  date
+  distance
+  elevation
+  duration
+  createdAt
+}
+
+input categoryFilter {
+  and: [categoryFilter!]
+  or: [categoryFilter!]
+  id: IDFilterComparison
+  name: StringFieldComparison
+  createdAt: DateFieldComparison
+}
+
+input categorySort {
+  field: categorySortFields!
+  direction: SortDirection!
+  nulls: SortNulls
+}
+
+enum categorySortFields {
+  id
+  name
+  createdAt
 }
 
 type Mutation {
   createUser(input: UserInput!): User!
-  newUser(input: NewUserInput!): User!
-  deleteUser(id: String!): User
-  updateUser(id: String!, input: UpdateUserInput!): User
+  updateUser(id: String!, input: UserUpdateInput!): User!
+  addFriend(id: String!): User!
+  removeFriend(id: String!): User!
+  deleteAccount: User!
+  createHike(input: HikeInput!): Hike!
+  addTagToHike(hikeId: String!, tagId: String!): Hike!
+  removeTagFromHike(hikeId: String!, tagId: String!): Hike!
+  deleteHike(id: String!): Hike!
+  createTag(input: TagInput!): tag!
+  deleteTag(id: String!): category!
+  createPointOfInterest(input: PointOfInterestInput!): pointOfInterest!
+  deletePointOfInterest(id: String!): pointOfInterest!
+  createPerformance(input: PerformanceInput!): Performance!
+  deletePerformance(id: String!): Performance!
+  addReview(input: ReviewInput!): Review!
+  updateReview(id: String!, input: ReviewInput!): Review!
+  deleteReview(id: String!): Review!
+  postAlert(input: AlertInput!): alert!
+  deleteAlert(id: String!): alert!
+  createPhoto(input: PhotoInput!): photo!
+  createCategory(input: CategoryInput!): category!
 }
 
 input UserInput {
@@ -91,38 +1334,78 @@ input UserInput {
 
   """Password of the user"""
   password: String!
-
-  """Public key of the user"""
-  publicKey: String!
-
-  """access of the user : bin rwrw"""
-  credidential: Float!
 }
 
-input NewUserInput {
+input UserUpdateInput {
   """Pseudo of the user"""
-  pseudo: String!
+  pseudo: String
 
-  """E-mail of the user"""
-  email: String!
-
-  """Password of the user"""
-  password: String!
-}
-
-input UpdateUserInput {
   """E-mail of the user"""
   email: String
 
-  """pseudo of the user"""
-  pseudo: String
-
   """Password of the user"""
   password: String
+}
 
-  """Public key of the user"""
-  publicKey: String
+input HikeInput {
+  name: String!
+  distance: Float!
+  elevation: Float!
+  description: String!
+  difficulty: Difficulty!
+  track: Upload!
+  tagsId: [String!]!
+}
 
-  """access of the user : bin rwrw"""
-  credidential: Float
+"""The `Upload` scalar type represents a file upload."""
+scalar Upload
+
+input TagInput {
+  name: String!
+}
+
+input PointOfInterestInput {
+  name: String!
+  description: String!
+  latitude: Float!
+  longitude: Float!
+  url: String
+}
+
+input PerformanceInput {
+  date: DateTime!
+  duration: Float!
+  distance: Float!
+  elevation: Float!
+  file: Upload!
+  hikeId: String!
+}
+
+input ReviewInput {
+  rating: Float!
+  hikeId: String!
+}
+
+input AlertInput {
+  latitude: Float!
+  longitude: Float!
+  type: AlertType!
+  hikeId: String!
+}
+
+input PhotoInput {
+  objId: String!
+  objType: ObjType!
+  file: Upload!
+}
+
+enum ObjType {
+  HIKE
+  USER
+  CATEGORY
+  POINTOFINTEREST
+}
+
+input CategoryInput {
+  name: String!
 }

@@ -161,3 +161,4 @@ lerna-debug.log*
 
 api/config
 api/test
+api/data

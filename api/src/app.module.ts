@@ -3,7 +3,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UsersModule } from './users/users.module';
+import { UserModule } from './user/user.module';
 import { ApolloDriver } from '@nestjs/apollo';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
@@ -14,6 +14,13 @@ import { ApolloArmor } from '@escape.tech/graphql-armor';
 import { regexDirectiveTransformer } from './directives/constraints.graphql';
 import { DirectiveLocation, GraphQLDirective, GraphQLString } from 'graphql';
 import { LoggerMiddleware } from './logger/logger.middleware';
+import { HikeModule } from './hike/hike.module';
+import { TagModule } from './tag/tag.module';
+import { PhotoModule } from './photo/photo.module';
+import { PointOfInterestModule } from './pointOfInterest/poi.module';
+import { PerformanceModule } from './performance/performance.module';
+import { ReviewModule } from './review/review.module';
+import { AlertModule } from './alert/alert.module';
 
 const armor = new ApolloArmor();
 const protection = armor.protect();
@@ -43,9 +50,9 @@ console.log = function (...args) {
         }),
         GraphQLModule.forRoot({
             driver: ApolloDriver,
-            imports: [AuthModule, UsersModule],
-
+            imports: [AuthModule, UserModule],
             autoSchemaFile: 'schema.gql',
+            uploads: false,
             transformSchema: (schema) => regexDirectiveTransformer(schema, 'constraint'),
             buildSchemaOptions: {
                 directives: [
@@ -76,13 +83,21 @@ console.log = function (...args) {
                 password: configService.get('database.password'),
                 database: 'Goto',
                 entities: ['dist/**/*.entity.js'],
-                synchronize: true,
+                synchronize: process.env.NODE_ENV === 'development',
                 charset: 'utf8mb4',
+                // load default values into the database
             }),
             inject: [ConfigService],
         }),
-        UsersModule,
+        UserModule,
         AuthModule,
+        HikeModule,
+        TagModule,
+        PointOfInterestModule,
+        PerformanceModule,
+        ReviewModule,
+        AlertModule,
+        PhotoModule,
     ],
     controllers: [AppController],
     providers: [AppService],
