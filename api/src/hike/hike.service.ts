@@ -46,6 +46,9 @@ export class HikeService extends TypeOrmQueryService<HikeEntity> {
             })
         );
         const category = await this.categoryModule.findById(hike.categoryId);
+        if (!category) {
+            throw new HttpException('Category does not exist', HttpStatus.BAD_REQUEST);
+        }
         const newHike = this.repo.create({
             ...hike,
             track: localfilename,

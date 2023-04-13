@@ -805,11 +805,13 @@ type HikeAlertsCountAggregate {
 type HikeAlertsSumAggregate {
   latitude: Float
   longitude: Float
+  type: Float
 }
 
 type HikeAlertsAvgAggregate {
   latitude: Float
   longitude: Float
+  type: Float
 }
 
 type HikeAlertsMinAggregate {
@@ -1097,11 +1099,13 @@ type alertCountAggregate {
 type alertSumAggregate {
   latitude: Float
   longitude: Float
+  type: Float
 }
 
 type alertAvgAggregate {
   latitude: Float
   longitude: Float
+  type: Float
 }
 
 type alertMinAggregate {
@@ -1389,6 +1393,8 @@ input HikeInput {
   description: String!
   difficulty: Difficulty!
   track: Upload!
+  latitude: Float!
+  longitude: Float!
   tagsId: [String!]!
   categoryId: String!
 }

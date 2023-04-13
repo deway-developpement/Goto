@@ -387,3 +387,61 @@ VALUES (
             LIMIT 1
         )
     );
+
+# Create a alert
+INSERT INTO
+    alert (
+        id,
+        type,
+        latitude,
+        longitude,
+        createdAt,
+        authorId,
+        hikeId
+    )
+VALUES (
+        uuid(),
+        1,
+        1,
+        1,
+        now(), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'admin'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM hike
+            LIMIT 1
+        )
+    );
+
+# Create a alert
+INSERT INTO
+    alert (
+        id,
+        type,
+        latitude,
+        longitude,
+        createdAt,
+        authorId,
+        hikeId
+    )
+VALUES (
+        uuid(),
+        4,
+        1.1,
+        1.2,
+        now(), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'user'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM hike
+            LIMIT 1
+        )
+    );
