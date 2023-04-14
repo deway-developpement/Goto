@@ -306,6 +306,7 @@ type Hike {
     """Specify to sort results."""
     sorting: [alertSort!] = []
   ): [alert!]
+  distanceFrom(lat: Float!, lon: Float!): Float!
 }
 
 input ReviewAggregateFilter {

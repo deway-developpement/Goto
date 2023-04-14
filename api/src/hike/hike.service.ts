@@ -12,6 +12,7 @@ import { Difficulty } from './interfaces/difficulty.dto';
 import { TagService } from '../tag/tag.service';
 import { FilesService } from '../file/file.service';
 import { CategoryService } from '../category/category.service';
+import { HikeDTO } from './interfaces/hike.dto';
 
 @QueryService(HikeEntity)
 export class HikeService extends TypeOrmQueryService<HikeEntity> {
@@ -127,5 +128,32 @@ export class HikeService extends TypeOrmQueryService<HikeEntity> {
             })
         );
         return hikes;
+    }
+
+    async computeDistance(hike: HikeDTO, latitude: number, longitude: number): Promise<number> {
+        return (
+            6371 *
+            2 *
+            Math.asin(
+                Math.sqrt(
+                    Math.pow(
+                        Math.sin(
+                            ((latitude * Math.PI) / 180 - (hike.latitude * Math.PI) / 180) / 2
+                        ),
+                        2
+                    ) +
+                        Math.cos((latitude * Math.PI) / 180) *
+                            Math.cos((hike.latitude * Math.PI) / 180) *
+                            Math.pow(
+                                Math.sin(
+                                    ((longitude * Math.PI) / 180 -
+                                        (hike.longitude * Math.PI) / 180) /
+                                        2
+                                ),
+                                2
+                            )
+                )
+            )
+        );
     }
 }

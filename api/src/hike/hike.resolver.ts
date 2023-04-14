@@ -1,6 +1,6 @@
 import { CRUDResolver } from '@nestjs-query/query-graphql';
 import { Inject, UseGuards } from '@nestjs/common';
-import { Mutation, Resolver, Args, Query } from '@nestjs/graphql';
+import { Mutation, Resolver, Args, Query, ResolveField, Parent } from '@nestjs/graphql';
 import { HikeService } from './hike.service';
 import { CurrentUser, GqlAuthGuard } from '../auth/graphql-auth.guard';
 import { HikeDTO } from './interfaces/hike.dto';
@@ -71,5 +71,14 @@ export class HikeResolver extends CRUDResolver(HikeDTO, {
         distance: number
     ): Promise<HikeDTO[]> {
         return this.service.findByDistance(lat, lon, distance);
+    }
+
+    @ResolveField(() => Number)
+    async distanceFrom(
+        @Args('lat') lat: number,
+        @Args('lon') lon: number,
+        @Parent() hike: HikeDTO
+    ): Promise<number> {
+        return this.service.computeDistance(hike, lat, lon);
     }
 }
