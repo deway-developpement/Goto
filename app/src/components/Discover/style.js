@@ -5,13 +5,13 @@ const stylesheet = (colors) =>
         textHeader: {
             marginTop: '6%',
             color: colors.text,
-            fontSize: 30,
+            fontSize: 36,
             fontWeight: '700',
             paddingLeft:'3%'
         },
         textLink: {
             color: colors.link,
-            fontSize: 16,
+            fontSize: 20,
             fontWeight: '400',
             textDecorationLine:'underline'
         },

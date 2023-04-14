@@ -5,6 +5,7 @@ import {
     View,
     ScrollView,
     Dimensions,
+    TouchableWithoutFeedback
 } from 'react-native';
 import stylesheet from './style';
 import { AuthContext } from '../../providers/AuthContext';
@@ -37,13 +38,16 @@ function Bidule(props) {
 
 function Categorie(props) {
     const marginTop=props.windowHeight*0.025;
+    const height=0.08;
     return (
-        <View style={[props.styles.container, {height:80, marginTop:marginTop, flexDirection:'row', backgroundColor:'#FFFFFF', borderRadius:12}]}>
+        <View onPress={() => console.log('press')} style={[props.styles.container, {height:props.windowHeight*height, marginTop:marginTop, flexDirection:'row', backgroundColor:'#FFFFFF', borderRadius:12}, props.horizontal ? {width:'70%', marginRight:props.windowWidth*0.05} : {}]}>
             <Image source={require('../../../assets/images/Dalle_background.png')} 
                 style={[
-                    {height:80,width:80, borderTopLeftRadius: 12, borderBottomLeftRadius:12 },
+                    {height:props.windowHeight*height,width:props.windowHeight*height, borderTopLeftRadius: 12, borderBottomLeftRadius:12, marginRight:props.windowHeight*height*0.2 },
                 ]}/>
-            <Text style={[props.styles.textHeader, {fontSize:24}]}>Categorie Name</Text>
+            <TouchableWithoutFeedback onPress={() => console.log('press')} style={[props.styles.container, {height:props.windowHeight*height}]}>
+                <Text style={[props.styles.textHeader, {marginLeft:0,fontSize:24, marginTop:0, alignSelf:'center'}, props.horizontal ? { paddingRight:props.windowWidth*(3*height), paddingVertical:props.windowWidth*(height*0.5)} : {paddingRight:props.windowWidth*(0.5-height), paddingVertical:props.windowWidth*(height*0.5)}]}>Categorie Name</Text>
+            </TouchableWithoutFeedback>
         </View>
     );
 }
@@ -54,18 +58,30 @@ export default function Discover(){
     const styles = stylesheet(colors);
 
     const windowHeight = Dimensions.get('window').height;
-
+    const windowWidth = Dimensions.get('window').width;
     return (
         <SafeAreaView style={styles.container}>
             <ScrollView
-                style={[styles.container,{paddingHorizontal:'7%'}]}
+                style={[styles.container,{paddingHorizontal:windowWidth*0.07}]}
                 keyboardShouldPersistTaps={'handled'}
             >
+
                 <Text style={styles.textHeader}>Discover</Text>
-                <View style={[styles.container, {flexDirection:'row', marginLeft:'4%', marginVertical:windowHeight*0.02}]}>
+                <View style={[styles.container, {flexDirection:'row', marginLeft:'4%', marginTop:windowHeight*0.02}]}>
                     <Bidule color={colors.logo} />
-                    <Text style={[styles.textLink, {textDecorationLine:'', marginLeft:'5%', marginTop:'1.3%'}]}>Add a hike</Text>
+                    <Text style={[styles.textLink, {textDecorationLine:'', marginLeft:'5%',alignSelf:'center'}]}>Add a hike</Text>
                 </View>
+                <ScrollView
+                    style={[styles.container, {marginBottom:windowHeight*0.05}]}
+                    keyboardShouldPersistTaps={'handled'}
+                    horizontal={true}
+                >
+                    <Categorie styles={styles} windowHeight={windowHeight} windowWidth={windowWidth} horizontal={true}/>
+                    <Categorie styles={styles} windowHeight={windowHeight} windowWidth={windowWidth} horizontal={true}/>
+                    <Categorie styles={styles} windowHeight={windowHeight} windowWidth={windowWidth} horizontal={true}/>
+                    <Categorie styles={styles} windowHeight={windowHeight} windowWidth={windowWidth} horizontal={true}/>
+
+                </ScrollView>
                 <Image source={require('../../../assets/images/Dalle_background.png')} 
                     style={[
                         {width: '100%',height:windowHeight*0.5, borderTopLeftRadius: 12, borderTopRightRadius:12 },
@@ -75,11 +91,11 @@ export default function Discover(){
                     <Text style={[styles.textLink, {alignSelf:'center'}]}>Discover</Text>
                 </View>
                 <Text style={[styles.textHeader, {marginTop:windowHeight*0.04, marginBottom:windowHeight*0.01}]}>Unique places</Text>
-                <Categorie styles={styles} windowHeight={windowHeight}/>
-                <Categorie styles={styles} windowHeight={windowHeight}/>
-                <Categorie styles={styles} windowHeight={windowHeight}/>
-                <Categorie styles={styles} windowHeight={windowHeight}/>
-                <Categorie styles={styles} windowHeight={windowHeight}/>
+                <Categorie styles={styles} windowHeight={windowHeight} windowWidth={windowWidth} horizontal={false}/>
+                <Categorie styles={styles} windowHeight={windowHeight} windowWidth={windowWidth} horizontal={false}/>
+                <Categorie styles={styles} windowHeight={windowHeight} windowWidth={windowWidth} horizontal={false}/>
+                <Categorie styles={styles} windowHeight={windowHeight} windowWidth={windowWidth} horizontal={false}/>
+                <Categorie styles={styles} windowHeight={windowHeight} windowWidth={windowWidth} horizontal={false}/>
                 <View style={{height:windowHeight*0.20}}/>
             </ScrollView>
         </SafeAreaView>
