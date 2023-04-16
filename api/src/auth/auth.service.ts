@@ -34,30 +34,16 @@ export class AuthService {
     }
 
     async refresh(req: any) {
-        if (!req.headers.refresh_token) {
-            throw new UnauthorizedException();
-        }
-        const decoded = this.jwtService.decode(req.headers.refresh_token);
+        if (!req.headers?.refresh_token) throw new UnauthorizedException();
+        const decoded = this.jwtService.verify(req.headers.refresh_token);
         const user = await this.usersService.findById(decoded.sub);
-        if (!user) {
-            throw new UnauthorizedException();
-        } else if (
-            req.headers.refresh_token == user.refresh_token &&
-            this.jwtService.verify(req.headers.refresh_token)
-        ) {
+        console.log('refresh', decoded, user);
+        console.log(user, req.headers?.refresh_token, user?.refresh_token);
+        if (req.headers.refresh_token === user?.refresh_token) {
             return this.login(user);
         } else {
-            await this.usersService.update(user.id, { refresh_token: null });
+            if (user) await this.usersService.update(user.id, { refresh_token: null });
             throw new UnauthorizedException();
-        }
-    }
-
-    async verifyToken(token: string) {
-        try {
-            const payload = this.jwtService.verify(token);
-            return this.usersService.findById(payload.sub);
-        } catch (err) {
-            return null;
         }
     }
 }

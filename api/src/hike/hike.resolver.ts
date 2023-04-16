@@ -1,14 +1,13 @@
 import { CRUDResolver } from '@nestjs-query/query-graphql';
-import { Inject, UseGuards } from '@nestjs/common';
+import { Inject, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { Mutation, Resolver, Args, Query, ResolveField, Parent } from '@nestjs/graphql';
 import { HikeService } from './hike.service';
-import { CurrentUser, GqlAuthGuard } from '../auth/graphql-auth.guard';
+import { CurrentUser, GqlAuthGuard } from '../auth/guards/graphql-auth.guard';
 import { HikeDTO } from './interfaces/hike.dto';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import * as _ from '@nestjs-query/query-graphql/node_modules/@nestjs-query/core';
 import { HikeInput } from './interfaces/hike.input';
 import { UserDTO } from '../user/interfaces/user.dto';
-import { UnauthorizedError } from 'type-graphql';
 
 const guards = [GqlAuthGuard];
 
@@ -57,7 +56,7 @@ export class HikeResolver extends CRUDResolver(HikeDTO, {
     async deleteHike(@Args('id') id: string, @CurrentUser() user: UserDTO): Promise<HikeDTO> {
         const hike = await this.service.findById(id);
         if (hike.owner !== user && user.credidential < 2) {
-            throw new UnauthorizedError();
+            throw new UnauthorizedException();
         }
         return this.service.deleteOne(id);
     }

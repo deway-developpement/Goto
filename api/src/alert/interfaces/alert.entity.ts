@@ -17,10 +17,10 @@ export class AlertEntity {
     @Column()
     type: AlertType;
 
-    @ManyToOne(() => HikeEntity, (hike) => hike.alerts)
+    @ManyToOne(() => HikeEntity, (hike) => hike.alerts, { onDelete: 'CASCADE' })
     hike: HikeEntity;
 
-    @ManyToOne(() => UserEntity)
+    @ManyToOne(() => UserEntity, { onDelete: 'CASCADE' })
     author: UserEntity;
 
     @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })

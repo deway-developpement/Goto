@@ -6,7 +6,7 @@ import { UserInput, UserUpdateInput } from './interfaces/user.input';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import * as _ from '@nestjs-query/query-graphql/node_modules/@nestjs-query/core';
 import { Inject, UseGuards } from '@nestjs/common';
-import { CurrentUser, GqlAuthGuard } from '../auth/graphql-auth.guard';
+import { CurrentUser, GqlAuthGuard, GqlSkipFieldGuard } from '../auth/guards/graphql-auth.guard';
 
 const guards = [GqlAuthGuard];
 
@@ -23,6 +23,7 @@ export class UserResolver extends CRUDResolver(UserDTO, {
         super(usersService);
     }
 
+    @UseGuards(GqlSkipFieldGuard)
     @Mutation(() => UserDTO)
     async createUser(@Args('input') query: UserInput): Promise<UserDTO> {
         return this.usersService.newUser(query);

@@ -63,19 +63,21 @@ export class HikeEntity {
     })
     longitude: number;
 
-    @ManyToMany(() => TagEntity, (tag) => tag.hikes)
+    @ManyToMany(() => TagEntity, (tag) => tag.hikes, { onDelete: 'CASCADE' })
     tags: TagEntity[];
 
     @OneToMany(() => PhotoEntity, (photo) => photo.hike, { cascade: ['remove'] })
     photos: PhotoEntity[];
 
-    @ManyToMany(() => PointOfInterestEntity, (poi) => poi.hikes)
+    @ManyToMany(() => PointOfInterestEntity, (poi) => poi.hikes, { onDelete: 'CASCADE' })
     pointsOfInterest: PointOfInterestEntity[];
 
     @OneToMany(() => ReviewEntity, (review) => review.hike, { cascade: ['remove'] })
     reviews: ReviewEntity[];
 
-    @OneToMany(() => AlertEntity, (alert) => alert.hike, { cascade: ['remove'] })
+    @OneToMany(() => AlertEntity, (alert) => alert.hike, {
+        cascade: ['remove'],
+    })
     alerts: AlertEntity[];
 
     @ManyToOne(() => CategoryEntity, (category) => category.hikes, { onDelete: 'CASCADE' })

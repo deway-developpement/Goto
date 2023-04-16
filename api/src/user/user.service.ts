@@ -1,11 +1,12 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserEntity } from './interfaces/user.entity';
-import { BadRequestException, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException } from '@nestjs/common';
 import { genSalt, hash } from 'bcrypt';
 import { TypeOrmQueryService } from '@nestjs-query/query-typeorm';
 import { UserInput } from './interfaces/user.input';
 import { QueryService } from '@nestjs-query/core';
+import { AuthType } from '../auth/interface/auth.type';
 
 @QueryService(UserEntity)
 export class UserService extends TypeOrmQueryService<UserEntity> {
@@ -17,15 +18,11 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
     }
 
     async newUser(input: UserInput): Promise<UserEntity> {
-        // check here if email isn't already used
-        if (await this.userRepository.findOne({ where: { email: input.email } })) {
-            throw new UnauthorizedException('Email already used');
-        }
         // create a new user
         const createUserDto = {
             ...input,
         } as UserEntity;
-        createUserDto.credidential = 1;
+        createUserDto.credidential = AuthType.user;
         // generate a 4-char random unique code
         createUserDto.publicKey = Math.random()
             .toString(36)
@@ -36,21 +33,18 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
         const salt = await genSalt(10);
         // hash the password with the salt
         createUserDto.password = await hash(createUserDto.password, salt);
-        const createdUser = this.userRepository.create(createUserDto as UserEntity);
-        await this.userRepository.insert(createdUser);
-        return createdUser;
-    }
-
-    async findById(id: string): Promise<UserEntity> {
-        return await this.userRepository.findOne({ where: { id } });
+        await this.userRepository.insert(createUserDto).catch(() => {
+            throw new BadRequestException('Email already exists');
+        });
+        return this.userRepository.findOne({ where: { email: createUserDto.email } });
     }
 
     async findByEmail(email: string): Promise<UserEntity> {
-        return await this.userRepository.findOne({ where: { email } });
+        return this.userRepository.findOne({ where: { email } });
     }
 
     async findByPublic(pseudo: string, publicKey: string): Promise<UserEntity> {
-        return await this.userRepository.findOne({ where: { pseudo, publicKey } });
+        return this.userRepository.findOne({ where: { pseudo, publicKey } });
     }
 
     async delete(id: string): Promise<UserEntity> {
@@ -60,18 +54,14 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
     }
 
     async update(id: string, input: Partial<UserEntity>): Promise<UserEntity> {
-        const updateUserDto = {
-            ...input,
-            ...(await this.userRepository.findOne({ where: { id } })),
-        } as UserEntity;
         if (input.password) {
             const salt = await genSalt(10);
-            updateUserDto.password = await hash(input.password, salt);
+            input.password = await hash(input.password, salt);
         }
-        return await this.userRepository.save({
-            id,
-            ...updateUserDto,
+        await this.userRepository.update(id, {
+            ...input,
         });
+        return this.userRepository.findOne({ where: { id } });
     }
 
     async exists(email: string): Promise<boolean> {

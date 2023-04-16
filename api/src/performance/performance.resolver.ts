@@ -1,14 +1,13 @@
 import { CRUDResolver } from '@nestjs-query/query-graphql';
-import { Inject, UseGuards } from '@nestjs/common';
+import { Inject, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { Mutation, Resolver, Args } from '@nestjs/graphql';
 import { PerfomanceService } from './performance.service';
-import { CurrentUser, GqlAuthGuard } from '../auth/graphql-auth.guard';
+import { CurrentUser, GqlAuthGuard } from '../auth/guards/graphql-auth.guard';
 import { PerformanceDTO } from './interfaces/performance.dto';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import * as _ from '@nestjs-query/query-graphql/node_modules/@nestjs-query/core';
 import { PerformanceInput } from './interfaces/performance.input';
 import { UserDTO } from '../user/interfaces/user.dto';
-import { UnauthorizedError } from 'type-graphql';
 
 const guards = [GqlAuthGuard];
 
@@ -42,7 +41,7 @@ export class PerfomanceResolver extends CRUDResolver(PerformanceDTO, {
     ): Promise<PerformanceDTO> {
         const perf = await this.service.findById(id);
         if (perf.user !== user && user.credidential < 2) {
-            throw new UnauthorizedError();
+            throw new UnauthorizedException();
         }
         return this.service.deleteOne(id);
     }
