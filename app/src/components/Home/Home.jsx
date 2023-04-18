@@ -21,7 +21,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import CameraScreen from '../Camera/CameraScreen';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Map from '../Map/Map';
-import { createIconSetFromFontello } from '@expo/vector-icons';
+import { Icon } from '../Icon/Icon';
 import { useFonts } from 'expo-font';
 
 function HikeScreen({ route }) {
@@ -287,11 +287,6 @@ function ProfilScreen() {
 }
 
 const Tab = createBottomTabNavigator();
-const Icon = createIconSetFromFontello(
-    require('../../../assets/font/config.json'),
-    'goto',
-    'goto.ttf'
-);
 
 function HomeScreen({ navigation }) {
     const [fontsLoaded] = useFonts({
