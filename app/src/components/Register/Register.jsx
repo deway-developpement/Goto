@@ -57,7 +57,7 @@ export default function RegisterScreen({ navigation, route }) {
             try {
                 const response = await client.query({
                     query: gql`
-                        query exists($email: String!) {
+                        query exist($email: String!) {
                             exist(email: $email)
                         }
                     `,
@@ -90,19 +90,19 @@ export default function RegisterScreen({ navigation, route }) {
             try {
                 const response = await client.mutate({
                     mutation: gql`
-                        mutation newUser(
+                        mutation createUser(
                             $email: String!
                             $password: String!
                             $pseudo: String!
                         ) {
-                            newUser(
+                            createUser(
                                 input: {
                                     email: $email
                                     password: $password
                                     pseudo: $pseudo
                                 }
                             ) {
-                                _id
+                                id
                             }
                         }
                     `,
@@ -112,7 +112,7 @@ export default function RegisterScreen({ navigation, route }) {
                         pseudo: pseudo,
                     },
                 });
-                if (response.data.newUser) {
+                if (response.data.createUser) {
                     const response = await publicAxios.post('/auth/login', {
                         email,
                         password,
@@ -171,6 +171,10 @@ export default function RegisterScreen({ navigation, route }) {
                                 </Text>
                                 <TextInput
                                     placeholder="email"
+                                    textContentType="username"
+                                    keyboardType="email-address"
+                                    autoCorrect={false}
+                                    autoCapitalize="none"
                                     style={[
                                         styles.textInput,
                                         emailInvalid && { borderColor: 'red' },
@@ -188,6 +192,8 @@ export default function RegisterScreen({ navigation, route }) {
                                 </Text>
                                 <TextInput
                                     placeholder="Pseudo"
+                                    autoCorrect={false}
+                                    autoCapitalize="none"
                                     placeholderColor="#c4c3cb"
                                     style={[styles.textInput]}
                                     onChangeText={(text) => setPseudo(text)}
@@ -201,6 +207,7 @@ export default function RegisterScreen({ navigation, route }) {
                                 </Text>
                                 <TextInput
                                     placeholder="Password"
+                                    textContentType="password"
                                     placeholderColor="#c4c3cb"
                                     style={[styles.textInput]}
                                     secureTextEntry={true}
@@ -216,6 +223,7 @@ export default function RegisterScreen({ navigation, route }) {
                                 <TextInput
                                     ref={vPasswordInput}
                                     placeholder="Confirm Password"
+                                    textContentType="password"
                                     placeholderColor="#c4c3cb"
                                     style={[
                                         styles.textInput,
