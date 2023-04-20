@@ -13,7 +13,7 @@ import {
 import { Button } from 'react-native-elements';
 import { AuthContext } from '../../providers/AuthContext';
 import { useTheme } from '@react-navigation/native';
-import { gql, useQuery } from '@apollo/client';
+import { gql, useApolloClient, useQuery } from '@apollo/client';
 import KeyboardDismissView from '../KeyboardDismissView/KeyboardDismissView';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import * as Location from 'expo-location';
@@ -23,6 +23,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Map from '../Map/Map';
 import { Icon } from '../Icon/Icon';
 import { useFonts } from 'expo-font';
+import * as ImagePicker from 'expo-image-picker';
+import { ReactNativeFile } from 'apollo-upload-client';
 
 function HikeScreen({ route }) {
     const [image, setImage] = useState(null);
@@ -189,6 +191,8 @@ function ProfilScreen() {
     const authContext = useContext(AuthContext);
     const { colors } = useTheme();
     const styles = stylesheet(colors);
+    const client = useApolloClient();
+    const [status, requestPermission] = ImagePicker.useCameraPermissions();
 
     const {
         data: profil,
@@ -197,12 +201,82 @@ function ProfilScreen() {
     } = useQuery(gql`
         query whoami {
             whoami {
+                id
                 pseudo
                 email
                 publicKey
             }
         }
     `);
+
+    const [image, setImage] = useState(null);
+
+    const pickImage = async () => {
+        if (status !== 'granted') {
+            const { status } = await requestPermission();
+            if (status !== 'granted') {
+                alert(
+                    'Sorry, we need camera roll permissions to make this work!'
+                );
+                return;
+            }
+        }
+        // No permissions request is necessary for launching the image library
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.All,
+            allowsEditing: true,
+            aspect: [4, 3],
+            quality: 1,
+        });
+
+        console.log(result);
+
+        if (!result.canceled) {
+            setImage(result.assets[0].uri);
+        }
+    };
+
+    useEffect(() => {
+        (async () => {
+            console.log('photo upload', image);
+            if (profil?.whoami && image) {
+                const file = new ReactNativeFile({
+                    uri: image,
+                    type: 'image/jpeg',
+                    name: 'image.jpg',
+                });
+                console.log('photo upload', file);
+
+                const MUTATION = gql`
+                    mutation (
+                        $file: Upload!
+                        $objId: String!
+                        $objType: ObjType!
+                    ) {
+                        createPhoto(
+                            input: {
+                                objId: $objId
+                                objType: $objType
+                                file: $file
+                            }
+                        ) {
+                            id
+                        }
+                    }
+                `;
+                const data = await client.mutate({
+                    mutation: MUTATION,
+                    variables: {
+                        file,
+                        objId: profil.whoami.id,
+                        objType: 'USER',
+                    },
+                    errorPolicy: 'all',
+                });
+                console.log('photo', data);
+            }
+        })();
+    }, [image]);
 
     return (
         <KeyboardAvoidingView style={styles.container}>
@@ -266,8 +340,8 @@ function ProfilScreen() {
                         <View style={styles.btnContainer}>
                             <View style={styles.btn}>
                                 <Button
-                                    title="Actualize"
-                                    onPress={() => refetch()}
+                                    title="Image"
+                                    onPress={() => pickImage()}
                                     buttonStyle={styles.btn}
                                 />
                                 <MaterialIcon
@@ -378,7 +452,7 @@ function HomeScreen({ navigation }) {
                             }}
                         />
                         <Tab.Screen
-                            name="Profile"
+                            name="Profil"
                             component={ProfilScreen}
                             options={{
                                 tabBarIcon: (props) => (
