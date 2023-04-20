@@ -25,7 +25,6 @@ export class PerfomanceService extends TypeOrmQueryService<PerformanceEntity> {
         const { createReadStream, filename } = await perf.file;
         const filetype = filename.split('.').pop();
         if (filetype !== 'gpx') {
-            console.log(filetype);
             throw new HttpException('Only GPX files are allowed', HttpStatus.BAD_REQUEST);
         }
         const localfilename = this.filesService.worker.nextId().toString() + '.' + filetype;
