@@ -8,6 +8,7 @@ import { HikeDTO } from './interfaces/hike.dto';
 import * as _ from '@nestjs-query/query-graphql/node_modules/@nestjs-query/core';
 import { HikeInput } from './interfaces/hike.input';
 import { UserDTO } from '../user/interfaces/user.dto';
+import { AuthType } from '../auth/interface/auth.type';
 
 const guards = [GqlAuthGuard];
 
@@ -55,7 +56,7 @@ export class HikeResolver extends CRUDResolver(HikeDTO, {
     @Mutation(() => HikeDTO)
     async deleteHike(@Args('id') id: string, @CurrentUser() user: UserDTO): Promise<HikeDTO> {
         const hike = await this.service.findById(id);
-        if (hike.owner !== user && user.credidential < 2) {
+        if (hike.owner !== user && user.credidential < AuthType.superAdmin) {
             throw new UnauthorizedException();
         }
         return this.service.deleteOne(id);

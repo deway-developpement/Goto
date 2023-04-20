@@ -8,6 +8,7 @@ import { CategoryDTO } from './interfaces/category.dto';
 import * as _ from '@nestjs-query/query-graphql/node_modules/@nestjs-query/core';
 import { CategoryInput } from './interfaces/category.input';
 import { UserDTO } from '../user/interfaces/user.dto';
+import { AuthType } from '../auth/interface/auth.type';
 
 const guards = [GqlAuthGuard];
 
@@ -28,7 +29,7 @@ export class CategoryResolver extends CRUDResolver(CategoryDTO, {
         @Args('input') query: CategoryInput,
         @CurrentUser() user: UserDTO
     ): Promise<CategoryDTO> {
-        if (user.credidential < 2) {
+        if (user.credidential < AuthType.superAdmin) {
             throw new UnauthorizedException();
         }
         return this.service.createOne(query);
@@ -37,7 +38,7 @@ export class CategoryResolver extends CRUDResolver(CategoryDTO, {
     @UseGuards(GqlAuthGuard)
     @Mutation(() => CategoryDTO)
     async deleteTag(@Args('id') id: string, @CurrentUser() user: UserDTO): Promise<CategoryDTO> {
-        if (user.credidential < 2) {
+        if (user.credidential < AuthType.superAdmin) {
             throw new UnauthorizedException();
         }
         return this.service.deleteOne(id);

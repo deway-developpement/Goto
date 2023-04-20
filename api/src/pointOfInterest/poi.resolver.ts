@@ -9,6 +9,7 @@ import * as _ from '@nestjs-query/query-graphql/node_modules/@nestjs-query/core'
 import { PointOfInterestEntity } from './interfaces/poi.entity';
 import { PointOfInterestInput } from './interfaces/poi.input';
 import { UserDTO } from '../user/interfaces/user.dto';
+import { AuthType } from '../auth/interface/auth.type';
 
 const guards = [GqlAuthGuard];
 
@@ -29,7 +30,7 @@ export class PointOfInterestResolver extends CRUDResolver(PointOfInterestDTO, {
         @Args('input') query: PointOfInterestInput,
         @CurrentUser() user: UserDTO
     ): Promise<PointOfInterestDTO> {
-        if (user.credidential < 2) {
+        if (user.credidential < AuthType.superAdmin) {
             throw new UnauthorizedException();
         }
         return this.service.createOne(query as PointOfInterestEntity);
@@ -41,7 +42,7 @@ export class PointOfInterestResolver extends CRUDResolver(PointOfInterestDTO, {
         @Args('id') id: string,
         @CurrentUser() user: UserDTO
     ): Promise<PointOfInterestDTO> {
-        if (user.credidential < 2) {
+        if (user.credidential < AuthType.superAdmin) {
             throw new UnauthorizedException();
         }
         return this.service.deleteOne(id);

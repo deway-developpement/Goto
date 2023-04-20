@@ -8,6 +8,7 @@ import { PerformanceDTO } from './interfaces/performance.dto';
 import * as _ from '@nestjs-query/query-graphql/node_modules/@nestjs-query/core';
 import { PerformanceInput } from './interfaces/performance.input';
 import { UserDTO } from '../user/interfaces/user.dto';
+import { AuthType } from '../auth/interface/auth.type';
 
 const guards = [GqlAuthGuard];
 
@@ -40,7 +41,7 @@ export class PerfomanceResolver extends CRUDResolver(PerformanceDTO, {
         @CurrentUser() user: UserDTO
     ): Promise<PerformanceDTO> {
         const perf = await this.service.findById(id);
-        if (perf.user !== user && user.credidential < 2) {
+        if (perf.user !== user && user.credidential < AuthType.superAdmin) {
             throw new UnauthorizedException();
         }
         return this.service.deleteOne(id);

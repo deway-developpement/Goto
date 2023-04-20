@@ -8,6 +8,7 @@ import { AlertDTO } from './interfaces/alert.dto';
 import * as _ from '@nestjs-query/query-graphql/node_modules/@nestjs-query/core';
 import { AlertInput } from './interfaces/alert.input';
 import { UserDTO } from '../user/interfaces/user.dto';
+import { AuthType } from '../auth/interface/auth.type';
 
 const guards = [GqlAuthGuard];
 
@@ -35,7 +36,7 @@ export class AlertResolver extends CRUDResolver(AlertDTO, {
     @Mutation(() => AlertDTO)
     async deleteAlert(@Args('id') id: string, @CurrentUser() user: UserDTO): Promise<AlertDTO> {
         const alert = await this.service.repo.findOne({ where: { id }, relations: ['author'] });
-        if (user.credidential < 2 && alert.author.id !== user.id) {
+        if (user.credidential < AuthType.superAdmin && alert.author.id !== user.id) {
             throw new UnauthorizedException();
         }
         return this.service.deleteOne(id);
