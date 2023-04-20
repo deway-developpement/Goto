@@ -19,7 +19,8 @@ export const Classic = {
         borderlinesecondary: '#8c8f91',
         iconprimary: '#78DBC8',
         label: '#F2F7F9',
-        logo: '#264653'
+        logo: '#264653',
+        backgroundCategorie:'#FFFFFF'
     },
 };
 
@@ -41,6 +42,7 @@ export const Dark = {
         borderlinesecondary: '#8c8f91',
         iconprimary: '#78DBC8',
         label: '#F2F7F9',
-        logo: '#264653'
+        logo: '#264653',
+        backgroundCategorie:'#FFFFFF'
     },
 };

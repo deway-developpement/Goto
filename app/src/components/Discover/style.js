@@ -24,6 +24,9 @@ const stylesheet = (colors) =>
             height:'100%',
             backgroundColor:colors.background,
             flex:1
+        },
+        backGroundCategorie: {
+            backgroundColor:colors.backgroundCategorie
         }
     });
 export default stylesheet;
