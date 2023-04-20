@@ -2,7 +2,7 @@ import { CRUDResolver } from '@nestjs-query/query-graphql';
 import { Inject, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { Mutation, Resolver, Args } from '@nestjs/graphql';
 import { ReviewService } from './review.service';
-import { CurrentUser, GqlAuthGuard } from '../auth/graphql-auth.guard';
+import { CurrentUser, GqlAuthGuard } from '../auth/guards/graphql-auth.guard';
 import { ReviewDTO } from './interfaces/review.dto';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import * as _ from '@nestjs-query/query-graphql/node_modules/@nestjs-query/core';

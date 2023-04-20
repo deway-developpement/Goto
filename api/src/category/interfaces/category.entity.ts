@@ -2,7 +2,7 @@ import { Entity, Column, PrimaryGeneratedColumn, Unique, OneToOne, OneToMany } f
 import { HikeEntity } from '../../hike/interfaces/hike.entity';
 import { PhotoEntity } from '../../photo/interfaces/photo.entity';
 
-@Entity('tag')
+@Entity('category')
 @Unique(['name'])
 export class CategoryEntity {
     @PrimaryGeneratedColumn('uuid')

@@ -31,7 +31,7 @@ export class UserEntity {
     credidential: number;
 
     // friend relation M2M
-    @ManyToMany(() => UserEntity, (user) => user.friends)
+    @ManyToMany(() => UserEntity, (user) => user.friends, { onDelete: 'CASCADE' })
     @JoinTable({ name: 'users_friends' })
     friends?: UserEntity[];
 

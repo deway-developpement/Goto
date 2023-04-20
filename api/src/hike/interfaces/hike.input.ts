@@ -1,5 +1,5 @@
 import { Field, InputType } from '@nestjs/graphql';
-import { IsNumber, Matches } from 'class-validator';
+import { IsNumber, IsString, Matches } from 'class-validator';
 import * as GraphQLUpload from 'graphql-upload/GraphQLUpload.js';
 import { Difficulty } from './difficulty.dto';
 import { FileUpload } from '../../file/interfaces/fileupload.type';
@@ -19,14 +19,28 @@ export class HikeInput {
     elevation: number;
 
     @Field(() => String)
+    @IsString()
     description: string;
 
     @Field(() => Difficulty)
+    @IsString()
     difficulty: Difficulty;
 
     @Field(() => GraphQLUpload)
     track: Promise<FileUpload>;
 
+    @Field(() => Number)
+    @IsNumber()
+    latitude: number;
+
+    @Field(() => Number)
+    @IsNumber()
+    longitude: number;
+
     @Field(() => [String])
     tagsId: string[];
+
+    @Field(() => String)
+    @IsString()
+    categoryId: string;
 }

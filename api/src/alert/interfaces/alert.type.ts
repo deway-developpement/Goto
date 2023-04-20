@@ -1,13 +1,13 @@
 import { registerEnumType } from '@nestjs/graphql';
 
 export enum AlertType {
-    TRACK_CHANGE = 'trackChange',
-    BLOCKED_PATH = 'trackBlocked',
-    DANGER = 'danger',
-    ANIMAL = 'animal',
-    SLIPPERY_PATH = 'slipperyPath',
-    DANGEROUS_ROAD = 'dangerousRoad',
-    FLOOD = 'flood',
+    TRACK_CHANGE,
+    BLOCKED_PATH,
+    DANGER,
+    ANIMAL,
+    SLIPPERY_PATH,
+    DANGEROUS_ROAD,
+    FLOOD,
 }
 
 registerEnumType(AlertType, {

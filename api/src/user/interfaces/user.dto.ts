@@ -7,7 +7,7 @@ import {
     UnPagedRelation,
 } from '@nestjs-query/query-graphql';
 import { ObjectType, ID } from '@nestjs/graphql';
-import { credidentialMiddleware, idMiddleware, pwdMiddleware } from '../../auth/auth.middleware';
+import { fieldMiddleware } from '../../auth/auth.middleware';
 import { PhotoDTO } from '../../photo/interfaces/photo.dto';
 
 @ObjectType('User')
@@ -15,7 +15,7 @@ import { PhotoDTO } from '../../photo/interfaces/photo.dto';
 @UnPagedRelation('friends', () => UserDTO, { disableRemove: true, disableUpdate: true })
 @Relation('avatar', () => PhotoDTO, { disableRemove: true, disableUpdate: true, nullable: true })
 export class UserDTO {
-    @IDField(() => ID, { middleware: [idMiddleware] })
+    @IDField(() => ID, { middleware: [fieldMiddleware] })
     id!: string;
 
     @FilterableField()
@@ -24,13 +24,13 @@ export class UserDTO {
     @FilterableField()
     email!: string;
 
-    @FilterableField({ middleware: [pwdMiddleware] })
+    @FilterableField({ middleware: [fieldMiddleware] })
     password!: string;
 
     @FilterableField()
     publicKey!: string;
 
-    @FilterableField({ middleware: [credidentialMiddleware] })
+    @FilterableField({ middleware: [fieldMiddleware] })
     credidential!: number;
 
     @FilterableField(() => Date)

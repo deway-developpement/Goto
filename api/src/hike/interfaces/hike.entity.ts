@@ -49,19 +49,35 @@ export class HikeEntity {
     @Column()
     track: string;
 
-    @ManyToMany(() => TagEntity, (tag) => tag.hikes)
+    @Column({
+        type: 'decimal',
+        precision: 16,
+        scale: 5,
+    })
+    latitude: number;
+
+    @Column({
+        type: 'decimal',
+        precision: 16,
+        scale: 5,
+    })
+    longitude: number;
+
+    @ManyToMany(() => TagEntity, (tag) => tag.hikes, { onDelete: 'CASCADE' })
     tags: TagEntity[];
 
     @OneToMany(() => PhotoEntity, (photo) => photo.hike, { cascade: ['remove'] })
     photos: PhotoEntity[];
 
-    @ManyToMany(() => PointOfInterestEntity, (poi) => poi.hikes)
+    @ManyToMany(() => PointOfInterestEntity, (poi) => poi.hikes, { onDelete: 'CASCADE' })
     pointsOfInterest: PointOfInterestEntity[];
 
     @OneToMany(() => ReviewEntity, (review) => review.hike, { cascade: ['remove'] })
     reviews: ReviewEntity[];
 
-    @OneToMany(() => AlertEntity, (alert) => alert.hike, { cascade: ['remove'] })
+    @OneToMany(() => AlertEntity, (alert) => alert.hike, {
+        cascade: ['remove'],
+    })
     alerts: AlertEntity[];
 
     @ManyToOne(() => CategoryEntity, (category) => category.hikes, { onDelete: 'CASCADE' })

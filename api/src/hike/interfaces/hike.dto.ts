@@ -16,6 +16,7 @@ import { PhotoDTO } from '../../photo/interfaces/photo.dto';
 import { PointOfInterestDTO } from '../../pointOfInterest/interfaces/poi.dto';
 import { ReviewDTO } from '../../review/interfaces/review.dto';
 import { AlertDTO } from '../../alert/interfaces/alert.dto';
+import { CategoryDTO } from '../../category/interfaces/category.dto';
 
 @ObjectType('Hike')
 @QueryOptions({ pagingStrategy: PagingStrategies.NONE })
@@ -50,7 +51,7 @@ import { AlertDTO } from '../../alert/interfaces/alert.dto';
     disableRemove: true,
     disableUpdate: true,
 })
-@FilterableRelation('category', () => TagDTO, {
+@FilterableRelation('category', () => CategoryDTO, {
     nullable: true,
     disableRemove: true,
     disableUpdate: true,
@@ -80,6 +81,12 @@ export class HikeDTO {
 
     @Field(() => String)
     track!: string;
+
+    @FilterableField(() => Number)
+    latitude!: number;
+
+    @FilterableField(() => Number)
+    longitude!: number;
 
     @FilterableField(() => Date)
     createdAt!: Date;

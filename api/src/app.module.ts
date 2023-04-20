@@ -9,7 +9,7 @@ import { AuthModule } from './auth/auth.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { configuration } from '../config/configuration';
 import { validationSchema } from '../config/validation';
-import { setHttpPlugin } from './auth/graphQL.plugin';
+import { setHttpPlugin } from './plugins/graphQL.plugin';
 import { ApolloArmor } from '@escape.tech/graphql-armor';
 import { regexDirectiveTransformer } from './directives/constraints.graphql';
 import { DirectiveLocation, GraphQLDirective, GraphQLString } from 'graphql';
@@ -21,6 +21,7 @@ import { PointOfInterestModule } from './pointOfInterest/poi.module';
 import { PerformanceModule } from './performance/performance.module';
 import { ReviewModule } from './review/review.module';
 import { AlertModule } from './alert/alert.module';
+import { FilesModule } from './file/file.module';
 
 const armor = new ApolloArmor();
 const protection = armor.protect();
@@ -98,6 +99,7 @@ console.log = function (...args) {
         ReviewModule,
         AlertModule,
         PhotoModule,
+        FilesModule,
     ],
     controllers: [AppController],
     providers: [AppService],

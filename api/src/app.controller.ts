@@ -8,10 +8,11 @@ import {
     Inject,
     StreamableFile,
 } from '@nestjs/common';
-import { JwtAuthGuard } from './auth/jwt-auth.guard';
-import { LocalAuthGuard } from './auth/local-auth.guard';
+import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
+import { LocalAuthGuard } from './auth/guards/local-auth.guard';
 import { AuthService } from './auth/auth.service';
 import { AppService } from './app.service';
+import { FileType } from './file/file.service';
 
 @Controller()
 export class AppController {
@@ -39,7 +40,7 @@ export class AppController {
 
     @UseGuards(JwtAuthGuard)
     @Get('files/:category/:id')
-    getFile(@Param('id') id: string, @Param('category') category: string): StreamableFile {
-        return this.appService.getFileStream(category, id);
+    getFile(@Param('id') id: string, @Param('category') category: FileType): StreamableFile {
+        return this.appService.getFileStream(id, category);
     }
 }

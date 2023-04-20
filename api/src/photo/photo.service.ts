@@ -3,11 +3,9 @@ import { Repository } from 'typeorm';
 import { PhotoEntity } from './interfaces/photo.entity';
 import { ObjType, PhotoInput } from './interfaces/photo.input';
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { createWriteStream } from 'fs';
-import { join } from 'path';
 import { HikeService } from '../hike/hike.service';
 import { UserService } from '../user/user.service';
-import { FilesService } from '../file/file.service';
+import { FileType, FilesService } from '../file/file.service';
 import { PointOfInterestService } from '../pointOfInterest/poi.service';
 import { CategoryService } from '../category/category.service';
 
@@ -45,22 +43,7 @@ export class PhotoService {
                 throw new HttpException('Point of interest not found', HttpStatus.NOT_FOUND);
             }
         }
-        const { createReadStream, filename } = await query.file;
-        const filetype = filename.split('.').pop();
-        if (filetype !== 'png' && filetype !== 'jpg' && filetype !== 'jpeg') {
-            console.log(filetype);
-            throw new HttpException('Only photo files are allowed', HttpStatus.BAD_REQUEST);
-        }
-        const localfilename = this.filesService.worker.nextId().toString() + '.' + filetype;
-        await new Promise(async (resolve) => {
-            createReadStream()
-                .pipe(createWriteStream(join(process.cwd(), `./data/photos/${localfilename}`)))
-                .on('finish', () => resolve({}))
-                .on('error', () => {
-                    new HttpException('Could not save image', HttpStatus.BAD_REQUEST);
-                });
-        });
-        photo.filename = localfilename;
+        photo.filename = await this.filesService.uploadFile(await query.file, FileType.IMAGE);
         return await this.photoRepository.save(photo);
     }
 

@@ -10,8 +10,8 @@ export class TagEntity {
     @Column()
     name: string;
 
-    @ManyToMany(() => HikeEntity, (hike) => hike.tags)
     @JoinTable({ name: 'hikes_tags' })
+    @ManyToMany(() => HikeEntity, (hike) => hike.tags)
     hikes: HikeEntity[];
 
     @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
