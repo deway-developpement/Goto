@@ -20,7 +20,7 @@ export class PhotoResolver {
         @CurrentUser() user: UserDTO
     ): Promise<PhotoDTO> {
         if (
-            user.credidential < AuthType.superAdmin ||
+            user.credidential < AuthType.superAdmin &&
             !(query.objType === ObjType.USER || query.objId === user.id) // if not superAdmin, only allow to create photo for himself
         ) {
             throw new UnauthorizedException();
