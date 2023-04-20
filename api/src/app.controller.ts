@@ -38,7 +38,6 @@ export class AppController {
         return req.user;
     }
 
-    @UseGuards(JwtAuthGuard)
     @Get('files/:category/:id')
     getFile(@Param('id') id: string, @Param('category') category: FileType): StreamableFile {
         return this.appService.getFileStream(id, category);
