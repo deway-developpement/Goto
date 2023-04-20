@@ -1,3 +1,5 @@
+USE Goto;
+
 # fill the database with some initial data
 INSERT INTO
     user (
@@ -189,7 +191,7 @@ INSERT INTO
     photo (id, filename, createdAt, hikeId)
 VALUES (
         uuid(),
-        'photo1.jpg',
+        '302611014573228032.jpg',
         now(), (
             SELECT id
             FROM hike
@@ -207,7 +209,7 @@ INSERT INTO
     )
 VALUES (
         uuid(),
-        'photo2.jpg',
+        '302611316751859712.jpg',
         now(), (
             SELECT id
             FROM
@@ -221,7 +223,7 @@ INSERT INTO
     photo (id, filename, createdAt, userId)
 VALUES (
         uuid(),
-        'photo3.jpg',
+        '302611691068325888.jpg',
         now(), (
             SELECT id
             FROM user
@@ -295,7 +297,7 @@ VALUES (
         40,
         11,
         500,
-        'track1.gpx',
+        '301803712811237376.gpx',
         now(), (
             SELECT id
             FROM hike
@@ -328,7 +330,7 @@ VALUES (
         45,
         13.5,
         600,
-        'track2.gpx',
+        '301803712811237377.gpx',
         now(), (
             SELECT id
             FROM hike

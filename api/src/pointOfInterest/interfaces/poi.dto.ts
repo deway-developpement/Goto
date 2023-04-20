@@ -10,7 +10,7 @@ import { ObjectType, ID, Field } from '@nestjs/graphql';
 import { HikeDTO } from '../../hike/interfaces/hike.dto';
 import { PhotoDTO } from '../../photo/interfaces/photo.dto';
 
-@ObjectType('pointOfInterest')
+@ObjectType('PointOfInterest')
 @QueryOptions({ pagingStrategy: PagingStrategies.NONE })
 @FilterableUnPagedRelation('hikes', () => HikeDTO, {
     disableRemove: true,

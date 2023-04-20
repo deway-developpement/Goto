@@ -34,7 +34,7 @@ input HikeFilter {
   latitude: NumberFieldComparison
   longitude: NumberFieldComparison
   createdAt: DateFieldComparison
-  category: HikeFiltertagFilter
+  category: HikeFiltercategoryFilter
   alerts: HikeFilteralertFilter
   reviews: HikeFilterReviewFilter
   pointsOfInterest: HikeFilterpointOfInterestFilter
@@ -138,9 +138,9 @@ input DateFieldComparisonBetween {
   upper: DateTime!
 }
 
-input HikeFiltertagFilter {
-  and: [HikeFiltertagFilter!]
-  or: [HikeFiltertagFilter!]
+input HikeFiltercategoryFilter {
+  and: [HikeFiltercategoryFilter!]
+  or: [HikeFiltercategoryFilter!]
   id: IDFilterComparison
   name: StringFieldComparison
   createdAt: DateFieldComparison
@@ -201,6 +201,14 @@ input HikeFilterpointOfInterestFilter {
   createdAt: DateFieldComparison
 }
 
+input HikeFiltertagFilter {
+  and: [HikeFiltertagFilter!]
+  or: [HikeFiltertagFilter!]
+  id: IDFilterComparison
+  name: StringFieldComparison
+  createdAt: DateFieldComparison
+}
+
 input HikeSort {
   field: HikeSortFields!
   direction: SortDirection!
@@ -249,6 +257,14 @@ type alert {
   author: User!
 }
 
+type category {
+  id: ID!
+  name: String!
+  createdAt: DateTime!
+  hikes: Hike
+  defaultPhoto: photo
+}
+
 type Hike {
   id: ID!
   name: String!
@@ -270,7 +286,7 @@ type Hike {
     filter: alertAggregateFilter
   ): [HikeAlertsAggregateResponse!]!
   owner: User!
-  category: tag
+  category: category
   tags(
     """Specify to filter the records returned."""
     filter: tagFilter = {}
@@ -522,14 +538,6 @@ type pointOfInterest {
     """Specify to sort results."""
     sorting: [HikeSort!] = []
   ): [Hike!]!
-}
-
-type category {
-  id: ID!
-  name: String!
-  createdAt: DateTime!
-  hikes: Hike
-  defaultPhoto: photo
 }
 
 type photo {
