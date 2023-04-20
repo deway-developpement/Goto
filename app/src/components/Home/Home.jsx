@@ -205,6 +205,9 @@ function ProfilScreen() {
                 pseudo
                 email
                 publicKey
+                avatar {
+                    filename
+                }
             }
         }
     `);
@@ -229,54 +232,45 @@ function ProfilScreen() {
             quality: 1,
         });
 
-        console.log(result);
-
         if (!result.canceled) {
-            setImage(result.assets[0].uri);
+            const file = new ReactNativeFile({
+                uri: result.assets[0].uri,
+                type: 'image/jpeg',
+                name: 'image.jpg',
+            });
+            console.log('photo upload', file);
+
+            const MUTATION = gql`
+                mutation ($file: Upload!, $objId: String!, $objType: ObjType!) {
+                    createPhoto(
+                        input: { objId: $objId, objType: $objType, file: $file }
+                    ) {
+                        id
+                    }
+                }
+            `;
+            await client.mutate({
+                mutation: MUTATION,
+                variables: {
+                    file,
+                    objId: profil.whoami.id,
+                    objType: 'USER',
+                },
+                errorPolicy: 'all',
+            });
         }
     };
 
     useEffect(() => {
-        (async () => {
-            console.log('photo upload', image);
-            if (profil?.whoami && image) {
-                const file = new ReactNativeFile({
-                    uri: image,
-                    type: 'image/jpeg',
-                    name: 'image.jpg',
-                });
-                console.log('photo upload', file);
-
-                const MUTATION = gql`
-                    mutation (
-                        $file: Upload!
-                        $objId: String!
-                        $objType: ObjType!
-                    ) {
-                        createPhoto(
-                            input: {
-                                objId: $objId
-                                objType: $objType
-                                file: $file
-                            }
-                        ) {
-                            id
-                        }
-                    }
-                `;
-                const data = await client.mutate({
-                    mutation: MUTATION,
-                    variables: {
-                        file,
-                        objId: profil.whoami.id,
-                        objType: 'USER',
-                    },
-                    errorPolicy: 'all',
-                });
-                console.log('photo', data);
-            }
-        })();
-    }, [image]);
+        if (profil?.whoami?.avatar?.filename) {
+            const url =
+                'https://deway.fr/goto-api/files/photos/' +
+                profil.whoami.avatar.filename;
+            setImage(url);
+        } else {
+            setImage(null);
+        }
+    }, [profil]);
 
     return (
         <KeyboardAvoidingView style={styles.container}>
@@ -316,6 +310,15 @@ function ProfilScreen() {
                                 </Text>
                                 <Text>{profil.whoami.email}</Text>
                             </>
+                        )}
+                        {image && (
+                            <Image
+                                source={{
+                                    uri: image,
+                                }}
+                                loadingIndicatorSource={require('../../../assets/images/logo.png')}
+                                style={{ width: 200, height: 200 }}
+                            />
                         )}
                         <View style={styles.btnContainer}>
                             <View style={styles.btn}>
