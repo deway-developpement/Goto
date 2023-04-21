@@ -4,9 +4,9 @@ export const Classic = {
     ...DefaultTheme,
     colors: {
         ...DefaultTheme.colors,
-        background: '#F1F1F1',
+        background: '#E4ECEA',
         backgroundTextInput: '#FFFFFF',
-        text: '#201F30',
+        text: '#0D0E0E',
         link: '#264653',
         primary: '#DFE17B',
         secondary: '#80C8D2',
@@ -28,7 +28,7 @@ export const Dark = {
     ...DefaultTheme,
     colors: {
         ...DefaultTheme.colors,
-        background: '#201F30',
+        background: '#E4ECEA',
         text: '#FDFEFE',
         link: '#5B774B',
         primary: '#5B774B',

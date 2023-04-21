@@ -20,7 +20,7 @@ const stylesheet = (colors) =>
         },
         textInput: {
             height: 40,
-            borderColor: colors.borders,
+            borderColor: colors.border,
             borderRadius: 4,
             borderWidth: 1,
             marginBottom: 10,

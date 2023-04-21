@@ -7,14 +7,11 @@ import {
     View,
     Platform,
     ActivityIndicator,
-    Image,
 } from 'react-native';
 import { Button } from 'react-native-elements';
 import { AuthContext } from '../../providers/AuthContext';
 import { useTheme } from '@react-navigation/native';
-import { gql, useApolloClient, useQuery } from '@apollo/client';
 import KeyboardDismissView from '../KeyboardDismissView/KeyboardDismissView';
-import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import * as Location from 'expo-location';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import CameraScreen from '../Camera/CameraScreen';
@@ -22,10 +19,9 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Map from '../Map/Map';
 import Discover from '../Discover/Discover';
 import { useFonts } from 'expo-font';
-import * as ImagePicker from 'expo-image-picker';
-import { ReactNativeFile } from 'apollo-upload-client';
 import { Icon } from '../Icon/Icon';
-import Search  from '../Search/Search';
+import Search from '../Search/Search';
+import ProfileScreen from '../Profile/Profile';
 
 function MapScreen({ route }) {
     const [permission, request] = Location.useForegroundPermissions();
@@ -140,182 +136,6 @@ function FavoritesScreen() {
     );
 }
 
-function ProfilScreen() {
-    const authContext = useContext(AuthContext);
-    const { colors } = useTheme();
-    const styles = stylesheet(colors);
-    const client = useApolloClient();
-    const [status, requestPermission] = ImagePicker.useCameraPermissions();
-
-    const {
-        data: profil,
-        loading,
-        refetch,
-    } = useQuery(gql`
-        query whoami {
-            whoami {
-                id
-                pseudo
-                email
-                publicKey
-                avatar {
-                    filename
-                }
-            }
-        }
-    `);
-
-    const [image, setImage] = useState(null);
-
-    const pickImage = async () => {
-        if (status !== 'granted') {
-            const { status } = await requestPermission();
-            if (status !== 'granted') {
-                alert(
-                    'Sorry, we need camera roll permissions to make this work!'
-                );
-                return;
-            }
-        }
-        // No permissions request is necessary for launching the image library
-        let result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.All,
-            allowsEditing: true,
-            aspect: [4, 3],
-            quality: 1,
-        });
-
-        if (!result.canceled) {
-            const file = new ReactNativeFile({
-                uri: result.assets[0].uri,
-                type: 'image/jpeg',
-                name: 'image.jpg',
-            });
-            console.log('photo upload', file);
-
-            const MUTATION = gql`
-                mutation ($file: Upload!, $objId: String!, $objType: ObjType!) {
-                    createPhoto(
-                        input: { objId: $objId, objType: $objType, file: $file }
-                    ) {
-                        id
-                    }
-                }
-            `;
-            await client.mutate({
-                mutation: MUTATION,
-                variables: {
-                    file,
-                    objId: profil.whoami.id,
-                    objType: 'USER',
-                },
-                errorPolicy: 'all',
-            });
-        }
-    };
-
-    useEffect(() => {
-        if (profil?.whoami?.avatar?.filename) {
-            const url =
-                'https://deway.fr/goto-api/files/photos/' +
-                profil.whoami.avatar.filename;
-            setImage(url);
-        } else {
-            setImage(null);
-        }
-    }, [profil]);
-
-    return (
-        <KeyboardAvoidingView style={styles.container}>
-            <KeyboardDismissView>
-                <SafeAreaView style={styles.container}>
-                    <View
-                        style={{
-                            flexDirection: 'row',
-                            alignItems: 'flex-start',
-                        }}
-                    >
-                        <Image
-                            source={require('../../../assets/images/logo.png')}
-                            style={styles.logo}
-                        />
-                        <Text style={styles.header}>Gotò</Text>
-                    </View>
-                    <View
-                        style={{
-                            flex: 1,
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                        }}
-                    >
-                        <Text>This is your profil :</Text>
-                        {loading ? (
-                            <ActivityIndicator
-                                size="large"
-                                color={colors.primary}
-                                style={{ flex: 3, width: '100%' }}
-                            />
-                        ) : (
-                            <>
-                                <Text>
-                                    {profil.whoami.pseudo}#
-                                    {profil.whoami.publicKey}
-                                </Text>
-                                <Text>{profil.whoami.email}</Text>
-                            </>
-                        )}
-                        {image && (
-                            <Image
-                                source={{
-                                    uri: image,
-                                }}
-                                loadingIndicatorSource={require('../../../assets/images/logo.png')}
-                                style={{ width: 200, height: 200 }}
-                            />
-                        )}
-                        <View style={styles.btnContainer}>
-                            <View style={styles.btn}>
-                                <Button
-                                    title="Logout"
-                                    onPress={() => {
-                                        authContext.logout();
-                                    }}
-                                    buttonStyle={styles.btn}
-                                />
-                                <MaterialIcon
-                                    name="logout"
-                                    size={30}
-                                    color={colors.link}
-                                    onPress={() => {
-                                        authContext.logout();
-                                    }}
-                                    style={{ alignSelf: 'center' }}
-                                />
-                            </View>
-                        </View>
-                        <View style={styles.btnContainer}>
-                            <View style={styles.btn}>
-                                <Button
-                                    title="Image"
-                                    onPress={() => pickImage()}
-                                    buttonStyle={styles.btn}
-                                />
-                                <MaterialIcon
-                                    name="refresh"
-                                    size={30}
-                                    color={colors.link}
-                                    onPress={() => refetch()}
-                                    style={{ alignSelf: 'center' }}
-                                />
-                            </View>
-                        </View>
-                    </View>
-                </SafeAreaView>
-            </KeyboardDismissView>
-        </KeyboardAvoidingView>
-    );
-}
-
 const Tab = createBottomTabNavigator();
 
 function HomeScreen({ navigation }) {
@@ -345,7 +165,7 @@ function HomeScreen({ navigation }) {
             <KeyboardDismissView>
                 <View style={styles.inner}>
                     <Tab.Navigator
-                        initialRouteName={'Directions'}
+                        initialRouteName={'Profile'}
                         screenOptions={{
                             tabBarStyle: styles.tabBar,
                             headerShown: false,
@@ -408,8 +228,8 @@ function HomeScreen({ navigation }) {
                             }}
                         />
                         <Tab.Screen
-                            name="Profil"
-                            component={ProfilScreen}
+                            name="Profile"
+                            component={ProfileScreen}
                             options={{
                                 tabBarIcon: (props) => (
                                     <Icon
