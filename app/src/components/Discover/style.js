@@ -5,7 +5,7 @@ const stylesheet = (colors) =>
         textHeader: {
             marginTop: '6%',
             color: colors.text,
-            fontSize: 36,
+            fontSize: 38,
             fontWeight: '700',
             paddingLeft:'3%'
         },
