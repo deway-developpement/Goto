@@ -25,15 +25,7 @@ import { useFonts } from 'expo-font';
 import * as ImagePicker from 'expo-image-picker';
 import { ReactNativeFile } from 'apollo-upload-client';
 import { Icon } from '../Icon/Icon';
-
-function SearchScreen() {
-    return (
-        <View style={{ flex: 1, backgroundColor: '' }}>
-            <SafeAreaView />
-            <Text>Search</Text>
-        </View>
-    );
-}
+import Search  from '../Search/Search';
 
 function MapScreen({ route }) {
     const [permission, request] = Location.useForegroundPermissions();
@@ -378,7 +370,7 @@ function HomeScreen({ navigation }) {
                         />
                         <Tab.Screen
                             name="Search"
-                            component={SearchScreen}
+                            component={Search}
                             options={{
                                 tabBarIcon: (props) => (
                                     <Icon
