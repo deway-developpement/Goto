@@ -51,27 +51,31 @@ const stylesheet = (colors) =>
             color: colors.link,
             borderRadius: 6,
         },
-        centeredView: {
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            margin: 45,
+        modalView: {
+            marginHorizontal: 45,
             marginTop: 160,
             marginBottom: 284,
             borderRadius: 12,
             paddingVertical: 16,
-            paddingHorizontal: 19,
+            paddingHorizontal: 22,
             backgroundColor: colors.backgroundTextInput,
         },
         modalText: {
             fontSize: 28,
             fontWeight: '700',
             color: colors.text,
-            marginBottom: 12,
+            marginBottom: 19,
             marginLeft: 3,
         },
         closeIcon: {
             marginTop: 11,
             color: colors.link,
+        },
+        smallModalText: {
+            fontSize: 14,
+            fontWeight: '400',
+            color: colors.link,
+            marginLeft: 13,
         },
     });
 export default stylesheet;

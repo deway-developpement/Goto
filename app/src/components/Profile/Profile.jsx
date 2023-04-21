@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import {
     View,
     Text,
@@ -15,36 +15,12 @@ import { gql, useQuery, useApolloClient } from '@apollo/client';
 import KeyboardDismissView from '../KeyboardDismissView/KeyboardDismissView';
 import stylesheet from './style';
 import { useTheme } from '@react-navigation/native';
-import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import { AuthContext } from '../../providers/AuthContext';
 import { Icon } from '../Icon/Icon';
 import * as ImagePicker from 'expo-image-picker';
 import { ReactNativeFile } from 'apollo-upload-client';
-import { useState } from 'react';
 
-function ProfileModal({ setModalVisible }) {
-    const { colors } = useTheme();
-    const styles = stylesheet(colors);
-    const modalActive = Object.freeze({
-        None: 0,
-        Settings: 1,
-        ModifyProfile: 2,
-    });
-    return (
-        <View style={styles.centeredView}>
-            <Text style={styles.modalText}>Settings</Text>
-            <Icon
-                name="cross"
-                size={17}
-                style={styles.closeIcon}
-                onPress={() => setModalVisible(modalActive.None)}
-            />
-        </View>
-    );
-}
-
-export default function ProfileScreen() {
-    const authContext = useContext(AuthContext);
+function ProfileModal({ setModalVisible, profil }) {
     const { colors } = useTheme();
     const styles = stylesheet(colors);
     const [status, requestPermission] =
@@ -55,54 +31,6 @@ export default function ProfileScreen() {
         Settings: 1,
         ModifyProfile: 2,
     });
-    const [modalVisible, setModalVisible] = useState(modalActive.None);
-
-    const {
-        data: profil,
-        loading,
-        refetch,
-    } = useQuery(gql`
-        query whoami {
-            whoami {
-                id
-                pseudo
-                email
-                publicKey
-                avatar {
-                    filename
-                }
-            }
-        }
-    `);
-
-    // async function createPhoto(Blobimage) {
-    //     try {
-    //         await client.mutate({
-    //             mutation: gql`
-    //                 mutation createPhoto($objId: String!, $file: Upload!) {
-    //                     createPhoto(
-    //                         input: {
-    //                             objId: $objId
-    //                             objType: "User"
-    //                             file: $file
-    //                         }
-    //                     )
-    //                 }
-    //             `,
-    //             variables: {
-    //                 objId: profil.whoami.id,
-    //                 file: Blobimage,
-    //             },
-    //             errorPolicy: (graphQLErrors, networkError) => {
-    //                 console.log('Gql', graphQLErrors);
-    //                 console.log('Net', networkError);
-    //             },
-    //         });
-    //         console.log('Photo created');
-    //     } catch (error) {
-    //         console.error(error);
-    //     }
-    // }
 
     const pickImage = async () => {
         if (status !== 'granted') {
@@ -152,6 +80,154 @@ export default function ProfileScreen() {
     };
 
     return (
+        <View style={styles.modalView}>
+            <View
+                style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                }}
+            >
+                <Text style={styles.modalText}>Modify Profile</Text>
+                <Icon
+                    name="cross"
+                    size={17}
+                    style={styles.closeIcon}
+                    onPress={() => setModalVisible(modalActive.None)}
+                />
+            </View>
+            <View>
+                <Pressable
+                    onPress={() => pickImage()}
+                    style={{
+                        flexDirection: 'row',
+                        marginBottom: 16,
+                    }}
+                >
+                    <Icon
+                        name="user"
+                        size={14}
+                        style={{ marginTop: 2 }}
+                        color={colors.link}
+                    />
+                    <Text style={styles.smallModalText}>
+                        Change profile picture
+                    </Text>
+                </Pressable>
+                <Pressable
+                    onPress={() => {
+                        Alert.alert('Not yet implemented', 'Coming soon !');
+                    }}
+                    style={{
+                        flexDirection: 'row',
+                        marginBottom: 10,
+                    }}
+                >
+                    <Icon
+                        name="user"
+                        size={14}
+                        style={{ marginTop: 2 }}
+                        color={colors.link}
+                    />
+                    <Text style={styles.smallModalText}>Change pseudo</Text>
+                </Pressable>
+            </View>
+        </View>
+    );
+}
+
+function SettingsModal({ setModalVisible, reload }) {
+    const authContext = useContext(AuthContext);
+    const { colors } = useTheme();
+    const styles = stylesheet(colors);
+    const modalActive = Object.freeze({
+        None: 0,
+        Settings: 1,
+        ModifyProfile: 2,
+    });
+
+    return (
+        <View style={styles.modalView}>
+            <View
+                style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                }}
+            >
+                <Text style={styles.modalText}>Settings</Text>
+                <Icon
+                    name="cross"
+                    size={17}
+                    style={styles.closeIcon}
+                    onPress={() => setModalVisible(modalActive.None)}
+                />
+            </View>
+            <View>
+                <Pressable
+                    onPress={() => reload()}
+                    style={{
+                        flexDirection: 'row',
+                        marginBottom: 16,
+                    }}
+                >
+                    <Icon
+                        name="reload"
+                        size={14}
+                        style={{ marginTop: 2 }}
+                        color={colors.link}
+                    />
+                    <Text style={styles.smallModalText}>Actualize</Text>
+                </Pressable>
+                <Pressable
+                    onPress={() => {
+                        authContext.logout();
+                    }}
+                    style={{
+                        flexDirection: 'row',
+                        marginBottom: 10,
+                    }}
+                >
+                    <Icon
+                        name="exit"
+                        size={14}
+                        style={{ marginTop: 2 }}
+                        color={colors.link}
+                    />
+                    <Text style={styles.smallModalText}>Log out</Text>
+                </Pressable>
+            </View>
+        </View>
+    );
+}
+
+export default function ProfileScreen() {
+    const { colors } = useTheme();
+    const styles = stylesheet(colors);
+    const modalActive = Object.freeze({
+        None: 0,
+        Settings: 1,
+        ModifyProfile: 2,
+    });
+    const [modalVisible, setModalVisible] = useState(modalActive.None);
+
+    const {
+        data: profil,
+        loading,
+        refetch,
+    } = useQuery(gql`
+        query whoami {
+            whoami {
+                id
+                pseudo
+                email
+                publicKey
+                avatar {
+                    filename
+                }
+            }
+        }
+    `);
+
+    return (
         <KeyboardAvoidingView style={styles.container}>
             <KeyboardDismissView>
                 <SafeAreaView style={styles.container}>
@@ -162,19 +238,22 @@ export default function ProfileScreen() {
                         }}
                     >
                         <Text style={styles.header}>Profile</Text>
-                        <View
+                        <Pressable
+                            onPress={() =>
+                                setModalVisible(modalActive.Settings)
+                            }
                             style={{
                                 width: 55,
                                 alignItems: 'center',
                             }}
                         >
-                            <Icon //TODO Add Pressable
+                            <Icon
                                 name="settings"
                                 size={35}
                                 color={colors.link}
                             />
                             <Text style={styles.textSettings}>Settings</Text>
-                        </View>
+                        </Pressable>
                     </View>
                     {loading ? (
                         <ActivityIndicator
@@ -229,67 +308,24 @@ export default function ProfileScreen() {
                             >
                                 <ProfileModal
                                     setModalVisible={setModalVisible}
+                                    profil={profil}
+                                />
+                            </Modal>
+                            <Modal
+                                animationType="slide"
+                                transparent={true}
+                                visible={modalVisible == modalActive.Settings}
+                                onRequestClose={() => {
+                                    setModalVisible(modalActive.None);
+                                }}
+                            >
+                                <SettingsModal
+                                    setModalVisible={setModalVisible}
+                                    reload={refetch}
                                 />
                             </Modal>
                         </View>
                     )}
-
-                    {/* <View
-                        style={{
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                        }}
-                    >
-                        <View style={styles.btnContainer}>
-                            <View style={styles.btn}>
-                                <Button
-                                    title="Logout"
-                                    onPress={() => {
-                                        authContext.logout();
-                                    }}
-                                    buttonStyle={styles.btn}
-                                />
-                                <MaterialIcon
-                                    name="logout"
-                                    size={30}
-                                    color={colors.link}
-                                    onPress={() => {
-                                        authContext.logout();
-                                    }}
-                                    style={{ alignSelf: 'center' }}
-                                />
-                            </View>
-                        </View>
-                        <View style={styles.btnContainer}>
-                            <View style={styles.btn}>
-                                <Button
-                                    title="Actualize"
-                                    onPress={() => refetch()}
-                                    buttonStyle={styles.btn}
-                                />
-                                <MaterialIcon
-                                    name="refresh"
-                                    size={30}
-                                    color={colors.link}
-                                    onPress={() => refetch()}
-                                    style={{ alignSelf: 'center' }}
-                                />
-                            </View>
-                        </View>
-                    </View> */}
-                    <View
-                        style={{
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            marginTop: 20,
-                        }}
-                    >
-                        <Button
-                            title="Pick an image from gallery"
-                            onPress={pickImage}
-                            style={{ flex: 1, height: 250 }}
-                        />
-                    </View>
                 </SafeAreaView>
             </KeyboardDismissView>
         </KeyboardAvoidingView>
