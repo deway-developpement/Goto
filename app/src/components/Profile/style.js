@@ -3,15 +3,21 @@ import { StyleSheet } from 'react-native';
 const stylesheet = (colors) =>
     StyleSheet.create({
         container: {
-            flex: 0.7,
-            backgroundColor: colors.background,
-            paddingTop: 27,
-            paddingHorizontal: 20,
+            flex: 1,
+            paddingTop: 24,
+            paddingHorizontal: 9,
         },
         header: {
             fontSize: 36,
             fontWeight: '700',
             color: colors.text,
+        },
+        textContent: {
+            fontSize: 22,
+            fontWeight: '800',
+            color: colors.link,
+            marginLeft: 2,
+            marginBottom: 14,
         },
         textSettings: {
             marginTop: 7.5,
@@ -76,6 +82,26 @@ const stylesheet = (colors) =>
             fontWeight: '400',
             color: colors.link,
             marginLeft: 13,
+        },
+        statContainer: {
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            backgroundColor: colors.backgroundTextInput,
+            borderRadius: 12,
+            padding: 30,
+            marginBottom: 46,
+        },
+        statLabel: {
+            fontSize: 12,
+            fontWeight: '400',
+            color: colors.link,
+            marginTop: 4,
+        },
+        statNumber: {
+            fontSize: 24,
+            fontWeight: '800',
+            color: colors.statstext,
+            marginTop: 10,
         },
     });
 export default stylesheet;

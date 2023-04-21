@@ -5,6 +5,7 @@ export const Classic = {
     colors: {
         ...DefaultTheme.colors,
         background: '#E4ECEA',
+        backgroundsecondary: '#26465366',
         backgroundTextInput: '#FFFFFF',
         text: '#0D0E0E',
         link: '#264653',
@@ -20,7 +21,9 @@ export const Classic = {
         iconprimary: '#78DBC8',
         label: '#F2F7F9',
         logo: '#264653',
-        backgroundCategorie:'#FFFFFF'
+        backgroundCategorie:'#FFFFFF',
+        stats: '#207665',
+        statstext: '#0D0E0E'
     },
 };
 
@@ -29,6 +32,7 @@ export const Dark = {
     colors: {
         ...DefaultTheme.colors,
         background: '#E4ECEA',
+        backgroundsecondary: '#26465366',
         text: '#FDFEFE',
         link: '#5B774B',
         primary: '#5B774B',
@@ -43,6 +47,8 @@ export const Dark = {
         iconprimary: '#78DBC8',
         label: '#F2F7F9',
         logo: '#264653',
-        backgroundCategorie:'#FFFFFF'
+        backgroundCategorie:'#FFFFFF',
+        stats: '#207665',
+        statstext: '#0D0E0E'
     },
 };

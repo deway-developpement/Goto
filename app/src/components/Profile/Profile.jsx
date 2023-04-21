@@ -9,6 +9,7 @@ import {
     Modal,
     Alert,
     Pressable,
+    ScrollView,
 } from 'react-native';
 import { Button } from 'react-native-elements';
 import { gql, useQuery, useApolloClient } from '@apollo/client';
@@ -228,104 +229,408 @@ export default function ProfileScreen() {
     `);
 
     return (
-        <KeyboardAvoidingView style={styles.container}>
+        <KeyboardAvoidingView
+            style={[
+                styles.container,
+                {
+                    backgroundColor:
+                        modalVisible == modalActive.None
+                            ? colors.background
+                            : colors.backgroundsecondary,
+                },
+            ]}
+        >
             <KeyboardDismissView>
                 <SafeAreaView style={styles.container}>
-                    <View
-                        style={{
-                            flexDirection: 'row',
-                            justifyContent: 'space-between',
-                        }}
-                    >
-                        <Text style={styles.header}>Profile</Text>
-                        <Pressable
-                            onPress={() =>
-                                setModalVisible(modalActive.Settings)
-                            }
+                    <ScrollView showsVerticalScrollIndicator={false}>
+                        <View
                             style={{
-                                width: 55,
-                                alignItems: 'center',
+                                flexDirection: 'row',
+                                justifyContent: 'space-between',
+                                marginHorizontal: 5,
                             }}
                         >
-                            <Icon
-                                name="settings"
-                                size={35}
-                                color={colors.link}
-                            />
-                            <Text style={styles.textSettings}>Settings</Text>
-                        </Pressable>
-                    </View>
-                    {loading ? (
-                        <ActivityIndicator
-                            size="large"
-                            color={colors.primary}
-                            style={{ flex: 3, width: '100%' }}
-                        />
-                    ) : (
-                        <View style={{ marginTop: 12 }}>
-                            <View style={styles.avatarContainer}>
-                                <Image
-                                    style={styles.avatar} //TODO Default pp
-                                    source={{
-                                        uri:
-                                            'https://deway.fr/goto-api/files/photos/' +
-                                            profil.whoami.avatar.filename,
-                                    }}
-                                />
-                            </View>
-                            <Text style={styles.pseudo}>
-                                {profil.whoami.pseudo}#{profil.whoami.publicKey}
-                            </Text>
-                            <View style={styles.btnContainer}>
-                                <View style={styles.btn}>
-                                    <Button
-                                        title="Modify profile"
-                                        // onPress={pickImage}
-                                        onPress={() =>
-                                            setModalVisible(
-                                                modalActive.ModifyProfile
-                                            )
-                                        }
-                                        buttonStyle={styles.btn}
-                                        titleStyle={{
-                                            color: colors.link,
-                                            fontSize: 12,
-                                            fontWeight: '500',
-                                        }}
-                                    />
-                                </View>
-                            </View>
-
-                            <Modal
-                                animationType="slide"
-                                transparent={true}
-                                visible={
-                                    modalVisible == modalActive.ModifyProfile
+                            <Text style={styles.header}>Profile</Text>
+                            <Pressable
+                                onPress={() =>
+                                    setModalVisible(modalActive.Settings)
                                 }
-                                onRequestClose={() => {
-                                    setModalVisible(modalActive.None);
+                                style={{
+                                    width: 55,
+                                    alignItems: 'center',
                                 }}
                             >
-                                <ProfileModal
-                                    setModalVisible={setModalVisible}
-                                    profil={profil}
+                                <Icon
+                                    name="settings"
+                                    size={35}
+                                    color={colors.link}
                                 />
-                            </Modal>
-                            <Modal
-                                animationType="slide"
-                                transparent={true}
-                                visible={modalVisible == modalActive.Settings}
-                                onRequestClose={() => {
-                                    setModalVisible(modalActive.None);
-                                }}
-                            >
-                                <SettingsModal
-                                    setModalVisible={setModalVisible}
-                                    reload={refetch}
-                                />
-                            </Modal>
+                                <Text style={styles.textSettings}>
+                                    Settings
+                                </Text>
+                            </Pressable>
                         </View>
-                    )}
+                        {(() => {
+                            if (loading) {
+                                return (
+                                    <ActivityIndicator
+                                        size="large"
+                                        color={colors.primary}
+                                        style={{ flex: 3, width: '100%' }}
+                                    />
+                                );
+                            } else {
+                                return (
+                                    <>
+                                        {/* Avatar Part */}
+                                        <View style={{ marginTop: 12 }}>
+                                            <View
+                                                style={styles.avatarContainer}
+                                            >
+                                                <Image
+                                                    style={styles.avatar} //TODO Default pp
+                                                    source={{
+                                                        uri:
+                                                            'https://deway.fr/goto-api/files/photos/' +
+                                                            profil.whoami.avatar
+                                                                .filename,
+                                                    }}
+                                                />
+                                            </View>
+                                            <Text style={styles.pseudo}>
+                                                {profil.whoami.pseudo}#
+                                                {profil.whoami.publicKey}
+                                            </Text>
+                                            <View style={styles.btnContainer}>
+                                                <View style={styles.btn}>
+                                                    <Button
+                                                        title="Modify profile"
+                                                        // onPress={pickImage}
+                                                        onPress={() =>
+                                                            setModalVisible(
+                                                                modalActive.ModifyProfile
+                                                            )
+                                                        }
+                                                        buttonStyle={styles.btn}
+                                                        titleStyle={{
+                                                            color: colors.link,
+                                                            fontSize: 12,
+                                                            fontWeight: '500',
+                                                        }}
+                                                    />
+                                                </View>
+                                            </View>
+
+                                            <Modal
+                                                animationType="slide"
+                                                transparent={true}
+                                                visible={
+                                                    modalVisible ==
+                                                    modalActive.ModifyProfile
+                                                }
+                                                onRequestClose={() => {
+                                                    setModalVisible(
+                                                        modalActive.None
+                                                    );
+                                                }}
+                                            >
+                                                <ProfileModal
+                                                    setModalVisible={
+                                                        setModalVisible
+                                                    }
+                                                    profil={profil}
+                                                />
+                                            </Modal>
+                                            <Modal
+                                                animationType="slide"
+                                                transparent={true}
+                                                visible={
+                                                    modalVisible ==
+                                                    modalActive.Settings
+                                                }
+                                                onRequestClose={() => {
+                                                    setModalVisible(
+                                                        modalActive.None
+                                                    );
+                                                }}
+                                            >
+                                                <SettingsModal
+                                                    setModalVisible={
+                                                        setModalVisible
+                                                    }
+                                                    reload={refetch}
+                                                />
+                                            </Modal>
+                                        </View>
+                                        {(() => {
+                                            if (
+                                                modalVisible == modalActive.None
+                                            ) {
+                                                return (
+                                                    <>
+                                                        {/* Stats Part */}
+                                                        <View
+                                                            style={{
+                                                                marginTop: 22,
+                                                            }}
+                                                        >
+                                                            <Text
+                                                                style={
+                                                                    styles.textContent
+                                                                }
+                                                            >
+                                                                This month
+                                                            </Text>
+                                                            <View
+                                                                style={
+                                                                    styles.statContainer
+                                                                }
+                                                            >
+                                                                <View
+                                                                    style={{
+                                                                        alignItems:
+                                                                            'center',
+                                                                    }}
+                                                                >
+                                                                    <Icon
+                                                                        name="hikes"
+                                                                        size={
+                                                                            28
+                                                                        }
+                                                                        color={
+                                                                            colors.stats
+                                                                        }
+                                                                    />
+                                                                    <Text
+                                                                        style={
+                                                                            styles.statNumber
+                                                                        }
+                                                                    >
+                                                                        Goto
+                                                                    </Text>
+                                                                    <Text
+                                                                        style={
+                                                                            styles.statLabel
+                                                                        }
+                                                                    >
+                                                                        Hikes
+                                                                    </Text>
+                                                                </View>
+                                                                <View
+                                                                    style={{
+                                                                        alignItems:
+                                                                            'center',
+                                                                    }}
+                                                                >
+                                                                    <Icon
+                                                                        name="info" //TODO Change to clock
+                                                                        size={
+                                                                            28
+                                                                        }
+                                                                        color={
+                                                                            colors.stats
+                                                                        }
+                                                                    />
+                                                                    <Text
+                                                                        style={
+                                                                            styles.statNumber
+                                                                        }
+                                                                    >
+                                                                        Goto
+                                                                    </Text>
+                                                                    <Text
+                                                                        style={
+                                                                            styles.statLabel
+                                                                        }
+                                                                    >
+                                                                        Total
+                                                                    </Text>
+                                                                </View>
+                                                                <View
+                                                                    style={{
+                                                                        alignItems:
+                                                                            'center',
+                                                                    }}
+                                                                >
+                                                                    <Icon
+                                                                        name="hikes"
+                                                                        size={
+                                                                            28
+                                                                        }
+                                                                        color={
+                                                                            colors.stats
+                                                                        }
+                                                                    />
+                                                                    <Text
+                                                                        style={
+                                                                            styles.statNumber
+                                                                        }
+                                                                    >
+                                                                        Goto
+                                                                    </Text>
+                                                                    <Text
+                                                                        style={
+                                                                            styles.statLabel
+                                                                        }
+                                                                    >
+                                                                        Total
+                                                                    </Text>
+                                                                </View>
+                                                                <View
+                                                                    style={{
+                                                                        alignItems:
+                                                                            'center',
+                                                                    }}
+                                                                >
+                                                                    <Icon
+                                                                        name="hikes"
+                                                                        size={
+                                                                            28
+                                                                        }
+                                                                        color={
+                                                                            colors.stats
+                                                                        }
+                                                                    />
+                                                                    <Text
+                                                                        style={
+                                                                            styles.statNumber
+                                                                        }
+                                                                    >
+                                                                        Goto
+                                                                    </Text>
+                                                                    <Text
+                                                                        style={
+                                                                            styles.statLabel
+                                                                        }
+                                                                    >
+                                                                        Elevation
+                                                                    </Text>
+                                                                </View>
+                                                            </View>
+                                                        </View>
+                                                        {/* Historic Part */}
+                                                        <View>
+                                                            <Text
+                                                                style={
+                                                                    styles.textContent
+                                                                }
+                                                            >
+                                                                Historic of my
+                                                                hikes
+                                                            </Text>
+                                                            <ScrollView
+                                                                horizontal={
+                                                                    true
+                                                                }
+                                                                showsHorizontalScrollIndicator={
+                                                                    false
+                                                                }
+                                                                style={{
+                                                                    height: 230,
+                                                                    backgroundColor:
+                                                                        colors.backgroundTextInput,
+                                                                    borderRadius: 10,
+                                                                    marginHorizontal: 5,
+                                                                }}
+                                                            >
+                                                                <View
+                                                                    style={
+                                                                        styles.historicContainer
+                                                                    }
+                                                                >
+                                                                    <View
+                                                                        style={
+                                                                            styles.historic
+                                                                        }
+                                                                    >
+                                                                        <Text
+                                                                            style={
+                                                                                styles.historicText
+                                                                            }
+                                                                        >
+                                                                            12/12/2020
+                                                                        </Text>
+                                                                        <Text
+                                                                            style={
+                                                                                styles.historicText
+                                                                            }
+                                                                        >
+                                                                            12:00
+                                                                        </Text>
+                                                                        <Text
+                                                                            style={
+                                                                                styles.historicText
+                                                                            }
+                                                                        >
+                                                                            12:00
+                                                                        </Text>
+                                                                        <Text
+                                                                            style={
+                                                                                styles.historicText
+                                                                            }
+                                                                        >
+                                                                            12:00
+                                                                        </Text>
+                                                                    </View>
+                                                                </View>
+                                                            </ScrollView>
+                                                        </View>
+                                                        {/* Friends Part */}
+                                                        <View>
+                                                            <Text
+                                                                style={
+                                                                    styles.textContent
+                                                                }
+                                                            >
+                                                                My friends
+                                                            </Text>
+                                                            <ScrollView
+                                                                horizontal={
+                                                                    true
+                                                                }
+                                                                showsHorizontalScrollIndicator={
+                                                                    false
+                                                                }
+                                                                style={{
+                                                                    height: 230,
+                                                                    backgroundColor:
+                                                                        colors.backgroundTextInput,
+                                                                    borderRadius: 10,
+                                                                    marginHorizontal: 5,
+                                                                    marginBottom: 120,
+                                                                }}
+                                                            >
+                                                                <View
+                                                                    style={
+                                                                        styles.historicContainer
+                                                                    }
+                                                                >
+                                                                    <View
+                                                                        style={
+                                                                            styles.historic
+                                                                        }
+                                                                    >
+                                                                        <Text
+                                                                            style={
+                                                                                styles.historicText
+                                                                            }
+                                                                        >
+                                                                            La
+                                                                            Poste
+                                                                        </Text>
+                                                                    </View>
+                                                                </View>
+                                                            </ScrollView>
+                                                        </View>
+                                                    </>
+                                                );
+                                            }
+                                        })()}
+                                    </>
+                                );
+                            }
+                        })()}
+                    </ScrollView>
                 </SafeAreaView>
             </KeyboardDismissView>
         </KeyboardAvoidingView>
