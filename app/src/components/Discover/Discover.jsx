@@ -1,14 +1,13 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React from 'react';
 import {
     Text,
     Image,
     View,
     ScrollView,
     Dimensions,
-    TouchableWithoutFeedback
+    TouchableWithoutFeedback,
 } from 'react-native';
 import stylesheet from './style';
-import { AuthContext } from '../../providers/AuthContext';
 import { useTheme } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { createIconSetFromFontello } from '@expo/vector-icons';
@@ -39,8 +38,8 @@ function Bidule(props) {
 
 function Categorie(props) {
     return (
-        <TouchableWithoutFeedback onPress={() => console.log('press')} style={[props.styles.container, {height:100, flexDirection:'row', borderRadius:12}, props.horizontal ? {width:'70%'} : {}]}>
-            <View style={[props.styles.container, {flexDirection:'row', marginTop:40, marginRight:40, paddingRight:40}, props.styles.backGroundCategorie]}>
+        <TouchableWithoutFeedback onPress={() => console.log('press')}>
+            <View style={[props.styles.container, {flexDirection:'row', marginTop:40, marginRight:40, paddingRight:40}, props.styles.backGroundCategorie, props.horizontal ? {width:400} : {}]}>
                 <Image source={require('../../../assets/images/Dalle_background.png')} 
                     style={[
                         {height:100,width:100, borderTopLeftRadius: 12, borderBottomLeftRadius:12, marginRight:30 },
@@ -52,14 +51,13 @@ function Categorie(props) {
 }
 
 export default function Discover(){
-    const authContext = useContext(AuthContext);
     const { colors } = useTheme();
     const styles = stylesheet(colors);
 
     const {
         data: categorie,
-        loading: loading,
-        refetch: refetch,
+        loading,
+        refetch,
     } = useQuery(
         gql `query categories($field: CategorySortFields!, $direction: SortDirection!){
             categories(sorting:{field: $field, direction: $direction}){
@@ -114,7 +112,7 @@ export default function Discover(){
                     <Text style={[styles.textLink, {alignSelf:'center'}]}>Discover</Text>
                 </View>
                 <Text style={[styles.textHeader, {marginTop:40}]}>Unique places</Text>
-                {!loading && categorie.categories.map((item, index) => (<Categorie key={item.id} styles={styles} horizontal={false} {...item} />))}
+                {!loading && categorie.categories.map((item) => (<Categorie key={item.id} styles={styles} horizontal={false} {...item} />))}
                 <View style={{height:windowHeight*0.20}}/>
             </ScrollView>
         </SafeAreaView>
