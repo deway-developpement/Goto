@@ -74,13 +74,17 @@ function createApolloClient(authContext) {
                 }
             }
             if (networkError) {
-                console.log(`[Network error]: ${networkError}`);
+                console.log(
+                    `[Network error]: ${JSON.stringify(networkError, null, 2)}`
+                );
+                return forward(operation);
             }
         }
     );
 
     const httpLink = new createUploadLink({
         uri: config.graphQLLink,
+        print: true,
     });
 
     const client = new ApolloClient({

@@ -10,7 +10,7 @@ import { HikeEntity } from '../../hike/interfaces/hike.entity';
 import { PointOfInterestDTO } from '../../pointOfInterest/interfaces/poi.dto';
 import { CategoryDTO } from '../../category/interfaces/category.dto';
 
-@ObjectType('photo')
+@ObjectType('Photo')
 @QueryOptions({ pagingStrategy: PagingStrategies.NONE })
 export class PhotoDTO {
     @IDField(() => ID)

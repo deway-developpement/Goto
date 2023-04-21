@@ -50,7 +50,8 @@
     "react-native-screens": "~3.18.0",
     "react-native-web": "0.18.12",
     "typings": "^2.1.1",
-    "xmldom": "^0.6.0"
+    "xmldom": "^0.6.0",
+    "expo-image-picker": "~14.0.2"
   },
   "devDependencies": {
     "@types/react": "^18.0.28",

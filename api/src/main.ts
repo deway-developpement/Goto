@@ -9,7 +9,7 @@ async function bootstrap() {
     });
     app.useGlobalPipes(new ValidationPipe());
     app.enableCors(); //! to remove after testing
-    app.use(graphqlUploadExpress({ maxFileSize: 1000000, maxFiles: 10 })); // allow file upload up to 1MB
+    app.use(graphqlUploadExpress({ maxFileSize: 10000000, maxFiles: 10 })); // allow file upload up to 1MB
     // allow hook at shutdown
     app.enableShutdownHooks();
     await app.listen(3000);

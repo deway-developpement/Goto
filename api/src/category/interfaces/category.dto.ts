@@ -9,7 +9,7 @@ import { ObjectType, ID } from '@nestjs/graphql';
 import { HikeDTO } from '../../hike/interfaces/hike.dto';
 import { PhotoDTO } from '../../photo/interfaces/photo.dto';
 
-@ObjectType('category')
+@ObjectType('Category')
 @QueryOptions({ pagingStrategy: PagingStrategies.NONE })
 @Relation('hikes', () => HikeDTO, {
     nullable: true,

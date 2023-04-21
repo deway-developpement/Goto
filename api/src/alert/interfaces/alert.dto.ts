@@ -10,7 +10,7 @@ import { HikeDTO } from '../../hike/interfaces/hike.dto';
 import { UserDTO } from '../../user/interfaces/user.dto';
 import { AlertType } from './alert.type';
 
-@ObjectType('alert')
+@ObjectType('Alert')
 @QueryOptions({ pagingStrategy: PagingStrategies.NONE })
 @FilterableRelation('hike', () => HikeDTO, {
     disableRemove: true,

@@ -4,7 +4,7 @@
 
 directive @constraint(pattern: String) on FIELD_DEFINITION
 
-type tag {
+type Tag {
   id: ID!
   name: String!
   createdAt: DateTime!
@@ -34,11 +34,11 @@ input HikeFilter {
   latitude: NumberFieldComparison
   longitude: NumberFieldComparison
   createdAt: DateFieldComparison
-  category: HikeFiltertagFilter
-  alerts: HikeFilteralertFilter
+  category: HikeFilterCategoryFilter
+  alerts: HikeFilterAlertFilter
   reviews: HikeFilterReviewFilter
-  pointsOfInterest: HikeFilterpointOfInterestFilter
-  tags: HikeFiltertagFilter
+  pointsOfInterest: HikeFilterPointOfInterestFilter
+  tags: HikeFilterTagFilter
 }
 
 input IDFilterComparison {
@@ -138,17 +138,17 @@ input DateFieldComparisonBetween {
   upper: DateTime!
 }
 
-input HikeFiltertagFilter {
-  and: [HikeFiltertagFilter!]
-  or: [HikeFiltertagFilter!]
+input HikeFilterCategoryFilter {
+  and: [HikeFilterCategoryFilter!]
+  or: [HikeFilterCategoryFilter!]
   id: IDFilterComparison
   name: StringFieldComparison
   createdAt: DateFieldComparison
 }
 
-input HikeFilteralertFilter {
-  and: [HikeFilteralertFilter!]
-  or: [HikeFilteralertFilter!]
+input HikeFilterAlertFilter {
+  and: [HikeFilterAlertFilter!]
+  or: [HikeFilterAlertFilter!]
   id: IDFilterComparison
   latitude: NumberFieldComparison
   longitude: NumberFieldComparison
@@ -191,13 +191,21 @@ input HikeFilterReviewFilter {
   createdAt: DateFieldComparison
 }
 
-input HikeFilterpointOfInterestFilter {
-  and: [HikeFilterpointOfInterestFilter!]
-  or: [HikeFilterpointOfInterestFilter!]
+input HikeFilterPointOfInterestFilter {
+  and: [HikeFilterPointOfInterestFilter!]
+  or: [HikeFilterPointOfInterestFilter!]
   id: IDFilterComparison
   name: StringFieldComparison
   latitude: NumberFieldComparison
   longitude: NumberFieldComparison
+  createdAt: DateFieldComparison
+}
+
+input HikeFilterTagFilter {
+  and: [HikeFilterTagFilter!]
+  or: [HikeFilterTagFilter!]
+  id: IDFilterComparison
+  name: StringFieldComparison
   createdAt: DateFieldComparison
 }
 
@@ -239,7 +247,7 @@ type Review {
   hike: Hike!
 }
 
-type alert {
+type Alert {
   id: ID!
   latitude: Float!
   longitude: Float!
@@ -247,6 +255,14 @@ type alert {
   createdAt: DateTime!
   hike: Hike!
   author: User!
+}
+
+type Category {
+  id: ID!
+  name: String!
+  createdAt: DateTime!
+  hikes: Hike
+  defaultPhoto: Photo
 }
 
 type Hike {
@@ -267,31 +283,31 @@ type Hike {
   ): [HikeReviewsAggregateResponse!]!
   alertsAggregate(
     """Filter to find records to aggregate on"""
-    filter: alertAggregateFilter
+    filter: AlertAggregateFilter
   ): [HikeAlertsAggregateResponse!]!
   owner: User!
-  category: tag
+  category: Category
   tags(
     """Specify to filter the records returned."""
-    filter: tagFilter = {}
+    filter: TagFilter = {}
 
     """Specify to sort results."""
-    sorting: [tagSort!] = []
-  ): [tag!]
+    sorting: [TagSort!] = []
+  ): [Tag!]
   photos(
     """Specify to filter the records returned."""
-    filter: photoFilter = {}
+    filter: PhotoFilter = {}
 
     """Specify to sort results."""
-    sorting: [photoSort!] = []
-  ): [photo!]
+    sorting: [PhotoSort!] = []
+  ): [Photo!]
   pointsOfInterests(
     """Specify to filter the records returned."""
-    filter: pointOfInterestFilter = {}
+    filter: PointOfInterestFilter = {}
 
     """Specify to sort results."""
-    sorting: [pointOfInterestSort!] = []
-  ): [pointOfInterest!]
+    sorting: [PointOfInterestSort!] = []
+  ): [PointOfInterest!]
   reviews(
     """Specify to filter the records returned."""
     filter: ReviewFilter = {}
@@ -301,11 +317,11 @@ type Hike {
   ): [Review!]
   alerts(
     """Specify to filter the records returned."""
-    filter: alertFilter = {}
+    filter: AlertFilter = {}
 
     """Specify to sort results."""
-    sorting: [alertSort!] = []
-  ): [alert!]
+    sorting: [AlertSort!] = []
+  ): [Alert!]
   distanceFrom(lat: Float!, lon: Float!): Float!
 }
 
@@ -317,9 +333,9 @@ input ReviewAggregateFilter {
   createdAt: DateFieldComparison
 }
 
-input alertAggregateFilter {
-  and: [alertAggregateFilter!]
-  or: [alertAggregateFilter!]
+input AlertAggregateFilter {
+  and: [AlertAggregateFilter!]
+  or: [AlertAggregateFilter!]
   id: IDFilterComparison
   latitude: NumberFieldComparison
   longitude: NumberFieldComparison
@@ -327,60 +343,60 @@ input alertAggregateFilter {
   createdAt: DateFieldComparison
 }
 
-input tagFilter {
-  and: [tagFilter!]
-  or: [tagFilter!]
+input TagFilter {
+  and: [TagFilter!]
+  or: [TagFilter!]
   id: IDFilterComparison
   name: StringFieldComparison
   createdAt: DateFieldComparison
 }
 
-input tagSort {
-  field: tagSortFields!
+input TagSort {
+  field: TagSortFields!
   direction: SortDirection!
   nulls: SortNulls
 }
 
-enum tagSortFields {
+enum TagSortFields {
   id
   name
   createdAt
 }
 
-input photoFilter {
-  and: [photoFilter!]
-  or: [photoFilter!]
+input PhotoFilter {
+  and: [PhotoFilter!]
+  or: [PhotoFilter!]
   id: IDFilterComparison
   filename: StringFieldComparison
   createdAt: DateFieldComparison
 }
 
-input photoSort {
-  field: photoSortFields!
+input PhotoSort {
+  field: PhotoSortFields!
   direction: SortDirection!
   nulls: SortNulls
 }
 
-enum photoSortFields {
+enum PhotoSortFields {
   id
   filename
   createdAt
 }
 
-input pointOfInterestFilter {
-  and: [pointOfInterestFilter!]
-  or: [pointOfInterestFilter!]
+input PointOfInterestFilter {
+  and: [PointOfInterestFilter!]
+  or: [PointOfInterestFilter!]
   id: IDFilterComparison
   name: StringFieldComparison
   latitude: NumberFieldComparison
   longitude: NumberFieldComparison
   createdAt: DateFieldComparison
-  hikes: pointOfInterestFilterHikeFilter
+  hikes: PointOfInterestFilterHikeFilter
 }
 
-input pointOfInterestFilterHikeFilter {
-  and: [pointOfInterestFilterHikeFilter!]
-  or: [pointOfInterestFilterHikeFilter!]
+input PointOfInterestFilterHikeFilter {
+  and: [PointOfInterestFilterHikeFilter!]
+  or: [PointOfInterestFilterHikeFilter!]
   id: IDFilterComparison
   name: StringFieldComparison
   distance: NumberFieldComparison
@@ -392,13 +408,13 @@ input pointOfInterestFilterHikeFilter {
   createdAt: DateFieldComparison
 }
 
-input pointOfInterestSort {
-  field: pointOfInterestSortFields!
+input PointOfInterestSort {
+  field: PointOfInterestSortFields!
   direction: SortDirection!
   nulls: SortNulls
 }
 
-enum pointOfInterestSortFields {
+enum PointOfInterestSortFields {
   id
   name
   latitude
@@ -454,21 +470,21 @@ enum ReviewSortFields {
   createdAt
 }
 
-input alertFilter {
-  and: [alertFilter!]
-  or: [alertFilter!]
+input AlertFilter {
+  and: [AlertFilter!]
+  or: [AlertFilter!]
   id: IDFilterComparison
   latitude: NumberFieldComparison
   longitude: NumberFieldComparison
   type: AlertTypeFilterComparison
   createdAt: DateFieldComparison
-  author: alertFilterUserFilter
-  hike: alertFilterHikeFilter
+  author: AlertFilterUserFilter
+  hike: AlertFilterHikeFilter
 }
 
-input alertFilterUserFilter {
-  and: [alertFilterUserFilter!]
-  or: [alertFilterUserFilter!]
+input AlertFilterUserFilter {
+  and: [AlertFilterUserFilter!]
+  or: [AlertFilterUserFilter!]
   id: IDFilterComparison
   pseudo: StringFieldComparison
   email: StringFieldComparison
@@ -478,9 +494,9 @@ input alertFilterUserFilter {
   createdAt: DateFieldComparison
 }
 
-input alertFilterHikeFilter {
-  and: [alertFilterHikeFilter!]
-  or: [alertFilterHikeFilter!]
+input AlertFilterHikeFilter {
+  and: [AlertFilterHikeFilter!]
+  or: [AlertFilterHikeFilter!]
   id: IDFilterComparison
   name: StringFieldComparison
   distance: NumberFieldComparison
@@ -492,13 +508,13 @@ input alertFilterHikeFilter {
   createdAt: DateFieldComparison
 }
 
-input alertSort {
-  field: alertSortFields!
+input AlertSort {
+  field: AlertSortFields!
   direction: SortDirection!
   nulls: SortNulls
 }
 
-enum alertSortFields {
+enum AlertSortFields {
   id
   latitude
   longitude
@@ -506,7 +522,7 @@ enum alertSortFields {
   createdAt
 }
 
-type pointOfInterest {
+type PointOfInterest {
   id: ID!
   name: String!
   description: String!
@@ -514,7 +530,7 @@ type pointOfInterest {
   longitude: Float!
   url: String
   createdAt: DateTime!
-  photo: photo
+  photo: Photo
   hikes(
     """Specify to filter the records returned."""
     filter: HikeFilter = {}
@@ -524,15 +540,7 @@ type pointOfInterest {
   ): [Hike!]!
 }
 
-type category {
-  id: ID!
-  name: String!
-  createdAt: DateTime!
-  hikes: Hike
-  defaultPhoto: photo
-}
-
-type photo {
+type Photo {
   id: ID!
   filename: String!
   createdAt: DateTime!
@@ -550,7 +558,7 @@ type User {
     """Filter to find records to aggregate on"""
     filter: UserAggregateFilter
   ): [UserFriendsAggregateResponse!]!
-  avatar: photo
+  avatar: Photo
   friends(
     """Specify to filter the records returned."""
     filter: UserFilter = {}
@@ -881,55 +889,55 @@ type HikeReviewsAggregateResponse {
   max: HikeReviewsMaxAggregate
 }
 
-type tagAggregateGroupBy {
+type TagAggregateGroupBy {
   id: ID
   name: String
   createdAt: DateTime
 }
 
-type tagCountAggregate {
+type TagCountAggregate {
   id: Int
   name: Int
   createdAt: Int
 }
 
-type tagMinAggregate {
+type TagMinAggregate {
   id: ID
   name: String
   createdAt: DateTime
 }
 
-type tagMaxAggregate {
+type TagMaxAggregate {
   id: ID
   name: String
   createdAt: DateTime
 }
 
-type categoryAggregateGroupBy {
+type CategoryAggregateGroupBy {
   id: ID
   name: String
   createdAt: DateTime
 }
 
-type categoryCountAggregate {
+type CategoryCountAggregate {
   id: Int
   name: Int
   createdAt: Int
 }
 
-type categoryMinAggregate {
+type CategoryMinAggregate {
   id: ID
   name: String
   createdAt: DateTime
 }
 
-type categoryMaxAggregate {
+type CategoryMaxAggregate {
   id: ID
   name: String
   createdAt: DateTime
 }
 
-type pointOfInterestAggregateGroupBy {
+type PointOfInterestAggregateGroupBy {
   id: ID
   name: String
   latitude: Float
@@ -937,7 +945,7 @@ type pointOfInterestAggregateGroupBy {
   createdAt: DateTime
 }
 
-type pointOfInterestCountAggregate {
+type PointOfInterestCountAggregate {
   id: Int
   name: Int
   latitude: Int
@@ -945,17 +953,17 @@ type pointOfInterestCountAggregate {
   createdAt: Int
 }
 
-type pointOfInterestSumAggregate {
+type PointOfInterestSumAggregate {
   latitude: Float
   longitude: Float
 }
 
-type pointOfInterestAvgAggregate {
+type PointOfInterestAvgAggregate {
   latitude: Float
   longitude: Float
 }
 
-type pointOfInterestMinAggregate {
+type PointOfInterestMinAggregate {
   id: ID
   name: String
   latitude: Float
@@ -963,7 +971,7 @@ type pointOfInterestMinAggregate {
   createdAt: DateTime
 }
 
-type pointOfInterestMaxAggregate {
+type PointOfInterestMaxAggregate {
   id: ID
   name: String
   latitude: Float
@@ -1081,7 +1089,7 @@ type ReviewAggregateResponse {
   max: ReviewMaxAggregate
 }
 
-type alertAggregateGroupBy {
+type AlertAggregateGroupBy {
   id: ID
   latitude: Float
   longitude: Float
@@ -1089,7 +1097,7 @@ type alertAggregateGroupBy {
   createdAt: DateTime
 }
 
-type alertCountAggregate {
+type AlertCountAggregate {
   id: Int
   latitude: Int
   longitude: Int
@@ -1097,19 +1105,19 @@ type alertCountAggregate {
   createdAt: Int
 }
 
-type alertSumAggregate {
+type AlertSumAggregate {
   latitude: Float
   longitude: Float
   type: Float
 }
 
-type alertAvgAggregate {
+type AlertAvgAggregate {
   latitude: Float
   longitude: Float
   type: Float
 }
 
-type alertMinAggregate {
+type AlertMinAggregate {
   id: ID
   latitude: Float
   longitude: Float
@@ -1117,7 +1125,7 @@ type alertMinAggregate {
   createdAt: DateTime
 }
 
-type alertMaxAggregate {
+type AlertMaxAggregate {
   id: ID
   latitude: Float
   longitude: Float
@@ -1168,36 +1176,36 @@ type Query {
   tag(
     """The id of the record to find."""
     id: ID!
-  ): tag
+  ): Tag
   tags(
     """Specify to filter the records returned."""
-    filter: tagFilter = {}
+    filter: TagFilter = {}
 
     """Specify to sort results."""
-    sorting: [tagSort!] = []
-  ): [tag!]!
+    sorting: [TagSort!] = []
+  ): [Tag!]!
   category(
     """The id of the record to find."""
     id: ID!
-  ): category
+  ): Category
   categories(
     """Specify to filter the records returned."""
-    filter: categoryFilter = {}
+    filter: CategoryFilter = {}
 
     """Specify to sort results."""
-    sorting: [categorySort!] = []
-  ): [category!]!
+    sorting: [CategorySort!] = []
+  ): [Category!]!
   pointOfInterest(
     """The id of the record to find."""
     id: ID!
-  ): pointOfInterest
+  ): PointOfInterest
   pointOfInterests(
     """Specify to filter the records returned."""
-    filter: pointOfInterestFilter = {}
+    filter: PointOfInterestFilter = {}
 
     """Specify to sort results."""
-    sorting: [pointOfInterestSort!] = []
-  ): [pointOfInterest!]!
+    sorting: [PointOfInterestSort!] = []
+  ): [PointOfInterest!]!
   performanceAggregate(
     """Filter to find records to aggregate on"""
     filter: PerformanceAggregateFilter
@@ -1231,14 +1239,14 @@ type Query {
   alert(
     """The id of the record to find."""
     id: ID!
-  ): alert
+  ): Alert
   alerts(
     """Specify to filter the records returned."""
-    filter: alertFilter = {}
+    filter: AlertFilter = {}
 
     """Specify to sort results."""
-    sorting: [alertSort!] = []
-  ): [alert!]!
+    sorting: [AlertSort!] = []
+  ): [Alert!]!
 }
 
 input HikeAggregateFilter {
@@ -1255,21 +1263,21 @@ input HikeAggregateFilter {
   createdAt: DateFieldComparison
 }
 
-input categoryFilter {
-  and: [categoryFilter!]
-  or: [categoryFilter!]
+input CategoryFilter {
+  and: [CategoryFilter!]
+  or: [CategoryFilter!]
   id: IDFilterComparison
   name: StringFieldComparison
   createdAt: DateFieldComparison
 }
 
-input categorySort {
-  field: categorySortFields!
+input CategorySort {
+  field: CategorySortFields!
   direction: SortDirection!
   nulls: SortNulls
 }
 
-enum categorySortFields {
+enum CategorySortFields {
   id
   name
   createdAt
@@ -1350,19 +1358,19 @@ type Mutation {
   addTagToHike(hikeId: String!, tagId: String!): Hike!
   removeTagFromHike(hikeId: String!, tagId: String!): Hike!
   deleteHike(id: String!): Hike!
-  createTag(input: TagInput!): tag!
-  deleteTag(id: String!): category!
-  createCategory(input: CategoryInput!): category!
-  createPointOfInterest(input: PointOfInterestInput!): pointOfInterest!
-  deletePointOfInterest(id: String!): pointOfInterest!
+  createTag(input: TagInput!): Tag!
+  deleteTag(id: String!): Category!
+  createCategory(input: CategoryInput!): Category!
+  createPointOfInterest(input: PointOfInterestInput!): PointOfInterest!
+  deletePointOfInterest(id: String!): PointOfInterest!
   createPerformance(input: PerformanceInput!): Performance!
   deletePerformance(id: String!): Performance!
   addReview(input: ReviewInput!): Review!
   updateReview(id: String!, input: ReviewInput!): Review!
   deleteReview(id: String!): Review!
-  postAlert(input: AlertInput!): alert!
-  deleteAlert(id: String!): alert!
-  createPhoto(input: PhotoInput!): photo!
+  postAlert(input: AlertInput!): Alert!
+  deleteAlert(id: String!): Alert!
+  createPhoto(input: PhotoInput!): Photo!
 }
 
 input UserInput {

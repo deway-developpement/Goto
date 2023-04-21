@@ -8,7 +8,7 @@ import {
 import { ObjectType, ID } from '@nestjs/graphql';
 import { HikeDTO } from '../../hike/interfaces/hike.dto';
 
-@ObjectType('tag')
+@ObjectType('Tag')
 @QueryOptions({ pagingStrategy: PagingStrategies.NONE })
 @UnPagedRelation('hikes', () => HikeDTO, {
     nullable: true,
