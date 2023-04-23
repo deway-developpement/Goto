@@ -13,14 +13,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { createIconSetFromFontello } from '@expo/vector-icons';
 import { useFonts } from 'expo-font';
 import { gql, useQuery } from '@apollo/client';
+import {Icon} from '../Icon/Icon'
 
-const Icon = createIconSetFromFontello(
-    require('../../../assets/font/config.json'),
-    'goto',
-    'goto.ttf'
-);
-
-function Bidule(props) {
+function PlusIcon(props) {
     const [fontsLoaded] = useFonts({
         goto: require('../../../assets/font/goto.ttf'),
     });
@@ -54,18 +49,21 @@ export default function Discover(){
     const { colors } = useTheme();
     const styles = stylesheet(colors);
 
+    const GET_CATEGORIES = gql `query categories($field: CategorySortFields!, $direction: SortDirection!){
+        categories(sorting:{field: $field, direction: $direction}){
+            id
+            name
+            createdAt
+        }
+    }`
+
     const {
         data: categorie,
         loading,
         refetch,
     } = useQuery(
-        gql `query categories($field: CategorySortFields!, $direction: SortDirection!){
-            categories(sorting:{field: $field, direction: $direction}){
-                id
-                name
-                createdAt
-            }
-        }`,
+        GET_CATEGORIES
+        ,
         {   
             variables:{
                 field:'id',
@@ -89,7 +87,7 @@ export default function Discover(){
                 <Text style={styles.textHeader}>Discover</Text>
                 <TouchableWithoutFeedback onPress={()=>console.log('DISCORVER')}>
                     <View style={[styles.container, {flexDirection:'row', marginLeft:'4%', marginTop:20}]}>
-                        <Bidule color={colors.logo} />
+                        <PlusIcon color={colors.logo} />
                         <Text style={[styles.textLink, {textDecorationLine:'', marginLeft:'5%',alignSelf:'center'}]}>Add a hike</Text>
                     </View>
                 </TouchableWithoutFeedback>
