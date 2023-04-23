@@ -10,40 +10,9 @@ import {
 import stylesheet from './style';
 import { useTheme } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { createIconSetFromFontello } from '@expo/vector-icons';
-import { useFonts } from 'expo-font';
 import { gql, useQuery } from '@apollo/client';
-import {Icon} from '../Icon/Icon'
-
-function PlusIcon(props) {
-    const [fontsLoaded] = useFonts({
-        goto: require('../../../assets/font/goto.ttf'),
-    });
-    if (!fontsLoaded) {
-        return <View />;
-    }
-    return (
-        <Icon
-            name='plus'
-            size={30}
-            color={props.color}
-        />
-    );
-}
-
-function Categorie(props) {
-    return (
-        <TouchableWithoutFeedback onPress={() => console.log('press')}>
-            <View style={[props.styles.container, {flexDirection:'row', marginTop:40, marginRight:40, paddingRight:40}, props.styles.backGroundCategorie, props.horizontal ? {width:400} : {}]}>
-                <Image source={require('../../../assets/images/Dalle_background.png')} 
-                    style={[
-                        {height:100,width:100, borderTopLeftRadius: 12, borderBottomLeftRadius:12, marginRight:30 },
-                    ]}/>
-                <Text style={[props.styles.textHeader, {marginLeft:0,fontSize:24, marginTop:35}]}>{props.name}</Text>
-            </View>
-        </TouchableWithoutFeedback>
-    );
-}
+import {IconComp} from '../Icon/Icon';
+import Categorie from '../Categorie/Categorie';
 
 export default function Discover(){
     const { colors } = useTheme();
@@ -55,7 +24,7 @@ export default function Discover(){
             name
             createdAt
         }
-    }`
+    }`;
 
     const {
         data: categorie,
@@ -72,10 +41,6 @@ export default function Discover(){
         },
     );
 
-    if (!loading) {
-        console.log(categorie);
-    }
-
     const windowHeight = Dimensions.get('window').height;
     return (
         <SafeAreaView style={styles.container}>
@@ -87,7 +52,7 @@ export default function Discover(){
                 <Text style={styles.textHeader}>Discover</Text>
                 <TouchableWithoutFeedback onPress={()=>console.log('DISCORVER')}>
                     <View style={[styles.container, {flexDirection:'row', marginLeft:'4%', marginTop:20}]}>
-                        <PlusIcon color={colors.logo} />
+                        <IconComp color={colors.logo} name={'plus'}/>
                         <Text style={[styles.textLink, {textDecorationLine:'', marginLeft:'5%',alignSelf:'center'}]}>Add a hike</Text>
                     </View>
                 </TouchableWithoutFeedback>
