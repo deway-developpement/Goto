@@ -20,7 +20,9 @@ export const Classic = {
         iconprimary: '#78DBC8',
         label: '#F2F7F9',
         logo: '#264653',
-        backgroundCategorie:'#FFFFFF'
+        description:'#6B6F70',
+        starEmpty:'#EFF0F1',
+        starFill:'#2A9D87'
     },
 };
 
@@ -31,6 +33,7 @@ export const Dark = {
         background: '#201F30',
         text: '#FDFEFE',
         link: '#5B774B',
+        backgroundTextInput: '#FFFFFF',
         primary: '#5B774B',
         secondary: '#80C8D2',
         accent: '#D1406C',
@@ -43,6 +46,8 @@ export const Dark = {
         iconprimary: '#78DBC8',
         label: '#F2F7F9',
         logo: '#264653',
-        backgroundCategorie:'#FFFFFF'
+        description:'#6B6F70',
+        starEmpty:'#EFF0F1',
+        starFill:'#2A9D87'
     },
 };

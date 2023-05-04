@@ -29,7 +29,6 @@ export default function Discover(){
     const {
         data: categorie,
         loading,
-        refetch,
     } = useQuery(
         GET_CATEGORIES
         ,
@@ -61,15 +60,15 @@ export default function Discover(){
                     keyboardShouldPersistTaps={'handled'}
                     horizontal={true}
                 >
-                    <Categorie styles={styles} horizontal={true} name={'Around you'}/>
-                    <Categorie styles={styles} horizontal={true} name={'Added this mounth'}/>
-                    <Categorie styles={styles} horizontal={true} name={'To redo'}/>
+                    <Categorie styles={styles} horizontal={true} name={'Around you'}  id={'Around you'}/>
+                    <Categorie styles={styles} horizontal={true} name={'Added this mounth'} id={'Added this mounth'}/>
+                    <Categorie styles={styles} horizontal={true} name={'To redo'} id={'To redo'}/>
                 </ScrollView>
                 <Image source={require('../../../assets/images/Dalle_background.png')} 
                     style={[
                         {width: '100%',height:windowHeight*0.5, borderTopLeftRadius: 12, borderTopRightRadius:12 },
                     ]}/>
-                <View style={[styles.container,styles.backGroundCategorie,{paddingBottom:'5%', borderBottomRightRadius:12, borderBottomLeftRadius:12}]}>
+                <View style={[styles.container,{paddingBottom:'5%', borderBottomRightRadius:12, borderBottomLeftRadius:12, backgroundColor:colors.backgroundTextInput}]}>
                     <Text style={[styles.textHeader, {alignSelf:'center'}]}>Most popular</Text>    
                     <Text style={[styles.textLink, {alignSelf:'center'}]}>Discover</Text>
                 </View>

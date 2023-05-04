@@ -12,6 +12,13 @@ const stylesheet = (colors) =>
             color: colors.text,
             fontSize: 20,
         },
+        textHeader: {
+            marginTop: '6%',
+            color: colors.text,
+            fontSize: 38,
+            fontWeight: '700',
+            paddingLeft:'3%'
+        },
         textInputContainer: {
             flexDirection: 'row',
             alignItems: 'center',

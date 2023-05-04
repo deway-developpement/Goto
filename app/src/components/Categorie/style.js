@@ -9,16 +9,6 @@ const stylesheet = (colors) =>
             fontWeight: '700',
             paddingLeft:'3%'
         },
-        textLink: {
-            color: colors.link,
-            fontSize: 20,
-            fontWeight: '400',
-            textDecorationLine:'underline'
-        },
-        logo: {
-            width: 150,
-            height: 150,
-        },
         container: {
             width:'100%',
             height:'100%',

@@ -22,6 +22,7 @@ export function IconComp(props) {
             name={props.name}
             size={props.size || 30}
             color={props.color}
+            style={[props.pos ? {position:'absolute', top:props.pos, right:props.pos} : {}, props.marginRight ? {marginRight:props.marginRight} : {}, props.marginLeft ? {marginLeft:props.marginLeft} : {}]}
         />
     );
 }

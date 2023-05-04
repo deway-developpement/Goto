@@ -22,8 +22,15 @@ const stylesheet = (colors) =>
         container: {
             width:'100%',
             height:'100%',
-            backgroundColor:colors.background,
-            flex:1
+            backgroundColor:colors.backgroundTextInput,
+            flex:1,
+            flexDirection:'column',
+            alignItems:'center',
+        },
+        textDescription:{
+            fontSize:20,
+            fontWeight:'400',
+            color:colors.description,
         }
     });
 export default stylesheet;
