@@ -20,12 +20,12 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import CameraScreen from '../Camera/CameraScreen';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Map from '../Map/Map';
-import Discover from '../Discover/Discover';
+import DiscoverScreen from '../DiscoverScreen/DiscoverScreen';
 import { useFonts } from 'expo-font';
 import * as ImagePicker from 'expo-image-picker';
 import { ReactNativeFile } from 'apollo-upload-client';
 import { Icon } from '../Icon/Icon';
-import Search  from '../Search/Search';
+import Search from '../Search/Search';
 
 function MapScreen({ route }) {
     const [permission, request] = Location.useForegroundPermissions();
@@ -357,7 +357,7 @@ function HomeScreen({ navigation }) {
                     >
                         <Tab.Screen
                             name="Discover"
-                            component={Discover}
+                            component={DiscoverScreen}
                             options={{
                                 tabBarIcon: (props) => (
                                     <Icon
