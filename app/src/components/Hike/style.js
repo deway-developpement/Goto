@@ -30,7 +30,7 @@ const stylesheet = (colors) =>
             alignItems:'flex-start',
             borderRadius:12,
             marginTop:35,
-            padding:24
+            padding:20
         },
         textDescription:{
             fontSize:16,
