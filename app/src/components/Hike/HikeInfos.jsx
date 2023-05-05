@@ -55,7 +55,7 @@ export default function HikeInfos(props) {
                 <TouchableWithoutFeedback onPress={()=>console.log('LIKE HIKE', props.name)}>
                     <View>
                         <IconComp color={colors.logo} name={'heart'} pos={0}/>
-                        <IconComp color={colors.backgroundTextInput} name={'heart'} size={22} pos={4}/>
+                        <IconComp color={colors.backgroundTextInput} name={'heart'} size={22} pos={4.7}/>
                     </View>
                 </TouchableWithoutFeedback>
             </View>

@@ -4,7 +4,8 @@ import {
     Image,
     View,
     TouchableWithoutFeedback,
-    StyleSheet
+    StyleSheet,
+    Dimensions
 } from 'react-native';
 import { useTheme } from '@react-navigation/native';
 import stylesheet from './style';
@@ -12,6 +13,7 @@ import { useNavigation } from '@react-navigation/native';
 import { gql, useQuery } from '@apollo/client';
 import {IconComp} from '../Icon/Icon';
 import HikeInfos from './HikeInfos';
+import PointsOfInterests from './PointOfInterest';
 
 function Tag(props){
     const { colors } = useTheme();
@@ -27,6 +29,8 @@ export default function FocusHike(props) {
     const styles = stylesheet(colors);
     const navigation = useNavigation();
 
+    const windowWidth = Dimensions.get('window').width;
+
     const GET_HIKES = gql `query hike($id: ID!){
         hike(id: $id){
             id
@@ -36,6 +40,7 @@ export default function FocusHike(props) {
             distance
             difficulty
             createdAt
+            elevation
             photos {
                 id
                 filename
@@ -49,6 +54,13 @@ export default function FocusHike(props) {
             owner {
                 pseudo
                 avatar {
+                    filename
+                }
+            }
+            pointsOfInterests {
+                name
+                description
+                photo {
                     filename
                 }
             }
@@ -77,8 +89,7 @@ export default function FocusHike(props) {
         tabDiff[2]=3;
     }
 
-    console.log(hike?.hike?.tags);
-
+    const text = "Hike's caracteristics";
     return (
         <View style={{flex:1}}>
             <Image
@@ -100,22 +111,40 @@ export default function FocusHike(props) {
                         <Text style={[styles.textDescription, {marginBottom:10, paddingHorizontal:24}]}>Principals caracteristics</Text>
                         <View style={{flexDirection:'row', width:'100%'}}>
                             <View style={{flex:1, justifyContent:'center', alignItems:'center', paddingBottom:10}}>
-                                <Text style={[styles.textHeader, {marginTop:10, fontSize:26}]}>{hike.hike.duration}h</Text>
-                                <Text style={[styles.textDescription, {color:colors.text, marginLeft:8}]}>of walking</Text>
+                                <Text style={[styles.textHeader, {marginTop:10, fontSize:20}]}>{hike.hike.duration}h</Text>
+                                <Text style={[styles.textDescription, {color:colors.text, marginLeft:8, fontSize:12}]}>of walking</Text>
                             </View>
                             <View style={{flex:1, justifyContent:'center', alignItems:'center', marginRight:10, paddingBottom:10}}>
-                                <Text style={[styles.textHeader, {marginTop:10, fontSize:26}]}>{hike.hike.distance}km</Text>
-                                <Text style={[styles.textDescription, {color:colors.text, marginLeft:8}]}>to gotò</Text>
+                                <Text style={[styles.textHeader, {marginTop:10, fontSize:20}]}>{hike.hike.distance}km</Text>
+                                <Text style={[styles.textDescription, {color:colors.text, marginLeft:8, fontSize:12}]}>to gotò</Text>
+                            </View>
+                            <View style={{flex:1, justifyContent:'center', alignItems:'center', marginRight:10, paddingBottom:10}}>
+                                <Text style={[styles.textHeader, {marginTop:10, fontSize:20}]}>{hike.hike.elevation}m</Text>
+                                <Text style={[styles.textDescription, {color:colors.text, marginLeft:8, fontSize:12}]}>of elevation</Text>
                             </View>
                             <View style={{backgroundColor:colors.styleBar, height:'100%', width:2, marginTop:5}} />
                             <View style={{flex:1, alignItems:'center', paddingBottom:10}}>
                                 <View style={{flex:1, flexDirection:'row', marginTop:20}}>
                                     {tabDiff.map(item=><View style={[{width:14, height:14, marginLeft:5, borderRadius:7}, item>0 ? {backgroundColor:colors.starFill}:{backgroundColor:colors.starEmpty}]} key={item}/>)}
                                 </View>
-                                <Text style={[styles.textDescription, {color:colors.text, marginLeft:8}]}>difficulty</Text>
+                                <Text style={[styles.textDescription, {color:colors.text, marginLeft:8, fontSize:12}]}>difficulty</Text>
                             </View>
                         </View>
                         { hike?.hike?.tags.map(item => <Tag key={item.name} name={item.name}/>)}
+                    </View>
+                }
+                {
+                    !loading && 
+                    <View style={[styles.containerFocus, {flexDirection:'column'}]}>
+                        <Text style={styles.textDescription}>{text}</Text>
+                        { hike?.hike?.pointsOfInterests.map(item => <PointsOfInterests key={item.name} {...item}/>) }
+                        <View style={{backgroundColor: colors.starEmpty, width:windowWidth*0.8, height:2, marginTop:15}}/>
+                        <TouchableWithoutFeedback onPress={()=>console.log('OPEN HIKE PATH')}>
+                            <View style={[styles.containerFocus, {backgroundColor:colors.logo, marginTop:15, flexDirection:'row', justifyContent:'center'}]}>
+                                <IconComp color={colors.backgroundTextInput} name={'map'} size={20}/>
+                                <Text style={[styles.textHeader], {fontSize:16, marginTop:0, color:colors.backgroundTextInput, marginLeft:20}}>See the Hike on the map</Text>
+                            </View>
+                        </TouchableWithoutFeedback>
                     </View>
                 }
                 {
@@ -129,7 +158,7 @@ export default function FocusHike(props) {
                         <Text style={styles.textDescription}>by <Text style={[styles.textDescription, {color: colors.text}]}>{hike?.hike?.owner?.pseudo}</Text></Text>
                     </View>
                 }
-                <View style={{height:200}}/>
+                <View style={{height:100}}/>
             </View>
         </View>
     );
