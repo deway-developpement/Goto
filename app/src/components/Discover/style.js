@@ -3,15 +3,15 @@ import { StyleSheet } from 'react-native';
 const stylesheet = (colors) =>
     StyleSheet.create({
         textHeader: {
-            marginTop: '6%',
+            marginTop: '4%',
             color: colors.text,
-            fontSize: 38,
+            fontSize: 32,
             fontWeight: '700',
             paddingLeft:'3%'
         },
         textLink: {
             color: colors.link,
-            fontSize: 20,
+            fontSize: 16,
             fontWeight: '400',
             textDecorationLine:'underline'
         },

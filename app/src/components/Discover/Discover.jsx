@@ -48,7 +48,7 @@ export default function Discover(){
                 keyboardShouldPersistTaps={'handled'}
             >
 
-                <Text style={styles.textHeader}>Discover</Text>
+                <Text style={[styles.textHeader, {marginTop:'6%'}]}>Discover</Text>
                 <TouchableWithoutFeedback onPress={()=>console.log('DISCORVER')}>
                     <View style={[styles.container, {flexDirection:'row', marginLeft:'4%', marginTop:20}]}>
                         <IconComp color={colors.logo} name={'plus'}/>
@@ -70,7 +70,7 @@ export default function Discover(){
                     ]}/>
                 <View style={[styles.container,{paddingBottom:'5%', borderBottomRightRadius:12, borderBottomLeftRadius:12, backgroundColor:colors.backgroundTextInput}]}>
                     <Text style={[styles.textHeader, {alignSelf:'center'}]}>Most popular</Text>    
-                    <Text style={[styles.textLink, {alignSelf:'center'}]}>Discover</Text>
+                    <Text style={[styles.textLink, {alignSelf:'center', marginTop:5}]}>Discover</Text>
                 </View>
                 <Text style={[styles.textHeader, {marginTop:40}]}>Unique places</Text>
                 {!loading && categorie.categories.map((item) => (<Categorie key={item.id} styles={styles} horizontal={false} {...item} />))}
