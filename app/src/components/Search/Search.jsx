@@ -12,9 +12,10 @@ import Categorie from '../Categorie/Categorie';
 import stylesheet from './style';
 import { gql, useQuery } from '@apollo/client';
 import Hike from '../Hike/Hike';
-
+import FocusHike from '../Hike/HikeFocus';
 
 export default function Search(props) {
+    console.log(props.route.params);
     const { colors } = useTheme();
     const styles = stylesheet(colors);
     
@@ -60,7 +61,6 @@ export default function Search(props) {
     );
 
     function handleTextInput(){
-        console.log('search : ', search);
         setHikes(null);
     }
 
@@ -74,31 +74,46 @@ export default function Search(props) {
             setHikes(null);
         }
     }, [search]);
-
-    return (
-        <SafeAreaView style={styles.container}>
+    if (!props?.route?.params?.focusHike){
+        return (
+            <SafeAreaView style={styles.container}>
+                <ScrollView
+                    style={styles.container}
+                    keyboardShouldPersistTaps={'handled'}
+                >
+                    {
+                        <View style={{ paddingHorizontal:'7%'}}>
+                            <View style={[styles.textInputContainer, {marginTop:48}]}>
+                                <TextInput
+                                    placeholder="search"
+                                    autoCorrect={false}
+                                    autoCapitalize="none"
+                                    placeholderTextColor={colors.border}
+                                    style={[styles.textInput, {width:'90%'}]}
+                                    onSubmitEditing={() => handleTextInput()}
+                                    onChangeText={(text) => setSearch(text)}
+                                    value={search}
+                                />
+                                <IconComp color={colors.border} name={'search'} size={24}/>
+                            </View>
+                            {hikes && hikes.length!==0 && props?.route?.params?.category && <Text style={[styles.textHeader, {marginBottom:10}]}>{props?.route?.params?.category}</Text>}
+                            {(!hikes || search=='') && !loading && categorie && categorie.categories.map((item) => (<Categorie key={item.id} id={item.id} horizontal={false} {...item} />))}
+                            {hikes && hikes.length!==0 && hikes.map((item) => (<Hike key={item.id} id={item.id} category={props?.route?.params?.category}{...item} />))}
+                            <View style={{height:200}}/>
+                        </View>
+                    }
+                </ScrollView>
+            </SafeAreaView>
+        );
+    }else{
+        return (
             <ScrollView
-                style={[styles.container,{paddingHorizontal:'7%'}]}
+                style={styles.container}
                 keyboardShouldPersistTaps={'handled'}
             >
-                <View style={[styles.textInputContainer, {marginTop:48}]}>
-                    <TextInput
-                        placeholder="search"
-                        autoCorrect={false}
-                        autoCapitalize="none"
-                        placeholderTextColor={colors.border}
-                        style={[styles.textInput, {width:'90%'}]}
-                        onSubmitEditing={() => handleTextInput()}
-                        onChangeText={(text) => setSearch(text)}
-                        value={search}
-                    />
-                    <IconComp color={colors.border} name={'search'} size={24}/>
-                </View>
-                {hikes && hikes.length!==0 && props?.route?.params?.category && <Text style={[styles.textHeader, {marginBottom:50}]}>{props?.route?.params?.category}</Text>}
-                {(!hikes || search=='') && !loading && categorie && categorie.categories.map((item) => (<Categorie key={item.id} id={item.id} horizontal={false} {...item} />))}
-                {hikes && hikes.length!==0 && hikes.map((item) => (<Hike key={item.id} id={item.id} category={props?.route?.params?.category}{...item} />))}
-                <View style={{height:200}}/>
+                <FocusHike id={props?.route?.params?.focusHike}/>
             </ScrollView>
-        </SafeAreaView>
-    );
+        );
+    }
+    
 }

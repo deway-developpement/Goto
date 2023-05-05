@@ -3,7 +3,6 @@ import { StyleSheet } from 'react-native';
 const stylesheet = (colors) =>
     StyleSheet.create({
         textHeader: {
-            marginTop: '6%',
             color: colors.text,
             fontSize: 38,
             fontWeight: '700',

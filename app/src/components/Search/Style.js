@@ -10,7 +10,7 @@ const stylesheet = (colors) =>
             height: 40,
             paddingLeft: 16,
             color: colors.text,
-            fontSize: 20,
+            fontSize: 18,
         },
         textHeader: {
             marginTop: '6%',

@@ -5,15 +5,9 @@ const stylesheet = (colors) =>
         textHeader: {
             marginTop: '6%',
             color: colors.text,
-            fontSize: 38,
+            fontSize: 32,
             fontWeight: '700',
             paddingLeft:'3%'
-        },
-        textLink: {
-            color: colors.link,
-            fontSize: 20,
-            fontWeight: '400',
-            textDecorationLine:'underline'
         },
         logo: {
             width: 150,
@@ -27,10 +21,30 @@ const stylesheet = (colors) =>
             flexDirection:'column',
             alignItems:'center',
         },
+        containerFocus : {
+            width:'100%',
+            height:'100%',
+            backgroundColor:colors.backgroundTextInput,
+            flex:1,
+            flexDirection:'column',
+            alignItems:'flex-start',
+            borderRadius:12,
+            marginTop:35,
+            padding:24
+        },
         textDescription:{
-            fontSize:20,
+            fontSize:16,
             fontWeight:'400',
             color:colors.description,
+        },
+        logoContainer:{
+            width:50,
+            height:50,
+            backgroundColor:colors.logo,
+            borderRadius:12,
+            flex:1,
+            alignItems:'center',
+            justifyContent:'center',
         }
     });
 export default stylesheet;
