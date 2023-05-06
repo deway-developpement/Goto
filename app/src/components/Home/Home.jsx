@@ -25,7 +25,8 @@ import { useFonts } from 'expo-font';
 import * as ImagePicker from 'expo-image-picker';
 import { ReactNativeFile } from 'apollo-upload-client';
 import { Icon } from '../Icon/Icon';
-import Search, { FocusHikeScreen } from '../Search/Search';
+import Search from '../Search/Search';
+import FocusHikeScreen from '../Hike/HikeFocus';
 
 function MapScreen({ route }) {
     const [permission, request] = Location.useForegroundPermissions();
@@ -353,6 +354,7 @@ function HomeScreen({ navigation }) {
                             tabBarLabelStyle: styles.tabBarLabel,
                             tabBarActiveTintColor: colors.iconprimary,
                             tabBarInactiveTintColor: colors.label,
+                            tabBarHideOnKeyboard: true,
                         }}
                     >
                         <Tab.Screen

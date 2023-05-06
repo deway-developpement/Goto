@@ -1,11 +1,10 @@
 import React from 'react';
-import { ScrollView, Text } from 'react-native';
+import { Text } from 'react-native';
 import { useTheme } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import stylesheet from './style';
 import { gql, useQuery } from '@apollo/client';
 import Hike from '../Hike/Hike';
-import FocusHike from '../Hike/HikeFocus';
 import { FlatList } from 'react-native-gesture-handler';
 import { View } from 'react-native';
 import { TextInput } from 'react-native';
@@ -88,19 +87,5 @@ export default function SearchScreen({ route }) {
                 style={[styles.container, { paddingHorizontal: '7%' }]}
             />
         </SafeAreaView>
-    );
-}
-
-export function FocusHikeScreen({ route }) {
-    const { colors } = useTheme();
-    const styles = stylesheet(colors);
-
-    return (
-        <ScrollView
-            style={styles.container}
-            keyboardShouldPersistTaps={'handled'}
-        >
-            <FocusHike hikeId={route.params.hikeId} />
-        </ScrollView>
     );
 }
