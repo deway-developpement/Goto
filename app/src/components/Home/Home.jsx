@@ -25,7 +25,7 @@ import { useFonts } from 'expo-font';
 import * as ImagePicker from 'expo-image-picker';
 import { ReactNativeFile } from 'apollo-upload-client';
 import { Icon } from '../Icon/Icon';
-import Search from '../Search/Search';
+import Search, { FocusHikeScreen } from '../Search/Search';
 
 function MapScreen({ route }) {
     const [permission, request] = Location.useForegroundPermissions();
@@ -395,7 +395,7 @@ function HomeScreen({ navigation }) {
                             }}
                         />
                         <Tab.Screen
-                            name="My Hikes"
+                            name="Favorites"
                             component={FavoritesScreen}
                             options={{
                                 tabBarIcon: (props) => (
@@ -408,7 +408,7 @@ function HomeScreen({ navigation }) {
                             }}
                         />
                         <Tab.Screen
-                            name="Profil"
+                            name="Profile"
                             component={ProfilScreen}
                             options={{
                                 tabBarIcon: (props) => (
@@ -418,6 +418,14 @@ function HomeScreen({ navigation }) {
                                         color={props.color}
                                     />
                                 ),
+                            }}
+                        />
+                        <Tab.Screen
+                            name="FocusHike"
+                            component={FocusHikeScreen}
+                            options={{
+                                headerShown: false,
+                                tabBarButton: () => null,
                             }}
                         />
                     </Tab.Navigator>

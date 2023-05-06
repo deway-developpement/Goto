@@ -1,119 +1,108 @@
 import React from 'react';
-import {
-    View,
-    ScrollView,
-    TextInput,
-    Text
-} from 'react-native';
+import { ScrollView, Text } from 'react-native';
 import { useTheme } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import {IconComp} from '../Icon/Icon';
-import Categorie from '../Categorie/Categorie';
 import stylesheet from './style';
 import { gql, useQuery } from '@apollo/client';
 import Hike from '../Hike/Hike';
 import FocusHike from '../Hike/HikeFocus';
+import { FlatList } from 'react-native-gesture-handler';
+import { View } from 'react-native';
+import { TextInput } from 'react-native';
+import { IconComp } from '../Icon/Icon';
 
-export default function Search(props) {
-    console.log(props.route.params);
+export default function SearchScreen({ route }) {
     const { colors } = useTheme();
     const styles = stylesheet(colors);
-    
-    const [hikes, setHikes] = React.useState(props?.route?.params?.hikes?.hikes);
-    const [search, setSearch] = React.useState('');
 
-    const GET_CATEGORIES = gql `query categories($field: CategorySortFields!, $direction: SortDirection!){
-        categories(sorting:{field: $field, direction: $direction}){
-            id
-            name
-            createdAt
-        }
-    }`;
-
-    const GET_CATEGORY = gql `query categories($name: StringFieldComparison){
-        categories(filter:{name: $name}){
-            id
-            name
-            createdAt
-        }
-    }`;
-
-    const {
-        data: categorie,
-        loading,
-    } =  !search || search=='' ? useQuery(
-        GET_CATEGORIES
-        ,
-        {   
-            variables:{
-                field:'id',
-                direction:'ASC',
+    const GET_HIKES = gql`
+        query hikes($filter: HikeFilter) {
+            hikes(filter: $filter) {
+                id
             }
-        },
-    ) : useQuery(
-        GET_CATEGORY
-        ,
-        {   
-            variables:{
-                name:{like:`${search}%`},
-            }
-        },
+        }
+    `;
+
+    const { data } = useQuery(
+        GET_HIKES,
+        route.params?.category && {
+            variables: {
+                filter: {
+                    category: {
+                        name: {
+                            eq: route.params?.category,
+                        },
+                    },
+                },
+            },
+        }
     );
 
-    function handleTextInput(){
-        setHikes(null);
-    }
+    function handleTextInput() {}
 
-    React.useEffect(() => {
-        setSearch(props?.route?.params?.category);
-        setHikes(props?.route?.params?.hikes?.hikes);
-    }, [props?.route?.params]);
-
-    React.useEffect(() => {
-        if (search==''){
-            setHikes(null);
-        }
-    }, [search]);
-    if (!props?.route?.params?.focusHike){
-        return (
-            <SafeAreaView style={styles.container}>
-                <ScrollView
-                    style={styles.container}
-                    keyboardShouldPersistTaps={'handled'}
-                >
-                    {
-                        <View style={{ paddingHorizontal:'7%'}}>
-                            <View style={[styles.textInputContainer, {marginTop:48}]}>
-                                <TextInput
-                                    placeholder="search"
-                                    autoCorrect={false}
-                                    autoCapitalize="none"
-                                    placeholderTextColor={colors.border}
-                                    style={[styles.textInput, {width:'90%'}]}
-                                    onSubmitEditing={() => handleTextInput()}
-                                    onChangeText={(text) => setSearch(text)}
-                                    value={search}
-                                />
-                                <IconComp color={colors.border} name={'search'} size={24}/>
-                            </View>
-                            {hikes && hikes.length!==0 && props?.route?.params?.category && <Text style={[styles.textHeader, {marginBottom:10}]}>{props?.route?.params?.category}</Text>}
-                            {(!hikes || search=='') && !loading && categorie && categorie.categories.map((item) => (<Categorie key={item.id} id={item.id} horizontal={false} {...item} />))}
-                            {hikes && hikes.length!==0 && hikes.map((item) => (<Hike key={item.id} id={item.id} category={props?.route?.params?.category}{...item} />))}
-                            <View style={{height:200}}/>
+    return (
+        <SafeAreaView style={styles.container}>
+            <FlatList
+                data={data?.hikes}
+                renderItem={({ item }) => <Hike id={item.id} />}
+                keyExtractor={(item) => item.id}
+                showsVerticalScrollIndicator={false}
+                emptyListComponent={
+                    <Text style={styles.textLink}>No hikes</Text>
+                }
+                ListHeaderComponent={
+                    <>
+                        <View
+                            style={[
+                                styles.textInputContainer,
+                                { marginTop: 28 },
+                            ]}
+                        >
+                            <TextInput
+                                placeholder="search"
+                                autoCorrect={false}
+                                autoCapitalize="none"
+                                placeholderTextColor={colors.border}
+                                style={[styles.textInput, { width: '90%' }]}
+                                onSubmitEditing={() => handleTextInput()}
+                            />
+                            <IconComp
+                                color={colors.border}
+                                name={'search'}
+                                size={24}
+                            />
                         </View>
-                    }
-                </ScrollView>
-            </SafeAreaView>
-        );
-    }else{
-        return (
-            <ScrollView
-                style={styles.container}
-                keyboardShouldPersistTaps={'handled'}
-            >
-                <FocusHike id={props?.route?.params?.focusHike}/>
-            </ScrollView>
-        );
-    }
-    
+                        {data?.hikes &&
+                            data?.hikes.length !== 0 &&
+                            route?.params?.category && (
+                            <Text
+                                style={[
+                                    styles.textHeader,
+                                    { marginBottom: 10 },
+                                ]}
+                            >
+                                {route?.params?.category}
+                            </Text>
+                        )}
+                    </>
+                }
+                ListFooterComponent={<View style={{ height: 100 }} />}
+                style={[styles.container, { paddingHorizontal: '7%' }]}
+            />
+        </SafeAreaView>
+    );
+}
+
+export function FocusHikeScreen({ route }) {
+    const { colors } = useTheme();
+    const styles = stylesheet(colors);
+
+    return (
+        <ScrollView
+            style={styles.container}
+            keyboardShouldPersistTaps={'handled'}
+        >
+            <FocusHike hikeId={route.params.hikeId} />
+        </ScrollView>
+    );
 }
