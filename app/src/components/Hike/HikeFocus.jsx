@@ -14,6 +14,7 @@ import { gql, useQuery } from '@apollo/client';
 import { IconComp } from '../Icon/Icon';
 import HikeInfos from './HikeInfos';
 import PointsOfInterests from './PointOfInterest';
+import SplashScreen from '../SplashScreen/SplashScreen';
 
 function Tag(props) {
     const { colors } = useTheme();
@@ -103,47 +104,49 @@ export default function FocusHike({ hikeId }) {
         tabDiff[2] = 3;
     }
 
-    const text = 'Hike\'s caracteristics';
-
-    return (
-        <View style={{ flex: 1 }}>
-            <Image
-                source={
-                    !loading && data.hike.photos && data.hike.photos.length > 0
-                        ? {
-                            uri: `https://deway.fr/goto-api/files/photos/${data.hike.photos[0].filename}`,
-                        }
-                        : require('../../../assets/images/Dalle_background.png')
-                }
-                style={[
-                    StyleSheet.absoluteFill,
-                    { width: '100%', height: '100%' },
-                ]}
-            />
-            <View
-                style={[
-                    {
-                        flex: 1,
-                        marginHorizontal: 14,
-                        marginTop: 48,
-                        flexDirection: 'column',
-                        alignItems: 'flex-start',
-                    },
-                ]}
-            >
-                <TouchableWithoutFeedback
-                    onPress={() => navigation.navigate('Search')}
+    if (loading) {
+        return <SplashScreen />;
+    } else {
+        return (
+            <View style={{ flex: 1 }}>
+                <Image
+                    source={
+                        data.hike.photos && data.hike.photos.length > 0
+                            ? {
+                                uri: `https://deway.fr/goto-api/files/photos/${data.hike.photos[0].filename}`,
+                            }
+                            : require('../../../assets/images/Dalle_background.png')
+                    }
+                    style={[
+                        StyleSheet.absoluteFill,
+                        { width: '100%', height: '100%' },
+                    ]}
+                />
+                <View
+                    style={[
+                        {
+                            flex: 1,
+                            marginHorizontal: 14,
+                            marginTop: 48,
+                            flexDirection: 'column',
+                            alignItems: 'flex-start',
+                        },
+                    ]}
                 >
-                    <View style={[styles.logoContainer, { marginBottom: 36 }]}>
-                        <IconComp
-                            color={colors.background}
-                            name={'back'}
-                            pos={0}
-                        />
-                    </View>
-                </TouchableWithoutFeedback>
-                {!loading && <HikeInfos hike={data.hike} borderRadius={true} />}
-                {!loading && (
+                    <TouchableWithoutFeedback
+                        onPress={() => navigation.navigate('Search')}
+                    >
+                        <View
+                            style={[styles.logoContainer, { marginBottom: 36 }]}
+                        >
+                            <IconComp
+                                color={colors.background}
+                                name={'back'}
+                                pos={0}
+                            />
+                        </View>
+                    </TouchableWithoutFeedback>
+                    <HikeInfos hike={data.hike} borderRadius={true} />
                     <View
                         style={[
                             styles.containerFocus,
@@ -311,15 +314,15 @@ export default function FocusHike({ hikeId }) {
                             <Tag key={item.name} name={item.name} />
                         ))}
                     </View>
-                )}
-                {!loading && (
                     <View
                         style={[
                             styles.containerFocus,
                             { flexDirection: 'column' },
                         ]}
                     >
-                        <Text style={styles.textDescription}>{text}</Text>
+                        <Text style={styles.textDescription}>
+                            Hike&apos;s caracteristics
+                        </Text>
                         {data?.hike?.pointsOfInterests.map((item) => (
                             <PointsOfInterests key={item.name} {...item} />
                         ))}
@@ -366,12 +369,13 @@ export default function FocusHike({ hikeId }) {
                             </View>
                         </TouchableWithoutFeedback>
                     </View>
-                )}
-                {!loading && (
                     <View
                         style={[
                             styles.containerFocus,
-                            { flexDirection: 'column', alignItems: 'center' },
+                            {
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                            },
                         ]}
                     >
                         <Image
@@ -409,9 +413,9 @@ export default function FocusHike({ hikeId }) {
                             </Text>
                         </Text>
                     </View>
-                )}
-                <View style={{ height: 100 }} />
+                    <View style={{ height: 100 }} />
+                </View>
             </View>
-        </View>
-    );
+        );
+    }
 }

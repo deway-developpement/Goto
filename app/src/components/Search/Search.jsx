@@ -72,9 +72,7 @@ export default function SearchScreen({ route }) {
                                 size={24}
                             />
                         </View>
-                        {data?.hikes &&
-                            data?.hikes.length !== 0 &&
-                            route?.params?.category && (
+                        {route?.params?.category && (
                             <Text
                                 style={[
                                     styles.textHeader,
