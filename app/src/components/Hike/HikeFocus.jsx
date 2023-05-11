@@ -121,7 +121,7 @@ export default function FocusHikeScreen({ route }) {
                         }
                         style={[
                             StyleSheet.absoluteFill,
-                            { width: windowWidth, height: windowHeight },
+                            { minHeight: windowHeight, width: 'auto' },
                         ]}
                     />
                     <View
