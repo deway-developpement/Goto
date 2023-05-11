@@ -29,6 +29,15 @@ const stylesheet = (colors) =>
             backgroundColor: colors.backgroundTextInput,
             paddingHorizontal:16,
             height:48
+        },
+        logoContainer:{
+            width:50,
+            height:50,
+            backgroundColor:colors.logo,
+            borderRadius:12,
+            flex:1,
+            alignItems:'center',
+            justifyContent:'center',
         }
     });
 export default stylesheet;
