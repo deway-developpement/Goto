@@ -49,6 +49,7 @@ export default function FocusHikeScreen({ route }) {
     }
 
     const windowWidth = Dimensions.get('window').width;
+    const windowHeight = Dimensions.get('window').height;
 
     const GET_HIKE = gql`
         query hike($id: ID!) {
@@ -120,7 +121,7 @@ export default function FocusHikeScreen({ route }) {
                         }
                         style={[
                             StyleSheet.absoluteFill,
-                            { width: '100%', height: '100%' },
+                            { width: windowWidth, height: windowHeight },
                         ]}
                     />
                     <View
@@ -425,7 +426,6 @@ export default function FocusHikeScreen({ route }) {
                                 </Text>
                             </Text>
                         </View>
-                        <View style={{ height: 150 }} />
                     </View>
                 </>
             </ScrollView>
