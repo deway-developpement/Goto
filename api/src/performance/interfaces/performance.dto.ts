@@ -14,12 +14,13 @@ import { HikeDTO } from '../../hike/interfaces/hike.dto';
 @FilterableRelation('user', () => UserDTO, {
     disableRemove: true,
     disableUpdate: true,
-    enableAggregate: true,
+    enableAggregate: false,
 })
 @FilterableRelation('hike', () => HikeDTO, {
     disableRemove: true,
     disableUpdate: true,
     enableAggregate: true,
+    enableTotalCount: true,
 })
 export class PerformanceDTO {
     @IDField(() => ID)

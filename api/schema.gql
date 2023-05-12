@@ -546,6 +546,18 @@ type Photo {
   createdAt: DateTime!
 }
 
+type Performance {
+  id: ID!
+  date: DateTime!
+  distance: Float!
+  elevation: Float!
+  duration: Float!
+  track: String!
+  createdAt: DateTime!
+  user: User!
+  hike: Hike!
+}
+
 type User {
   id: ID!
   pseudo: String!
@@ -558,6 +570,10 @@ type User {
     """Filter to find records to aggregate on"""
     filter: UserAggregateFilter
   ): [UserFriendsAggregateResponse!]!
+  performancesAggregate(
+    """Filter to find records to aggregate on"""
+    filter: PerformanceAggregateFilter
+  ): [UserPerformancesAggregateResponse!]!
   avatar: Photo
   friends(
     """Specify to filter the records returned."""
@@ -566,6 +582,13 @@ type User {
     """Specify to sort results."""
     sorting: [UserSort!] = []
   ): [User!]!
+  performances(
+    """Specify to filter the records returned."""
+    filter: PerformanceFilter = {}
+
+    """Specify to sort results."""
+    sorting: [PerformanceSort!] = []
+  ): [Performance!]!
 }
 
 input UserAggregateFilter {
@@ -577,6 +600,17 @@ input UserAggregateFilter {
   password: StringFieldComparison
   publicKey: StringFieldComparison
   credidential: NumberFieldComparison
+  createdAt: DateFieldComparison
+}
+
+input PerformanceAggregateFilter {
+  and: [PerformanceAggregateFilter!]
+  or: [PerformanceAggregateFilter!]
+  id: IDFilterComparison
+  date: DateFieldComparison
+  distance: NumberFieldComparison
+  elevation: NumberFieldComparison
+  duration: NumberFieldComparison
   createdAt: DateFieldComparison
 }
 
@@ -605,6 +639,60 @@ enum UserSortFields {
   password
   publicKey
   credidential
+  createdAt
+}
+
+input PerformanceFilter {
+  and: [PerformanceFilter!]
+  or: [PerformanceFilter!]
+  id: IDFilterComparison
+  date: DateFieldComparison
+  distance: NumberFieldComparison
+  elevation: NumberFieldComparison
+  duration: NumberFieldComparison
+  createdAt: DateFieldComparison
+  hike: PerformanceFilterHikeFilter
+  user: PerformanceFilterUserFilter
+}
+
+input PerformanceFilterHikeFilter {
+  and: [PerformanceFilterHikeFilter!]
+  or: [PerformanceFilterHikeFilter!]
+  id: IDFilterComparison
+  name: StringFieldComparison
+  distance: NumberFieldComparison
+  elevation: NumberFieldComparison
+  difficulty: DifficultyFilterComparison
+  duration: NumberFieldComparison
+  latitude: NumberFieldComparison
+  longitude: NumberFieldComparison
+  createdAt: DateFieldComparison
+}
+
+input PerformanceFilterUserFilter {
+  and: [PerformanceFilterUserFilter!]
+  or: [PerformanceFilterUserFilter!]
+  id: IDFilterComparison
+  pseudo: StringFieldComparison
+  email: StringFieldComparison
+  password: StringFieldComparison
+  publicKey: StringFieldComparison
+  credidential: NumberFieldComparison
+  createdAt: DateFieldComparison
+}
+
+input PerformanceSort {
+  field: PerformanceSortFields!
+  direction: SortDirection!
+  nulls: SortNulls
+}
+
+enum PerformanceSortFields {
+  id
+  date
+  distance
+  elevation
+  duration
   createdAt
 }
 
@@ -663,6 +751,63 @@ type UserAggregateResponse {
   avg: UserAvgAggregate
   min: UserMinAggregate
   max: UserMaxAggregate
+}
+
+type UserPerformancesAggregateGroupBy {
+  id: ID
+  date: DateTime
+  distance: Float
+  elevation: Float
+  duration: Float
+  createdAt: DateTime
+}
+
+type UserPerformancesCountAggregate {
+  id: Int
+  date: Int
+  distance: Int
+  elevation: Int
+  duration: Int
+  createdAt: Int
+}
+
+type UserPerformancesSumAggregate {
+  distance: Float
+  elevation: Float
+  duration: Float
+}
+
+type UserPerformancesAvgAggregate {
+  distance: Float
+  elevation: Float
+  duration: Float
+}
+
+type UserPerformancesMinAggregate {
+  id: ID
+  date: DateTime
+  distance: Float
+  elevation: Float
+  duration: Float
+  createdAt: DateTime
+}
+
+type UserPerformancesMaxAggregate {
+  id: ID
+  date: DateTime
+  distance: Float
+  elevation: Float
+  duration: Float
+  createdAt: DateTime
+}
+
+type UserPerformancesAggregateResponse {
+  groupBy: UserPerformancesAggregateGroupBy
+  count: UserPerformancesCountAggregate
+  sum: UserPerformancesSumAggregate
+  avg: UserPerformancesAvgAggregate
+  min: UserPerformancesMinAggregate
+  max: UserPerformancesMaxAggregate
 }
 
 type UserFriendsAggregateGroupBy {
@@ -979,18 +1124,6 @@ type PointOfInterestMaxAggregate {
   createdAt: DateTime
 }
 
-type Performance {
-  id: ID!
-  date: DateTime!
-  distance: Float!
-  elevation: Float!
-  duration: Float!
-  track: String!
-  createdAt: DateTime!
-  user: User!
-  hike: Hike!
-}
-
 type PerformanceAggregateGroupBy {
   id: ID
   date: DateTime
@@ -1280,71 +1413,6 @@ input CategorySort {
 enum CategorySortFields {
   id
   name
-  createdAt
-}
-
-input PerformanceAggregateFilter {
-  and: [PerformanceAggregateFilter!]
-  or: [PerformanceAggregateFilter!]
-  id: IDFilterComparison
-  date: DateFieldComparison
-  distance: NumberFieldComparison
-  elevation: NumberFieldComparison
-  duration: NumberFieldComparison
-  createdAt: DateFieldComparison
-}
-
-input PerformanceFilter {
-  and: [PerformanceFilter!]
-  or: [PerformanceFilter!]
-  id: IDFilterComparison
-  date: DateFieldComparison
-  distance: NumberFieldComparison
-  elevation: NumberFieldComparison
-  duration: NumberFieldComparison
-  createdAt: DateFieldComparison
-  hike: PerformanceFilterHikeFilter
-  user: PerformanceFilterUserFilter
-}
-
-input PerformanceFilterHikeFilter {
-  and: [PerformanceFilterHikeFilter!]
-  or: [PerformanceFilterHikeFilter!]
-  id: IDFilterComparison
-  name: StringFieldComparison
-  distance: NumberFieldComparison
-  elevation: NumberFieldComparison
-  difficulty: DifficultyFilterComparison
-  duration: NumberFieldComparison
-  latitude: NumberFieldComparison
-  longitude: NumberFieldComparison
-  createdAt: DateFieldComparison
-}
-
-input PerformanceFilterUserFilter {
-  and: [PerformanceFilterUserFilter!]
-  or: [PerformanceFilterUserFilter!]
-  id: IDFilterComparison
-  pseudo: StringFieldComparison
-  email: StringFieldComparison
-  password: StringFieldComparison
-  publicKey: StringFieldComparison
-  credidential: NumberFieldComparison
-  createdAt: DateFieldComparison
-}
-
-input PerformanceSort {
-  field: PerformanceSortFields!
-  direction: SortDirection!
-  nulls: SortNulls
-}
-
-enum PerformanceSortFields {
-  id
-  date
-  distance
-  elevation
-  duration
   createdAt
 }
 
