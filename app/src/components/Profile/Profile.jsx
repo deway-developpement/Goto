@@ -212,8 +212,8 @@ export default function ProfileScreen() {
 
     const {
         data: profil,
-        loading,
-        refetch,
+        loading: loadingProfile,
+        refetch: refetchProfile,
     } = useQuery(gql`
         query whoami {
             whoami {
@@ -223,6 +223,23 @@ export default function ProfileScreen() {
                 publicKey
                 avatar {
                     filename
+                }
+                friends {
+                    pseudo
+                    publicKey
+                    avatar {
+                        filename
+                    }
+                }
+                performancesAggregate {
+                    count {
+                        id
+                    }
+                    sum {
+                        duration
+                        distance
+                        elevation
+                    }
                 }
             }
         }
@@ -271,7 +288,7 @@ export default function ProfileScreen() {
                             </Pressable>
                         </View>
                         {(() => {
-                            if (loading) {
+                            if (loadingProfile) {
                                 return (
                                     <ActivityIndicator
                                         size="large"
@@ -280,6 +297,9 @@ export default function ProfileScreen() {
                                     />
                                 );
                             } else {
+                                console.log(
+                                    profil.whoami.performancesAggregate[0]
+                                );
                                 return (
                                     <>
                                         {/* Avatar Part */}
@@ -358,7 +378,7 @@ export default function ProfileScreen() {
                                                     setModalVisible={
                                                         setModalVisible
                                                     }
-                                                    reload={refetch}
+                                                    reload={refetchProfile}
                                                 />
                                             </Modal>
                                         </View>
@@ -406,7 +426,13 @@ export default function ProfileScreen() {
                                                                             styles.statNumber
                                                                         }
                                                                     >
-                                                                        Goto
+                                                                        {
+                                                                            profil
+                                                                                .whoami
+                                                                                .performancesAggregate[0]
+                                                                                .count
+                                                                                .id
+                                                                        }
                                                                     </Text>
                                                                     <Text
                                                                         style={
@@ -436,7 +462,14 @@ export default function ProfileScreen() {
                                                                             styles.statNumber
                                                                         }
                                                                     >
-                                                                        Goto
+                                                                        {
+                                                                            profil
+                                                                                .whoami
+                                                                                .performancesAggregate[0]
+                                                                                .sum
+                                                                                .duration
+                                                                        }
+                                                                        h
                                                                     </Text>
                                                                     <Text
                                                                         style={
@@ -466,7 +499,14 @@ export default function ProfileScreen() {
                                                                             styles.statNumber
                                                                         }
                                                                     >
-                                                                        Goto
+                                                                        {
+                                                                            profil
+                                                                                .whoami
+                                                                                .performancesAggregate[0]
+                                                                                .sum
+                                                                                .distance
+                                                                        }
+                                                                        km
                                                                     </Text>
                                                                     <Text
                                                                         style={
@@ -496,7 +536,14 @@ export default function ProfileScreen() {
                                                                             styles.statNumber
                                                                         }
                                                                     >
-                                                                        Goto
+                                                                        {
+                                                                            profil
+                                                                                .whoami
+                                                                                .performancesAggregate[0]
+                                                                                .sum
+                                                                                .elevation
+                                                                        }
+                                                                        m
                                                                     </Text>
                                                                     <Text
                                                                         style={
@@ -617,6 +664,20 @@ export default function ProfileScreen() {
                                                                         >
                                                                             La
                                                                             Poste
+                                                                        </Text>
+                                                                        <Text
+                                                                            style={
+                                                                                styles.historicText
+                                                                            }
+                                                                        >
+                                                                            @
+                                                                        </Text>
+                                                                        <Text
+                                                                            style={
+                                                                                styles.historicText
+                                                                            }
+                                                                        >
+                                                                            .net
                                                                         </Text>
                                                                     </View>
                                                                 </View>

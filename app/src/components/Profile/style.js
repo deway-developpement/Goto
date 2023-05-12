@@ -62,8 +62,9 @@ const stylesheet = (colors) =>
             marginTop: 160,
             marginBottom: 284,
             borderRadius: 12,
-            paddingVertical: 16,
             paddingHorizontal: 22,
+            paddingTop: 16,
+            paddingBottom: 30,
             backgroundColor: colors.backgroundTextInput,
         },
         modalText: {
