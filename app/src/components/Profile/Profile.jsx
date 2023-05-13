@@ -25,7 +25,7 @@ import { useNavigation } from '@react-navigation/native';
 import HikeInfos from '../Hike/HikeInfos';
 import { FlatList } from 'react-native-gesture-handler';
 
-function ProfileModal({ setModalVisible, profil }) {
+function ProfileModal({ setModalVisible, profil, reload }) {
     const { colors } = useTheme();
     const styles = stylesheet(colors);
     const [status, requestPermission] =
@@ -37,7 +37,7 @@ function ProfileModal({ setModalVisible, profil }) {
         ModifyProfile: 2,
     });
 
-    const pickImage = async () => {
+    const pickImage = async (update) => {
         if (status !== 'granted') {
             const { status } = await requestPermission();
             if (status !== 'granted') {
@@ -63,6 +63,8 @@ function ProfileModal({ setModalVisible, profil }) {
             });
             console.log('photo upload', file);
 
+            console.log('update', update);
+
             const MUTATION = gql`
                 mutation ($file: Upload!, $objId: String!, $objType: ObjType!) {
                     createPhoto(
@@ -72,8 +74,18 @@ function ProfileModal({ setModalVisible, profil }) {
                     }
                 }
             `;
+
+            const MUTATION_UPDATE = gql`
+                mutation ($file: Upload!, $objId: String!, $objType: ObjType!) {
+                    changeAvatar(
+                        input: { objId: $objId, objType: $objType, file: $file }
+                    ) {
+                        id
+                    }
+                }
+            `;
             await client.mutate({
-                mutation: MUTATION,
+                mutation: update ? MUTATION_UPDATE : MUTATION,
                 variables: {
                     file,
                     objId: profil.whoami.id,
@@ -81,6 +93,8 @@ function ProfileModal({ setModalVisible, profil }) {
                 },
                 errorPolicy: 'all',
             });
+            setModalVisible(modalActive.None);
+            reload();
         }
     };
 
@@ -102,7 +116,7 @@ function ProfileModal({ setModalVisible, profil }) {
             </View>
             <View>
                 <Pressable
-                    onPress={() => pickImage()}
+                    onPress={() => pickImage(profil.whoami.avatar !== null)}
                     style={{
                         flexDirection: 'row',
                         marginBottom: 16,
@@ -115,7 +129,7 @@ function ProfileModal({ setModalVisible, profil }) {
                         color={colors.link}
                     />
                     <Text style={styles.smallModalText}>
-                        Change profile picture
+                        {profil.whoami.avatar ? 'Change avatar' : 'Add avatar'}
                     </Text>
                 </Pressable>
                 <Pressable
@@ -143,6 +157,7 @@ function ProfileModal({ setModalVisible, profil }) {
 function SettingsModal({ setModalVisible, reload }) {
     const authContext = useContext(AuthContext);
     const { colors } = useTheme();
+    const client = useApolloClient();
     const styles = stylesheet(colors);
     const modalActive = Object.freeze({
         None: 0,
@@ -153,6 +168,43 @@ function SettingsModal({ setModalVisible, reload }) {
     function actualize() {
         reload();
         setModalVisible(modalActive.None);
+    }
+
+    function deleteAccount() {
+        Alert.alert(
+            'Are you sure ?',
+            'This action is irreversible !',
+            [
+                {
+                    text: 'Cancel',
+                    style: 'cancel',
+                },
+                {
+                    text: 'Delete',
+                    onPress: () => {
+                        const MUTATION = gql`
+                            mutation {
+                                deleteAccount {
+                                    id
+                                }
+                            }
+                        `;
+                        client
+                            .mutate({
+                                mutation: MUTATION,
+                                errorPolicy: 'all',
+                            })
+                            .then(() => {
+                                authContext.logout();
+                            })
+                            .catch((err) => {
+                                console.error(err);
+                            });
+                    },
+                },
+            ],
+            { cancelable: false }
+        );
     }
 
     return (
@@ -176,6 +228,7 @@ function SettingsModal({ setModalVisible, reload }) {
                     onPress={() => actualize()}
                     style={{
                         flexDirection: 'row',
+                        alignItems: 'center',
                         marginBottom: 16,
                     }}
                 >
@@ -189,10 +242,29 @@ function SettingsModal({ setModalVisible, reload }) {
                 </Pressable>
                 <Pressable
                     onPress={() => {
+                        deleteAccount();
+                    }}
+                    style={{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        marginBottom: 10,
+                    }}
+                >
+                    <Icon
+                        name="reload"
+                        size={14}
+                        style={{ marginTop: 2 }}
+                        color={colors.link}
+                    />
+                    <Text style={styles.smallModalText}>Delete account</Text>
+                </Pressable>
+                <Pressable
+                    onPress={() => {
                         authContext.logout();
                     }}
                     style={{
                         flexDirection: 'row',
+                        alignItems: 'center',
                         marginBottom: 10,
                     }}
                 >
@@ -350,7 +422,7 @@ function Friends({ friends }) {
                 <Text style={styles.textContent}>My friends</Text>
                 <View style={styles.statContainer}>
                     <Text style={[styles.statNumber, { marginBottom: 10 }]}>
-                        You don{"'"}t have any friends yet
+                        You don{'\''}t have any friends yet
                     </Text>
                 </View>
             </View>
@@ -511,12 +583,13 @@ export default function ProfileScreen() {
                                             >
                                                 <Image
                                                     style={styles.avatar} //TODO Default pp
-                                                    source={{
-                                                        uri:
-                                                            'https://deway.fr/goto-api/files/photos/' +
-                                                            profil.whoami.avatar
-                                                                .filename,
-                                                    }}
+                                                    source={
+                                                        profil.whoami.avatar
+                                                            ? {
+                                                                uri: `https://deway.fr/goto-api/files/photos/${profil.whoami.avatar.filename}`,
+                                                            }
+                                                            : require('../../../assets/images/default_pp.jpeg')
+                                                    }
                                                 />
                                             </View>
                                             <Text style={styles.pseudo}>
@@ -560,6 +633,7 @@ export default function ProfileScreen() {
                                                         setModalVisible
                                                     }
                                                     profil={profil}
+                                                    reload={refetchProfile}
                                                 />
                                             </Modal>
                                             <Modal
