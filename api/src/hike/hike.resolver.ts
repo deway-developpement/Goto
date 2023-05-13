@@ -10,6 +10,7 @@ import { HikeInput } from './interfaces/hike.input';
 import { UserDTO } from '../user/interfaces/user.dto';
 import { AuthType } from '../auth/interface/auth.type';
 import { HikeConnectionDTO } from '../CustomScalar/hikeConnection/interface/hikeconnection.dto';
+import { Int } from 'type-graphql';
 
 const guards = [GqlAuthGuard];
 
@@ -71,8 +72,8 @@ export class HikeResolver extends CRUDResolver(HikeDTO, {
         @Args('distance', { description: 'Distance in kilometers', defaultValue: 50 })
         distance: number,
         @Args('search', { nullable: true }) search: string,
-        @Args('limit') limit: number,
-        @Args('cursor') cursor: string
+        @Args('limit', { type: () => Int }) limit: number,
+        @Args('cursor', { defaultValue: '' }) cursor: string
     ): Promise<HikeConnectionDTO> {
         return this.service.findByDistance(lat, lon, distance, limit, cursor, search);
     }

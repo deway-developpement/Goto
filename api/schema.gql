@@ -1363,8 +1363,8 @@ type Query {
     """Distance in kilometers"""
     distance: Float = 50
     search: String
-    limit: Float!
-    cursor: String!
+    limit: Int!
+    cursor: String = ""
   ): CustomHikeConnection!
   tag(
     """The id of the record to find."""
