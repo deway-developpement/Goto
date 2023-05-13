@@ -7,7 +7,6 @@ import {
     View,
     Platform,
     ActivityIndicator,
-    Image,
 } from 'react-native';
 import { Button } from 'react-native-elements';
 import { AuthContext } from '../../providers/AuthContext';
