@@ -10,6 +10,7 @@ import {
     Alert,
     Pressable,
     ScrollView,
+    TouchableWithoutFeedback,
 } from 'react-native';
 import { Button } from 'react-native-elements';
 import { gql, useQuery, useApolloClient } from '@apollo/client';
@@ -20,6 +21,8 @@ import { AuthContext } from '../../providers/AuthContext';
 import { Icon } from '../Icon/Icon';
 import * as ImagePicker from 'expo-image-picker';
 import { ReactNativeFile } from 'apollo-upload-client';
+import { useNavigation } from '@react-navigation/native';
+import HikeInfos from '../Hike/HikeInfos';
 
 function ProfileModal({ setModalVisible, profil }) {
     const { colors } = useTheme();
@@ -255,6 +258,43 @@ function Stats({ count, distance, duration, elevation }) {
     );
 }
 
+function Historic({ hikes }) {
+    const navigation = useNavigation();
+    const { colors } = useTheme();
+    const styles = stylesheet(colors);
+
+    function handleClickHike(hikeId) {
+        navigation.navigate('FocusHike', { hikeId });
+    }
+    console.log(hikes[0].hike.photos[0].filename);
+
+    return (
+        <View style={{ marginTop: 22, marginBottom: 58 }}>
+            <Text style={styles.textContent}>Historic of my hikes</Text>
+            <ScrollView style={styles.historicContainer} horizontal={true}>
+                <TouchableWithoutFeedback
+                    onPress={() => handleClickHike(hikes[0].hike.id)}
+                >
+                    <View style={styles.historicCard}>
+                        <Image
+                            source={{
+                                uri: `https://deway.fr/goto-api/files/photos/${hikes[0].hike.photos[0].filename}`,
+                            }}
+                            style={{
+                                height: 150,
+                                width: 190,
+                                borderTopRightRadius: 12,
+                                borderTopLeftRadius: 12,
+                            }}
+                        />
+                        <HikeInfos hike={hikes[0].hike} inProfile={true} />
+                    </View>
+                </TouchableWithoutFeedback>
+            </ScrollView>
+        </View>
+    );
+}
+
 export default function ProfileScreen() {
     const { colors } = useTheme();
     const styles = stylesheet(colors);
@@ -297,12 +337,15 @@ export default function ProfileScreen() {
                         sorting: { field: $field, direction: $direction }
                     ) {
                         hike {
+                            id
                             name
                             description
                             category {
+                                id
                                 name
                             }
                             photos {
+                                id
                                 filename
                             }
                         }
@@ -497,72 +540,12 @@ export default function ProfileScreen() {
                                                             }
                                                         />
                                                         {/* Historic Part */}
-                                                        <View>
-                                                            <Text
-                                                                style={
-                                                                    styles.textContent
-                                                                }
-                                                            >
-                                                                Historic of my
-                                                                hikes
-                                                            </Text>
-                                                            <ScrollView
-                                                                horizontal={
-                                                                    true
-                                                                }
-                                                                showsHorizontalScrollIndicator={
-                                                                    false
-                                                                }
-                                                                style={{
-                                                                    height: 230,
-                                                                    backgroundColor:
-                                                                        colors.backgroundTextInput,
-                                                                    borderRadius: 10,
-                                                                    marginHorizontal: 5,
-                                                                }}
-                                                            >
-                                                                <View
-                                                                    style={
-                                                                        styles.historicContainer
-                                                                    }
-                                                                >
-                                                                    <View
-                                                                        style={
-                                                                            styles.historic
-                                                                        }
-                                                                    >
-                                                                        <Text
-                                                                            style={
-                                                                                styles.historicText
-                                                                            }
-                                                                        >
-                                                                            12/12/2020
-                                                                        </Text>
-                                                                        <Text
-                                                                            style={
-                                                                                styles.historicText
-                                                                            }
-                                                                        >
-                                                                            12:00
-                                                                        </Text>
-                                                                        <Text
-                                                                            style={
-                                                                                styles.historicText
-                                                                            }
-                                                                        >
-                                                                            12:00
-                                                                        </Text>
-                                                                        <Text
-                                                                            style={
-                                                                                styles.historicText
-                                                                            }
-                                                                        >
-                                                                            12:00
-                                                                        </Text>
-                                                                    </View>
-                                                                </View>
-                                                            </ScrollView>
-                                                        </View>
+                                                        <Historic
+                                                            hikes={
+                                                                profil.whoami
+                                                                    .performances
+                                                            }
+                                                        />
                                                         {/* Friends Part */}
                                                         <View>
                                                             <Text

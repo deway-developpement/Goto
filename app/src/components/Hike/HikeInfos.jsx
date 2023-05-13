@@ -5,7 +5,7 @@ import stylesheet from './style';
 import { gql, useQuery } from '@apollo/client';
 import { IconComp } from '../Icon/Icon';
 
-export default function HikeInfos({ hike, borderRadius }) {
+export default function HikeInfos({ hike, borderRadius, inProfile = false }) {
     const { colors } = useTheme();
     const styles = stylesheet(colors);
 
@@ -35,6 +35,7 @@ export default function HikeInfos({ hike, borderRadius }) {
                 styles.containerFocus,
                 { marginTop: 0 },
                 borderRadius ? { borderRadius: 12 } : {},
+                inProfile ? { width: 190 } : {},
             ]}
         >
             <View
@@ -45,22 +46,33 @@ export default function HikeInfos({ hike, borderRadius }) {
                     width: '100%',
                 }}
             >
-                <Text style={[styles.textDescription, { marginLeft: 0 }]}>
+                <Text
+                    style={[
+                        styles.textDescription,
+                        { marginLeft: 0, marginBottom: 4 },
+                    ]}
+                >
                     {hike.category.name}
                 </Text>
-                <TouchableWithoutFeedback
-                    onPress={() => console.log('LIKE HIKE', hike.name)}
-                >
-                    <View>
-                        <IconComp color={colors.logo} name={'heart'} pos={0} />
-                        <IconComp
-                            color={colors.backgroundTextInput}
-                            name={'heart'}
-                            size={22}
-                            pos={4.7}
-                        />
-                    </View>
-                </TouchableWithoutFeedback>
+                {!inProfile ? (
+                    <TouchableWithoutFeedback
+                        onPress={() => console.log('LIKE HIKE', hike.name)}
+                    >
+                        <View>
+                            <IconComp
+                                color={colors.logo}
+                                name={'heart'}
+                                pos={0}
+                            />
+                            <IconComp
+                                color={colors.backgroundTextInput}
+                                name={'heart'}
+                                size={22}
+                                pos={4.7}
+                            />
+                        </View>
+                    </TouchableWithoutFeedback>
+                ) : null}
             </View>
             <Text
                 style={[
@@ -83,39 +95,45 @@ export default function HikeInfos({ hike, borderRadius }) {
             >
                 {hike.description}
             </Text>
-            <View
-                style={{
-                    flex: 1,
-                    flexDirection: 'row',
-                    alignSelf: 'flex-start',
-                    marginTop: 8,
-                }}
-            >
-                {!loading &&
-                    Array.from({ length: 5 }, () => 0).map((_, index) => {
-                        return (
-                            <IconComp
-                                color={
-                                    index < avgRating - 1
-                                        ? colors.starFill
-                                        : colors.starEmpty
-                                }
-                                key={index}
-                                name={'star'}
-                                marginRight={7}
-                                size={22}
-                            />
-                        );
-                    })}
-                <Text
-                    style={[
-                        styles.textDescription,
-                        { color: styles.text, paddingTop: 2, marginLeft: 10 },
-                    ]}
+            {!inProfile ? (
+                <View
+                    style={{
+                        flex: 1,
+                        flexDirection: 'row',
+                        alignSelf: 'flex-start',
+                        marginTop: 8,
+                    }}
                 >
-                    See reviews
-                </Text>
-            </View>
+                    {!loading &&
+                        Array.from({ length: 5 }, () => 0).map((_, index) => {
+                            return (
+                                <IconComp
+                                    color={
+                                        index < avgRating - 1
+                                            ? colors.starFill
+                                            : colors.starEmpty
+                                    }
+                                    key={index}
+                                    name={'star'}
+                                    marginRight={7}
+                                    size={22}
+                                />
+                            );
+                        })}
+                    <Text
+                        style={[
+                            styles.textDescription,
+                            {
+                                color: styles.text,
+                                paddingTop: 2,
+                                marginLeft: 10,
+                            },
+                        ]}
+                    >
+                        See reviews
+                    </Text>
+                </View>
+            ) : null}
         </View>
     );
 }
