@@ -3,8 +3,7 @@ import {
     FilterableRelation,
     FilterableUnPagedRelation,
     IDField,
-    PagingStrategies,
-    QueryOptions,
+    KeySet,
     Relation,
     UnPagedRelation,
 } from '@nestjs-query/query-graphql';
@@ -19,7 +18,7 @@ import { AlertDTO } from '../../alert/interfaces/alert.dto';
 import { CategoryDTO } from '../../category/interfaces/category.dto';
 
 @ObjectType('Hike')
-@QueryOptions({ pagingStrategy: PagingStrategies.NONE })
+@KeySet(['id'])
 @Relation('owner', () => UserDTO, { disableRemove: true, disableUpdate: true })
 @FilterableUnPagedRelation('tags', () => TagDTO, {
     nullable: true,

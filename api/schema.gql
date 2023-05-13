@@ -867,6 +867,42 @@ type UserFriendsAggregateResponse {
   max: UserFriendsMaxAggregate
 }
 
+type HikeEdge {
+  """The node containing the Hike"""
+  node: Hike!
+
+  """Cursor for this node."""
+  cursor: ConnectionCursor!
+}
+
+"""Cursor for paging through collections"""
+scalar ConnectionCursor
+
+type PageInfo {
+  """true if paging forward and there are more records."""
+  hasNextPage: Boolean
+
+  """true if paging backwards and there are more records."""
+  hasPreviousPage: Boolean
+
+  """The cursor of the first returned record."""
+  startCursor: ConnectionCursor
+
+  """The cursor of the last returned record."""
+  endCursor: ConnectionCursor
+}
+
+type HikeConnection {
+  """Paging information"""
+  pageInfo: PageInfo!
+
+  """Array of edges."""
+  edges: [HikeEdge!]!
+
+  """Fetch total count of records"""
+  totalCount: Int!
+}
+
 type HikeAggregateGroupBy {
   id: ID
   name: String
@@ -1293,12 +1329,15 @@ type Query {
     id: ID!
   ): Hike
   hikes(
+    """Limit or page results."""
+    paging: CursorPaging = {first: 10}
+
     """Specify to filter the records returned."""
     filter: HikeFilter = {}
 
     """Specify to sort results."""
     sorting: [HikeSort!] = []
-  ): [Hike!]!
+  ): HikeConnection!
   getHikeAround(
     lat: Float!
     lon: Float!
@@ -1394,6 +1433,20 @@ input HikeAggregateFilter {
   latitude: NumberFieldComparison
   longitude: NumberFieldComparison
   createdAt: DateFieldComparison
+}
+
+input CursorPaging {
+  """Paginate before opaque cursor"""
+  before: ConnectionCursor
+
+  """Paginate after opaque cursor"""
+  after: ConnectionCursor
+
+  """Paginate first"""
+  first: Int
+
+  """Paginate last"""
+  last: Int
 }
 
 input CategoryFilter {
