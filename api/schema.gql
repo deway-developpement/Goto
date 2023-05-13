@@ -1492,6 +1492,7 @@ type Mutation {
   postAlert(input: AlertInput!): Alert!
   deleteAlert(id: String!): Alert!
   createPhoto(input: PhotoInput!): Photo!
+  changeAvatar(input: PhotoInput!): Photo!
 }
 
 input UserInput {
