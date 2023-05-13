@@ -200,6 +200,61 @@ function SettingsModal({ setModalVisible, reload }) {
     );
 }
 
+function Stats({ count, distance, duration, elevation }) {
+    const { colors } = useTheme();
+    const styles = stylesheet(colors);
+
+    return (
+        <View style={{ marginTop: 22 }}>
+            <Text style={styles.textContent}>This month</Text>
+            <View style={styles.statContainer}>
+                {count === 0 ? (
+                    <View style={{ display: 'flex', flexDirection: 'column' }}>
+                        <View
+                            style={{
+                                alignItems: 'center',
+                                justifyContent: 'space-between',
+                            }}
+                        >
+                            <Text style={styles.statNumber}>
+                                No statistics for this month
+                            </Text>
+                            <View style={{ height: 10 }} />
+                        </View>
+                    </View>
+                ) : (
+                    <>
+                        <View style={{ alignItems: 'center' }}>
+                            <Icon name="hikes" size={28} color={colors.stats} />
+                            <Text style={styles.statNumber}>{count}</Text>
+                            <Text style={styles.statLabel}>hikes</Text>
+                        </View>
+                        <View style={{ alignItems: 'center' }}>
+                            <Icon
+                                name="info" //TODO change to clock
+                                size={28}
+                                color={colors.stats}
+                            />
+                            <Text style={styles.statNumber}>{duration}h</Text>
+                            <Text style={styles.statLabel}>Total</Text>
+                        </View>
+                        <View style={{ alignItems: 'center' }}>
+                            <Icon name="hikes" size={28} color={colors.stats} />
+                            <Text style={styles.statNumber}>{distance}km</Text>
+                            <Text style={styles.statLabel}>Total</Text>
+                        </View>
+                        <View style={{ alignItems: 'center' }}>
+                            <Icon name="hikes" size={28} color={colors.stats} />
+                            <Text style={styles.statNumber}>{elevation}m</Text>
+                            <Text style={styles.statLabel}>Total</Text>
+                        </View>
+                    </>
+                )}
+            </View>
+        </View>
+    );
+}
+
 export default function ProfileScreen() {
     const { colors } = useTheme();
     const styles = stylesheet(colors);
@@ -209,41 +264,72 @@ export default function ProfileScreen() {
         ModifyProfile: 2,
     });
     const [modalVisible, setModalVisible] = useState(modalActive.None);
+    const today = new Date();
+    const lastMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1);
 
     const {
         data: profil,
         loading: loadingProfile,
         refetch: refetchProfile,
-    } = useQuery(gql`
-        query whoami {
-            whoami {
-                id
-                pseudo
-                email
-                publicKey
-                avatar {
-                    filename
-                }
-                friends {
+    } = useQuery(
+        gql`
+            query whoami(
+                $lastMonth: DateTime!
+                $field: PerformanceSortFields!
+                $direction: SortDirection!
+            ) {
+                whoami {
+                    id
                     pseudo
+                    email
                     publicKey
                     avatar {
                         filename
                     }
-                }
-                performancesAggregate {
-                    count {
-                        id
+                    friends {
+                        pseudo
+                        publicKey
+                        avatar {
+                            filename
+                        }
                     }
-                    sum {
-                        duration
-                        distance
-                        elevation
+                    performances(
+                        sorting: { field: $field, direction: $direction }
+                    ) {
+                        hike {
+                            name
+                            description
+                            category {
+                                name
+                            }
+                            photos {
+                                filename
+                            }
+                        }
+                    }
+                    performancesAggregate(
+                        filter: { date: { gte: $lastMonth } }
+                    ) {
+                        count {
+                            id
+                        }
+                        sum {
+                            duration
+                            distance
+                            elevation
+                        }
                     }
                 }
             }
+        `,
+        {
+            variables: {
+                lastMonth: lastMonth.toISOString(),
+                field: 'date',
+                direction: 'DESC',
+            },
         }
-    `);
+    );
 
     return (
         <KeyboardAvoidingView
@@ -297,9 +383,6 @@ export default function ProfileScreen() {
                                     />
                                 );
                             } else {
-                                console.log(
-                                    profil.whoami.performancesAggregate[0]
-                                );
                                 return (
                                     <>
                                         {/* Avatar Part */}
@@ -325,7 +408,6 @@ export default function ProfileScreen() {
                                                 <View style={styles.btn}>
                                                     <Button
                                                         title="Modify profile"
-                                                        // onPress={pickImage}
                                                         onPress={() =>
                                                             setModalVisible(
                                                                 modalActive.ModifyProfile
@@ -389,172 +471,31 @@ export default function ProfileScreen() {
                                                 return (
                                                     <>
                                                         {/* Stats Part */}
-                                                        <View
-                                                            style={{
-                                                                marginTop: 22,
-                                                            }}
-                                                        >
-                                                            <Text
-                                                                style={
-                                                                    styles.textContent
-                                                                }
-                                                            >
-                                                                This month
-                                                            </Text>
-                                                            <View
-                                                                style={
-                                                                    styles.statContainer
-                                                                }
-                                                            >
-                                                                <View
-                                                                    style={{
-                                                                        alignItems:
-                                                                            'center',
-                                                                    }}
-                                                                >
-                                                                    <Icon
-                                                                        name="hikes"
-                                                                        size={
-                                                                            28
-                                                                        }
-                                                                        color={
-                                                                            colors.stats
-                                                                        }
-                                                                    />
-                                                                    <Text
-                                                                        style={
-                                                                            styles.statNumber
-                                                                        }
-                                                                    >
-                                                                        {
-                                                                            profil
-                                                                                .whoami
-                                                                                .performancesAggregate[0]
-                                                                                .count
-                                                                                .id
-                                                                        }
-                                                                    </Text>
-                                                                    <Text
-                                                                        style={
-                                                                            styles.statLabel
-                                                                        }
-                                                                    >
-                                                                        Hikes
-                                                                    </Text>
-                                                                </View>
-                                                                <View
-                                                                    style={{
-                                                                        alignItems:
-                                                                            'center',
-                                                                    }}
-                                                                >
-                                                                    <Icon
-                                                                        name="info" //TODO Change to clock
-                                                                        size={
-                                                                            28
-                                                                        }
-                                                                        color={
-                                                                            colors.stats
-                                                                        }
-                                                                    />
-                                                                    <Text
-                                                                        style={
-                                                                            styles.statNumber
-                                                                        }
-                                                                    >
-                                                                        {
-                                                                            profil
-                                                                                .whoami
-                                                                                .performancesAggregate[0]
-                                                                                .sum
-                                                                                .duration
-                                                                        }
-                                                                        h
-                                                                    </Text>
-                                                                    <Text
-                                                                        style={
-                                                                            styles.statLabel
-                                                                        }
-                                                                    >
-                                                                        Total
-                                                                    </Text>
-                                                                </View>
-                                                                <View
-                                                                    style={{
-                                                                        alignItems:
-                                                                            'center',
-                                                                    }}
-                                                                >
-                                                                    <Icon
-                                                                        name="hikes"
-                                                                        size={
-                                                                            28
-                                                                        }
-                                                                        color={
-                                                                            colors.stats
-                                                                        }
-                                                                    />
-                                                                    <Text
-                                                                        style={
-                                                                            styles.statNumber
-                                                                        }
-                                                                    >
-                                                                        {
-                                                                            profil
-                                                                                .whoami
-                                                                                .performancesAggregate[0]
-                                                                                .sum
-                                                                                .distance
-                                                                        }
-                                                                        km
-                                                                    </Text>
-                                                                    <Text
-                                                                        style={
-                                                                            styles.statLabel
-                                                                        }
-                                                                    >
-                                                                        Total
-                                                                    </Text>
-                                                                </View>
-                                                                <View
-                                                                    style={{
-                                                                        alignItems:
-                                                                            'center',
-                                                                    }}
-                                                                >
-                                                                    <Icon
-                                                                        name="hikes"
-                                                                        size={
-                                                                            28
-                                                                        }
-                                                                        color={
-                                                                            colors.stats
-                                                                        }
-                                                                    />
-                                                                    <Text
-                                                                        style={
-                                                                            styles.statNumber
-                                                                        }
-                                                                    >
-                                                                        {
-                                                                            profil
-                                                                                .whoami
-                                                                                .performancesAggregate[0]
-                                                                                .sum
-                                                                                .elevation
-                                                                        }
-                                                                        m
-                                                                    </Text>
-                                                                    <Text
-                                                                        style={
-                                                                            styles.statLabel
-                                                                        }
-                                                                    >
-                                                                        Elevation
-                                                                    </Text>
-                                                                </View>
-                                                            </View>
-                                                        </View>
+                                                        <Stats
+                                                            count={
+                                                                profil.whoami
+                                                                    .performancesAggregate[0]
+                                                                    .count.id
+                                                            }
+                                                            duration={
+                                                                profil.whoami
+                                                                    .performancesAggregate[0]
+                                                                    .sum
+                                                                    .duration
+                                                            }
+                                                            distance={
+                                                                profil.whoami
+                                                                    .performancesAggregate[0]
+                                                                    .sum
+                                                                    .distance
+                                                            }
+                                                            elevation={
+                                                                profil.whoami
+                                                                    .performancesAggregate[0]
+                                                                    .sum
+                                                                    .elevation
+                                                            }
+                                                        />
                                                         {/* Historic Part */}
                                                         <View>
                                                             <Text
