@@ -110,7 +110,8 @@ export default function FocusHikeScreen({ route }) {
                 bounces={false}
                 showsVerticalScrollIndicator={false}
             >
-                <>
+                <>  
+                    <View style={{height:windowHeight*0.6}}/>
                     <Image
                         source={
                             data.hike.photos && data.hike.photos.length > 0
@@ -427,6 +428,7 @@ export default function FocusHikeScreen({ route }) {
                             </Text>
                         </View>
                     </View>
+                    <View style={{height:200}}/>
                 </>
             </ScrollView>
         );
