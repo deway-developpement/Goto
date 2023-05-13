@@ -35,7 +35,13 @@ export default function HikeInfos({ hike, borderRadius, inProfile = false }) {
                 styles.containerFocus,
                 { marginTop: 0 },
                 borderRadius ? { borderRadius: 12 } : {},
-                inProfile ? { width: 190 } : {},
+                inProfile
+                    ? {
+                        width: 190,
+                        borderTopLeftRadius: 0,
+                        borderTopRightRadius: 0,
+                    }
+                    : {},
             ]}
         >
             <View
