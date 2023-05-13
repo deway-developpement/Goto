@@ -7,7 +7,6 @@ import {
     Dimensions,
 } from 'react-native';
 import { useTheme } from '@react-navigation/native';
-import { gql, useQuery } from '@apollo/client';
 import stylesheet from './style';
 import { useNavigation } from '@react-navigation/native';
 
