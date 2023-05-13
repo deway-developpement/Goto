@@ -15,38 +15,53 @@ export default function Search({ route, navigation }) {
     const styles = stylesheet(colors);
 
     const GET_HIKES = gql`
-        query hikes($filter: HikeFilter) {
-            hikes(filter: $filter) {
-                id
+        query hikes(
+            $filter: HikeFilter
+            $limit: Int
+            $cursor: ConnectionCursor
+        ) {
+            hikes(filter: $filter, paging: { first: $limit, after: $cursor }) {
+                edges {
+                    node {
+                        id
+                        name
+                    }
+                }
+                pageInfo {
+                    hasNextPage
+                    endCursor
+                }
             }
         }
     `;
 
-    const { data } = useQuery(
-        GET_HIKES,
-        route.params?.category && {
-            variables: {
-                filter: {
-                    category: {
-                        name: {
-                            eq: route.params?.category,
-                        },
+    const { data, loading, fetchMore } = useQuery(GET_HIKES, {
+        variables: {
+            filter: {
+                category: {
+                    name: {
+                        eq: route.params?.category,
                     },
                 },
             },
-        }
-    );
+            limit: 2,
+            cursor: null,
+        },
+    });
 
-    function handleTextInput() {}
+    const nodes = data?.hikes?.edges.map((hike) => hike.node);
 
     function removeFilter() {
         route.params?.category && navigation.navigate('Search');
     }
 
+    let onEndReachedCalledDuringMomentum = false;
+
     return (
         <SafeAreaView style={styles.container}>
             <FlatList
-                data={data?.hikes}
+                data={nodes}
+                extraData={data?.hikes.edges}
                 renderItem={({ item }) => <Hike id={item.id} />}
                 keyExtractor={(item) => item.id}
                 showsVerticalScrollIndicator={false}
@@ -67,7 +82,9 @@ export default function Search({ route, navigation }) {
                                 autoCapitalize="none"
                                 placeholderTextColor={colors.border}
                                 style={[styles.textInput, { width: '90%' }]}
-                                onSubmitEditing={() => handleTextInput()}
+                                onSubmitEditing={() => {
+                                    console.log('search');
+                                }}
                             />
                             <IconComp
                                 color={colors.border}
@@ -108,6 +125,41 @@ export default function Search({ route, navigation }) {
                 }
                 ListFooterComponent={<View style={{ height: 100 }} />}
                 style={[styles.container, { paddingHorizontal: '7%' }]}
+                onEndReachedThreshold={0.2}
+                onEndReached={() => {
+                    if (
+                        data?.hikes?.pageInfo?.hasNextPage &&
+                        !loading &&
+                        !onEndReachedCalledDuringMomentum
+                    ) {
+                        fetchMore({
+                            variables: {
+                                cursor: data?.hikes?.pageInfo?.endCursor,
+                            },
+                            updateQuery: (prev, { fetchMoreResult }) => {
+                                if (!fetchMoreResult) {
+                                    return prev;
+                                }
+                                return {
+                                    hikes: {
+                                        __typename: prev.hikes.__typename,
+                                        edges: [
+                                            ...prev.hikes.edges,
+                                            ...fetchMoreResult.hikes.edges,
+                                        ],
+                                        pageInfo: {
+                                            ...fetchMoreResult.hikes.pageInfo,
+                                        },
+                                    },
+                                };
+                            },
+                        });
+                    }
+                    onEndReachedCalledDuringMomentum = true;
+                }}
+                onMomentumScrollBegin={() => {
+                    onEndReachedCalledDuringMomentum = false;
+                }}
             />
         </SafeAreaView>
     );

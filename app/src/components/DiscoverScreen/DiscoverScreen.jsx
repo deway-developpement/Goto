@@ -12,7 +12,7 @@ import { useTheme } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { gql, useQuery } from '@apollo/client';
 import { IconComp } from '../Icon/Icon';
-import CategorieScreen from '../CategorieScreen/CategorieScreen';
+import Category from '../Category/Category';
 import { FlatList } from 'react-native';
 
 export default function DiscoverScreen() {
@@ -49,7 +49,7 @@ export default function DiscoverScreen() {
             <FlatList
                 data={categorie?.categories}
                 renderItem={({ item }) => (
-                    <CategorieScreen
+                    <Category
                         key={item.id}
                         styles={styles}
                         horizontal={false}
@@ -120,19 +120,19 @@ function DiscoverHeader({ windowHeight }) {
                 horizontal={true}
                 showsHorizontalScrollIndicator={false}
             >
-                <CategorieScreen
+                <Category
                     styles={styles}
                     horizontal={true}
                     name={'Around you'}
                     id={'around-you'}
                 />
-                <CategorieScreen
+                <Category
                     styles={styles}
                     horizontal={true}
                     name={'Added this month'}
                     id={'added-this-month'}
                 />
-                <CategorieScreen
+                <Category
                     styles={styles}
                     horizontal={true}
                     name={'To redo'}

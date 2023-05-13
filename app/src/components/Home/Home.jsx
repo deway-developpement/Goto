@@ -25,7 +25,7 @@ import { useFonts } from 'expo-font';
 import * as ImagePicker from 'expo-image-picker';
 import { ReactNativeFile } from 'apollo-upload-client';
 import { Icon } from '../Icon/Icon';
-import Search from '../Search/Search';
+import SearchScreen from '../SearchScreen/SearchScreen';
 import FocusHikeScreen from '../Hike/FocusHikeScreen';
 
 function MapScreen({ route }) {
@@ -372,7 +372,7 @@ function HomeScreen({ navigation }) {
                         />
                         <Tab.Screen
                             name="Search"
-                            component={Search}
+                            component={SearchScreen}
                             options={{
                                 tabBarIcon: (props) => (
                                     <Icon
