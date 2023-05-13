@@ -21,13 +21,13 @@ export const Classic = {
         iconprimary: '#78DBC8',
         label: '#F2F7F9',
         logo: '#264653',
-        backgroundCategorie:'#FFFFFF',
+        backgroundCategorie: '#FFFFFF',
         stats: '#207665',
-        statstext: '#0D0E0E'
-        description:'#6B6F70',
-        starEmpty:'#EFF0F1',
-        starFill:'#2A9D87',
-        styleBar:'#E1E2E3'
+        statstext: '#0D0E0E',
+        description: '#6B6F70',
+        starEmpty: '#EFF0F1',
+        starFill: '#2A9D87',
+        styleBar: '#E1E2E3',
     },
 };
 
@@ -52,12 +52,12 @@ export const Dark = {
         iconprimary: '#78DBC8',
         label: '#F2F7F9',
         logo: '#264653',
-        backgroundCategorie:'#FFFFFF',
+        backgroundCategorie: '#FFFFFF',
         stats: '#207665',
-        statstext: '#0D0E0E'
-        description:'#6B6F70',
-        starEmpty:'#EFF0F1',
-        starFill:'#2A9D87',
-        styleBar:'#E1E2E3'
+        statstext: '#0D0E0E',
+        description: '#6B6F70',
+        starEmpty: '#EFF0F1',
+        starFill: '#2A9D87',
+        styleBar: '#E1E2E3',
     },
 };
