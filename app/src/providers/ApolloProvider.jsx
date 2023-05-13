@@ -13,6 +13,7 @@ import { refreshAuth } from '../services/auth.service';
 import { default as config } from '../config.json';
 import apolloLogger from 'apollo-link-logger';
 import { createUploadLink } from 'apollo-upload-client';
+import { relayStylePagination } from '@apollo/client/utilities';
 
 function createApolloClient(authContext) {
     const authLink = setContext(() => {
@@ -94,7 +95,15 @@ function createApolloClient(authContext) {
 
     const client = new ApolloClient({
         link: from([apolloLogger, authLink, refreshLink, httpLink]),
-        cache: new InMemoryCache(),
+        cache: new InMemoryCache({
+            typePolicies: {
+                Query: {
+                    fields: {
+                        comments: relayStylePagination(),
+                    },
+                },
+            },
+        }),
     });
 
     return client;

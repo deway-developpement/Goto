@@ -7,47 +7,24 @@ import {
     Dimensions,
 } from 'react-native';
 import { useTheme } from '@react-navigation/native';
-import { gql, useQuery } from '@apollo/client';
 import stylesheet from './style';
 import { useNavigation } from '@react-navigation/native';
 
-export default function CategorieScreen(props) {
+export default function Category(props) {
     const { colors } = useTheme();
     const styles = stylesheet(colors);
     const navigation = useNavigation();
 
     const windowWidth = Dimensions.get('window').width;
 
-    const GET_HIKES = gql`
-        query hikes($category: HikeFilterCategoryFilter) {
-            hikes(filter: { category: $category }) {
-                id
-                name
-                description
-                photos {
-                    id
-                    filename
-                }
-            }
-        }
-    `;
-
-    const { data: hikes, loading } = useQuery(GET_HIKES, {
-        variables: {
-            category: { id: { eq: props.id } },
-        },
-    });
-    function handleClickCategory(category, hikes, categoryName) {
-        if (!loading) {
-            navigation.navigate('Search', {
-                hikes: hikes,
-                category: categoryName,
-            });
-        }
+    function handleClickCategory(category, categoryName) {
+        navigation.navigate('Search', {
+            category: categoryName,
+        });
     }
     return (
         <TouchableWithoutFeedback
-            onPress={() => handleClickCategory(props.id, hikes, props.name)}
+            onPress={() => handleClickCategory(props.id, props.name)}
         >
             <View
                 style={[

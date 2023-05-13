@@ -27,7 +27,7 @@ import { PerformanceDTO } from '../../performance/interfaces/performance.dto';
 })
 @Relation('avatar', () => PhotoDTO, { disableRemove: true, disableUpdate: true, nullable: true })
 export class UserDTO {
-    @IDField(() => ID, { middleware: [fieldMiddleware] })
+    @IDField(() => ID)
     id!: string;
 
     @FilterableField()
@@ -42,7 +42,7 @@ export class UserDTO {
     @FilterableField()
     publicKey!: string;
 
-    @FilterableField({ middleware: [fieldMiddleware] })
+    @FilterableField()
     credidential!: number;
 
     @FilterableField(() => Date)
