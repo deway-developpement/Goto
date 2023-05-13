@@ -13,11 +13,10 @@ const stylesheet = (colors) =>
             fontSize: 18,
         },
         textHeader: {
-            marginTop: '6%',
             color: colors.text,
             fontSize: 38,
             fontWeight: '700',
-            paddingLeft:'3%'
+            paddingLeft: '3%',
         },
         textInputContainer: {
             flexDirection: 'row',
@@ -27,17 +26,17 @@ const stylesheet = (colors) =>
             borderRadius: 6,
             borderWidth: 1,
             backgroundColor: colors.backgroundTextInput,
-            paddingHorizontal:16,
-            height:48
+            paddingHorizontal: 16,
+            height: 48,
         },
-        logoContainer:{
-            width:50,
-            height:50,
-            backgroundColor:colors.logo,
-            borderRadius:12,
-            flex:1,
-            alignItems:'center',
-            justifyContent:'center',
-        }
+        logoContainer: {
+            width: 50,
+            height: 50,
+            backgroundColor: colors.logo,
+            borderRadius: 12,
+            flex: 1,
+            alignItems: 'center',
+            justifyContent: 'center',
+        },
     });
 export default stylesheet;

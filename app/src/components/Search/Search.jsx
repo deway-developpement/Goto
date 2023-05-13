@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, TouchableWithoutFeedback, Dimensions } from 'react-native';
+import { Text, TouchableWithoutFeedback } from 'react-native';
 import { useTheme } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import stylesheet from './style';
@@ -10,10 +10,9 @@ import { View } from 'react-native';
 import { TextInput } from 'react-native';
 import { IconComp } from '../Icon/Icon';
 
-export default function Search({ route }) {
+export default function Search({ route, navigation }) {
     const { colors } = useTheme();
     const styles = stylesheet(colors);
-    const windowWidth = Dimensions.get('window').width;
 
     const GET_HIKES = gql`
         query hikes($filter: HikeFilter) {
@@ -39,6 +38,10 @@ export default function Search({ route }) {
     );
 
     function handleTextInput() {}
+
+    function removeFilter() {
+        route.params?.category && navigation.navigate('Search');
+    }
 
     return (
         <SafeAreaView style={styles.container}>
@@ -72,40 +75,34 @@ export default function Search({ route }) {
                                 size={24}
                             />
                         </View>
-                        <View
-                            style={{
-                                flex: 1,
-                                flexDirection: 'row',
-                                alignItems: 'flex-end',
-                                marginTop: 20,
-                                width: '100%',
-                                paddingRight: 50,
-                            }}
-                        >
-                            <View
-                                style={{ width: windowWidth * 0.86 - 50 - 50 }}
-                            />
-                            <TouchableWithoutFeedback
-                                onPress={() => handleTextInput()}
-                            >
-                                <View>
-                                    <IconComp
-                                        color={colors.logo}
-                                        name={'filter'}
-                                        pos={0}
-                                    />
-                                </View>
-                            </TouchableWithoutFeedback>
-                        </View>
                         {route?.params?.category && (
-                            <Text
-                                style={[
-                                    styles.textHeader,
-                                    { marginBottom: 10 },
-                                ]}
-                            >
-                                {route?.params?.category}
-                            </Text>
+                            <>
+                                <View
+                                    style={{
+                                        flex: 1,
+                                        flexDirection: 'row',
+                                        justifyContent: 'space-between',
+                                        alignItems: 'center',
+                                        marginTop: 20,
+                                        marginBottom: 10,
+                                    }}
+                                >
+                                    <Text style={[styles.textHeader]}>
+                                        {route?.params?.category}
+                                    </Text>
+                                    <TouchableWithoutFeedback
+                                        onPress={() => removeFilter()}
+                                    >
+                                        <View>
+                                            <IconComp
+                                                color={colors.logo}
+                                                name={'filter'}
+                                                pos={0}
+                                            />
+                                        </View>
+                                    </TouchableWithoutFeedback>
+                                </View>
+                            </>
                         )}
                     </>
                 }
