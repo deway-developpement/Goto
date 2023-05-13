@@ -72,14 +72,30 @@ export default function SearchScreen({ route }) {
                                 size={24}
                             />
                         </View>
-                        <View style={{flex:1, flexDirection:'row', alignItems:'flex-end', marginTop:20, width:'100%', paddingRight:50}}>
-                            <View style={{width:windowWidth*0.86-50-50}} />
-                            <TouchableWithoutFeedback onPress={()=>handleTextInput()}>
+                        <View
+                            style={{
+                                flex: 1,
+                                flexDirection: 'row',
+                                alignItems: 'flex-end',
+                                marginTop: 20,
+                                width: '100%',
+                                paddingRight: 50,
+                            }}
+                        >
+                            <View
+                                style={{ width: windowWidth * 0.86 - 50 - 50 }}
+                            />
+                            <TouchableWithoutFeedback
+                                onPress={() => handleTextInput()}
+                            >
                                 <View>
-                                    <IconComp color={colors.logo} name={'filter'} pos={0}/>
+                                    <IconComp
+                                        color={colors.logo}
+                                        name={'filter'}
+                                        pos={0}
+                                    />
                                 </View>
                             </TouchableWithoutFeedback>
-                            
                         </View>
                         {route?.params?.category && (
                             <Text

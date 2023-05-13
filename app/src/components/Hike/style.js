@@ -21,9 +21,8 @@ const stylesheet = (colors) =>
             flexDirection: 'column',
             alignItems: 'center',
         },
-        containerBasic: {
+        containerNoBg: {
             flex: 1,
-            backgroundColor: colors.background,
         },
         containerFocus: {
             width: '100%',

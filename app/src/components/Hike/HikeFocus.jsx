@@ -104,331 +104,355 @@ export default function FocusHikeScreen({ route }) {
         return <SplashScreen />;
     } else {
         return (
-            <ScrollView
-                style={styles.containerBasic}
-                keyboardShouldPersistTaps={'handled'}
-                bounces={false}
-                showsVerticalScrollIndicator={false}
-            >
-                <>
-                    <Image
-                        source={
-                            data.hike.photos && data.hike.photos.length > 0
-                                ? {
-                                    uri: `https://deway.fr/goto-api/files/photos/${data.hike.photos[0].filename}`,
-                                }
-                                : require('../../../assets/images/Dalle_background.png')
-                        }
-                        style={[
-                            StyleSheet.absoluteFill,
-                            { minHeight: windowHeight, width: 'auto' },
-                        ]}
-                    />
+            <>
+                <TouchableWithoutFeedback
+                    onPress={() => navigation.navigate('Search')}
+                >
                     <View
                         style={[
+                            styles.logoContainer,
                             {
-                                flex: 1,
-                                marginHorizontal: 14,
-                                marginTop: 48,
-                                flexDirection: 'column',
-                                alignItems: 'flex-start',
+                                position: 'absolute',
+                                top: '5%',
+                                left: '5%',
+                                zIndex: 1000,
                             },
                         ]}
                     >
-                        <TouchableWithoutFeedback
-                            onPress={() => navigation.navigate('Search')}
-                        >
-                            <View
-                                style={[
-                                    styles.logoContainer,
-                                    { marginBottom: 36 },
-                                ]}
-                            >
-                                <IconComp
-                                    color={colors.background}
-                                    name={'back'}
-                                    pos={0}
-                                />
-                            </View>
-                        </TouchableWithoutFeedback>
-                        <HikeInfos hike={data.hike} borderRadius={true} />
+                        <IconComp
+                            color={colors.background}
+                            name={'back'}
+                            pos={0}
+                        />
+                    </View>
+                </TouchableWithoutFeedback>
+                <Image
+                    source={
+                        data.hike.photos && data.hike.photos.length > 0
+                            ? {
+                                uri: `https://deway.fr/goto-api/files/photos/${data.hike.photos[0].filename}`,
+                            }
+                            : require('../../../assets/images/Dalle_background.png')
+                    }
+                    style={[
+                        StyleSheet.absoluteFill,
+                        {
+                            minHeight: windowHeight,
+                            width: 'auto',
+                            zIndex: 0,
+                        },
+                    ]}
+                />
+                <ScrollView
+                    style={styles.containerNoBg}
+                    keyboardShouldPersistTaps={'handled'}
+                    bounces={false}
+                    showsVerticalScrollIndicator={false}
+                >
+                    <>
                         <View
                             style={[
-                                styles.containerFocus,
-                                { paddingHorizontal: 0 },
+                                {
+                                    flex: 1,
+                                    marginHorizontal: 14,
+                                    marginTop: 48,
+                                    flexDirection: 'column',
+                                    alignItems: 'flex-start',
+                                },
                             ]}
                         >
-                            <Text
+                            <View style={{ height: windowHeight * 0.6 }} />
+                            <HikeInfos hike={data.hike} borderRadius={true} />
+                            <View
                                 style={[
-                                    styles.textDescription,
-                                    { marginBottom: 10, paddingHorizontal: 24 },
+                                    styles.containerFocus,
+                                    { paddingHorizontal: 0 },
                                 ]}
                             >
-                                Principals caracteristics
-                            </Text>
-                            <View
-                                style={{ flexDirection: 'row', width: '100%' }}
-                            >
-                                <View
-                                    style={{
-                                        flex: 1,
-                                        justifyContent: 'center',
-                                        alignItems: 'center',
-                                        paddingBottom: 10,
-                                    }}
+                                <Text
+                                    style={[
+                                        styles.textDescription,
+                                        {
+                                            marginBottom: 10,
+                                            paddingHorizontal: 24,
+                                        },
+                                    ]}
                                 >
-                                    <Text
-                                        style={[
-                                            styles.textHeader,
-                                            { marginTop: 10, fontSize: 20 },
-                                        ]}
-                                    >
-                                        {data.hike.duration}h
-                                    </Text>
-                                    <Text
-                                        style={[
-                                            styles.textDescription,
-                                            {
-                                                color: colors.text,
-                                                marginLeft: 8,
-                                                fontSize: 12,
-                                            },
-                                        ]}
-                                    >
-                                        of walking
-                                    </Text>
-                                </View>
+                                    Principals caracteristics
+                                </Text>
                                 <View
                                     style={{
-                                        flex: 1,
-                                        justifyContent: 'center',
-                                        alignItems: 'center',
-                                        marginRight: 10,
-                                        paddingBottom: 10,
-                                    }}
-                                >
-                                    <Text
-                                        style={[
-                                            styles.textHeader,
-                                            { marginTop: 10, fontSize: 20 },
-                                        ]}
-                                    >
-                                        {data.hike.distance}km
-                                    </Text>
-                                    <Text
-                                        style={[
-                                            styles.textDescription,
-                                            {
-                                                color: colors.text,
-                                                marginLeft: 8,
-                                                fontSize: 12,
-                                            },
-                                        ]}
-                                    >
-                                        to gotò
-                                    </Text>
-                                </View>
-                                <View
-                                    style={{
-                                        flex: 1,
-                                        justifyContent: 'center',
-                                        alignItems: 'center',
-                                        marginRight: 10,
-                                        paddingBottom: 10,
-                                    }}
-                                >
-                                    <Text
-                                        style={[
-                                            styles.textHeader,
-                                            { marginTop: 10, fontSize: 20 },
-                                        ]}
-                                    >
-                                        {data.hike.elevation}m
-                                    </Text>
-                                    <Text
-                                        style={[
-                                            styles.textDescription,
-                                            {
-                                                color: colors.text,
-                                                marginLeft: 8,
-                                                fontSize: 12,
-                                            },
-                                        ]}
-                                    >
-                                        of elevation
-                                    </Text>
-                                </View>
-                                <View
-                                    style={{
-                                        backgroundColor: colors.styleBar,
-                                        height: '100%',
-                                        width: 2,
-                                        marginTop: 5,
-                                    }}
-                                />
-                                <View
-                                    style={{
-                                        flex: 1,
-                                        alignItems: 'center',
-                                        paddingBottom: 10,
+                                        flexDirection: 'row',
+                                        width: '100%',
                                     }}
                                 >
                                     <View
                                         style={{
                                             flex: 1,
-                                            flexDirection: 'row',
-                                            marginTop: 20,
+                                            justifyContent: 'center',
+                                            alignItems: 'center',
+                                            paddingBottom: 10,
                                         }}
                                     >
-                                        {Array.from(
-                                            { length: 3 },
-                                            (_, i) =>
-                                                difficulties.indexOf(
-                                                    data.hike.difficulty
-                                                ) >= i
-                                        ).map((item, index) => (
-                                            <View
-                                                style={[
-                                                    {
-                                                        width: 14,
-                                                        height: 14,
-                                                        marginLeft: 5,
-                                                        borderRadius: 7,
-                                                    },
-                                                    item
-                                                        ? {
-                                                            backgroundColor:
-                                                                  colors.starFill,
-                                                        }
-                                                        : {
-                                                            backgroundColor:
-                                                                  colors.starEmpty,
-                                                        },
-                                                ]}
-                                                key={index}
-                                            />
-                                        ))}
+                                        <Text
+                                            style={[
+                                                styles.textHeader,
+                                                { marginTop: 10, fontSize: 20 },
+                                            ]}
+                                        >
+                                            {data.hike.duration}h
+                                        </Text>
+                                        <Text
+                                            style={[
+                                                styles.textDescription,
+                                                {
+                                                    color: colors.text,
+                                                    marginLeft: 8,
+                                                    fontSize: 12,
+                                                },
+                                            ]}
+                                        >
+                                            of walking
+                                        </Text>
                                     </View>
-                                    <Text
+                                    <View
+                                        style={{
+                                            flex: 1,
+                                            justifyContent: 'center',
+                                            alignItems: 'center',
+                                            marginRight: 10,
+                                            paddingBottom: 10,
+                                        }}
+                                    >
+                                        <Text
+                                            style={[
+                                                styles.textHeader,
+                                                { marginTop: 10, fontSize: 20 },
+                                            ]}
+                                        >
+                                            {data.hike.distance}km
+                                        </Text>
+                                        <Text
+                                            style={[
+                                                styles.textDescription,
+                                                {
+                                                    color: colors.text,
+                                                    marginLeft: 8,
+                                                    fontSize: 12,
+                                                },
+                                            ]}
+                                        >
+                                            to cover
+                                        </Text>
+                                    </View>
+                                    <View
+                                        style={{
+                                            flex: 1,
+                                            justifyContent: 'center',
+                                            alignItems: 'center',
+                                            marginRight: 10,
+                                            paddingBottom: 10,
+                                        }}
+                                    >
+                                        <Text
+                                            style={[
+                                                styles.textHeader,
+                                                { marginTop: 10, fontSize: 20 },
+                                            ]}
+                                        >
+                                            {data.hike.elevation}m
+                                        </Text>
+                                        <Text
+                                            style={[
+                                                styles.textDescription,
+                                                {
+                                                    color: colors.text,
+                                                    marginLeft: 8,
+                                                    fontSize: 12,
+                                                },
+                                            ]}
+                                        >
+                                            of elevation
+                                        </Text>
+                                    </View>
+                                    <View
+                                        style={{
+                                            backgroundColor: colors.styleBar,
+                                            height: '100%',
+                                            width: 2,
+                                            marginTop: 5,
+                                        }}
+                                    />
+                                    <View
+                                        style={{
+                                            flex: 1,
+                                            alignItems: 'center',
+                                            paddingBottom: 10,
+                                        }}
+                                    >
+                                        <View
+                                            style={{
+                                                flex: 1,
+                                                flexDirection: 'row',
+                                                marginTop: 20,
+                                            }}
+                                        >
+                                            {Array.from(
+                                                { length: 3 },
+                                                (_, i) =>
+                                                    difficulties.indexOf(
+                                                        data.hike.difficulty
+                                                    ) >= i
+                                            ).map((item, index) => (
+                                                <View
+                                                    style={[
+                                                        {
+                                                            width: 14,
+                                                            height: 14,
+                                                            marginLeft: 5,
+                                                            borderRadius: 7,
+                                                        },
+                                                        item
+                                                            ? {
+                                                                backgroundColor:
+                                                                      colors.starFill,
+                                                            }
+                                                            : {
+                                                                backgroundColor:
+                                                                      colors.starEmpty,
+                                                            },
+                                                    ]}
+                                                    key={index}
+                                                />
+                                            ))}
+                                        </View>
+                                        <Text
+                                            style={[
+                                                styles.textDescription,
+                                                {
+                                                    color: colors.text,
+                                                    marginLeft: 8,
+                                                    fontSize: 12,
+                                                },
+                                            ]}
+                                        >
+                                            difficulty
+                                        </Text>
+                                    </View>
+                                </View>
+                                {data?.hike?.tags.map((item) => (
+                                    <Tag key={item.name} name={item.name} />
+                                ))}
+                            </View>
+                            <View
+                                style={[
+                                    styles.containerFocus,
+                                    { flexDirection: 'column' },
+                                ]}
+                            >
+                                <Text style={styles.textDescription}>
+                                    Hike&apos;s caracteristics
+                                </Text>
+                                {data?.hike?.pointsOfInterests.map((item) => (
+                                    <PointsOfInterests
+                                        key={item.name}
+                                        {...item}
+                                    />
+                                ))}
+                                <View
+                                    style={{
+                                        backgroundColor: colors.starEmpty,
+                                        width: windowWidth * 0.8,
+                                        height: 2,
+                                        marginTop: 15,
+                                    }}
+                                />
+                                <TouchableWithoutFeedback
+                                    onPress={() =>
+                                        console.log('OPEN HIKE PATH')
+                                    }
+                                >
+                                    <View
                                         style={[
-                                            styles.textDescription,
+                                            styles.containerFocus,
                                             {
-                                                color: colors.text,
-                                                marginLeft: 8,
-                                                fontSize: 12,
+                                                backgroundColor: colors.logo,
+                                                marginTop: 15,
+                                                flexDirection: 'row',
+                                                justifyContent: 'center',
                                             },
                                         ]}
                                     >
-                                        difficulty
-                                    </Text>
-                                </View>
+                                        <IconComp
+                                            color={colors.backgroundTextInput}
+                                            name={'map'}
+                                            size={20}
+                                        />
+                                        <Text
+                                            style={
+                                                ([styles.textHeader],
+                                                {
+                                                    fontSize: 16,
+                                                    marginTop: 0,
+                                                    color: colors.backgroundTextInput,
+                                                    marginLeft: 20,
+                                                })
+                                            }
+                                        >
+                                            See the Hike on the map
+                                        </Text>
+                                    </View>
+                                </TouchableWithoutFeedback>
                             </View>
-                            {data?.hike?.tags.map((item) => (
-                                <Tag key={item.name} name={item.name} />
-                            ))}
-                        </View>
-                        <View
-                            style={[
-                                styles.containerFocus,
-                                { flexDirection: 'column' },
-                            ]}
-                        >
-                            <Text style={styles.textDescription}>
-                                Hike&apos;s caracteristics
-                            </Text>
-                            {data?.hike?.pointsOfInterests.map((item) => (
-                                <PointsOfInterests key={item.name} {...item} />
-                            ))}
                             <View
-                                style={{
-                                    backgroundColor: colors.starEmpty,
-                                    width: windowWidth * 0.8,
-                                    height: 2,
-                                    marginTop: 15,
-                                }}
-                            />
-                            <TouchableWithoutFeedback
-                                onPress={() => console.log('OPEN HIKE PATH')}
-                            >
-                                <View
-                                    style={[
-                                        styles.containerFocus,
-                                        {
-                                            backgroundColor: colors.logo,
-                                            marginTop: 15,
-                                            flexDirection: 'row',
-                                            justifyContent: 'center',
-                                        },
-                                    ]}
-                                >
-                                    <IconComp
-                                        color={colors.backgroundTextInput}
-                                        name={'map'}
-                                        size={20}
-                                    />
-                                    <Text
-                                        style={
-                                            ([styles.textHeader],
-                                            {
-                                                fontSize: 16,
-                                                marginTop: 0,
-                                                color: colors.backgroundTextInput,
-                                                marginLeft: 20,
-                                            })
-                                        }
-                                    >
-                                        See the Hike on the map
-                                    </Text>
-                                </View>
-                            </TouchableWithoutFeedback>
-                        </View>
-                        <View
-                            style={[
-                                styles.containerFocus,
-                                {
-                                    flexDirection: 'column',
-                                    alignItems: 'center',
-                                },
-                            ]}
-                        >
-                            <Image
-                                source={
-                                    data?.hike?.owner?.avatar?.filename
-                                        ? {
-                                            uri: `https://deway.fr/goto-api/files/photos/${data?.hike?.owner?.avatar?.filename}`,
-                                        }
-                                        : require('../../../assets/images/Dalle_background.png')
-                                }
                                 style={[
+                                    styles.containerFocus,
                                     {
-                                        height: 30,
-                                        width: 30,
-                                        borderRadius: 15,
-                                        marginBottom: 10,
+                                        flexDirection: 'column',
+                                        alignItems: 'center',
                                     },
                                 ]}
-                            />
-                            <Text style={styles.textDescription}>
-                                Hike Created on the{' '}
-                                {data?.hike?.createdAt.slice(8, 10)}/
-                                {data?.hike?.createdAt.slice(5, 7)}/
-                                {data?.hike?.createdAt.slice(0, 4)}
-                            </Text>
-                            <Text style={styles.textDescription}>
-                                by{' '}
-                                <Text
+                            >
+                                <Image
+                                    source={
+                                        data?.hike?.owner?.avatar?.filename
+                                            ? {
+                                                uri: `https://deway.fr/goto-api/files/photos/${data?.hike?.owner?.avatar?.filename}`,
+                                            }
+                                            : require('../../../assets/images/Dalle_background.png')
+                                    }
                                     style={[
-                                        styles.textDescription,
-                                        { color: colors.text },
+                                        {
+                                            height: 30,
+                                            width: 30,
+                                            borderRadius: 15,
+                                            marginBottom: 10,
+                                        },
                                     ]}
-                                >
-                                    {data?.hike?.owner?.pseudo}
+                                />
+                                <Text style={styles.textDescription}>
+                                    Hike Created on the{' '}
+                                    {data?.hike?.createdAt.slice(8, 10)}/
+                                    {data?.hike?.createdAt.slice(5, 7)}/
+                                    {data?.hike?.createdAt.slice(0, 4)}
                                 </Text>
-                            </Text>
+                                <Text style={styles.textDescription}>
+                                    by{' '}
+                                    <Text
+                                        style={[
+                                            styles.textDescription,
+                                            { color: colors.text },
+                                        ]}
+                                    >
+                                        {data?.hike?.owner?.pseudo}
+                                    </Text>
+                                </Text>
+                            </View>
                         </View>
-                    </View>
-                </>
-            </ScrollView>
+                        <View style={{ height: 150 }} />
+                    </>
+                </ScrollView>
+            </>
         );
     }
 }

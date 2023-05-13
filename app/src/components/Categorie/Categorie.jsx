@@ -65,7 +65,13 @@ export default function Categorie(props) {
                 ]}
             >
                 <Image
-                    source={require('../../../assets/images/Dalle_background.png')}
+                    source={
+                        props.defaultPhoto
+                            ? {
+                                uri: `https://deway.fr/goto-api/files/photos/${props.defaultPhoto.filename}`,
+                            }
+                            : require('../../../assets/images/Dalle_background.png')
+                    }
                     style={[
                         {
                             height: windowWidth * 0.2,
