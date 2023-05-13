@@ -22,6 +22,8 @@ import { PerformanceModule } from './performance/performance.module';
 import { ReviewModule } from './review/review.module';
 import { AlertModule } from './alert/alert.module';
 import { FilesModule } from './file/file.module';
+import { PageInfoModule } from './CustomScalar/pageInfo/pageinfo.module';
+import { HikeConnectionModule } from './CustomScalar/hikeConnection/hikeconnection.module';
 
 const armor = new ApolloArmor();
 const protection = armor.protect();
@@ -100,6 +102,8 @@ console.log = function (...args) {
         AlertModule,
         PhotoModule,
         FilesModule,
+        PageInfoModule,
+        HikeConnectionModule,
     ],
     controllers: [AppController],
     providers: [AppService],

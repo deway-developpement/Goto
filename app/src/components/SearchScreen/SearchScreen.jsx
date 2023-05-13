@@ -10,7 +10,7 @@ import { View } from 'react-native';
 import { TextInput } from 'react-native';
 import { IconComp } from '../Icon/Icon';
 
-export default function Search({ route, navigation }) {
+export default function SearchScreen({ route, navigation }) {
     const { colors } = useTheme();
     const styles = stylesheet(colors);
 
@@ -35,7 +35,7 @@ export default function Search({ route, navigation }) {
         }
     `;
 
-    const { data, loading, fetchMore } = useQuery(GET_HIKES, {
+    const { data, loading, fetchMore, refetch } = useQuery(GET_HIKES, {
         variables: {
             filter: {
                 category: {
@@ -53,6 +53,24 @@ export default function Search({ route, navigation }) {
 
     function removeFilter() {
         route.params?.category && navigation.navigate('Search');
+    }
+
+    function handleSearch(text) {
+        console.log(text);
+        refetch({
+            filter: {
+                name: {
+                    like: text.split(' ').join('%') + '%',
+                },
+                category: {
+                    name: {
+                        eq: route.params?.category,
+                    },
+                },
+            },
+            limit: 2,
+            cursor: null,
+        });
     }
 
     let onEndReachedCalledDuringMomentum = false;
@@ -82,9 +100,9 @@ export default function Search({ route, navigation }) {
                                 autoCapitalize="none"
                                 placeholderTextColor={colors.border}
                                 style={[styles.textInput, { width: '90%' }]}
-                                onSubmitEditing={() => {
-                                    console.log('search');
-                                }}
+                                onSubmitEditing={(e) =>
+                                    handleSearch(e.nativeEvent.text)
+                                }
                             />
                             <IconComp
                                 color={colors.border}
