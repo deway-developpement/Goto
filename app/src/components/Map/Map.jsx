@@ -3,11 +3,20 @@ import MapView, { Marker, Polyline, Overlay } from 'react-native-maps';
 import { useTheme } from '@react-navigation/native';
 import CONTENTGPX from './gpx';
 import { DOMParser } from 'xmldom';
+import { set } from 'react-native-reanimated';
 
-export default function Map({ location, image }) {
+export default function Map({ location, image, leftImage, setLeftImage, topImage, setTopImage, widthImage, setWidthImage, heightImage, setHeightImage}) {
     const { colors } = useTheme();
     let [leftPoints, setLeftPoints] = useState([]);
     let [passedPoints, setPassedPoints] = useState([]);
+
+    useEffect(() => {
+        setLeftImage(location?.coords?.longitude);
+        setTopImage(location?.coords?.latitude);
+        setWidthImage(0.01);
+        setHeightImage(0.01);
+        //image.height / image.width) * widthImage
+    }, [image]);
 
     function parseFile() {
         const doc = new DOMParser().parseFromString(CONTENTGPX, 'text/xml');
@@ -94,12 +103,12 @@ export default function Map({ location, image }) {
                 <Overlay
                     bounds={[
                         [
-                            parseFloat(location?.coords?.latitude),
-                            parseFloat(location?.coords?.longitude),
+                            topImage,
+                            leftImage,
                         ],
                         [
-                            parseFloat(location?.coords?.latitude) + 0.01,
-                            parseFloat(location?.coords?.longitude) + 0.01,
+                            topImage + heightImage,
+                            leftImage + widthImage,
                         ],
                     ]}
                     image={{ uri: image.uri }}

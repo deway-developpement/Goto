@@ -8,6 +8,7 @@ import {
     Platform,
     ActivityIndicator,
     Image,
+    TouchableWithoutFeedback
 } from 'react-native';
 import { Button } from 'react-native-elements';
 import { AuthContext } from '../../providers/AuthContext';
@@ -24,15 +25,132 @@ import DiscoverScreen from '../DiscoverScreen/DiscoverScreen';
 import { useFonts } from 'expo-font';
 import * as ImagePicker from 'expo-image-picker';
 import { ReactNativeFile } from 'apollo-upload-client';
-import { Icon } from '../Icon/Icon';
+import { Icon, IconComp } from '../Icon/Icon';
 import Search from '../Search/Search';
 import FocusHikeScreen from '../Hike/FocusHikeScreen';
+import { Slider, Icon as IconThemed, CheckBox } from '@rneui/themed';
+import { check } from 'prettier';
 
 function MapScreen({ route }) {
     const [permission, request] = Location.useForegroundPermissions();
     const [location, setLocation] = useState(null);
     const [errorMsg, setErrorMsg] = useState(null);
     const [isCamera, setIsCamera] = useState(false);
+
+    const [leftImage, setLeftImage] = useState(null);
+    const [topImage, setTopImage] = useState(null);
+    const [widthImage, setWidthImage] = useState(0);
+    const [heightImage, setHeightImage] = useState(0);
+
+    const stepWidth=0.01;
+    const [minWidth, setMinWidth] = useState(0.001);
+    const [maxWidth, setMaxWidth] = useState(minWidth+stepWidth);
+    const [minHeight, setMinHeight] = useState(0.001);
+    const [maxHeight, setMaxHeight] = useState(minWidth+stepWidth);
+    const [lastClickPlus, setLastClickPlus] = useState(0);
+    const [lastClickMinus, setLastClickMinus] = useState(0);
+
+    function handlePlus() {
+        if(checkWidth){
+            let step=stepWidth;
+            if (new Date().getTime()-lastClickPlus<500){
+                step*=3;
+            }
+            setWidthImage(prev => prev+step);
+            setMinWidth(prev => prev+step);
+            setMaxWidth(prev => prev+step);
+            setLastClickPlus(new Date().getTime());
+        }
+        if(checkHeight){
+            let step=stepWidth;
+            if (new Date().getTime()-lastClickPlus<500){
+                step*=3;
+            }
+            setHeightImage(prev => prev+step);
+            setMinHeight(prev => prev+step);
+            setMaxHeight(prev => prev+step);
+            setLastClickPlus(new Date().getTime());
+        }
+        
+    }
+    function handleMinus() {
+        if(checkWidth){
+            if (minWidth > stepWidth){
+                let step=stepWidth;
+                if (new Date().getTime()-lastClickMinus<500 && minWidth>stepWidth*3){
+                    step*=3;
+                }
+                setWidthImage(prev => prev-step);
+                setMinWidth(prev => prev-step);
+                setMaxWidth(prev => prev-step);
+                setLastClickMinus(new Date().getTime());
+            }
+        } else if(checkHeight){
+            if (minHeight > stepWidth){
+                let step=stepWidth;
+                if (new Date().getTime()-lastClickMinus<500 && minHeight>stepWidth*3){
+                    step*=3;
+                }
+                setHeightImage(prev => prev-step);
+                setMinHeight(prev => prev-step);
+                setMaxHeight(prev => prev-step);
+                setLastClickMinus(new Date().getTime());
+            }
+        }
+    }
+
+    const [checkWidth, setCheckWidth] = useState(false);
+    const [checkHeight, setCheckHeight] = useState(false);
+    const [checkTop, setCheckTop] = useState(false);
+    const [checkLeft, setCheckLeft] = useState(false);
+    const [checkAngle, setCheckAngle] = useState(false);
+
+    function handleCheck(set, value){
+        if (value){
+            set(false);
+        }
+        else{
+            setCheckWidth(false);
+            setCheckHeight(false);
+            setCheckTop(false);
+            setCheckLeft(false);
+            setCheckAngle(false);
+            set(true);
+        }
+        setLastClickPlus(0);
+        setLastClickMinus(0);
+    }
+
+    function getMaxValue(){
+        if (checkWidth){
+            return maxWidth;
+        } else if (checkHeight){
+            return maxHeight;
+        }
+    }
+
+    function getMinValue(){
+        if (checkWidth){
+            return minWidth;
+        } else if (checkHeight){
+            return minHeight;
+        }
+    }
+
+    function getOnChangeValue(){
+        if (checkWidth){
+            return setWidthImage;
+        } else if (checkHeight){
+            return setHeightImage;
+        }
+    }
+
+    function getStep(){
+        if (checkWidth || checkHeight){
+            return 0.0002;
+        }
+        return 1;
+    }
 
     const { colors } = useTheme();
     const styles = stylesheet(colors);
@@ -48,6 +166,8 @@ function MapScreen({ route }) {
         setImage({
             paraUri: route.params?.dataImg.uri,
             uri: 'data:image/jpg;base64,' + route.params.dataImg.base64,
+            heigth: route.params.dataImg.height,
+            width: route.params.dataImg.width,
         });
     }
 
@@ -73,7 +193,6 @@ function MapScreen({ route }) {
             });
         }
     }, [permission]);
-
     return (
         <View style={{ width: '100%', height: '100%', flex: 1 }}>
             {(() => {
@@ -103,6 +222,14 @@ function MapScreen({ route }) {
                                 setIsCamera={setIsCamera}
                                 image={image}
                                 styles={styles}
+                                leftImage={leftImage}
+                                setLeftImage={setLeftImage}
+                                topImage={topImage}
+                                setTopImage={setTopImage}
+                                widthImage={widthImage}
+                                setWidthImage={setWidthImage}
+                                heightImage={heightImage}
+                                setHeightImage={setHeightImage}
                             />
                             <View
                                 style={[
@@ -123,6 +250,98 @@ function MapScreen({ route }) {
                                         setIsCamera(true);
                                     }}
                                 />
+                                <CheckBox
+                                    wrapperStyle={{padding:0, margin:0, backgroundColor:''}}
+                                    containerStyle={{padding:0, margin:0, backgroundColor:''}}
+                                    title="Width"
+                                    checked={checkWidth}
+                                    onPress={() => handleCheck(setCheckWidth, checkWidth)}
+                                />
+                                <CheckBox
+                                    wrapperStyle={{padding:0, margin:0, backgroundColor:''}}
+                                    containerStyle={{padding:0, margin:0, backgroundColor:''}}
+                                    title="Height"
+                                    checked={checkHeight}
+                                    onPress={() => handleCheck(setCheckHeight, checkHeight)}
+                                />
+                                <CheckBox
+                                    wrapperStyle={{padding:0, margin:0, backgroundColor:''}}
+                                    containerStyle={{padding:0, margin:0, backgroundColor:''}}
+                                    title="Top"
+                                    checked={checkTop}
+                                    onPress={() => handleCheck(setCheckTop, checkTop)}
+                                />
+                                <CheckBox
+                                    wrapperStyle={{padding:0, margin:0, backgroundColor:''}}
+                                    containerStyle={{padding:0, margin:0, backgroundColor:''}}
+                                    title="Left"
+                                    checked={checkLeft}
+                                    onPress={() => handleCheck(setCheckLeft, checkLeft)}
+                                />
+                                <CheckBox
+                                    wrapperStyle={{padding:0, margin:0, backgroundColor:''}}
+                                    containerStyle={{padding:0, margin:0, backgroundColor:''}}
+                                    title="Angle"
+                                    checked={checkAngle}
+                                    onPress={() => handleCheck(setCheckAngle, checkAngle)}
+                                />
+                                { (checkHeight || checkWidth || checkTop || checkLeft || checkAngle) && image!=null && 
+                                    <Slider
+                                        value={widthImage}
+                                        onValueChange={getOnChangeValue()}
+                                        maximumValue={getMaxValue()}
+                                        minimumValue={getMinValue()}
+                                        step={getStep()}
+                                        allowTouchTrack
+                                        trackStyle={{ height: 10, backgroundColor: 'transparent' }}
+                                        thumbStyle={{ height: 20, width: 20, backgroundColor: 'transparent' }}
+                                        thumbProps={{
+                                            children: (
+                                                <IconThemed
+                                                    type="font-awesome"
+                                                    size={10}
+                                                    reverse
+                                                    containerStyle={{ bottom: 10, right: 10 }}
+                                                    color={colors.logo}
+                                                />
+                                            ),
+                                        }}
+                                    />
+                                }
+                                { (checkHeight || checkWidth) && image!=null && 
+                                    <>
+                                        <TouchableWithoutFeedback
+                                            onPress={() => handlePlus()}
+                                        >
+                                            <View
+                                                style={[
+                                                    styles.logoContainer
+                                                ]}
+                                            >
+                                                <IconComp
+                                                    color={colors.logo}
+                                                    name={'plus'}
+                                                    pos={0}
+                                                />
+                                            </View>
+                                        </TouchableWithoutFeedback>
+                                        <TouchableWithoutFeedback
+                                            onPress={() => handleMinus()}
+                                        >
+                                            <View
+                                                style={[
+                                                    styles.logoContainer
+                                                ]}
+                                            >
+                                                <IconComp
+                                                    color={colors.logo}
+                                                    name={'back'}
+                                                    pos={0}
+                                                />
+                                            </View>
+                                        </TouchableWithoutFeedback>
+                                    </>
+                                }
                             </View>
                         </View>
                     );
