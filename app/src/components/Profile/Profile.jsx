@@ -23,6 +23,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { ReactNativeFile } from 'apollo-upload-client';
 import { useNavigation } from '@react-navigation/native';
 import HikeInfos from '../Hike/HikeInfos';
+import { FlatList } from 'react-native-gesture-handler';
 
 function ProfileModal({ setModalVisible, profil }) {
     const { colors } = useTheme();
@@ -149,6 +150,11 @@ function SettingsModal({ setModalVisible, reload }) {
         ModifyProfile: 2,
     });
 
+    function actualize() {
+        reload();
+        setModalVisible(modalActive.None);
+    }
+
     return (
         <View style={styles.modalView}>
             <View
@@ -167,7 +173,7 @@ function SettingsModal({ setModalVisible, reload }) {
             </View>
             <View>
                 <Pressable
-                    onPress={() => reload()}
+                    onPress={() => actualize()}
                     style={{
                         flexDirection: 'row',
                         marginBottom: 16,
@@ -266,16 +272,28 @@ function Historic({ hikes }) {
     function handleClickHike(hikeId) {
         navigation.navigate('FocusHike', { hikeId });
     }
-    console.log(hikes[0].hike.photos[0].filename);
+
+    if (hikes.length === 0) {
+        return (
+            <View style={{ marginTop: 22 }}>
+                <Text style={styles.textContent}>Historic of my hikes</Text>
+                <View style={styles.statContainer}>
+                    <Text style={[styles.statNumber, { marginBottom: 10 }]}>
+                        No hikes for this month
+                    </Text>
+                </View>
+            </View>
+        );
+    }
 
     return (
-        <View style={{ marginTop: 22, marginBottom: 58 }}>
+        <View style={{ marginTop: 22 }}>
             <Text style={styles.textContent}>Historic of my hikes</Text>
-            <ScrollView style={styles.historicContainer} horizontal={true}>
+            <ScrollView horizontal={true}>
                 <TouchableWithoutFeedback
                     onPress={() => handleClickHike(hikes[0].hike.id)}
                 >
-                    <View style={styles.historicCard}>
+                    <View>
                         <Image
                             source={{
                                 uri: `https://deway.fr/goto-api/files/photos/${hikes[0].hike.photos[0].filename}`,
@@ -291,6 +309,63 @@ function Historic({ hikes }) {
                     </View>
                 </TouchableWithoutFeedback>
             </ScrollView>
+        </View>
+    );
+}
+
+function FriendCard({ friend }) {
+    const { colors } = useTheme();
+    const styles = stylesheet(colors);
+
+    return (
+        <View style={{ backgroundColor: '#000' }}>
+            <Image
+                source={{
+                    uri: `https://deway.fr/goto-api/files/photos/${friend.photo}`,
+                }}
+                style={{
+                    height: 50,
+                    width: 50,
+                    borderRadius: 50,
+                    marginRight: 10,
+                }}
+            />
+            <View style={{ flexDirection: 'column' }}>
+                <Text style={styles.friendName}>{friend.name}</Text>
+                <Text style={styles.friendHikes}>
+                    {friend.hikes} hikes together
+                </Text>
+            </View>
+        </View>
+    );
+}
+
+function Friends({ friends }) {
+    const { colors } = useTheme();
+    const styles = stylesheet(colors);
+
+    if (friends.length === 0) {
+        return (
+            <View style={{ marginTop: 22, marginBottom: 58 }}>
+                <Text style={styles.textContent}>My friends</Text>
+                <View style={styles.statContainer}>
+                    <Text style={[styles.statNumber, { marginBottom: 10 }]}>
+                        You don{"'"}t have any friends yet
+                    </Text>
+                </View>
+            </View>
+        );
+    }
+
+    return (
+        <View style={{ marginTop: 22, marginBottom: 58 }}>
+            <Text style={styles.textContent}>My friends</Text>
+            <FlatList
+                data={friends}
+                renderItem={({ item }) => <FriendCard friend={item} />}
+                style={styles.friendsContainer}
+                horizontal={true}
+            />
         </View>
     );
 }
@@ -327,6 +402,7 @@ export default function ProfileScreen() {
                         filename
                     }
                     friends {
+                        id
                         pseudo
                         publicKey
                         avatar {
@@ -547,66 +623,12 @@ export default function ProfileScreen() {
                                                             }
                                                         />
                                                         {/* Friends Part */}
-                                                        <View>
-                                                            <Text
-                                                                style={
-                                                                    styles.textContent
-                                                                }
-                                                            >
-                                                                My friends
-                                                            </Text>
-                                                            <ScrollView
-                                                                horizontal={
-                                                                    true
-                                                                }
-                                                                showsHorizontalScrollIndicator={
-                                                                    false
-                                                                }
-                                                                style={{
-                                                                    height: 230,
-                                                                    backgroundColor:
-                                                                        colors.backgroundTextInput,
-                                                                    borderRadius: 10,
-                                                                    marginHorizontal: 5,
-                                                                    marginBottom: 120,
-                                                                }}
-                                                            >
-                                                                <View
-                                                                    style={
-                                                                        styles.historicContainer
-                                                                    }
-                                                                >
-                                                                    <View
-                                                                        style={
-                                                                            styles.historic
-                                                                        }
-                                                                    >
-                                                                        <Text
-                                                                            style={
-                                                                                styles.historicText
-                                                                            }
-                                                                        >
-                                                                            La
-                                                                            Poste
-                                                                        </Text>
-                                                                        <Text
-                                                                            style={
-                                                                                styles.historicText
-                                                                            }
-                                                                        >
-                                                                            @
-                                                                        </Text>
-                                                                        <Text
-                                                                            style={
-                                                                                styles.historicText
-                                                                            }
-                                                                        >
-                                                                            .net
-                                                                        </Text>
-                                                                    </View>
-                                                                </View>
-                                                            </ScrollView>
-                                                        </View>
+                                                        <Friends
+                                                            friends={
+                                                                profil.whoami
+                                                                    .friends
+                                                            }
+                                                        />
                                                     </>
                                                 );
                                             }
