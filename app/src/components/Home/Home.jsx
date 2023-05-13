@@ -8,7 +8,6 @@ import {
     Platform,
     ActivityIndicator,
     Image,
-    Dimensions,
 } from 'react-native';
 import { Button } from 'react-native-elements';
 import { AuthContext } from '../../providers/AuthContext';
@@ -21,58 +20,13 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import CameraScreen from '../Camera/CameraScreen';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Map from '../Map/Map';
-import { Icon } from '../Icon/Icon';
+import DiscoverScreen from '../Discover/Discover';
 import { useFonts } from 'expo-font';
 import * as ImagePicker from 'expo-image-picker';
 import { ReactNativeFile } from 'apollo-upload-client';
-
-function HikeScreen({ route }) {
-    const [image, setImage] = useState(null);
-
-    const windowWidth = Dimensions.get('window').width;
-
-    if (
-        route.params?.dataImg &&
-        (image == null || image.paraUri != route.params.dataImg.uri)
-    ) {
-        setImage({
-            paraUri: route.params?.dataImg.uri,
-            uri: 'data:image/jpg;base64,' + route.params.dataImg.base64,
-        });
-    }
-    return (
-        <View style={{ flex: 1, backgroundColor: '' }}>
-            <SafeAreaView />
-            <Text>
-                {route.params?.dataImg
-                    ? 'This should display a photo '
-                    : 'Hikes'}
-            </Text>
-            {image != null && (
-                <Image
-                    style={{
-                        transform: [{ rotate: '45deg' }],
-                        width: windowWidth,
-                        height:
-                            (windowWidth * route.params.dataImg.height) /
-                            route.params.dataImg.width,
-                        backgroundColor: '',
-                    }}
-                    source={{ uri: image.uri }}
-                />
-            )}
-        </View>
-    );
-}
-
-function SearchScreen() {
-    return (
-        <View style={{ flex: 1, backgroundColor: '' }}>
-            <SafeAreaView />
-            <Text>Search</Text>
-        </View>
-    );
-}
+import { Icon } from '../Icon/Icon';
+import Search from '../Search/Search';
+import FocusHikeScreen from '../Hike/FocusHikeScreen';
 
 function MapScreen({ route }) {
     const [permission, request] = Location.useForegroundPermissions();
@@ -400,11 +354,12 @@ function HomeScreen({ navigation }) {
                             tabBarLabelStyle: styles.tabBarLabel,
                             tabBarActiveTintColor: colors.iconprimary,
                             tabBarInactiveTintColor: colors.label,
+                            tabBarHideOnKeyboard: true,
                         }}
                     >
                         <Tab.Screen
                             name="Discover"
-                            component={HikeScreen}
+                            component={DiscoverScreen}
                             options={{
                                 tabBarIcon: (props) => (
                                     <Icon
@@ -417,7 +372,7 @@ function HomeScreen({ navigation }) {
                         />
                         <Tab.Screen
                             name="Search"
-                            component={SearchScreen}
+                            component={Search}
                             options={{
                                 tabBarIcon: (props) => (
                                     <Icon
@@ -442,7 +397,7 @@ function HomeScreen({ navigation }) {
                             }}
                         />
                         <Tab.Screen
-                            name="My Hikes"
+                            name="Favorites"
                             component={FavoritesScreen}
                             options={{
                                 tabBarIcon: (props) => (
@@ -455,7 +410,7 @@ function HomeScreen({ navigation }) {
                             }}
                         />
                         <Tab.Screen
-                            name="Profil"
+                            name="Profile"
                             component={ProfilScreen}
                             options={{
                                 tabBarIcon: (props) => (
@@ -465,6 +420,14 @@ function HomeScreen({ navigation }) {
                                         color={props.color}
                                     />
                                 ),
+                            }}
+                        />
+                        <Tab.Screen
+                            name="FocusHike"
+                            component={FocusHikeScreen}
+                            options={{
+                                headerShown: false,
+                                tabBarButton: () => null,
                             }}
                         />
                     </Tab.Navigator>

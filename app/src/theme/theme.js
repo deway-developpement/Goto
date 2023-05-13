@@ -4,7 +4,7 @@ export const Classic = {
     ...DefaultTheme,
     colors: {
         ...DefaultTheme.colors,
-        background: '#FDFEFE',
+        background: '#F1F1F1',
         backgroundTextInput: '#FFFFFF',
         text: '#201F30',
         link: '#264653',
@@ -18,7 +18,12 @@ export const Classic = {
         linesecondary: '#bbbdbf',
         borderlinesecondary: '#8c8f91',
         iconprimary: '#78DBC8',
-        label: '#F2F7F9'
+        label: '#F2F7F9',
+        logo: '#264653',
+        description:'#6B6F70',
+        starEmpty:'#EFF0F1',
+        starFill:'#2A9D87',
+        styleBar:'#E1E2E3'
     },
 };
 
@@ -29,6 +34,7 @@ export const Dark = {
         background: '#201F30',
         text: '#FDFEFE',
         link: '#5B774B',
+        backgroundTextInput: '#FFFFFF',
         primary: '#5B774B',
         secondary: '#80C8D2',
         accent: '#D1406C',
@@ -39,6 +45,11 @@ export const Dark = {
         linesecondary: '#bbbdbf',
         borderlinesecondary: '#8c8f91',
         iconprimary: '#78DBC8',
-        label: '#F2F7F9'
+        label: '#F2F7F9',
+        logo: '#264653',
+        description:'#6B6F70',
+        starEmpty:'#EFF0F1',
+        starFill:'#2A9D87',
+        styleBar:'#E1E2E3'
     },
 };
