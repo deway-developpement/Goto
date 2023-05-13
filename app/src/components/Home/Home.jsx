@@ -17,7 +17,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import CameraScreen from '../Camera/CameraScreen';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Map from '../Map/Map';
-import DiscoverScreen from '../Discover/Discover';
+import DiscoverScreen from '../DiscoverScreen/DiscoverScreen';
 import { useFonts } from 'expo-font';
 import ProfileScreen from '../Profile/Profile';
 import { Icon } from '../Icon/Icon';
