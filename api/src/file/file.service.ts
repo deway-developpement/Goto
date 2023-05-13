@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { Worker } from 'snowflake-uuid';
 import { FileUpload } from './interfaces/fileupload.type';
-import { createReadStream, createWriteStream } from 'fs';
+import { createReadStream, createWriteStream, existsSync } from 'fs';
 import { join } from 'path';
 
 export enum FileType {
@@ -54,10 +54,21 @@ export class FilesService {
     //TODO: delete file
 
     getFileStream(filename: string, type: FileType): StreamableFile {
+        const path = join(process.cwd(), `./data/${type}/${filename}`);
         // check that the id is safe and the user isn't trying to access a file outside of the category
-        if (filename.match(/^[0-9]{16,20}.[a-zA-Z]{3,4}$/) && type.match(/^[a-zA-Z]+$/)) {
-            const file = createReadStream(join(process.cwd(), `./data/${type}/${filename}`));
-            return new StreamableFile(file);
+        if (path.match(/^[a-zA-Z\/]+[0-9]{16,20}.[a-zA-Z]{3,4}$/)) {
+            // check that the file exists
+            if (!existsSync(path)) {
+                throw new HttpException('File not found', HttpStatus.NOT_FOUND);
+            } else {
+                try {
+                    const file = createReadStream(path);
+                    return new StreamableFile(file);
+                } catch (e) {
+                    console.log(e);
+                    throw new HttpException('Error reading file', HttpStatus.BAD_REQUEST);
+                }
+            }
         }
         // else throw error
         throw new UnauthorizedException("You don't have access to this file");

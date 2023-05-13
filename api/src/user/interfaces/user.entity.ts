@@ -6,8 +6,10 @@ import {
     ManyToMany,
     JoinTable,
     OneToOne,
+    OneToMany,
 } from 'typeorm';
 import { PhotoEntity } from '../../photo/interfaces/photo.entity';
+import { PerformanceEntity } from '../../performance/interfaces/performance.entity';
 
 @Entity('user')
 @Unique(['pseudo', 'publicKey'])
@@ -34,6 +36,10 @@ export class UserEntity {
     @ManyToMany(() => UserEntity, (user) => user.friends, { onDelete: 'CASCADE' })
     @JoinTable({ name: 'users_friends' })
     friends?: UserEntity[];
+
+    // performance relation O2M
+    @OneToMany(() => PerformanceEntity, (performance) => performance.user, { cascade: ['remove'] })
+    performances?: PerformanceEntity[];
 
     @OneToOne(() => PhotoEntity, (photo) => photo.user, { cascade: ['remove'] })
     avatar?: PhotoEntity;

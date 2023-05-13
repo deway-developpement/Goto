@@ -9,10 +9,22 @@ import {
 import { ObjectType, ID } from '@nestjs/graphql';
 import { fieldMiddleware } from '../../auth/auth.middleware';
 import { PhotoDTO } from '../../photo/interfaces/photo.dto';
+import { PerformanceDTO } from '../../performance/interfaces/performance.dto';
 
 @ObjectType('User')
 @QueryOptions({ pagingStrategy: PagingStrategies.NONE })
-@UnPagedRelation('friends', () => UserDTO, { disableRemove: true, disableUpdate: true })
+@UnPagedRelation('friends', () => UserDTO, {
+    disableRemove: true,
+    disableUpdate: true,
+    enableAggregate: true,
+    enableTotalCount: true,
+})
+@UnPagedRelation('performances', () => PerformanceDTO, {
+    disableRemove: true,
+    disableUpdate: true,
+    enableAggregate: true,
+    enableTotalCount: true,
+})
 @Relation('avatar', () => PhotoDTO, { disableRemove: true, disableUpdate: true, nullable: true })
 export class UserDTO {
     @IDField(() => ID, { middleware: [fieldMiddleware] })
