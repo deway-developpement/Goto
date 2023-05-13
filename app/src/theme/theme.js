@@ -24,6 +24,10 @@ export const Classic = {
         backgroundCategorie:'#FFFFFF',
         stats: '#207665',
         statstext: '#0D0E0E'
+        description:'#6B6F70',
+        starEmpty:'#EFF0F1',
+        starFill:'#2A9D87',
+        styleBar:'#E1E2E3'
     },
 };
 
@@ -35,6 +39,7 @@ export const Dark = {
         backgroundsecondary: '#26465366',
         text: '#FDFEFE',
         link: '#5B774B',
+        backgroundTextInput: '#FFFFFF',
         primary: '#5B774B',
         secondary: '#80C8D2',
         accent: '#D1406C',
@@ -50,5 +55,9 @@ export const Dark = {
         backgroundCategorie:'#FFFFFF',
         stats: '#207665',
         statstext: '#0D0E0E'
+        description:'#6B6F70',
+        starEmpty:'#EFF0F1',
+        starFill:'#2A9D87',
+        styleBar:'#E1E2E3'
     },
 };

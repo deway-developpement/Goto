@@ -33,6 +33,11 @@ function createApolloClient(authContext) {
                 for (let err of graphQLErrors) {
                     switch (err.extensions.code) {
                     case 'UNAUTHENTICATED': {
+                        // check if error is authentication error
+                        if (err.message !== 'Unauthorized') {
+                            console.log('401 Exception', err);
+                            return forward(operation);
+                        }
                         // Here we create a new Promise that will be resolved when the token refresh is complete
                         let _forward;
                         if (!isRefreshing) {
