@@ -12,7 +12,7 @@ import { useTheme } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { gql, useQuery } from '@apollo/client';
 import { IconComp } from '../Icon/Icon';
-import Categorie from '../Categorie/Categorie';
+import Categorie from '../CategorieScreen/CategorieScreen';
 import { FlatList } from 'react-native';
 
 export default function DiscoverScreen() {

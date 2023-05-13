@@ -11,7 +11,7 @@ import { gql, useQuery } from '@apollo/client';
 import stylesheet from './style';
 import { useNavigation } from '@react-navigation/native';
 
-export default function Categorie(props) {
+export default function CategorieScreen(props) {
     const { colors } = useTheme();
     const styles = stylesheet(colors);
     const navigation = useNavigation();
