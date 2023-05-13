@@ -11,7 +11,7 @@ import { gql, useQuery } from '@apollo/client';
 import stylesheet from './style';
 import { useNavigation } from '@react-navigation/native';
 
-export default function Categorie(props) {
+export default function CategorieScreen(props) {
     const { colors } = useTheme();
     const styles = stylesheet(colors);
     const navigation = useNavigation();
@@ -65,7 +65,13 @@ export default function Categorie(props) {
                 ]}
             >
                 <Image
-                    source={require('../../../assets/images/Dalle_background.png')}
+                    source={
+                        props.defaultPhoto
+                            ? {
+                                uri: `https://deway.fr/goto-api/files/photos/${props.defaultPhoto.filename}`,
+                            }
+                            : require('../../../assets/images/Dalle_background.png')
+                    }
                     style={[
                         {
                             height: windowWidth * 0.2,

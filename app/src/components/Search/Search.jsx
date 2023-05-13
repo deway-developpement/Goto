@@ -10,7 +10,7 @@ import { View } from 'react-native';
 import { TextInput } from 'react-native';
 import { IconComp } from '../Icon/Icon';
 
-export default function SearchScreen({ route }) {
+export default function Search({ route }) {
     const { colors } = useTheme();
     const styles = stylesheet(colors);
     const windowWidth = Dimensions.get('window').width;
