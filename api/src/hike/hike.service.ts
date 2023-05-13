@@ -118,11 +118,11 @@ export class HikeService extends TypeOrmQueryService<HikeEntity> {
                     longitude: longitude,
                 }
             )
-            .andWhere('hike.id > :cursor', { cursor: cursor }) // cursor is the last hike id of the previous query
             .andWhere('hike.name LIKE :search', { search: `%${search}%` }) // search is the search string
             .orderBy('id', 'ASC') // order by id
-            .limit(limit); // limit number of results
-        const hikesId = await query.getMany();
+        const totalCount = await query.getCount(); // get total number of results
+        const beforeExist = await query.clone().andWhere('hike.id <= :cursor', { cursor: cursor }).getExists(); // check if there is a hike before the cursor
+        const hikesId = await query.andWhere('hike.id > :cursor', { cursor: cursor }).limit(limit).getMany(); // get all hikes id
         const numberOfResults = await query.getCount();
         // get all hikes from ids found
         const hikes = await Promise.all(
@@ -142,11 +142,11 @@ export class HikeService extends TypeOrmQueryService<HikeEntity> {
             ],
             pageInfo: {
                 hasNextPage: numberOfResults > limit,
-                hasPreviousPage: cursor !== '',
+                hasPreviousPage: beforeExist,
                 startCursor: hikes.length > 0 ? hikes[0].id : '',
                 endCursor: hikes.length > 0 ? hikes[hikes.length - 1].id : '',
             },
-            totalCount: hikes.length,
+            totalCount,
         };
     }
 
