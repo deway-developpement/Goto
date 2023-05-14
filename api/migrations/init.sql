@@ -42,6 +42,26 @@ VALUES (
         now()
     );
 
+INSERT INTO
+    user (
+        id,
+        pseudo,
+        password,
+        email,
+        publicKey,
+        credidential,
+        createdAt
+    )
+VALUES (
+        uuid(),
+        'user2',
+        '$2b$10$omYQk0C0C6wKi34usPe1xOgv8Lka3rLjbYHd9V9lm0VPq6auAjSM.',
+        'user2@localhost',
+        'USER02',
+        1,
+        now()
+    );
+
 # Create a category
 INSERT INTO
     category (id, name, createdAt)
