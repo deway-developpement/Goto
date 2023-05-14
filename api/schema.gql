@@ -867,6 +867,24 @@ type UserFriendsAggregateResponse {
   max: UserFriendsMaxAggregate
 }
 
+type CustomPageInfo {
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  startCursor: String!
+  endCursor: String!
+}
+
+type CustomHikeConnection {
+  pageInfo: CustomPageInfo!
+  edges: [CustomHikeEdge!]!
+  totalCount: Float!
+}
+
+type CustomHikeEdge {
+  cursor: String!
+  node: Hike!
+}
+
 type HikeEdge {
   """The node containing the Hike"""
   node: Hike!
@@ -1344,7 +1362,10 @@ type Query {
 
     """Distance in kilometers"""
     distance: Float = 50
-  ): [Hike!]!
+    search: String
+    limit: Int!
+    cursor: String = ""
+  ): CustomHikeConnection!
   tag(
     """The id of the record to find."""
     id: ID!
@@ -1492,6 +1513,7 @@ type Mutation {
   postAlert(input: AlertInput!): Alert!
   deleteAlert(id: String!): Alert!
   createPhoto(input: PhotoInput!): Photo!
+  changeAvatar(input: PhotoInput!): Photo!
 }
 
 input UserInput {

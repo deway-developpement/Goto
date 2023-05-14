@@ -9,6 +9,8 @@ import * as _ from '@nestjs-query/query-graphql/node_modules/@nestjs-query/core'
 import { HikeInput } from './interfaces/hike.input';
 import { UserDTO } from '../user/interfaces/user.dto';
 import { AuthType } from '../auth/interface/auth.type';
+import { HikeConnectionDTO } from '../CustomScalar/hikeConnection/interface/hikeconnection.dto';
+import { Int } from 'type-graphql';
 
 const guards = [GqlAuthGuard];
 
@@ -63,14 +65,17 @@ export class HikeResolver extends CRUDResolver(HikeDTO, {
     }
 
     @UseGuards(GqlAuthGuard)
-    @Query(() => [HikeDTO])
+    @Query(() => HikeConnectionDTO)
     async getHikeAround(
         @Args('lat') lat: number,
         @Args('lon') lon: number,
         @Args('distance', { description: 'Distance in kilometers', defaultValue: 50 })
-        distance: number
-    ): Promise<HikeDTO[]> {
-        return this.service.findByDistance(lat, lon, distance);
+        distance: number,
+        @Args('search', { nullable: true }) search: string,
+        @Args('limit', { type: () => Int }) limit: number,
+        @Args('cursor', { defaultValue: '' }) cursor: string
+    ): Promise<HikeConnectionDTO> {
+        return this.service.findByDistance(lat, lon, distance, limit, cursor, search);
     }
 
     @ResolveField(() => Number)

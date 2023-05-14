@@ -42,6 +42,26 @@ VALUES (
         now()
     );
 
+INSERT INTO
+    user (
+        id,
+        pseudo,
+        password,
+        email,
+        publicKey,
+        credidential,
+        createdAt
+    )
+VALUES (
+        uuid(),
+        'user2',
+        '$2b$10$omYQk0C0C6wKi34usPe1xOgv8Lka3rLjbYHd9V9lm0VPq6auAjSM.',
+        'user2@localhost',
+        'USER02',
+        1,
+        now()
+    );
+
 # Create a category
 INSERT INTO
     category (id, name, createdAt)
@@ -126,6 +146,86 @@ VALUES (
             FROM user
             WHERE
                 pseudo = 'user'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM category
+            LIMIT 1
+        )
+    );
+
+INSERT INTO
+    hike (
+        id,
+        name,
+        distance,
+        elevation,
+        duration,
+        description,
+        difficulty,
+        track,
+        createdAt,
+        latitude,
+        longitude,
+        ownerId,
+        categoryId
+    )
+VALUES (
+        uuid(),
+        'Hike 3',
+        40,
+        500,
+        11,
+        'Hike 3 description',
+        1,
+        'track3.gpx',
+        now(),
+        1.234567,
+        1.234567, (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'admin'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM category
+            LIMIT 1
+        )
+    );
+
+INSERT INTO
+    hike (
+        id,
+        name,
+        distance,
+        elevation,
+        duration,
+        description,
+        difficulty,
+        track,
+        createdAt,
+        latitude,
+        longitude,
+        ownerId,
+        categoryId
+    )
+VALUES (
+        uuid(),
+        'Hike 4',
+        40,
+        500,
+        11,
+        'Hike 4 description',
+        1,
+        'track4.gpx',
+        now(),
+        1.234567,
+        1.234567, (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'admin'
             LIMIT 1
         ), (
             SELECT id

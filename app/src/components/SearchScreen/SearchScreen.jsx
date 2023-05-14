@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { Text, TouchableWithoutFeedback } from 'react-native';
 import { useTheme } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -10,49 +10,154 @@ import { View } from 'react-native';
 import { TextInput } from 'react-native';
 import { IconComp } from '../Icon/Icon';
 
-export default function Search({ route, navigation }) {
-    const { colors } = useTheme();
-    const styles = stylesheet(colors);
-
-    const GET_HIKES = gql`
-        query hikes(
-            $filter: HikeFilter
-            $limit: Int
-            $cursor: ConnectionCursor
+const GET_HIKES_ARROUND_ME = gql`
+    query hikes($limit: Int!, $cursor: String, $search: String) {
+        hikes: getHikeAround(
+            lon: 1
+            lat: 1
+            distance: 69
+            limit: $limit
+            cursor: $cursor
+            search: $search
         ) {
-            hikes(filter: $filter, paging: { first: $limit, after: $cursor }) {
-                edges {
-                    node {
-                        id
-                        name
-                    }
-                }
-                pageInfo {
-                    hasNextPage
-                    endCursor
+            edges {
+                node {
+                    id
                 }
             }
+            pageInfo {
+                startCursor
+                endCursor
+                hasNextPage
+                hasPreviousPage
+            }
         }
-    `;
+    }
+`;
 
-    const { data, loading, fetchMore } = useQuery(GET_HIKES, {
+const GET_HIKES = gql`
+    query hikes($filter: HikeFilter, $limit: Int, $cursor: ConnectionCursor) {
+        hikes(filter: $filter, paging: { first: $limit, after: $cursor }) {
+            edges {
+                node {
+                    id
+                    name
+                }
+            }
+            pageInfo {
+                hasNextPage
+                endCursor
+            }
+        }
+    }
+`;
+
+const QUERIES_CONFIG = (category, search, cursor, limit) => {
+    if (category === 'Around you') {
+        return {
+            query: GET_HIKES_ARROUND_ME,
+            variables: {
+                limit: 2,
+                cursor: cursor,
+            },
+            variablesSearch: {
+                search: search.split(' ').join('%') + '%',
+                limit: 2,
+                cursor: cursor,
+            },
+        };
+    }
+    if (category === 'Added this month') {
+        const today = new Date();
+        const thismonth = new Date(
+            today.getFullYear(),
+            today.getMonth() - 1,
+            1
+        );
+        return {
+            query: GET_HIKES,
+            variables: {
+                filter: {
+                    createdAt: {
+                        lt: thismonth,
+                    },
+                },
+                limit: limit,
+                cursor: cursor,
+            },
+            variablesSearch: {
+                filter: {
+                    name: {
+                        like: search.split(' ').join('%') + '%',
+                    },
+                    createdAt: {
+                        lt: thismonth,
+                    },
+                },
+                limit: limit,
+                cursor: cursor,
+            },
+        };
+    }
+    return {
+        query: GET_HIKES,
         variables: {
             filter: {
                 category: {
                     name: {
-                        eq: route.params?.category,
+                        eq: category,
                     },
                 },
             },
-            limit: 2,
-            cursor: null,
+            limit: limit,
+            cursor: cursor,
         },
+        variablesSearch: {
+            filter: {
+                name: {
+                    like: search.split(' ').join('%') + '%',
+                },
+                category: {
+                    name: {
+                        eq: category,
+                    },
+                },
+            },
+            limit: limit,
+            cursor: cursor,
+        },
+    };
+};
+
+export default function SearchScreen({ route, navigation }) {
+    const { colors } = useTheme();
+    const styles = stylesheet(colors);
+
+    const searchBarRef = useRef(null);
+
+    const limitByPage = 2;
+
+    const CONFIG = QUERIES_CONFIG(route.params?.category, '', '', limitByPage);
+
+    const { data, loading, fetchMore, refetch } = useQuery(CONFIG.query, {
+        variables: CONFIG.variables,
     });
 
     const nodes = data?.hikes?.edges.map((hike) => hike.node);
 
     function removeFilter() {
         route.params?.category && navigation.navigate('Search');
+        searchBarRef.current.clear();
+    }
+
+    function handleSearch(text) {
+        const CONFIG = QUERIES_CONFIG(
+            route.params?.category,
+            text,
+            '',
+            limitByPage
+        );
+        refetch(CONFIG.variablesSearch);
     }
 
     let onEndReachedCalledDuringMomentum = false;
@@ -82,9 +187,10 @@ export default function Search({ route, navigation }) {
                                 autoCapitalize="none"
                                 placeholderTextColor={colors.border}
                                 style={[styles.textInput, { width: '90%' }]}
-                                onSubmitEditing={() => {
-                                    console.log('search');
-                                }}
+                                onSubmitEditing={(e) =>
+                                    handleSearch(e.nativeEvent.text)
+                                }
+                                ref={searchBarRef}
                             />
                             <IconComp
                                 color={colors.border}

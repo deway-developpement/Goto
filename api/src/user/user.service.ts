@@ -7,6 +7,7 @@ import { TypeOrmQueryService } from '@nestjs-query/query-typeorm';
 import { UserInput } from './interfaces/user.input';
 import { QueryService } from '@nestjs-query/core';
 import { AuthType } from '../auth/interface/auth.type';
+import { UserDTO } from './interfaces/user.dto';
 
 @QueryService(UserEntity)
 export class UserService extends TypeOrmQueryService<UserEntity> {
@@ -72,28 +73,32 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
         if (id === friendId) {
             throw new BadRequestException('You can not add yourself as a friend');
         }
-        const user = await this.userRepository.findOne({ where: { id } });
-        if (!user.friends) {
-            user.friends = [];
-        }
         const friend = await this.userRepository.findOne({ where: { id: friendId } });
         if (!friend) {
             throw new BadRequestException('Friend not found');
         }
-        user.friends.push(friend);
-        return await this.userRepository.save(user);
+        try {
+            await this.addRelations('friends', id, [friend.id]);
+        } catch {
+            throw new BadRequestException('Friend already added');
+        }
+        return await this.findById(id);
     }
 
     async removeFriend(id: string, friendId: string): Promise<UserEntity> {
-        const user = await this.userRepository.findOne({ where: { id } });
-        if (!user.friends) {
-            user.friends = [];
-        }
-        const friend = await this.userRepository.findOne({ where: { id: friendId } });
-        if (!friend || !user.friends.find((f) => f.id === friend?.id)) {
+        const user = await this.findById(id);
+        const filter = {
+            filter: {
+                id: {
+                    eq: friendId,
+                },
+            },
+        };
+        const relation = await this.findRelation(UserDTO, 'friends', user, filter);
+        if (!relation) {
             throw new BadRequestException('Friend not found');
         }
-        user.friends = user.friends.filter((f) => f.id !== friend.id);
-        return await this.userRepository.save(user);
+        await this.removeRelations('friends', id, [friendId]);
+        return await this.findById(id);
     }
 }

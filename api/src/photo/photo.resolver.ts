@@ -28,12 +28,15 @@ export class PhotoResolver {
         return this.service.create(query);
     }
 
-    // @UseGuards(GqlAuthGuard)
-    // @Mutation(() => PhotoDTO)
-    // async removePhoto(@Args('id') id: string, @CurrentUser() user: UserDTO): Promise<PhotoDTO> {
-    //     if (user.credidential < 2) {
-    //         throw new UnauthorizedException();
-    //     }
-    //     return this.service.remove(id);
-    // }
+    @UseGuards(GqlAuthGuard)
+    @Mutation(() => PhotoDTO)
+    async changeAvatar(
+        @Args('input') query: PhotoInput,
+        @CurrentUser() user: UserDTO
+    ): Promise<PhotoDTO> {
+        if (query.objType !== ObjType.USER || query.objId !== user.id) {
+            throw new UnauthorizedException();
+        }
+        return this.service.changeAvatar(query, user.id);
+    }
 }
