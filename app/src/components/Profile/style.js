@@ -19,6 +19,24 @@ const stylesheet = (colors) =>
             marginLeft: 2,
             marginBottom: 14,
         },
+        textInputContainer: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            borderColor: colors.backgroundTextInput,
+            borderRadius: 6,
+            borderWidth: 1,
+            backgroundColor: colors.backgroundTextInput,
+            paddingHorizontal: 16,
+            height: 44,
+        },
+        textInput: {
+            height: 40,
+            color: colors.text,
+            fontSize: 14,
+            fontWeight: '400',
+            width: '90%',
+        },
         textSettings: {
             marginTop: 7.5,
             fontSize: 14,
@@ -47,6 +65,14 @@ const stylesheet = (colors) =>
             alignSelf: 'center',
             marginTop: 12,
             marginBottom: 12,
+        },
+        smallpseudo: {
+            fontSize: 14,
+            fontWeight: '500',
+            color: colors.link,
+            alignSelf: 'center',
+            marginBottom: 12,
+            marginTop: 4,
         },
         btnContainer: {
             justifyContent: 'center',
@@ -90,7 +116,7 @@ const stylesheet = (colors) =>
             backgroundColor: colors.backgroundTextInput,
             borderRadius: 12,
             padding: 30,
-            marginBottom: 46,
+            marginBottom: 26,
         },
         statLabel: {
             fontSize: 12,

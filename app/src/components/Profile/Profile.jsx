@@ -11,6 +11,7 @@ import {
     Pressable,
     ScrollView,
     TouchableWithoutFeedback,
+    TextInput,
 } from 'react-native';
 import { Button } from 'react-native-elements';
 import { gql, useQuery, useApolloClient } from '@apollo/client';
@@ -247,7 +248,7 @@ function SettingsModal({ setModalVisible, reload }) {
                     style={{
                         flexDirection: 'row',
                         alignItems: 'center',
-                        marginBottom: 10,
+                        marginBottom: 16,
                     }}
                 >
                     <Icon
@@ -336,14 +337,36 @@ function Stats({ count, distance, duration, elevation }) {
     );
 }
 
-function Historic({ hikes }) {
+function HikeCard({ hike }) {
     const navigation = useNavigation();
-    const { colors } = useTheme();
-    const styles = stylesheet(colors);
 
     function handleClickHike(hikeId) {
         navigation.navigate('FocusHike', { hikeId });
     }
+
+    return (
+        <TouchableWithoutFeedback onPress={() => handleClickHike(hike.id)}>
+            <View style={{ marginRight: 25 }}>
+                <Image
+                    source={{
+                        uri: `https://deway.fr/goto-api/files/photos/${hike.photos[0].filename}`,
+                    }}
+                    style={{
+                        height: 150,
+                        width: 190,
+                        borderTopRightRadius: 12,
+                        borderTopLeftRadius: 12,
+                    }}
+                />
+                <HikeInfos hike={hike} inProfile={true} />
+            </View>
+        </TouchableWithoutFeedback>
+    );
+}
+
+function Historic({ hikes }) {
+    const { colors } = useTheme();
+    const styles = stylesheet(colors);
 
     if (hikes.length === 0) {
         return (
@@ -351,7 +374,7 @@ function Historic({ hikes }) {
                 <Text style={styles.textContent}>Historic of my hikes</Text>
                 <View style={styles.statContainer}>
                     <Text style={[styles.statNumber, { marginBottom: 10 }]}>
-                        No hikes for this month
+                        You haven{"'"}t done any hike yet
                     </Text>
                 </View>
             </View>
@@ -361,26 +384,16 @@ function Historic({ hikes }) {
     return (
         <View style={{ marginTop: 22 }}>
             <Text style={styles.textContent}>Historic of my hikes</Text>
-            <ScrollView horizontal={true}>
-                <TouchableWithoutFeedback
-                    onPress={() => handleClickHike(hikes[0].hike.id)}
-                >
-                    <View>
-                        <Image
-                            source={{
-                                uri: `https://deway.fr/goto-api/files/photos/${hikes[0].hike.photos[0].filename}`,
-                            }}
-                            style={{
-                                height: 150,
-                                width: 190,
-                                borderTopRightRadius: 12,
-                                borderTopLeftRadius: 12,
-                            }}
-                        />
-                        <HikeInfos hike={hikes[0].hike} inProfile={true} />
-                    </View>
-                </TouchableWithoutFeedback>
-            </ScrollView>
+            <FlatList
+                data={hikes}
+                style={{ marginBottom: 26 }}
+                renderItem={({ item }) => (
+                    <HikeCard hike={item.hike} key={item.id} />
+                )}
+                keyExtractor={(item) => item.id}
+                horizontal={true}
+                showsHorizontalScrollIndicator={false}
+            />
         </View>
     );
 }
@@ -390,23 +403,28 @@ function FriendCard({ friend }) {
     const styles = stylesheet(colors);
 
     return (
-        <View style={{ backgroundColor: '#000' }}>
-            <Image
-                source={{
-                    uri: `https://deway.fr/goto-api/files/photos/${friend.photo}`,
-                }}
-                style={{
-                    height: 50,
-                    width: 50,
-                    borderRadius: 50,
-                    marginRight: 10,
-                }}
-            />
+        <View
+            style={{
+                marginBottom: 64,
+                flexDirection: 'column',
+                alignItems: 'center',
+                marginRight: 16,
+            }}
+        >
+            <View style={[styles.avatarContainer, { width: 56, height: 56 }]}>
+                <Image
+                    source={
+                        friend.avatar
+                            ? {
+                                  uri: `https://deway.fr/goto-api/files/photos/${friend.avatar.filename}`,
+                              }
+                            : require('../../../assets/images/default_pp.jpeg')
+                    }
+                    style={[styles.avatar, { width: 54, height: 54 }]}
+                />
+            </View>
             <View style={{ flexDirection: 'column' }}>
-                <Text style={styles.friendName}>{friend.name}</Text>
-                <Text style={styles.friendHikes}>
-                    {friend.hikes} hikes together
-                </Text>
+                <Text style={styles.smallpseudo}>{friend.pseudo}</Text>
             </View>
         </View>
     );
@@ -418,11 +436,11 @@ function Friends({ friends }) {
 
     if (friends.length === 0) {
         return (
-            <View style={{ marginTop: 22, marginBottom: 58 }}>
+            <View style={{ marginTop: 22, marginBottom: 86 }}>
                 <Text style={styles.textContent}>My friends</Text>
                 <View style={styles.statContainer}>
                     <Text style={[styles.statNumber, { marginBottom: 10 }]}>
-                        You don{'\''}t have any friends yet
+                        You haven{"'"}t added any friend yet
                     </Text>
                 </View>
             </View>
@@ -432,11 +450,39 @@ function Friends({ friends }) {
     return (
         <View style={{ marginTop: 22, marginBottom: 58 }}>
             <Text style={styles.textContent}>My friends</Text>
+            {friends.length !== 0 ? (
+                <View style={[styles.textInputContainer, { marginBottom: 24 }]}>
+                    <TextInput
+                        style={styles.textInput}
+                        placeholder="Search"
+                        placeholderTextColor={colors.border}
+                        onChangeText={(text) => console.log(text)}
+                    />
+                    <Icon name="search" size={15} color={colors.border} />
+                </View>
+            ) : null}
             <FlatList
                 data={friends}
                 renderItem={({ item }) => <FriendCard friend={item} />}
                 style={styles.friendsContainer}
                 horizontal={true}
+                keyExtractor={(item) => item.id}
+                showsHorizontalScrollIndicator={false}
+                ListEmptyComponent={() => (
+                    <View style={{ marginTop: 22, marginBottom: 58 }}>
+                        <Text style={styles.textContent}>My friends</Text>
+                        <View style={styles.statContainer}>
+                            <Text
+                                style={[
+                                    styles.statNumber,
+                                    { marginBottom: 10 },
+                                ]}
+                            >
+                                You don{"'"}t have any friends yet
+                            </Text>
+                        </View>
+                    </View>
+                )}
             />
         </View>
     );
@@ -452,7 +498,7 @@ export default function ProfileScreen() {
     });
     const [modalVisible, setModalVisible] = useState(modalActive.None);
     const today = new Date();
-    const lastMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+    const lastMonth = new Date(today.getFullYear(), today.getMonth(), 1);
 
     const {
         data: profil,
@@ -522,6 +568,50 @@ export default function ProfileScreen() {
         }
     );
 
+    const {
+        data: performances,
+        loading: loadingPerformances,
+        refetch: refetchPerformances,
+    } = useQuery(
+        gql`
+            query whoami(
+                $field: PerformanceSortFields!
+                $direction: SortDirection!
+            ) {
+                whoami {
+                    performances(
+                        sorting: { field: $field, direction: $direction }
+                    ) {
+                        hike {
+                            id
+                            name
+                            description
+                            category {
+                                id
+                                name
+                            }
+                            photos {
+                                id
+                                filename
+                            }
+                        }
+                    }
+                }
+            }
+        `,
+        {
+            variables: {
+                field: 'date',
+                direction: 'DESC',
+            },
+        }
+    );
+
+    function refetchAll() {
+        refetchProfile();
+        refetchPerformances();
+    }
+
     return (
         <KeyboardAvoidingView
             style={[
@@ -565,7 +655,7 @@ export default function ProfileScreen() {
                             </Pressable>
                         </View>
                         {(() => {
-                            if (loadingProfile) {
+                            if (loadingProfile || loadingPerformances) {
                                 return (
                                     <ActivityIndicator
                                         size="large"
@@ -586,8 +676,8 @@ export default function ProfileScreen() {
                                                     source={
                                                         profil.whoami.avatar
                                                             ? {
-                                                                uri: `https://deway.fr/goto-api/files/photos/${profil.whoami.avatar.filename}`,
-                                                            }
+                                                                  uri: `https://deway.fr/goto-api/files/photos/${profil.whoami.avatar.filename}`,
+                                                              }
                                                             : require('../../../assets/images/default_pp.jpeg')
                                                     }
                                                 />
@@ -633,7 +723,7 @@ export default function ProfileScreen() {
                                                         setModalVisible
                                                     }
                                                     profil={profil}
-                                                    reload={refetchProfile}
+                                                    reload={refetchAll}
                                                 />
                                             </Modal>
                                             <Modal
@@ -653,7 +743,7 @@ export default function ProfileScreen() {
                                                     setModalVisible={
                                                         setModalVisible
                                                     }
-                                                    reload={refetchProfile}
+                                                    reload={refetchAll}
                                                 />
                                             </Modal>
                                         </View>
@@ -692,7 +782,8 @@ export default function ProfileScreen() {
                                                         {/* Historic Part */}
                                                         <Historic
                                                             hikes={
-                                                                profil.whoami
+                                                                performances
+                                                                    .whoami
                                                                     .performances
                                                             }
                                                         />

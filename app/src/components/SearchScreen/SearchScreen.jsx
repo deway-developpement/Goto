@@ -182,7 +182,7 @@ export default function SearchScreen({ route, navigation }) {
                             ]}
                         >
                             <TextInput
-                                placeholder="search"
+                                placeholder="Search"
                                 autoCorrect={false}
                                 autoCapitalize="none"
                                 placeholderTextColor={colors.border}
