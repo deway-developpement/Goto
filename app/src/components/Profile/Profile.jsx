@@ -36,8 +36,8 @@ function ProfileModal({ setModalVisible, profil, reload }) {
         None: 0,
         Settings: 1,
         ModifyProfile: 2,
+        ModifyPseudo: 3,
     });
-
     const pickImage = async (update) => {
         if (status !== 'granted') {
             const { status } = await requestPermission();
@@ -135,7 +135,7 @@ function ProfileModal({ setModalVisible, profil, reload }) {
                 </Pressable>
                 <Pressable
                     onPress={() => {
-                        Alert.alert('Not yet implemented', 'Coming soon !');
+                        setModalVisible(modalActive.ModifyPseudo);
                     }}
                     style={{
                         flexDirection: 'row',
@@ -152,6 +152,79 @@ function ProfileModal({ setModalVisible, profil, reload }) {
                 </Pressable>
             </View>
         </View>
+    );
+}
+
+function PseudoModal({ setModalVisible, profil, reload }) {
+    const { colors } = useTheme();
+    const styles = stylesheet(colors);
+    const [pseudo, setPseudo] = useState(profil.whoami.pseudo);
+    const client = useApolloClient();
+    const modalActive = Object.freeze({
+        None: 0,
+        Settings: 1,
+        ModifyProfile: 2,
+        ModifyPseudo: 3,
+    });
+
+    function changePseudo(pseudo) {
+        if (pseudo == '') {
+            Alert.alert('Error', 'Please enter a pseudo');
+            return;
+        }
+        client.mutate({
+            mutation: gql`
+                mutation updateUser($id: String!, $pseudo: String!) {
+                    updateUser(id: $id, input: { pseudo: $pseudo }) {
+                        pseudo
+                    }
+                }
+            `,
+            variables: {
+                id: profil.whoami.id,
+                pseudo: pseudo,
+            },
+            errorPolicy: 'all',
+        });
+        reload();
+        setModalVisible(modalActive.None);
+    }
+
+    return (
+        <KeyboardDismissView>
+            <View style={styles.modalView}>
+                <View
+                    style={{
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
+                    }}
+                >
+                    <Text style={styles.modalText}>Change pseudo</Text>
+                    <Icon
+                        name="cross"
+                        size={17}
+                        style={styles.closeIcon}
+                        onPress={() => {
+                            setModalVisible(modalActive.ModifyProfile);
+                        }}
+                    />
+                </View>
+                <View>
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Enter your new pseudo"
+                        onChangeText={(text) => setPseudo(text)}
+                        value={pseudo}
+                    />
+                    <Pressable
+                        style={{ marginBottom: 44 }}
+                        onPress={() => changePseudo(pseudo)}
+                    >
+                        <Text style={styles.buttonText}>Change</Text>
+                    </Pressable>
+                </View>
+            </View>
+        </KeyboardDismissView>
     );
 }
 
@@ -388,9 +461,9 @@ function Historic({ hikes }) {
                 data={hikes}
                 style={{ marginBottom: 26 }}
                 renderItem={({ item }) => (
-                    <HikeCard hike={item.hike} key={item.id} />
+                    <HikeCard hike={item.hike} key={item.hike.id} />
                 )}
-                keyExtractor={(item) => item.id}
+                keyExtractor={(item) => item.hike.id}
                 horizontal={true}
                 showsHorizontalScrollIndicator={false}
             />
@@ -495,6 +568,7 @@ export default function ProfileScreen() {
         None: 0,
         Settings: 1,
         ModifyProfile: 2,
+        ModifyPseudo: 3,
     });
     const [modalVisible, setModalVisible] = useState(modalActive.None);
     const today = new Date();
@@ -568,50 +642,6 @@ export default function ProfileScreen() {
         }
     );
 
-    const {
-        data: performances,
-        loading: loadingPerformances,
-        refetch: refetchPerformances,
-    } = useQuery(
-        gql`
-            query whoami(
-                $field: PerformanceSortFields!
-                $direction: SortDirection!
-            ) {
-                whoami {
-                    performances(
-                        sorting: { field: $field, direction: $direction }
-                    ) {
-                        hike {
-                            id
-                            name
-                            description
-                            category {
-                                id
-                                name
-                            }
-                            photos {
-                                id
-                                filename
-                            }
-                        }
-                    }
-                }
-            }
-        `,
-        {
-            variables: {
-                field: 'date',
-                direction: 'DESC',
-            },
-        }
-    );
-
-    function refetchAll() {
-        refetchProfile();
-        refetchPerformances();
-    }
-
     return (
         <KeyboardAvoidingView
             style={[
@@ -655,7 +685,7 @@ export default function ProfileScreen() {
                             </Pressable>
                         </View>
                         {(() => {
-                            if (loadingProfile || loadingPerformances) {
+                            if (loadingProfile) {
                                 return (
                                     <ActivityIndicator
                                         size="large"
@@ -723,7 +753,7 @@ export default function ProfileScreen() {
                                                         setModalVisible
                                                     }
                                                     profil={profil}
-                                                    reload={refetchAll}
+                                                    reload={refetchProfile}
                                                 />
                                             </Modal>
                                             <Modal
@@ -743,7 +773,28 @@ export default function ProfileScreen() {
                                                     setModalVisible={
                                                         setModalVisible
                                                     }
-                                                    reload={refetchAll}
+                                                    reload={refetchProfile}
+                                                />
+                                            </Modal>
+                                            <Modal
+                                                animationType="slide"
+                                                transparent={true}
+                                                visible={
+                                                    modalVisible ==
+                                                    modalActive.ModifyPseudo
+                                                }
+                                                onRequestClose={() => {
+                                                    setModalVisible(
+                                                        modalActive.ModifyProfile
+                                                    );
+                                                }}
+                                            >
+                                                <PseudoModal
+                                                    setModalVisible={
+                                                        setModalVisible
+                                                    }
+                                                    profil={profil}
+                                                    reload={refetchProfile}
                                                 />
                                             </Modal>
                                         </View>
@@ -782,8 +833,7 @@ export default function ProfileScreen() {
                                                         {/* Historic Part */}
                                                         <Historic
                                                             hikes={
-                                                                performances
-                                                                    .whoami
+                                                                profil.whoami
                                                                     .performances
                                                             }
                                                         />

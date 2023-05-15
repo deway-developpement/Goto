@@ -43,6 +43,23 @@ const stylesheet = (colors) =>
             fontWeight: '500',
             color: colors.link,
         },
+        input: {
+            height: 40,
+            color: colors.logo,
+            fontSize: 14,
+            fontWeight: '400',
+            width: '90%',
+            borderColor: colors.accentuated,
+            borderWidth: 1,
+            borderRadius: 6,
+            paddingHorizontal: 8,
+            marginBottom: 16,
+        },
+        buttonText: {
+            fontSize: 14,
+            fontWeight: '500',
+            color: colors.link,
+        },
         avatarContainer: {
             backgroundColor: colors.backgroundTextInput,
             borderRadius: 50,
