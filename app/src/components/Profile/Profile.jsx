@@ -209,19 +209,48 @@ function PseudoModal({ setModalVisible, profil, reload }) {
                         }}
                     />
                 </View>
-                <View>
+                <View
+                // style={{ display: 'flex', flexDirection: 'column-reverse' }}
+                >
                     <TextInput
                         style={styles.input}
                         placeholder="Enter your new pseudo"
                         onChangeText={(text) => setPseudo(text)}
                         value={pseudo}
                     />
-                    <Pressable
-                        style={{ marginBottom: 44 }}
-                        onPress={() => changePseudo(pseudo)}
+                    <View
+                        style={{
+                            display: 'flex',
+                            flexDirection: 'row',
+                            justifyContent: 'space-around',
+                            paddingTop: 10,
+                        }}
                     >
-                        <Text style={styles.buttonText}>Change</Text>
-                    </Pressable>
+                        <Pressable
+                            style={{
+                                marginBottom: 10,
+                                display: 'flex',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                            }}
+                            onPress={() => changePseudo(pseudo)}
+                        >
+                            <Text style={styles.buttonText}>Change</Text>
+                        </Pressable>
+                        <Pressable
+                            style={{
+                                marginBottom: 10,
+                                display: 'flex',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                            }}
+                            onPress={() => {
+                                setModalVisible(modalActive.ModifyProfile);
+                            }}
+                        >
+                            <Text style={styles.buttonText}>Cancel</Text>
+                        </Pressable>
+                    </View>
                 </View>
             </View>
         </KeyboardDismissView>

@@ -58,7 +58,11 @@ const stylesheet = (colors) =>
         buttonText: {
             fontSize: 14,
             fontWeight: '500',
-            color: colors.link,
+            backgroundColor: colors.link,
+            color: colors.label,
+            paddingHorizontal: 16,
+            paddingVertical: 8,
+            borderRadius: 6,
         },
         avatarContainer: {
             backgroundColor: colors.backgroundTextInput,
@@ -101,7 +105,7 @@ const stylesheet = (colors) =>
             borderRadius: 6,
         },
         modalView: {
-            marginHorizontal: 45,
+            marginHorizontal: '10%',
             marginTop: 160,
             marginBottom: 284,
             borderRadius: 12,
@@ -109,6 +113,9 @@ const stylesheet = (colors) =>
             paddingTop: 16,
             paddingBottom: 30,
             backgroundColor: colors.backgroundTextInput,
+            flex: 1,
+            width: '80%',
+            position: 'absolute',
         },
         modalText: {
             fontSize: 28,
