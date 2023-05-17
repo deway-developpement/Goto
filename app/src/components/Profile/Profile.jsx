@@ -38,73 +38,62 @@ export default function ProfileScreen() {
     const today = new Date();
     const lastMonth = new Date(today.getFullYear(), today.getMonth(), 1);
 
-    const {
-        data: profil,
-        loading: loadingProfile,
-        refetch: refetchProfile,
-    } = useQuery(
-        gql`
-            query whoami(
-                $lastMonth: DateTime!
-                $field: PerformanceSortFields!
-                $direction: SortDirection!
-            ) {
-                whoami {
+    const WHOAMI = gql`
+        query whoami($lastMonth: DateTime!) {
+            whoami {
+                id
+                pseudo
+                email
+                publicKey
+                avatar {
+                    filename
+                }
+                friends(sorting: { field: pseudo, direction: ASC }) {
                     id
                     pseudo
-                    email
                     publicKey
                     avatar {
                         filename
                     }
-                    friends {
+                }
+                performances(sorting: { field: date, direction: DESC }) {
+                    hike {
                         id
-                        pseudo
-                        publicKey
-                        avatar {
+                        name
+                        description
+                        category {
+                            id
+                            name
+                        }
+                        photos {
+                            id
                             filename
                         }
                     }
-                    performances(
-                        sorting: { field: $field, direction: $direction }
-                    ) {
-                        hike {
-                            id
-                            name
-                            description
-                            category {
-                                id
-                                name
-                            }
-                            photos {
-                                id
-                                filename
-                            }
-                        }
+                }
+                performancesAggregate(filter: { date: { gte: $lastMonth } }) {
+                    count {
+                        id
                     }
-                    performancesAggregate(
-                        filter: { date: { gte: $lastMonth } }
-                    ) {
-                        count {
-                            id
-                        }
-                        sum {
-                            duration
-                            distance
-                            elevation
-                        }
+                    sum {
+                        duration
+                        distance
+                        elevation
                     }
                 }
             }
-        `,
-        {
-            variables: {
-                lastMonth: lastMonth.toISOString(),
-                field: 'date',
-                direction: 'DESC',
-            },
         }
-    );
+    `;
+
+    const {
+        data: profil,
+        loading: loadingProfile,
+        refetch: refetchProfile,
+    } = useQuery(WHOAMI, {
+        variables: {
+            lastMonth: lastMonth.toISOString(),
+        },
+    });
 
     return (
         <KeyboardAvoidingView
@@ -134,7 +123,7 @@ export default function ProfileScreen() {
                                     setModalVisible(modalActive.Settings)
                                 }
                                 style={{
-                                    width: 55,
+                                    width: 'auto',
                                     alignItems: 'center',
                                 }}
                             >
@@ -160,7 +149,6 @@ export default function ProfileScreen() {
                             } else {
                                 return (
                                     <>
-                                        {/* Avatar Part */}
                                         <View style={{ marginTop: 12 }}>
                                             <Modal
                                                 animationType="slide"
@@ -240,7 +228,7 @@ export default function ProfileScreen() {
                                                             <Image
                                                                 style={
                                                                     styles.avatar
-                                                                } //TODO Default pp
+                                                                }
                                                                 source={
                                                                     profil
                                                                         .whoami

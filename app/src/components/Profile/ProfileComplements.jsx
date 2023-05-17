@@ -7,8 +7,10 @@ import {
     Alert,
     TouchableWithoutFeedback,
     Image,
+    ScrollView,
 } from 'react-native';
 import { gql, useApolloClient } from '@apollo/client';
+import KeyboardDismissView from '../KeyboardDismissView/KeyboardDismissView';
 import stylesheet from './style';
 import { useTheme } from '@react-navigation/native';
 import { AuthContext } from '../../providers/AuthContext';
@@ -159,6 +161,13 @@ function PseudoModal({ setModalVisible, profil, reload }) {
         ModifyProfile: 2,
         ModifyPseudo: 3,
     });
+    const UPDATE_USER = gql`
+        mutation updateUser($id: String!, $pseudo: String!) {
+            updateUser(id: $id, input: { pseudo: $pseudo }) {
+                pseudo
+            }
+        }
+    `;
 
     function changePseudo(pseudo) {
         if (pseudo == '') {
@@ -166,26 +175,23 @@ function PseudoModal({ setModalVisible, profil, reload }) {
             return;
         }
         client.mutate({
-            mutation: gql`
-                mutation updateUser($id: String!, $pseudo: String!) {
-                    updateUser(id: $id, input: { pseudo: $pseudo }) {
-                        pseudo
-                    }
-                }
-            `,
+            mutation: UPDATE_USER,
             variables: {
                 id: profil.whoami.id,
                 pseudo: pseudo,
             },
             errorPolicy: 'all',
         });
-        reload();
         setModalVisible(modalActive.None);
+        reload();
     }
 
     return (
         <KeyboardDismissView>
-            <View style={styles.modalView}>
+            <ScrollView
+                style={styles.modalView}
+                keyboardShouldPersistTaps={'handled'}
+            >
                 <View
                     style={{
                         flexDirection: 'row',
@@ -202,13 +208,13 @@ function PseudoModal({ setModalVisible, profil, reload }) {
                         }}
                     />
                 </View>
-                <View
-                // style={{ display: 'flex', flexDirection: 'column-reverse' }}
-                >
+                <View>
                     <TextInput
                         style={styles.input}
                         placeholder="Enter your new pseudo"
                         onChangeText={(text) => setPseudo(text)}
+                        onSubmitEditing={() => changePseudo(pseudo)}
+                        autoFocus={true}
                         value={pseudo}
                     />
                     <View
@@ -220,17 +226,7 @@ function PseudoModal({ setModalVisible, profil, reload }) {
                         }}
                     >
                         <Pressable
-                            style={{
-                                marginBottom: 10,
-                                display: 'flex',
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                            }}
-                            onPress={() => changePseudo(pseudo)}
-                        >
-                            <Text style={styles.buttonText}>Change</Text>
-                        </Pressable>
-                        <Pressable
+                            // title={'Cancel'}
                             style={{
                                 marginBottom: 10,
                                 display: 'flex',
@@ -243,9 +239,20 @@ function PseudoModal({ setModalVisible, profil, reload }) {
                         >
                             <Text style={styles.buttonText}>Cancel</Text>
                         </Pressable>
+                        <Pressable
+                            style={{
+                                marginBottom: 10,
+                                display: 'flex',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                            }}
+                            onPress={() => changePseudo(pseudo)}
+                        >
+                            <Text style={styles.buttonText}>Change</Text>
+                        </Pressable>
                     </View>
                 </View>
-            </View>
+            </ScrollView>
         </KeyboardDismissView>
     );
 }
@@ -459,14 +466,17 @@ function HikeCard({ hike }) {
     );
 }
 
-function Historic({ hikes }) {
+function Historic({ hikes, FriendPseudo = '' }) {
     const { colors } = useTheme();
     const styles = stylesheet(colors);
 
     if (hikes.length === 0) {
         return (
             <View style={{ marginTop: 22 }}>
-                <Text style={styles.textContent}>Historic of my hikes</Text>
+                <Text style={styles.textContent}>
+                    Historic of{' '}
+                    {FriendPseudo == '' ? 'my' : FriendPseudo + '\'s'} hikes
+                </Text>
                 <View style={styles.statContainer}>
                     <Text style={[styles.statNumber, { marginBottom: 10 }]}>
                         You haven{'\''}t done any hike yet
@@ -478,7 +488,10 @@ function Historic({ hikes }) {
 
     return (
         <View style={{ marginTop: 22 }}>
-            <Text style={styles.textContent}>Historic of my hikes</Text>
+            <Text style={styles.textContent}>
+                Historic of {FriendPseudo == '' ? 'my' : FriendPseudo + '\'s'}{' '}
+                hikes
+            </Text>
             <FlatList
                 data={hikes}
                 style={{ marginBottom: 26 }}
@@ -496,9 +509,17 @@ function Historic({ hikes }) {
 function FriendCard({ friend }) {
     const { colors } = useTheme();
     const styles = stylesheet(colors);
+    const navigation = useNavigation();
+
+    function handleClick({ friendId }) {
+        navigation.navigate('FocusFriend', { friendId });
+    }
 
     return (
-        <View
+        <Pressable
+            onPress={() => {
+                handleClick({ friendId: friend.id });
+            }}
             style={{
                 marginBottom: 64,
                 flexDirection: 'column',
@@ -521,7 +542,7 @@ function FriendCard({ friend }) {
             <View style={{ flexDirection: 'column' }}>
                 <Text style={styles.smallpseudo}>{friend.pseudo}</Text>
             </View>
-        </View>
+        </Pressable>
     );
 }
 
@@ -529,33 +550,18 @@ function Friends({ friends }) {
     const { colors } = useTheme();
     const styles = stylesheet(colors);
 
-    if (friends.length === 0) {
-        return (
-            <View style={{ marginTop: 22, marginBottom: 86 }}>
-                <Text style={styles.textContent}>My friends</Text>
-                <View style={styles.statContainer}>
-                    <Text style={[styles.statNumber, { marginBottom: 10 }]}>
-                        You haven{'\''}t added any friend yet
-                    </Text>
-                </View>
-            </View>
-        );
-    }
-
     return (
         <View style={{ marginTop: 22, marginBottom: 58 }}>
             <Text style={styles.textContent}>My friends</Text>
-            {friends.length !== 0 ? (
-                <View style={[styles.textInputContainer, { marginBottom: 24 }]}>
-                    <TextInput
-                        style={styles.textInput}
-                        placeholder="Search"
-                        placeholderTextColor={colors.border}
-                        onChangeText={(text) => console.log(text)}
-                    />
-                    <Icon name="search" size={15} color={colors.border} />
-                </View>
-            ) : null}
+            <View style={[styles.textInputContainer, { marginBottom: 24 }]}>
+                <TextInput
+                    style={styles.textInput}
+                    placeholder="Search"
+                    placeholderTextColor={colors.border}
+                    onChangeText={(text) => console.log(text)}
+                />
+                <Icon name="search" size={15} color={colors.border} />
+            </View>
             <FlatList
                 data={friends}
                 renderItem={({ item }) => <FriendCard friend={item} />}
@@ -563,21 +569,7 @@ function Friends({ friends }) {
                 horizontal={true}
                 keyExtractor={(item) => item.id}
                 showsHorizontalScrollIndicator={false}
-                ListEmptyComponent={() => (
-                    <View style={{ marginTop: 22, marginBottom: 58 }}>
-                        <Text style={styles.textContent}>My friends</Text>
-                        <View style={styles.statContainer}>
-                            <Text
-                                style={[
-                                    styles.statNumber,
-                                    { marginBottom: 10 },
-                                ]}
-                            >
-                                You don{'\''}t have any friends yet
-                            </Text>
-                        </View>
-                    </View>
-                )}
+                ListEmptyComponent={() => <View style={{ height: 58 }} />}
             />
         </View>
     );
