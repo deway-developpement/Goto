@@ -29,7 +29,6 @@ import { Icon, IconComp } from '../Icon/Icon';
 import Search from '../Search/Search';
 import FocusHikeScreen from '../Hike/FocusHikeScreen';
 import { Slider, Icon as IconThemed, CheckBox } from '@rneui/themed';
-import { check } from 'prettier';
 
 function MapScreen({ route }) {
     const [permission, request] = Location.useForegroundPermissions();
@@ -37,10 +36,11 @@ function MapScreen({ route }) {
     const [errorMsg, setErrorMsg] = useState(null);
     const [isCamera, setIsCamera] = useState(false);
 
-    const [leftImage, setLeftImage] = useState(null);
-    const [topImage, setTopImage] = useState(null);
+    const [leftImage, setLeftImage] = useState(0);
+    const [topImage, setTopImage] = useState(0);
     const [widthImage, setWidthImage] = useState(0);
     const [heightImage, setHeightImage] = useState(0);
+    const [angleImage, setAngleImage] = useState(0);
 
     const stepWidth=0.01;
     const [minWidth, setMinWidth] = useState(0.001);
@@ -49,6 +49,12 @@ function MapScreen({ route }) {
     const [maxHeight, setMaxHeight] = useState(minWidth+stepWidth);
     const [lastClickPlus, setLastClickPlus] = useState(0);
     const [lastClickMinus, setLastClickMinus] = useState(0);
+    const [minTop, setMinTop] = useState(-0.0005);
+    const [maxTop, setMaxTop] = useState(minTop+stepWidth);
+    const [minLeft, setMinLeft] = useState(-0.0005);
+    const [maxLeft, setMaxLeft] = useState(minLeft+stepWidth);
+    const minAngle=0;
+    const maxAngle=180;
 
     function handlePlus() {
         if(checkWidth){
@@ -60,8 +66,7 @@ function MapScreen({ route }) {
             setMinWidth(prev => prev+step);
             setMaxWidth(prev => prev+step);
             setLastClickPlus(new Date().getTime());
-        }
-        if(checkHeight){
+        } else if(checkHeight){
             let step=stepWidth;
             if (new Date().getTime()-lastClickPlus<500){
                 step*=3;
@@ -69,6 +74,24 @@ function MapScreen({ route }) {
             setHeightImage(prev => prev+step);
             setMinHeight(prev => prev+step);
             setMaxHeight(prev => prev+step);
+            setLastClickPlus(new Date().getTime());
+        } else if (checkTop){
+            let step=stepWidth;
+            if (new Date().getTime()-lastClickPlus<500){
+                step*=3;
+            }
+            setTopImage(prev => prev+step);
+            setMinTop(prev => prev+step);
+            setMaxTop(prev => prev+step);
+            setLastClickPlus(new Date().getTime());
+        } else if (checkLeft){
+            let step=stepWidth;
+            if (new Date().getTime()-lastClickPlus<500){
+                step*=3;
+            }
+            setLeftImage(prev => prev+step);
+            setMinLeft(prev => prev+step);
+            setMaxLeft(prev => prev+step);
             setLastClickPlus(new Date().getTime());
         }
         
@@ -96,6 +119,24 @@ function MapScreen({ route }) {
                 setMaxHeight(prev => prev-step);
                 setLastClickMinus(new Date().getTime());
             }
+        } else if (checkTop){
+            let step=stepWidth;
+            if (new Date().getTime()-lastClickMinus<500 && minTop>stepWidth*3){
+                step*=3;
+            }
+            setTopImage(prev => prev-step);
+            setMinTop(prev => prev-step);
+            setMaxTop(prev => prev-step);
+            setLastClickMinus(new Date().getTime());  
+        } else if (checkLeft){
+            let step=stepWidth;
+            if (new Date().getTime()-lastClickMinus<500 && minLeft>stepWidth*3){
+                step*=3;
+            }
+            setLeftImage(prev => prev-step);
+            setMinLeft(prev => prev-step);
+            setMaxLeft(prev => prev-step);
+            setLastClickMinus(new Date().getTime());  
         }
     }
 
@@ -126,6 +167,12 @@ function MapScreen({ route }) {
             return maxWidth;
         } else if (checkHeight){
             return maxHeight;
+        } else if (checkTop){
+            return maxTop;
+        } else if (checkLeft){
+            return maxLeft;
+        } else if (checkAngle){
+            return maxAngle;
         }
     }
 
@@ -134,6 +181,26 @@ function MapScreen({ route }) {
             return minWidth;
         } else if (checkHeight){
             return minHeight;
+        } else if (checkTop){
+            return minTop;
+        } else if (checkLeft){
+            return minLeft;
+        } else if (checkAngle){
+            return minAngle;
+        }
+    }
+
+    function getValue(){
+        if (checkWidth){
+            return widthImage;
+        } else if (checkHeight){
+            return heightImage;
+        } else if (checkTop){
+            return topImage;
+        } else if (checkLeft){
+            return leftImage;
+        } else if (checkAngle){
+            return angleImage;
         }
     }
 
@@ -142,11 +209,17 @@ function MapScreen({ route }) {
             return setWidthImage;
         } else if (checkHeight){
             return setHeightImage;
+        } else if (checkTop){
+            return setTopImage;
+        } else if (checkLeft){
+            return setLeftImage;
+        } else if (checkAngle){
+            return setAngleImage;
         }
     }
 
     function getStep(){
-        if (checkWidth || checkHeight){
+        if (checkWidth || checkHeight || checkTop || checkLeft){
             return 0.0002;
         }
         return 1;
@@ -193,6 +266,7 @@ function MapScreen({ route }) {
             });
         }
     }, [permission]);
+    console.log(angleImage);
     return (
         <View style={{ width: '100%', height: '100%', flex: 1 }}>
             {(() => {
@@ -223,13 +297,12 @@ function MapScreen({ route }) {
                                 image={image}
                                 styles={styles}
                                 leftImage={leftImage}
-                                setLeftImage={setLeftImage}
                                 topImage={topImage}
-                                setTopImage={setTopImage}
                                 widthImage={widthImage}
                                 setWidthImage={setWidthImage}
                                 heightImage={heightImage}
                                 setHeightImage={setHeightImage}
+                                angleImage={angleImage}
                             />
                             <View
                                 style={[
@@ -287,7 +360,7 @@ function MapScreen({ route }) {
                                 />
                                 { (checkHeight || checkWidth || checkTop || checkLeft || checkAngle) && image!=null && 
                                     <Slider
-                                        value={widthImage}
+                                        value={getValue()}
                                         onValueChange={getOnChangeValue()}
                                         maximumValue={getMaxValue()}
                                         minimumValue={getMinValue()}
@@ -308,7 +381,7 @@ function MapScreen({ route }) {
                                         }}
                                     />
                                 }
-                                { (checkHeight || checkWidth) && image!=null && 
+                                { (checkHeight || checkWidth || checkTop || checkLeft) && image!=null && 
                                     <>
                                         <TouchableWithoutFeedback
                                             onPress={() => handlePlus()}

@@ -3,16 +3,13 @@ import MapView, { Marker, Polyline, Overlay } from 'react-native-maps';
 import { useTheme } from '@react-navigation/native';
 import CONTENTGPX from './gpx';
 import { DOMParser } from 'xmldom';
-import { set } from 'react-native-reanimated';
 
-export default function Map({ location, image, leftImage, setLeftImage, topImage, setTopImage, widthImage, setWidthImage, heightImage, setHeightImage}) {
+export default function Map({ location, image, leftImage, topImage, widthImage, setWidthImage, heightImage, setHeightImage, angleImage}) {
     const { colors } = useTheme();
     let [leftPoints, setLeftPoints] = useState([]);
     let [passedPoints, setPassedPoints] = useState([]);
 
     useEffect(() => {
-        setLeftImage(location?.coords?.longitude);
-        setTopImage(location?.coords?.latitude);
         setWidthImage(0.01);
         setHeightImage(0.01);
         //image.height / image.width) * widthImage
@@ -51,7 +48,13 @@ export default function Map({ location, image, leftImage, setLeftImage, topImage
         setPassedPoints(gpxPathpassedPoints);
         setLeftPoints(gpxPathLeft);
     }
-
+    const y1=parseFloat(location?.coords?.latitude) + topImage*Math.cos(angleImage) + leftImage*Math.sin(angleImage);
+    const x1=parseFloat(location?.coords?.longitude) + leftImage*Math.cos(angleImage) - topImage*Math.sin(angleImage);
+    const y2=parseFloat(location?.coords?.latitude) + (topImage + heightImage)*Math.cos(angleImage) + (leftImage + widthImage)*Math.sin(angleImage);
+    const x2=parseFloat(location?.coords?.longitude) + (leftImage + widthImage)*Math.cos(angleImage) - (topImage + heightImage)*Math.sin(angleImage);
+    
+    console.log(y1, x1, y2, x2);
+    console.log(y1-parseFloat(location?.coords?.latitude), x1-parseFloat(location?.coords?.longitude), y2-parseFloat(location?.coords?.latitude), x2-parseFloat(location?.coords?.longitude));
     return (
         <MapView
             initialRegion={{
@@ -103,16 +106,16 @@ export default function Map({ location, image, leftImage, setLeftImage, topImage
                 <Overlay
                     bounds={[
                         [
-                            topImage,
-                            leftImage,
+                            y1,
+                            x1,
                         ],
                         [
-                            topImage + heightImage,
-                            leftImage + widthImage,
+                            y2,
+                            x2,
                         ],
                     ]}
                     image={{ uri: image.uri }}
-                    opacity={0.5}
+                    opacity={0.8}
                 />
             )}
         </MapView>
