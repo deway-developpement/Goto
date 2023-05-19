@@ -10,7 +10,7 @@ import { View } from 'react-native';
 import { TextInput } from 'react-native';
 import { IconComp } from '../Icon/Icon';
 
-const GET_HIKES_ARROUND_ME = gql`
+const GET_HIKES_AROUND_ME = gql`
     query hikes($limit: Int!, $cursor: String, $search: String) {
         hikes: getHikeAround(
             lon: 1
@@ -55,11 +55,7 @@ const GET_HIKES_POPULAR = gql`
 
 const GET_HIKES_ALREADY_DONE = gql`
     query hikes($limit: Int!, $cursor: String, $search: String) {
-        hikes: getHikeAlreadyDone(
-            limit: $limit
-            cursor: $cursor
-            search: $search
-        ) {
+        hikes: getHikeAlreadyDone(limit: $limit, cursor: $cursor, search: $search) {
             edges {
                 node {
                     id
@@ -91,10 +87,10 @@ const GET_HIKES = gql`
     }
 `;
 
-const QUERIES_CONFIG = (category, search, cursor, limit) => {
+export const QUERIES_CONFIG = (category, search, cursor, limit) => {
     if (category === 'Around you') {
         return {
-            query: GET_HIKES_ARROUND_ME,
+            query: GET_HIKES_AROUND_ME,
             variables: {
                 limit: limit,
                 cursor: cursor,
@@ -108,11 +104,7 @@ const QUERIES_CONFIG = (category, search, cursor, limit) => {
     }
     if (category === 'Added this month') {
         const today = new Date();
-        const thismonth = new Date(
-            today.getFullYear(),
-            today.getMonth() - 1,
-            1
-        );
+        const thismonth = new Date(today.getFullYear(), today.getMonth() - 1, 1);
         return {
             query: GET_HIKES,
             variables: {
@@ -218,12 +210,7 @@ export default function SearchScreen({ route, navigation }) {
     }
 
     function handleSearch(text) {
-        const CONFIG = QUERIES_CONFIG(
-            route.params?.category,
-            text,
-            '',
-            limitByPage
-        );
+        const CONFIG = QUERIES_CONFIG(route.params?.category, text, '', limitByPage);
         refetch(CONFIG.variablesSearch);
     }
 
@@ -237,33 +224,20 @@ export default function SearchScreen({ route, navigation }) {
                 renderItem={({ item }) => <Hike id={item.id} />}
                 keyExtractor={(item) => item.id}
                 showsVerticalScrollIndicator={false}
-                emptyListComponent={
-                    <Text style={styles.textLink}>No hikes</Text>
-                }
+                emptyListComponent={<Text style={styles.textLink}>No hikes</Text>}
                 ListHeaderComponent={
                     <>
-                        <View
-                            style={[
-                                styles.textInputContainer,
-                                { marginTop: 28 },
-                            ]}
-                        >
+                        <View style={[styles.textInputContainer, { marginTop: 28 }]}>
                             <TextInput
                                 placeholder="search"
                                 autoCorrect={false}
                                 autoCapitalize="none"
                                 placeholderTextColor={colors.border}
                                 style={[styles.textInput, { width: '90%' }]}
-                                onSubmitEditing={(e) =>
-                                    handleSearch(e.nativeEvent.text)
-                                }
+                                onSubmitEditing={(e) => handleSearch(e.nativeEvent.text)}
                                 ref={searchBarRef}
                             />
-                            <IconComp
-                                color={colors.border}
-                                name={'search'}
-                                size={24}
-                            />
+                            <IconComp color={colors.border} name={'search'} size={24} />
                         </View>
                         {route?.params?.category && (
                             <>
@@ -280,15 +254,9 @@ export default function SearchScreen({ route, navigation }) {
                                     <Text style={[styles.textHeader]}>
                                         {route?.params?.category}
                                     </Text>
-                                    <TouchableWithoutFeedback
-                                        onPress={() => removeFilter()}
-                                    >
+                                    <TouchableWithoutFeedback onPress={() => removeFilter()}>
                                         <View>
-                                            <IconComp
-                                                color={colors.logo}
-                                                name={'filter'}
-                                                pos={0}
-                                            />
+                                            <IconComp color={colors.logo} name={'filter'} pos={0} />
                                         </View>
                                     </TouchableWithoutFeedback>
                                 </View>
