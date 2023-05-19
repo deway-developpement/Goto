@@ -35,8 +35,7 @@ export default function Category(props) {
                         marginRight: 40,
                         paddingRight: 40,
                         backgroundColor: colors.backgroundTextInput,
-                        borderTopLeftRadius: 12,
-                        borderBottomLeftRadius: 12,
+                        borderRadius: 12,
                     },
                     props.horizontal ? { width: windowWidth * 0.7 } : {},
                 ]}
@@ -65,6 +64,8 @@ export default function Category(props) {
                         justifyContent: 'center',
                         width: windowWidth * 0.5,
                         height: windowWidth * 0.2,
+                        borderBottomRightRadius: 12,
+                        borderTopRightRadius: 12,
                     }}
                 >
                     <Text
