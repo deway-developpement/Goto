@@ -110,20 +110,17 @@ export class HikeService extends TypeOrmQueryService<HikeEntity> {
         const query = await this.repo.manager
             .createQueryBuilder(HikeEntity, 'hike') // select all columns from hikeQuery
             .select(['hike.id'])
-            .where(
-                '6371 * 2 * ASIN(SQRT(POWER(SIN((:latitude * PI()/180 - hike.latitude * PI()/180)/ 2), 2) + COS(:latitude * PI()/180) * COS(hike.latitude * PI()/180) * POWER(SIN((:longitude * PI()/180 - hike.longitude * PI()/180) / 2), 2))) < :distance',
-                {
-                    distance: distance,
-                    latitude: latitude,
-                    longitude: longitude,
-                }
-            )
-            .andWhere('hike.name LIKE :search', { search: `%${search}%` }) // search is the search string
-            .orderBy(
+            .addSelect(
                 '6371 * 2 * ASIN(SQRT(POWER(SIN((:latitude * PI()/180 - hike.latitude * PI()/180)/ 2), 2) + COS(:latitude * PI()/180) * COS(hike.latitude * PI()/180) * POWER(SIN((:longitude * PI()/180 - hike.longitude * PI()/180) / 2), 2)))',
-                'ASC',
-                'NULLS LAST'
-            ); // order by id
+                'distance'
+            )
+            .where('distance < :distance', {
+                distance: distance,
+                latitude: latitude,
+                longitude: longitude,
+            })
+            .andWhere('hike.name LIKE :search', { search: `%${search}%` }) // search is the search string
+            .orderBy('distance', 'ASC'); // order by id
         const totalCount = await query.getCount(); // get total number of results
         const beforeExist = await query
             .clone()
