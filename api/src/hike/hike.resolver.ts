@@ -78,6 +78,27 @@ export class HikeResolver extends CRUDResolver(HikeDTO, {
         return this.service.findByDistance(lat, lon, distance, limit, cursor, search);
     }
 
+    @UseGuards(GqlAuthGuard)
+    @Query(() => HikeConnectionDTO)
+    async getHikePopular(
+        @Args('search', { nullable: true }) search: string,
+        @Args('limit', { type: () => Int }) limit: number,
+        @Args('cursor', { defaultValue: '' }) cursor: string
+    ): Promise<HikeConnectionDTO> {
+        return this.service.findPopular(limit, cursor, search);
+    }
+
+    @UseGuards(GqlAuthGuard)
+    @Query(() => HikeConnectionDTO)
+    async getHikeAlreadyDone(
+        @CurrentUser() user: UserDTO,
+        @Args('search', { nullable: true }) search: string,
+        @Args('limit', { type: () => Int }) limit: number,
+        @Args('cursor', { defaultValue: '' }) cursor: string
+    ): Promise<HikeConnectionDTO> {
+        return this.service.findAlreadyDone(user.id, limit, cursor, search);
+    }
+
     @ResolveField(() => Number)
     async distanceFrom(
         @Args('lat') lat: number,

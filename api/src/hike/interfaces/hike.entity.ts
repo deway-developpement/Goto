@@ -15,6 +15,7 @@ import { PointOfInterestEntity } from '../../pointOfInterest/interfaces/poi.enti
 import { ReviewEntity } from '../../review/interfaces/review.entity';
 import { AlertEntity } from '../../alert/interfaces/alert.entity';
 import { CategoryEntity } from '../../category/interfaces/category.entity';
+import { PerformanceEntity } from '../../performance/interfaces/performance.entity';
 
 @Entity('hike')
 @Unique(['name'])
@@ -82,6 +83,11 @@ export class HikeEntity {
 
     @ManyToOne(() => CategoryEntity, (category) => category.hikes, { onDelete: 'CASCADE' })
     category: CategoryEntity;
+
+    @OneToMany(() => PerformanceEntity, (performance) => performance.hike, {
+        cascade: ['remove'],
+    })
+    performances: PerformanceEntity[];
 
     @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
     createdAt: Date;
