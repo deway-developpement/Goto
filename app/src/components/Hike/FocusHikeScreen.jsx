@@ -1,12 +1,5 @@
 import React from 'react';
-import {
-    Text,
-    Image,
-    View,
-    TouchableWithoutFeedback,
-    StyleSheet,
-    Dimensions,
-} from 'react-native';
+import { Text, Image, View, TouchableWithoutFeedback, StyleSheet, Dimensions } from 'react-native';
 import { useTheme } from '@react-navigation/native';
 import stylesheet from './style';
 import { useNavigation } from '@react-navigation/native';
@@ -31,9 +24,7 @@ function Tag(props) {
                 borderRadius: 24,
             }}
         >
-            <Text style={{ color: colors.backgroundTextInput }}>
-                {props.name}
-            </Text>
+            <Text style={{ color: colors.backgroundTextInput }}>{props.name}</Text>
         </View>
     );
 }
@@ -88,6 +79,7 @@ export default function FocusHikeScreen({ route }) {
                         filename
                     }
                 }
+                distanceFrom(lat: 1, lon: 1)
             }
         }
     `;
@@ -105,9 +97,7 @@ export default function FocusHikeScreen({ route }) {
     } else {
         return (
             <>
-                <TouchableWithoutFeedback
-                    onPress={() => navigation.navigate('Search')}
-                >
+                <TouchableWithoutFeedback onPress={() => navigation.navigate('Search')}>
                     <View
                         style={[
                             styles.logoContainer,
@@ -119,11 +109,7 @@ export default function FocusHikeScreen({ route }) {
                             },
                         ]}
                     >
-                        <IconComp
-                            color={colors.background}
-                            name={'back'}
-                            pos={0}
-                        />
+                        <IconComp color={colors.background} name={'back'} pos={0} />
                     </View>
                 </TouchableWithoutFeedback>
                 <Image
@@ -163,12 +149,7 @@ export default function FocusHikeScreen({ route }) {
                         >
                             <View style={{ height: windowHeight * 0.6 }} />
                             <HikeInfos hike={data.hike} borderRadius={true} />
-                            <View
-                                style={[
-                                    styles.containerFocus,
-                                    { paddingHorizontal: 0 },
-                                ]}
-                            >
+                            <View style={[styles.containerFocus, { paddingHorizontal: 0 }]}>
                                 <Text
                                     style={[
                                         styles.textDescription,
@@ -300,9 +281,7 @@ export default function FocusHikeScreen({ route }) {
                                             {Array.from(
                                                 { length: 3 },
                                                 (_, i) =>
-                                                    difficulties.indexOf(
-                                                        data.hike.difficulty
-                                                    ) >= i
+                                                    difficulties.indexOf(data.hike.difficulty) >= i
                                             ).map((item, index) => (
                                                 <View
                                                     style={[
@@ -314,12 +293,10 @@ export default function FocusHikeScreen({ route }) {
                                                         },
                                                         item
                                                             ? {
-                                                                backgroundColor:
-                                                                      colors.starFill,
+                                                                backgroundColor: colors.starFill,
                                                             }
                                                             : {
-                                                                backgroundColor:
-                                                                      colors.starEmpty,
+                                                                backgroundColor: colors.starEmpty,
                                                             },
                                                     ]}
                                                     key={index}
@@ -344,20 +321,12 @@ export default function FocusHikeScreen({ route }) {
                                     <Tag key={item.name} name={item.name} />
                                 ))}
                             </View>
-                            <View
-                                style={[
-                                    styles.containerFocus,
-                                    { flexDirection: 'column' },
-                                ]}
-                            >
+                            <View style={[styles.containerFocus, { flexDirection: 'column' }]}>
                                 <Text style={styles.textDescription}>
                                     Hike&apos;s caracteristics
                                 </Text>
                                 {data?.hike?.pointsOfInterests.map((item) => (
-                                    <PointsOfInterests
-                                        key={item.name}
-                                        {...item}
-                                    />
+                                    <PointsOfInterests key={item.name} {...item} />
                                 ))}
                                 <View
                                     style={{
@@ -367,10 +336,35 @@ export default function FocusHikeScreen({ route }) {
                                         marginTop: 15,
                                     }}
                                 />
+                                <Text
+                                    style={[
+                                        styles.textDescription,
+                                        {
+                                            marginTop: 15,
+                                            marginBottom: 10,
+                                        },
+                                    ]}
+                                >
+                                    Distance from here
+                                </Text>
+                                <Text
+                                    style={[
+                                        styles.textDescription,
+                                        {
+                                            color: colors.text,
+                                        },
+                                    ]}
+                                >
+                                    {
+                                        // round to 2 decimals
+                                        Math.round(
+                                            (data?.hike?.distanceFrom + Number.EPSILON) * 100
+                                        ) / 100
+                                    }{' '}
+                                    Km
+                                </Text>
                                 <TouchableWithoutFeedback
-                                    onPress={() =>
-                                        console.log('OPEN HIKE PATH')
-                                    }
+                                    onPress={() => console.log('OPEN HIKE PATH')}
                                 >
                                     <View
                                         style={[
@@ -431,19 +425,13 @@ export default function FocusHikeScreen({ route }) {
                                     ]}
                                 />
                                 <Text style={styles.textDescription}>
-                                    Hike Created on the{' '}
-                                    {data?.hike?.createdAt.slice(8, 10)}/
+                                    Hike Created on the {data?.hike?.createdAt.slice(8, 10)}/
                                     {data?.hike?.createdAt.slice(5, 7)}/
                                     {data?.hike?.createdAt.slice(0, 4)}
                                 </Text>
                                 <Text style={styles.textDescription}>
                                     by{' '}
-                                    <Text
-                                        style={[
-                                            styles.textDescription,
-                                            { color: colors.text },
-                                        ]}
-                                    >
+                                    <Text style={[styles.textDescription, { color: colors.text }]}>
                                         {data?.hike?.owner?.pseudo}
                                     </Text>
                                 </Text>

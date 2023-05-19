@@ -1,12 +1,5 @@
 import React from 'react';
-import {
-    Text,
-    Image,
-    View,
-    ScrollView,
-    Dimensions,
-    TouchableWithoutFeedback,
-} from 'react-native';
+import { Text, Image, View, ScrollView, Dimensions, TouchableWithoutFeedback } from 'react-native';
 import stylesheet from './style';
 import { useTheme } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -20,10 +13,7 @@ export default function DiscoverScreen({ navigation }) {
     const styles = stylesheet(colors);
 
     const GET_CATEGORIES = gql`
-        query categories(
-            $field: CategorySortFields!
-            $direction: SortDirection!
-        ) {
+        query categories($field: CategorySortFields!, $direction: SortDirection!) {
             categories(sorting: { field: $field, direction: $direction }) {
                 id
                 name
@@ -49,24 +39,14 @@ export default function DiscoverScreen({ navigation }) {
             <FlatList
                 data={categorie?.categories}
                 renderItem={({ item }) => (
-                    <Category
-                        key={item.id}
-                        styles={styles}
-                        horizontal={false}
-                        {...item}
-                    />
+                    <Category key={item.id} styles={styles} horizontal={false} {...item} />
                 )}
                 keyExtractor={(item) => item.id}
                 horizontal={false}
                 showsVerticalScrollIndicator={false}
-                emptyListComponent={
-                    <Text style={styles.textLink}>No categories</Text>
-                }
+                emptyListComponent={<Text style={styles.textLink}>No categories</Text>}
                 ListHeaderComponent={
-                    <DiscoverHeader
-                        windowHeight={windowHeight}
-                        navigation={navigation}
-                    />
+                    <DiscoverHeader windowHeight={windowHeight} navigation={navigation} />
                 }
                 ListFooterComponent={
                     <View
@@ -86,11 +66,25 @@ function DiscoverHeader({ windowHeight, navigation }) {
     const { colors } = useTheme();
     const styles = stylesheet(colors);
 
+    const GET_POPULAR_IMAGE = gql`
+        query {
+            getHikePopular(limit: 1) {
+                edges {
+                    node {
+                        photos {
+                            filename
+                        }
+                    }
+                }
+            }
+        }
+    `;
+
+    const { data: popularImage } = useQuery(GET_POPULAR_IMAGE);
+
     return (
         <View style={styles.container}>
-            <Text style={[styles.textHeader, { marginTop: '6%' }]}>
-                Discover
-            </Text>
+            <Text style={[styles.textHeader, { marginTop: '6%' }]}>Discover</Text>
             <TouchableWithoutFeedback onPress={() => console.log('DISCORVER')}>
                 <View
                     style={[
@@ -123,24 +117,14 @@ function DiscoverHeader({ windowHeight, navigation }) {
                 horizontal={true}
                 showsHorizontalScrollIndicator={false}
             >
-                <Category
-                    styles={styles}
-                    horizontal={true}
-                    name={'Around you'}
-                    id={'around-you'}
-                />
+                <Category styles={styles} horizontal={true} name={'Around you'} id={'around-you'} />
                 <Category
                     styles={styles}
                     horizontal={true}
                     name={'Added this month'}
                     id={'added-this-month'}
                 />
-                <Category
-                    styles={styles}
-                    horizontal={true}
-                    name={'To redo'}
-                    id={'to-redo'}
-                />
+                <Category styles={styles} horizontal={true} name={'To redo'} id={'to-redo'} />
             </ScrollView>
             <TouchableWithoutFeedback
                 onPress={() => {
@@ -152,7 +136,13 @@ function DiscoverHeader({ windowHeight, navigation }) {
             >
                 <View>
                     <Image
-                        source={require('../../../assets/images/Dalle_background.png')}
+                        source={
+                            popularImage?.getHikePopular?.edges[0]?.node.photos[0]?.filename
+                                ? {
+                                    uri: `https://deway.fr/goto-api/files/photos/${popularImage?.getHikePopular?.edges[0]?.node?.photos[0]?.filename}`,
+                                }
+                                : require('../../../assets/images/Dalle_background.png')
+                        }
                         style={[
                             {
                                 width: '100%',
@@ -173,25 +163,17 @@ function DiscoverHeader({ windowHeight, navigation }) {
                             },
                         ]}
                     >
-                        <Text
-                            style={[styles.textHeader, { alignSelf: 'center' }]}
-                        >
+                        <Text style={[styles.textHeader, { alignSelf: 'center' }]}>
                             Most popular
                         </Text>
-                        <Text
-                            style={[
-                                styles.textLink,
-                                { alignSelf: 'center', marginTop: 5 },
-                            ]}
-                        >
-                            Discover
+                        <Text style={[styles.textLink, { alignSelf: 'center', marginTop: 5 }]}>
+                            {' '}
+                            Discover{' '}
                         </Text>
                     </View>
                 </View>
             </TouchableWithoutFeedback>
-            <Text style={[styles.textHeader, { marginTop: 40 }]}>
-                Unique places
-            </Text>
+            <Text style={[styles.textHeader, { marginTop: 40 }]}>Unique places</Text>
         </View>
     );
 }
