@@ -30,7 +30,11 @@ const GET_IMAGE_CATEGORIES = (categoryName) => {
         return {
             query: gql`
                 query hikes($filter: HikeFilter, $limit: Int) {
-                    hikes(filter: $filter, paging: { first: $limit }) {
+                    hikes(
+                        filter: $filter
+                        paging: { first: $limit }
+                        sorting: { field: id, direction: DESC }
+                    ) {
                         edges {
                             node {
                                 photos {
@@ -44,7 +48,7 @@ const GET_IMAGE_CATEGORIES = (categoryName) => {
             variables: {
                 filter: {
                     createdAt: {
-                        lt: thismonth,
+                        gt: thismonth,
                     },
                 },
                 limit: 1,

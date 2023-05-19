@@ -73,7 +73,11 @@ const GET_HIKES_ALREADY_DONE = gql`
 
 const GET_HIKES = gql`
     query hikes($filter: HikeFilter, $limit: Int, $cursor: ConnectionCursor) {
-        hikes(filter: $filter, paging: { first: $limit, after: $cursor }) {
+        hikes(
+            filter: $filter
+            paging: { first: $limit, after: $cursor }
+            sorting: { field: id, direction: DESC }
+        ) {
             edges {
                 node {
                     id
@@ -110,7 +114,7 @@ export const QUERIES_CONFIG = (category, search, cursor, limit) => {
             variables: {
                 filter: {
                     createdAt: {
-                        lt: thismonth,
+                        gt: thismonth,
                     },
                 },
                 limit: limit,
@@ -122,7 +126,7 @@ export const QUERIES_CONFIG = (category, search, cursor, limit) => {
                         like: search.split(' ').join('%') + '%',
                     },
                     createdAt: {
-                        lt: thismonth,
+                        gt: thismonth,
                     },
                 },
                 limit: limit,
