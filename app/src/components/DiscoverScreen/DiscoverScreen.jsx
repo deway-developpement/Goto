@@ -7,10 +7,13 @@ import { gql, useQuery } from '@apollo/client';
 import { IconComp } from '../Icon/Icon';
 import Category from '../Category/Category';
 import { FlatList } from 'react-native';
+import HikeCreationScreen from '../HikeCreationSreen/HikeCreationSreen';
 
 export default function DiscoverScreen({ navigation }) {
     const { colors } = useTheme();
     const styles = stylesheet(colors);
+
+    const [HikeCreation, setHikeCreation] = React.useState(false);
 
     const GET_CATEGORIES = gql`
         query categories($field: CategorySortFields!, $direction: SortDirection!) {
@@ -32,6 +35,11 @@ export default function DiscoverScreen({ navigation }) {
         },
     });
 
+    const categoryNameId = [];
+    categorie?.categories.map((category) => {
+        categoryNameId.push({ id: category.id, name: category.name });
+    });
+
     const windowHeight = Dimensions.get('window').height;
 
     return (
@@ -45,9 +53,7 @@ export default function DiscoverScreen({ navigation }) {
                 horizontal={false}
                 showsVerticalScrollIndicator={false}
                 emptyListComponent={<Text style={styles.textLink}>No categories</Text>}
-                ListHeaderComponent={
-                    <DiscoverHeader windowHeight={windowHeight} navigation={navigation} />
-                }
+                ListHeaderComponent={<DiscoverHeader windowHeight={windowHeight} />}
                 ListFooterComponent={
                     <View
                         style={{
