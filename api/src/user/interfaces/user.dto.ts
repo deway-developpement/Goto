@@ -1,8 +1,8 @@
 import {
     FilterableField,
     IDField,
+    KeySet,
     PagingStrategies,
-    QueryOptions,
     Relation,
     UnPagedRelation,
 } from '@nestjs-query/query-graphql';
@@ -12,10 +12,11 @@ import { PhotoDTO } from '../../photo/interfaces/photo.dto';
 import { PerformanceDTO } from '../../performance/interfaces/performance.dto';
 
 @ObjectType('User')
-@QueryOptions({ pagingStrategy: PagingStrategies.NONE })
+@KeySet(['id'])
 @UnPagedRelation('friends', () => UserDTO, {
     disableRemove: true,
     disableUpdate: true,
+    pagingStrategy: PagingStrategies.NONE,
     enableAggregate: true,
     enableTotalCount: true,
 })
