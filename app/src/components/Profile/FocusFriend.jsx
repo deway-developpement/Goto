@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     View,
     Text,
@@ -7,21 +7,33 @@ import {
     SafeAreaView,
     ScrollView,
 } from 'react-native';
-import { gql, useQuery } from '@apollo/client';
+import { gql, useApolloClient, useQuery } from '@apollo/client';
 import stylesheet from './style';
 import { useTheme } from '@react-navigation/native';
 import { useNavigation } from '@react-navigation/native';
 import { Icon } from '../Icon/Icon';
 import SplashScreen from '../SplashScreen/SplashScreen';
 import { Historic, Stats } from './ProfileComplements';
+import { Button } from 'react-native-elements';
 
 export default function FocusFriend({ route }) {
     const { colors } = useTheme();
     const styles = stylesheet(colors);
     const navigation = useNavigation();
     const friendId = route.params?.friendId;
+    const friends = route.params?.friends;
+    const client = useApolloClient();
     const today = new Date();
     const lastMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+    const [isFriend, setIsFriend] = useState(false);
+
+    useEffect(() => {
+        for (let elem of friends) {
+            if (elem.id == friendId) {
+                setIsFriend(true);
+            }
+        }
+    }, []);
 
     const GET_FRIEND = gql`
         query user($id: ID!, $lastMonth: DateTime!) {
@@ -59,6 +71,41 @@ export default function FocusFriend({ route }) {
             }
         }
     `;
+    const ADD_FRIEND = gql`
+        mutation addFriend($id: String!) {
+            addFriend(id: $id) {
+                id
+            }
+        }
+    `;
+    const REMOVE_FRIEND = gql`
+        mutation removeFriend($id: String!) {
+            removeFriend(id: $id) {
+                id
+            }
+        }
+    `;
+
+    function updateFriend() {
+        if (isFriend) {
+            client.mutate({
+                mutation: REMOVE_FRIEND,
+                variables: {
+                    id: friendId,
+                },
+                errorPolicy: 'all',
+            });
+        } else {
+            client.mutate({
+                mutation: ADD_FRIEND,
+                variables: {
+                    id: friendId,
+                },
+                errorPolicy: 'all',
+            });
+        }
+        setIsFriend(!isFriend);
+    }
 
     const { data: profile, loading: loadingProfile } = useQuery(GET_FRIEND, {
         variables: {
@@ -99,6 +146,25 @@ export default function FocusFriend({ route }) {
                     <Text style={styles.pseudo}>
                         {profile.user.pseudo}#{profile.user.publicKey}
                     </Text>
+
+                    <View style={styles.btnContainer}>
+                        <View style={styles.btn}>
+                            <Button
+                                title={
+                                    isFriend ? 'Remove Friend' : 'Add Friend'
+                                }
+                                onPress={() => {
+                                    updateFriend();
+                                }}
+                                buttonStyle={styles.btn}
+                                titleStyle={{
+                                    color: colors.link,
+                                    fontSize: 12,
+                                    fontWeight: '500',
+                                }}
+                            />
+                        </View>
+                    </View>
 
                     <Stats
                         count={profile.user.performancesAggregate[0].count.id}

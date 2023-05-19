@@ -506,19 +506,19 @@ function Historic({ hikes, FriendPseudo = '' }) {
     );
 }
 
-function FriendCard({ friend }) {
+function FriendCard({ friend, allFriends }) {
     const { colors } = useTheme();
     const styles = stylesheet(colors);
     const navigation = useNavigation();
 
-    function handleClick({ friendId }) {
-        navigation.navigate('FocusFriend', { friendId });
+    function handleClick({ friendId, friends }) {
+        navigation.navigate('FocusFriend', { friendId, friends });
     }
 
     return (
         <Pressable
             onPress={() => {
-                handleClick({ friendId: friend.id });
+                handleClick({ friendId: friend.id, friends: allFriends });
             }}
             style={{
                 marginBottom: 64,
@@ -564,7 +564,9 @@ function Friends({ friends }) {
             </View>
             <FlatList
                 data={friends}
-                renderItem={({ item }) => <FriendCard friend={item} />}
+                renderItem={({ item }) => (
+                    <FriendCard friend={item} allFriends={friends} />
+                )}
                 style={styles.friendsContainer}
                 horizontal={true}
                 keyExtractor={(item) => item.id}
