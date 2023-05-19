@@ -71,7 +71,7 @@ export class UserResolver extends CRUDResolver(UserDTO, {
     }
 
     @UseGuards(GqlAuthGuard)
-    @ResolveField(() => [UserDTO])
+    @ResolveField(() => Boolean)
     async isFriend(@CurrentUser() user: UserDTO, @Parent() quser: UserDTO): Promise<boolean> {
         return this.usersService.isFriend(user.id, quser.id);
     }

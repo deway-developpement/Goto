@@ -589,6 +589,7 @@ type User {
     """Specify to sort results."""
     sorting: [PerformanceSort!] = []
   ): [Performance!]!
+  isFriend: Boolean!
 }
 
 input UserAggregateFilter {
@@ -694,6 +695,42 @@ enum PerformanceSortFields {
   elevation
   duration
   createdAt
+}
+
+type UserEdge {
+  """The node containing the User"""
+  node: User!
+
+  """Cursor for this node."""
+  cursor: ConnectionCursor!
+}
+
+"""Cursor for paging through collections"""
+scalar ConnectionCursor
+
+type PageInfo {
+  """true if paging forward and there are more records."""
+  hasNextPage: Boolean
+
+  """true if paging backwards and there are more records."""
+  hasPreviousPage: Boolean
+
+  """The cursor of the first returned record."""
+  startCursor: ConnectionCursor
+
+  """The cursor of the last returned record."""
+  endCursor: ConnectionCursor
+}
+
+type UserConnection {
+  """Paging information"""
+  pageInfo: PageInfo!
+
+  """Array of edges."""
+  edges: [UserEdge!]!
+
+  """Fetch total count of records"""
+  totalCount: Int!
 }
 
 type UserAggregateGroupBy {
@@ -891,23 +928,6 @@ type HikeEdge {
 
   """Cursor for this node."""
   cursor: ConnectionCursor!
-}
-
-"""Cursor for paging through collections"""
-scalar ConnectionCursor
-
-type PageInfo {
-  """true if paging forward and there are more records."""
-  hasNextPage: Boolean
-
-  """true if paging backwards and there are more records."""
-  hasPreviousPage: Boolean
-
-  """The cursor of the first returned record."""
-  startCursor: ConnectionCursor
-
-  """The cursor of the last returned record."""
-  endCursor: ConnectionCursor
 }
 
 type HikeConnection {
@@ -1330,12 +1350,15 @@ type Query {
     id: ID!
   ): User
   users(
+    """Limit or page results."""
+    paging: CursorPaging = {first: 10}
+
     """Specify to filter the records returned."""
     filter: UserFilter = {}
 
     """Specify to sort results."""
     sorting: [UserSort!] = []
-  ): [User!]!
+  ): UserConnection!
   exist(email: String!): Boolean!
   whoami: User!
   hikeAggregate(
@@ -1442,20 +1465,6 @@ type Query {
   ): [Alert!]!
 }
 
-input HikeAggregateFilter {
-  and: [HikeAggregateFilter!]
-  or: [HikeAggregateFilter!]
-  id: IDFilterComparison
-  name: StringFieldComparison
-  distance: NumberFieldComparison
-  elevation: NumberFieldComparison
-  difficulty: DifficultyFilterComparison
-  duration: NumberFieldComparison
-  latitude: NumberFieldComparison
-  longitude: NumberFieldComparison
-  createdAt: DateFieldComparison
-}
-
 input CursorPaging {
   """Paginate before opaque cursor"""
   before: ConnectionCursor
@@ -1468,6 +1477,20 @@ input CursorPaging {
 
   """Paginate last"""
   last: Int
+}
+
+input HikeAggregateFilter {
+  and: [HikeAggregateFilter!]
+  or: [HikeAggregateFilter!]
+  id: IDFilterComparison
+  name: StringFieldComparison
+  distance: NumberFieldComparison
+  elevation: NumberFieldComparison
+  difficulty: DifficultyFilterComparison
+  duration: NumberFieldComparison
+  latitude: NumberFieldComparison
+  longitude: NumberFieldComparison
+  createdAt: DateFieldComparison
 }
 
 input CategoryFilter {
