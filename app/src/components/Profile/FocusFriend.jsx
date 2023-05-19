@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import {
     View,
     Text,
@@ -21,19 +21,10 @@ export default function FocusFriend({ route }) {
     const styles = stylesheet(colors);
     const navigation = useNavigation();
     const friendId = route.params?.friendId;
-    const friends = route.params?.friends;
+    const isFriend = route.params?.isFriend;
     const client = useApolloClient();
     const today = new Date();
     const lastMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-    const [isFriend, setIsFriend] = useState(false);
-
-    useEffect(() => {
-        for (let elem of friends) {
-            if (elem.id == friendId) {
-                setIsFriend(true);
-            }
-        }
-    }, []);
 
     const GET_FRIEND = gql`
         query user($id: ID!, $lastMonth: DateTime!) {
@@ -104,7 +95,6 @@ export default function FocusFriend({ route }) {
                 errorPolicy: 'all',
             });
         }
-        setIsFriend(!isFriend);
     }
 
     const { data: profile, loading: loadingProfile } = useQuery(GET_FRIEND, {

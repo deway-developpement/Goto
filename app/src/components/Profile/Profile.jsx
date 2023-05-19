@@ -52,6 +52,7 @@ export default function ProfileScreen() {
                     id
                     pseudo
                     publicKey
+                    isFriend
                     avatar {
                         filename
                     }
@@ -323,6 +324,9 @@ export default function ProfileScreen() {
                                                             friends={
                                                                 profil.whoami
                                                                     .friends
+                                                            }
+                                                            MyID={
+                                                                profil.whoami.id
                                                             }
                                                         />
                                                     </>

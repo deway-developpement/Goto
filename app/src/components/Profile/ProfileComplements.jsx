@@ -3,13 +3,14 @@ import {
     View,
     Text,
     TextInput,
+    ActivityIndicator,
     Pressable,
     Alert,
     TouchableWithoutFeedback,
     Image,
     ScrollView,
 } from 'react-native';
-import { gql, useApolloClient } from '@apollo/client';
+import { gql, useQuery, useApolloClient } from '@apollo/client';
 import KeyboardDismissView from '../KeyboardDismissView/KeyboardDismissView';
 import stylesheet from './style';
 import { useTheme } from '@react-navigation/native';
@@ -506,19 +507,19 @@ function Historic({ hikes, FriendPseudo = '' }) {
     );
 }
 
-function FriendCard({ friend, allFriends }) {
+function FriendCard({ friend }) {
     const { colors } = useTheme();
     const styles = stylesheet(colors);
     const navigation = useNavigation();
 
-    function handleClick({ friendId, friends }) {
-        navigation.navigate('FocusFriend', { friendId, friends });
+    function handleClick({ friendId, isFriend }) {
+        navigation.navigate('FocusFriend', { friendId, isFriend });
     }
 
     return (
         <Pressable
             onPress={() => {
-                handleClick({ friendId: friend.id, friends: allFriends });
+                handleClick({ friendId: friend.id, isFriend: friend.isFriend });
             }}
             style={{
                 marginBottom: 64,
@@ -527,7 +528,19 @@ function FriendCard({ friend, allFriends }) {
                 marginRight: 16,
             }}
         >
-            <View style={[styles.avatarContainer, { width: 56, height: 56 }]}>
+            <View
+                style={[
+                    styles.avatarContainer,
+                    {
+                        width: 58,
+                        height: 58,
+                        padding: 2,
+                        backgroundColor: friend.isFriend
+                            ? colors.stats
+                            : colors.backgroundTextInput,
+                    },
+                ]}
+            >
                 <Image
                     source={
                         friend.avatar
@@ -546,9 +559,77 @@ function FriendCard({ friend, allFriends }) {
     );
 }
 
-function Friends({ friends }) {
+function Friends({ friends, MyID }) {
     const { colors } = useTheme();
     const styles = stylesheet(colors);
+    const limitByPage = 10;
+    let onEndReachedCalledDuringMomentum = false;
+
+    const GET_USERS = gql`
+        query users(
+            $pseudoPart: String!
+            $MyID: ID!
+            $limit: Int!
+            $cursor: ConnectionCursor!
+        ) {
+            users(
+                filter: {
+                    pseudo: { like: $pseudoPart }
+                    id: { neq: $MyID }
+                    # isFriend: { eq: false }
+                }
+                sorting: { field: pseudo, direction: ASC }
+                paging: { first: $limit, after: $cursor }
+            ) {
+                edges {
+                    node {
+                        id
+                        pseudo
+                        publicKey
+                        isFriend
+                        avatar {
+                            filename
+                        }
+                    }
+                }
+                pageInfo {
+                    startCursor
+                    endCursor
+                    hasNextPage
+                    hasPreviousPage
+                }
+            }
+        }
+    `;
+    const { data, loading, fetchMore, refetch } = useQuery(GET_USERS, {
+        variables: {
+            pseudoPart: '',
+            MyID,
+            limit: limitByPage,
+            cursor: '',
+        },
+        errorPolicy: 'all',
+    });
+
+    if (loading) {
+        return (
+            <ActivityIndicator
+                size="large"
+                color={colors.primary}
+                style={{ flex: 3, width: '100%' }}
+            />
+        );
+    }
+
+    const nodes = data?.users?.edges.map((user) => user.node);
+
+    function handleSearch(pseudoPart) {
+        if (pseudoPart === '') {
+            refetch({ pseudoPart: '' });
+            return;
+        }
+        refetch({ pseudoPart: '%' + pseudoPart + '%' });
+    }
 
     return (
         <View style={{ marginTop: 22, marginBottom: 58 }}>
@@ -558,12 +639,12 @@ function Friends({ friends }) {
                     style={styles.textInput}
                     placeholder="Search"
                     placeholderTextColor={colors.border}
-                    onChangeText={(text) => console.log(text)}
+                    onChangeText={(text) => handleSearch(text)}
                 />
                 <Icon name="search" size={15} color={colors.border} />
             </View>
             <FlatList
-                data={friends}
+                data={[...friends, ...nodes]}
                 renderItem={({ item }) => (
                     <FriendCard friend={item} allFriends={friends} />
                 )}
@@ -572,6 +653,38 @@ function Friends({ friends }) {
                 keyExtractor={(item) => item.id}
                 showsHorizontalScrollIndicator={false}
                 ListEmptyComponent={() => <View style={{ height: 58 }} />}
+                onEndReached={() => {
+                    if (
+                        data?.users?.pageInfo?.hasNextPage &&
+                        !loading &&
+                        !onEndReachedCalledDuringMomentum
+                    ) {
+                        fetchMore({
+                            variables: {
+                                cursor: data?.users?.pageInfo?.endCursor,
+                            },
+                            updateQuery: (prev, { fetchMoreResult }) => {
+                                if (!fetchMoreResult) return prev;
+                                return {
+                                    users: {
+                                        __typename: prev.users.__typename,
+                                        edges: [
+                                            ...prev.users.edges,
+                                            ...fetchMoreResult.users.edges,
+                                        ],
+                                        pageInfo: {
+                                            ...fetchMoreResult.users.pageInfo,
+                                        },
+                                    },
+                                };
+                            },
+                        });
+                    }
+                    onEndReachedCalledDuringMomentum = true;
+                }}
+                onMomentumScrollBegin={() => {
+                    onEndReachedCalledDuringMomentum = false;
+                }}
             />
         </View>
     );
