@@ -14,10 +14,13 @@ import { gql, useQuery } from '@apollo/client';
 import { IconComp } from '../Icon/Icon';
 import Category from '../Category/Category';
 import { FlatList } from 'react-native';
+import HikeCreationScreen from '../HikeCreationSreen/HikeCreationSreen';
 
 export default function DiscoverScreen() {
     const { colors } = useTheme();
     const styles = stylesheet(colors);
+
+    const [HikeCreation, setHikeCreation] = React.useState(false);
 
     const GET_CATEGORIES = gql`
         query categories(
@@ -42,44 +45,50 @@ export default function DiscoverScreen() {
         },
     });
 
+    const categoryNameId=[];
+    categorie?.categories.map((category) => { categoryNameId.push({id:category.id, name:category.name});});
+
     const windowHeight = Dimensions.get('window').height;
 
     return (
         <SafeAreaView style={styles.container}>
-            <FlatList
-                data={categorie?.categories}
-                renderItem={({ item }) => (
-                    <Category
-                        key={item.id}
-                        styles={styles}
-                        horizontal={false}
-                        {...item}
-                    />
-                )}
-                keyExtractor={(item) => item.id}
-                horizontal={false}
-                showsVerticalScrollIndicator={false}
-                emptyListComponent={
-                    <Text style={styles.textLink}>No categories</Text>
-                }
-                ListHeaderComponent={
-                    <DiscoverHeader windowHeight={windowHeight} />
-                }
-                ListFooterComponent={
-                    <View
-                        style={{
-                            height: windowHeight * 0.2,
-                        }}
-                    />
-                }
-                style={[styles.container, { paddingHorizontal: '7%' }]}
-                keyboardShouldPersistTaps={'handled'}
-            />
+            {!HikeCreation ?
+                <FlatList
+                    data={categorie?.categories}
+                    renderItem={({ item }) => (
+                        <Category
+                            key={item.id}
+                            styles={styles}
+                            horizontal={false}
+                            {...item}
+                        />
+                    )}
+                    keyExtractor={(item) => item.id}
+                    horizontal={false}
+                    showsVerticalScrollIndicator={false}
+                    emptyListComponent={
+                        <Text style={styles.textLink}>No categories</Text>
+                    }
+                    ListHeaderComponent={
+                        <DiscoverHeader windowHeight={windowHeight} setHikeCreation={setHikeCreation}/>
+                    }
+                    ListFooterComponent={
+                        <View
+                            style={{
+                                height: windowHeight * 0.2,
+                            }}
+                        />
+                    }
+                    style={[styles.container, { paddingHorizontal: '7%' }]}
+                    keyboardShouldPersistTaps={'handled'}
+                />
+                : <HikeCreationScreen setHikeCreation={setHikeCreation} categories={categoryNameId}/>
+            }
         </SafeAreaView>
     );
 }
 
-function DiscoverHeader({ windowHeight }) {
+function DiscoverHeader({ windowHeight, setHikeCreation }) {
     const { colors } = useTheme();
     const styles = stylesheet(colors);
 
@@ -88,7 +97,7 @@ function DiscoverHeader({ windowHeight }) {
             <Text style={[styles.textHeader, { marginTop: '6%' }]}>
                 Discover
             </Text>
-            <TouchableWithoutFeedback onPress={() => console.log('DISCORVER')}>
+            <TouchableWithoutFeedback onPress={() => setHikeCreation(true)}>
                 <View
                     style={[
                         styles.container,
