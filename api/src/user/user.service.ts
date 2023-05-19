@@ -101,4 +101,17 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
         await this.removeRelations('friends', id, [friendId]);
         return await this.findById(id);
     }
+
+    async isFriend(id: string, friendId: string): Promise<boolean> {
+        const user = await this.findById(id);
+        const filter = {
+            filter: {
+                id: {
+                    eq: friendId,
+                },
+            },
+        };
+        const relation = await this.findRelation(UserDTO, 'friends', user, filter);
+        return !!relation;
+    }
 }
