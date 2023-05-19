@@ -119,10 +119,122 @@ export class HikeService extends TypeOrmQueryService<HikeEntity> {
                 }
             )
             .andWhere('hike.name LIKE :search', { search: `%${search}%` }) // search is the search string
-            .orderBy('id', 'ASC') // order by id
+            .orderBy('id', 'ASC'); // order by id
         const totalCount = await query.getCount(); // get total number of results
-        const beforeExist = await query.clone().andWhere('hike.id <= :cursor', { cursor: cursor }).getExists(); // check if there is a hike before the cursor
-        const hikesId = await query.andWhere('hike.id > :cursor', { cursor: cursor }).limit(limit).getMany(); // get all hikes id
+        const beforeExist = await query
+            .clone()
+            .andWhere('hike.id <= :cursor', { cursor: cursor })
+            .getExists(); // check if there is a hike before the cursor
+        const hikesId = await query
+            .andWhere('hike.id > :cursor', { cursor: cursor })
+            .limit(limit)
+            .getMany(); // get all hikes id
+        const numberOfResults = await query.getCount();
+        // get all hikes from ids found
+        const hikes = await Promise.all(
+            hikesId.map(async (hike) => {
+                return await this.repo.findOne({ where: { id: hike.id } });
+            })
+        );
+        // return connection
+        return {
+            edges: [
+                ...hikes.map((hike) => {
+                    return {
+                        node: hike,
+                        cursor: hike.id,
+                    };
+                }),
+            ],
+            pageInfo: {
+                hasNextPage: numberOfResults > limit,
+                hasPreviousPage: beforeExist,
+                startCursor: hikes.length > 0 ? hikes[0].id : '',
+                endCursor: hikes.length > 0 ? hikes[hikes.length - 1].id : '',
+            },
+            totalCount,
+        };
+    }
+
+    async findPopular(limit: number, cursor: string, search = ''): Promise<HikeConnectionDTO> {
+        //build query to find hikes within distance
+        // the harvesine formula is used to calculate the distance between two points on a sphere
+        // d = 2R × sin⁻¹(√[sin²((θ₂ - θ₁)/2) + cosθ₁ × cosθ₂ × sin²((φ₂ - φ₁)/2)]) where R is earth radius (6371 km), θ is latitude, φ is longitude
+        const query = await this.repo.manager
+            .createQueryBuilder(HikeEntity, 'hike') // select all columns from hikeQuery
+            .select(['hike.id'])
+            .leftJoin('hike.reviews', 'review')
+            .where('hike.name LIKE :search', { search: `%${search}%` }) // search is the search string
+            .groupBy('hike.id')
+            .having('AVG(review.rating) >= 4')
+            .orderBy('AVG(review.rating)', 'DESC');
+        const totalCount =
+            (await query.clone().select('COUNT(DISTINCT hike.id) as "totalCount"').getRawOne())
+                ?.totalCount || 0; // get total number of results
+        const beforeExist = await query
+            .clone()
+            .andWhere('hike.id <= :cursor', { cursor: cursor })
+            .getExists(); // check if there is a hike before the cursor
+        const hikesId = await query
+            .andWhere('hike.id > :cursor', { cursor: cursor })
+            .limit(limit)
+            .getMany(); // get all hikes id
+        const numberOfResults = await query.getCount();
+        // get all hikes from ids found
+        const hikes = await Promise.all(
+            hikesId.map(async (hike) => {
+                return await this.repo.findOne({ where: { id: hike.id } });
+            })
+        );
+        // return connection
+        return {
+            edges: [
+                ...hikes.map((hike) => {
+                    return {
+                        node: hike,
+                        cursor: hike.id,
+                    };
+                }),
+            ],
+            pageInfo: {
+                hasNextPage: numberOfResults > limit,
+                hasPreviousPage: beforeExist,
+                startCursor: hikes.length > 0 ? hikes[0].id : '',
+                endCursor: hikes.length > 0 ? hikes[hikes.length - 1].id : '',
+            },
+            totalCount,
+        };
+    }
+
+    async findAlreadyDone(
+        userId: string,
+        limit: number,
+        cursor: string,
+        search = ''
+    ): Promise<HikeConnectionDTO> {
+        //build query to find hikes within distance
+        // the harvesine formula is used to calculate the distance between two points on a sphere
+        // d = 2R × sin⁻¹(√[sin²((θ₂ - θ₁)/2) + cosθ₁ × cosθ₂ × sin²((φ₂ - φ₁)/2)]) where R is earth radius (6371 km), θ is latitude, φ is longitude
+        const query = await this.repo.manager
+            .createQueryBuilder(HikeEntity, 'hike') // select all columns from hikeQuery
+            .select(['hike.id'])
+            .leftJoin('hike.performances', 'performance')
+            .where('hike.name LIKE :search', { search: `%${search}%` }) // search is the search string
+            .andWhere('performance.userId = :userId', { userId: userId })
+            .groupBy('hike.id')
+            .having('COUNT(performance.id) > 0')
+            .orderBy('COUNT(performance.id)', 'DESC');
+        const totalCount =
+            (await query.clone().select('COUNT(DISTINCT hike.id) as "totalCount"').getRawOne())
+                ?.totalCount || 0; // get total number of results
+        const beforeExist = await query
+            .clone()
+            .andWhere('hike.id <= :cursor', { cursor: cursor })
+            .getExists(); // check if there is a hike before the cursor
+        const hikesId = await query
+            .andWhere('hike.id > :cursor', { cursor: cursor })
+            .limit(limit)
+            .getMany(); // get all hikes id
         const numberOfResults = await query.getCount();
         // get all hikes from ids found
         const hikes = await Promise.all(

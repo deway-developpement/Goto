@@ -35,13 +35,52 @@ const GET_HIKES_ARROUND_ME = gql`
     }
 `;
 
+const GET_HIKES_POPULAR = gql`
+    query hikes($limit: Int!, $cursor: String, $search: String) {
+        hikes: getHikePopular(limit: $limit, cursor: $cursor, search: $search) {
+            edges {
+                node {
+                    id
+                }
+            }
+            pageInfo {
+                startCursor
+                endCursor
+                hasNextPage
+                hasPreviousPage
+            }
+        }
+    }
+`;
+
+const GET_HIKES_ALREADY_DONE = gql`
+    query hikes($limit: Int!, $cursor: String, $search: String) {
+        hikes: getHikeAlreadyDone(
+            limit: $limit
+            cursor: $cursor
+            search: $search
+        ) {
+            edges {
+                node {
+                    id
+                }
+            }
+            pageInfo {
+                startCursor
+                endCursor
+                hasNextPage
+                hasPreviousPage
+            }
+        }
+    }
+`;
+
 const GET_HIKES = gql`
     query hikes($filter: HikeFilter, $limit: Int, $cursor: ConnectionCursor) {
         hikes(filter: $filter, paging: { first: $limit, after: $cursor }) {
             edges {
                 node {
                     id
-                    name
                 }
             }
             pageInfo {
@@ -57,12 +96,12 @@ const QUERIES_CONFIG = (category, search, cursor, limit) => {
         return {
             query: GET_HIKES_ARROUND_ME,
             variables: {
-                limit: 2,
+                limit: limit,
                 cursor: cursor,
             },
             variablesSearch: {
                 search: search.split(' ').join('%') + '%',
-                limit: 2,
+                limit: limit,
                 cursor: cursor,
             },
         };
@@ -94,6 +133,34 @@ const QUERIES_CONFIG = (category, search, cursor, limit) => {
                         lt: thismonth,
                     },
                 },
+                limit: limit,
+                cursor: cursor,
+            },
+        };
+    }
+    if (category === 'Popular') {
+        return {
+            query: GET_HIKES_POPULAR,
+            variables: {
+                limit: limit,
+                cursor: cursor,
+            },
+            variablesSearch: {
+                search: search.split(' ').join('%') + '%',
+                limit: limit,
+                cursor: cursor,
+            },
+        };
+    }
+    if (category === 'To redo') {
+        return {
+            query: GET_HIKES_ALREADY_DONE,
+            variables: {
+                limit: limit,
+                cursor: cursor,
+            },
+            variablesSearch: {
+                search: search.split(' ').join('%') + '%',
                 limit: limit,
                 cursor: cursor,
             },

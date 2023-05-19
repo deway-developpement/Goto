@@ -15,7 +15,7 @@ import { IconComp } from '../Icon/Icon';
 import Category from '../Category/Category';
 import { FlatList } from 'react-native';
 
-export default function DiscoverScreen() {
+export default function DiscoverScreen({ navigation }) {
     const { colors } = useTheme();
     const styles = stylesheet(colors);
 
@@ -63,7 +63,10 @@ export default function DiscoverScreen() {
                     <Text style={styles.textLink}>No categories</Text>
                 }
                 ListHeaderComponent={
-                    <DiscoverHeader windowHeight={windowHeight} />
+                    <DiscoverHeader
+                        windowHeight={windowHeight}
+                        navigation={navigation}
+                    />
                 }
                 ListFooterComponent={
                     <View
@@ -79,7 +82,7 @@ export default function DiscoverScreen() {
     );
 }
 
-function DiscoverHeader({ windowHeight }) {
+function DiscoverHeader({ windowHeight, navigation }) {
     const { colors } = useTheme();
     const styles = stylesheet(colors);
 
@@ -139,40 +142,53 @@ function DiscoverHeader({ windowHeight }) {
                     id={'to-redo'}
                 />
             </ScrollView>
-            <Image
-                source={require('../../../assets/images/Dalle_background.png')}
-                style={[
-                    {
-                        width: '100%',
-                        height: windowHeight * 0.5,
-                        borderTopLeftRadius: 12,
-                        borderTopRightRadius: 12,
-                    },
-                ]}
-            />
-            <View
-                style={[
-                    styles.container,
-                    {
-                        paddingBottom: '5%',
-                        borderBottomRightRadius: 12,
-                        borderBottomLeftRadius: 12,
-                        backgroundColor: colors.backgroundTextInput,
-                    },
-                ]}
+            <TouchableWithoutFeedback
+                onPress={() => {
+                    console.log('DISCORVER');
+                    navigation.navigate('Search', {
+                        category: 'Popular',
+                    });
+                }}
             >
-                <Text style={[styles.textHeader, { alignSelf: 'center' }]}>
-                    Most popular
-                </Text>
-                <Text
-                    style={[
-                        styles.textLink,
-                        { alignSelf: 'center', marginTop: 5 },
-                    ]}
-                >
-                    Discover
-                </Text>
-            </View>
+                <View>
+                    <Image
+                        source={require('../../../assets/images/Dalle_background.png')}
+                        style={[
+                            {
+                                width: '100%',
+                                height: windowHeight * 0.5,
+                                borderTopLeftRadius: 12,
+                                borderTopRightRadius: 12,
+                            },
+                        ]}
+                    />
+                    <View
+                        style={[
+                            styles.container,
+                            {
+                                paddingBottom: '5%',
+                                borderBottomRightRadius: 12,
+                                borderBottomLeftRadius: 12,
+                                backgroundColor: colors.backgroundTextInput,
+                            },
+                        ]}
+                    >
+                        <Text
+                            style={[styles.textHeader, { alignSelf: 'center' }]}
+                        >
+                            Most popular
+                        </Text>
+                        <Text
+                            style={[
+                                styles.textLink,
+                                { alignSelf: 'center', marginTop: 5 },
+                            ]}
+                        >
+                            Discover
+                        </Text>
+                    </View>
+                </View>
+            </TouchableWithoutFeedback>
             <Text style={[styles.textHeader, { marginTop: 40 }]}>
                 Unique places
             </Text>
