@@ -24,7 +24,6 @@ import {
     Historic,
     Friends,
 } from './ProfileComplements.jsx';
-import { set } from 'react-native-reanimated';
 
 export default function ProfileScreen() {
     const { colors } = useTheme();
