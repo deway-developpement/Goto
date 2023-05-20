@@ -113,6 +113,10 @@ const stylesheet = (colors) =>
             color: colors.link,
             borderRadius: 6,
         },
+        btnAdd: {
+            backgroundColor: colors.primary,
+            borderRadius: 6,
+        },
         modalView: {
             marginHorizontal: '10%',
             top: '20%',

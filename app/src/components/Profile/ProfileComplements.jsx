@@ -153,12 +153,12 @@ function PseudoModal({ setModalVisible, profil, reload }) {
         }
     `;
 
-    function changePseudo(pseudo) {
+    async function changePseudo(pseudo) {
         if (pseudo == '') {
             Alert.alert('Error', 'Please enter a pseudo');
             return;
         }
-        client.mutate({
+        await client.mutate({
             mutation: UPDATE_USER,
             variables: {
                 id: profil.whoami.id,
@@ -518,12 +518,11 @@ function FriendCard({ friend }) {
     );
 }
 
-function Friends({ friends, MyID, reload }) {
+function Friends({ friends, MyID, reload, search, setSearch }) {
     const { colors } = useTheme();
     const styles = stylesheet(colors);
     const limitByPage = 6;
     let onEndReachedCalledDuringMomentum = false;
-    const [pseudoPart, setPseudoPart] = useState('');
 
     const GET_USERS = gql`
         query users($pseudoPart: String!, $MyID: ID!, $limit: Int!, $cursor: ConnectionCursor!) {
@@ -541,7 +540,6 @@ function Friends({ friends, MyID, reload }) {
                         id
                         pseudo
                         publicKey
-                        isFriend
                         avatar {
                             filename
                         }
@@ -576,15 +574,18 @@ function Friends({ friends, MyID, reload }) {
         );
     }
 
-    const nodes = data?.users?.edges.map((user) => user.node).filter((user) => !user.isFriend);
+    const nodes = data?.users?.edges.map((user) => user.node);
 
-    function handleSearch(pseudoPart) {
-        reload(pseudoPart);
-        if (pseudoPart === '') {
-            refetch({ pseudoPart: '' });
-            return;
-        }
-        refetch({ pseudoPart: '%' + pseudoPart + '%' });
+    function removeDuplicatesFromArray2(array1, array2) {
+        // add a filter to remove duplicates from the array so that there is no two objects with the same id
+        const myarray = array2.filter((item) => array1.findIndex((t) => t.id === item.id) === -1);
+        return [...array1, ...myarray];
+    }
+
+    function handleSearch(search) {
+        reload(search);
+        const variables = search === '' ? { pseudoPart: '' } : { pseudoPart: '%' + search + '%' };
+        refetch(variables);
     }
 
     return (
@@ -595,17 +596,17 @@ function Friends({ friends, MyID, reload }) {
                     style={styles.textInput}
                     placeholder="Search"
                     placeholderTextColor={colors.border}
-                    onChangeText={(text) => setPseudoPart(text)}
-                    onSubmitEditing={() => handleSearch(pseudoPart)}
-                    value={pseudoPart}
+                    onChangeText={(text) => setSearch(text)}
+                    onSubmitEditing={() => handleSearch(search)}
+                    value={search}
                 />
-                {pseudoPart !== '' ? (
+                {search !== '' ? (
                     <Icon
                         name="cross"
                         size={15}
                         color={colors.border}
                         onPress={() => {
-                            setPseudoPart('');
+                            setSearch('');
                             handleSearch('');
                         }}
                     />
@@ -614,7 +615,7 @@ function Friends({ friends, MyID, reload }) {
                 )}
             </View>
             <FlatList
-                data={[...friends, ...nodes]}
+                data={removeDuplicatesFromArray2(friends, nodes)}
                 renderItem={({ item }) => <FriendCard friend={item} allFriends={friends} />}
                 style={styles.friendsContainer}
                 horizontal={true}
