@@ -106,7 +106,7 @@ export default function Category(props) {
                         marginTop: 20,
                         marginRight: 40,
                         paddingRight: 40,
-                        backgroundColor: colors.backgroundsecondary,
+                        backgroundColor: colors.backgroundSecondary,
                         borderRadius: 12,
                     },
                     props.horizontal ? { width: windowWidth * 0.7 } : {},

@@ -27,7 +27,7 @@ export default function PointsOfInterests(props) {
                         marginTop: 20,
                         marginRight: 40,
                         paddingRight: 40,
-                        backgroundColor: colors.backgroundsecondary,
+                        backgroundColor: colors.backgroundSecondary,
                         borderTopLeftRadius: 12,
                         borderBottomLeftRadius: 12,
                         width: windowWidth * 0.7,

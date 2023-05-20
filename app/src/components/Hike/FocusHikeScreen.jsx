@@ -24,7 +24,7 @@ function Tag(props) {
                 borderRadius: 24,
             }}
         >
-            <Text style={{ color: colors.backgroundsecondary }}>{props.name}</Text>
+            <Text style={{ color: colors.backgroundSecondary }}>{props.name}</Text>
         </View>
     );
 }
@@ -378,7 +378,7 @@ export default function FocusHikeScreen({ route }) {
                                         ]}
                                     >
                                         <IconComp
-                                            color={colors.backgroundsecondary}
+                                            color={colors.backgroundSecondary}
                                             name={'map'}
                                             size={20}
                                         />
@@ -388,7 +388,7 @@ export default function FocusHikeScreen({ route }) {
                                                 {
                                                     fontSize: 16,
                                                     marginTop: 0,
-                                                    color: colors.backgroundsecondary,
+                                                    color: colors.backgroundSecondary,
                                                     marginLeft: 20,
                                                 })
                                             }

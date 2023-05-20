@@ -5,8 +5,8 @@ export const Classic = {
     colors: {
         ...DefaultTheme.colors,
         background: '#E4ECEA',
-        backgroundmodal: '#26465366',
-        backgroundsecondary: '#FFFFFF',
+        backgroundModal: '#26465366',
+        backgroundSecondary: '#FFFFFF',
         text: '#0D0E0E',
         link: '#264653',
         primary: '#DFE17B',
@@ -21,7 +21,6 @@ export const Classic = {
         iconprimary: '#78DBC8',
         label: '#F2F7F9',
         stats: '#207665',
-        statstext: '#0D0E0E',
         description: '#6B6F70',
         starEmpty: '#EFF0F1',
         starFill: '#2A9D87',
