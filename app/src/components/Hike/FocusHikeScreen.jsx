@@ -159,7 +159,7 @@ export default function FocusHikeScreen({ route }) {
                                         },
                                     ]}
                                 >
-                                    Principals caracteristics
+                                    Principals characteristics
                                 </Text>
                                 <View
                                     style={{
@@ -323,7 +323,7 @@ export default function FocusHikeScreen({ route }) {
                             </View>
                             <View style={[styles.containerFocus, { flexDirection: 'column' }]}>
                                 <Text style={styles.textDescription}>
-                                    Hike&apos;s caracteristics
+                                    Hike&apos;s characteristics
                                 </Text>
                                 {data?.hike?.pointsOfInterests.map((item) => (
                                     <PointsOfInterests key={item.name} {...item} />
