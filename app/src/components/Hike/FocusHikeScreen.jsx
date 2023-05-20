@@ -97,7 +97,7 @@ export default function FocusHikeScreen({ route }) {
     } else {
         return (
             <>
-                <TouchableWithoutFeedback onPress={() => navigation.navigate('Search')}>
+                <TouchableWithoutFeedback onPress={() => navigation.goBack()}>
                     <View
                         style={[
                             styles.logoContainer,

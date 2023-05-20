@@ -111,7 +111,7 @@ export default function FocusFriend({ route }) {
         <View style={styles.container}>
             <SafeAreaView style={styles.container}>
                 <ScrollView showsVerticalScrollIndicator={false}>
-                    <Pressable onPress={() => navigation.navigate('Profile')}>
+                    <Pressable onPress={() => navigation.goBack()}>
                         <View style={styles.logoContainer}>
                             <Icon name="back" size={30} color={colors.background} />
                         </View>

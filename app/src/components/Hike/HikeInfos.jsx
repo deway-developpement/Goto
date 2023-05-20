@@ -52,30 +52,13 @@ export default function HikeInfos({ hike, borderRadius, inProfile = false }) {
                     width: '100%',
                 }}
             >
-                <Text
-                    style={[
-                        styles.textDescription,
-                        { marginLeft: 0, marginBottom: 4 },
-                    ]}
-                >
+                <Text style={[styles.textDescription, { marginLeft: 0, marginBottom: 4 }]}>
                     {hike.category.name}
                 </Text>
                 {!inProfile ? (
-                    <TouchableWithoutFeedback
-                        onPress={() => console.log('LIKE HIKE', hike.name)}
-                    >
+                    <TouchableWithoutFeedback onPress={() => console.log('LIKE HIKE', hike.name)}>
                         <View>
-                            <IconComp
-                                color={colors.logo}
-                                name={'heart'}
-                                pos={0}
-                            />
-                            <IconComp
-                                color={colors.backgroundTextInput}
-                                name={'heart'}
-                                size={22}
-                                pos={4.7}
-                            />
+                            <IconComp color={colors.logo} name={'heartempty'} pos={0} />
                         </View>
                     </TouchableWithoutFeedback>
                 ) : null}
@@ -115,9 +98,7 @@ export default function HikeInfos({ hike, borderRadius, inProfile = false }) {
                             return (
                                 <IconComp
                                     color={
-                                        index < avgRating - 1
-                                            ? colors.starFill
-                                            : colors.starEmpty
+                                        index < avgRating - 1 ? colors.starFill : colors.starEmpty
                                     }
                                     key={index}
                                     name={'star'}

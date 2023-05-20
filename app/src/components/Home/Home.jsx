@@ -38,10 +38,7 @@ function MapScreen({ route }) {
 
     const [image, setImage] = useState(null);
 
-    if (
-        route.params?.dataImg &&
-        (image == null || image.paraUri != route.params.dataImg.uri)
-    ) {
+    if (route.params?.dataImg && (image == null || image.paraUri != route.params.dataImg.uri)) {
         setImage({
             paraUri: route.params?.dataImg.uri,
             uri: 'data:image/jpg;base64,' + route.params.dataImg.base64,
@@ -51,15 +48,9 @@ function MapScreen({ route }) {
     useEffect(() => {
         if (permission === null) {
             request();
-        } else if (
-            permission.granted === false &&
-            permission.canAskAgain === false
-        ) {
+        } else if (permission.granted === false && permission.canAskAgain === false) {
             setErrorMsg('Permission to access location was denied');
-        } else if (
-            permission.granted === false &&
-            permission.canAskAgain === true
-        ) {
+        } else if (permission.granted === false && permission.canAskAgain === true) {
             request();
         } else if (permission.granted === true) {
             Location.getLastKnownPositionAsync({}).then((response) => {
@@ -78,11 +69,7 @@ function MapScreen({ route }) {
                     return <CameraScreen setIsCamera={setIsCamera} />;
                 } else if (location == null) {
                     if (errorMsg != null) {
-                        return (
-                            <Text style={{ alignSelf: 'center' }}>
-                                {errorMsg}
-                            </Text>
-                        );
+                        return <Text style={{ alignSelf: 'center' }}>{errorMsg}</Text>;
                     } else {
                         return (
                             <ActivityIndicator
@@ -168,6 +155,7 @@ function HomeScreen({ navigation }) {
                 <View style={styles.inner}>
                     <Tab.Navigator
                         initialRouteName={'Profile'}
+                        backBehavior="history"
                         screenOptions={{
                             tabBarStyle: styles.tabBar,
                             headerShown: false,
@@ -183,11 +171,7 @@ function HomeScreen({ navigation }) {
                             component={DiscoverScreen}
                             options={{
                                 tabBarIcon: (props) => (
-                                    <Icon
-                                        name="list"
-                                        size={30}
-                                        color={props.color}
-                                    />
+                                    <Icon name="list" size={30} color={props.color} />
                                 ),
                             }}
                         />
@@ -196,11 +180,7 @@ function HomeScreen({ navigation }) {
                             component={SearchScreen}
                             options={{
                                 tabBarIcon: (props) => (
-                                    <Icon
-                                        name="search"
-                                        size={30}
-                                        color={props.color}
-                                    />
+                                    <Icon name="search" size={30} color={props.color} />
                                 ),
                             }}
                         />
@@ -209,11 +189,7 @@ function HomeScreen({ navigation }) {
                             component={MapScreen}
                             options={{
                                 tabBarIcon: (props) => (
-                                    <Icon
-                                        name="position"
-                                        size={30}
-                                        color={props.color}
-                                    />
+                                    <Icon name="position" size={30} color={props.color} />
                                 ),
                             }}
                         />
@@ -222,11 +198,7 @@ function HomeScreen({ navigation }) {
                             component={FavoritesScreen}
                             options={{
                                 tabBarIcon: (props) => (
-                                    <Icon
-                                        name="hiker"
-                                        size={30}
-                                        color={props.color}
-                                    />
+                                    <Icon name="hiker" size={30} color={props.color} />
                                 ),
                             }}
                         />
@@ -235,11 +207,7 @@ function HomeScreen({ navigation }) {
                             component={ProfileScreen}
                             options={{
                                 tabBarIcon: (props) => (
-                                    <Icon
-                                        name="user"
-                                        size={props.size}
-                                        color={props.color}
-                                    />
+                                    <Icon name="user" size={props.size} color={props.color} />
                                 ),
                             }}
                         />
