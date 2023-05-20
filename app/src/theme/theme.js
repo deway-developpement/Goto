@@ -4,9 +4,10 @@ export const Classic = {
     ...DefaultTheme,
     colors: {
         ...DefaultTheme.colors,
-        background: '#F1F1F1',
+        background: '#E4ECEA',
+        backgroundsecondary: '#26465366',
         backgroundTextInput: '#FFFFFF',
-        text: '#201F30',
+        text: '#0D0E0E',
         link: '#264653',
         primary: '#DFE17B',
         secondary: '#80C8D2',
@@ -20,10 +21,13 @@ export const Classic = {
         iconprimary: '#78DBC8',
         label: '#F2F7F9',
         logo: '#264653',
-        description:'#6B6F70',
-        starEmpty:'#EFF0F1',
-        starFill:'#2A9D87',
-        styleBar:'#E1E2E3'
+        backgroundCategorie: '#FFFFFF',
+        stats: '#207665',
+        statstext: '#0D0E0E',
+        description: '#6B6F70',
+        starEmpty: '#EFF0F1',
+        starFill: '#2A9D87',
+        styleBar: '#E1E2E3',
     },
 };
 
@@ -31,7 +35,8 @@ export const Dark = {
     ...DefaultTheme,
     colors: {
         ...DefaultTheme.colors,
-        background: '#201F30',
+        background: '#E4ECEA',
+        backgroundsecondary: '#26465366',
         text: '#FDFEFE',
         link: '#5B774B',
         backgroundTextInput: '#FFFFFF',
@@ -47,9 +52,12 @@ export const Dark = {
         iconprimary: '#78DBC8',
         label: '#F2F7F9',
         logo: '#264653',
-        description:'#6B6F70',
-        starEmpty:'#EFF0F1',
-        starFill:'#2A9D87',
-        styleBar:'#E1E2E3'
+        backgroundCategorie: '#FFFFFF',
+        stats: '#207665',
+        statstext: '#0D0E0E',
+        description: '#6B6F70',
+        starEmpty: '#EFF0F1',
+        starFill: '#2A9D87',
+        styleBar: '#E1E2E3',
     },
 };

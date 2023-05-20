@@ -233,7 +233,7 @@ export default function SearchScreen({ route, navigation }) {
                     <>
                         <View style={[styles.textInputContainer, { marginTop: 28 }]}>
                             <TextInput
-                                placeholder="search"
+                                placeholder="Search"
                                 autoCorrect={false}
                                 autoCapitalize="none"
                                 placeholderTextColor={colors.border}
