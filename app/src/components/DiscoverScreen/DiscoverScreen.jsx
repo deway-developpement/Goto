@@ -190,7 +190,7 @@ function DiscoverHeader({ windowHeight, navigation }) {
                                 paddingBottom: '5%',
                                 borderBottomRightRadius: 12,
                                 borderBottomLeftRadius: 12,
-                                backgroundColor: colors.backgroundsecondary,
+                                backgroundColor: colors.backgroundSecondary,
                             },
                         ]}
                     >

@@ -33,10 +33,10 @@ const stylesheet = (colors) =>
             flexDirection: 'row',
             alignItems: 'center',
             justifyContent: 'space-between',
-            borderColor: colors.backgroundsecondary,
+            borderColor: colors.backgroundSecondary,
             borderRadius: 6,
             borderWidth: 1,
-            backgroundColor: colors.backgroundsecondary,
+            backgroundColor: colors.backgroundSecondary,
             paddingHorizontal: 16,
             height: 44,
         },
@@ -74,7 +74,7 @@ const stylesheet = (colors) =>
             borderRadius: 6,
         },
         avatarContainer: {
-            backgroundColor: colors.backgroundsecondary,
+            backgroundColor: colors.backgroundSecondary,
             borderRadius: 50,
             width: 66,
             height: 66,
@@ -124,7 +124,7 @@ const stylesheet = (colors) =>
             paddingHorizontal: 22,
             paddingTop: 16,
             paddingBottom: 30,
-            backgroundColor: colors.backgroundsecondary,
+            backgroundColor: colors.backgroundSecondary,
             width: '80%',
             position: 'absolute',
         },
@@ -148,7 +148,7 @@ const stylesheet = (colors) =>
         statContainer: {
             flexDirection: 'row',
             justifyContent: 'space-between',
-            backgroundColor: colors.backgroundsecondary,
+            backgroundColor: colors.backgroundSecondary,
             borderRadius: 12,
             padding: 30,
             marginBottom: 26,
@@ -162,7 +162,7 @@ const stylesheet = (colors) =>
         statNumber: {
             fontSize: 24,
             fontWeight: '800',
-            color: colors.statstext,
+            color: colors.text,
             marginTop: 10,
         },
     });

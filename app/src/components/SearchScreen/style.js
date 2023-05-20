@@ -25,7 +25,7 @@ const stylesheet = (colors) =>
             borderColor: colors.border,
             borderRadius: 6,
             borderWidth: 1,
-            backgroundColor: colors.backgroundsecondary,
+            backgroundColor: colors.backgroundSecondary,
             paddingHorizontal: 16,
             height: 48,
         },

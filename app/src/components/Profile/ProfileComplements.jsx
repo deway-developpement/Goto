@@ -492,7 +492,7 @@ function FriendCard({ friend }) {
                         padding: 2,
                         backgroundColor: friend.isFriend
                             ? colors.stats
-                            : colors.backgroundsecondary,
+                            : colors.backgroundSecondary,
                     },
                 ]}
             >

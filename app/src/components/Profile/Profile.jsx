@@ -128,7 +128,7 @@ export default function ProfileScreen() {
                     backgroundColor:
                         modalVisible == modalActive.None
                             ? colors.background
-                            : colors.backgroundmodal,
+                            : colors.backgroundModal,
                 },
             ]}
         >

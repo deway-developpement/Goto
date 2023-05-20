@@ -66,7 +66,7 @@ const stylesheet = (colors) =>
             marginBottom: '4%',
             paddingLeft: 15,
             color: colors.text,
-            backgroundColor: colors.backgroundsecondary,
+            backgroundColor: colors.backgroundSecondary,
             alignSelf: 'stretch',
             fontSize: 16,
         },
