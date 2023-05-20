@@ -48,10 +48,10 @@ export default function Map({ location, image, leftImage, topImage, widthImage, 
         setPassedPoints(gpxPathpassedPoints);
         setLeftPoints(gpxPathLeft);
     }
-    const y1=parseFloat(location?.coords?.latitude) + topImage*Math.cos(angleImage) + leftImage*Math.sin(angleImage);
-    const x1=parseFloat(location?.coords?.longitude) + leftImage*Math.cos(angleImage) - topImage*Math.sin(angleImage);
-    const y2=parseFloat(location?.coords?.latitude) + (topImage + heightImage)*Math.cos(angleImage) + (leftImage + widthImage)*Math.sin(angleImage);
-    const x2=parseFloat(location?.coords?.longitude) + (leftImage + widthImage)*Math.cos(angleImage) - (topImage + heightImage)*Math.sin(angleImage);
+    const y1=parseFloat(location?.coords?.latitude) + topImage;
+    const x1=parseFloat(location?.coords?.longitude) + leftImage;
+    const y2=parseFloat(location?.coords?.latitude) + topImage + heightImage;
+    const x2=parseFloat(location?.coords?.longitude) + leftImage + widthImage;
     
     console.log(y1, x1, y2, x2);
     console.log(y1-parseFloat(location?.coords?.latitude), x1-parseFloat(location?.coords?.longitude), y2-parseFloat(location?.coords?.latitude), x2-parseFloat(location?.coords?.longitude));
@@ -115,6 +115,7 @@ export default function Map({ location, image, leftImage, topImage, widthImage, 
                         ],
                     ]}
                     image={{ uri: image.uri }}
+                    bearing={angleImage}
                     opacity={0.8}
                 />
             )}
