@@ -96,7 +96,7 @@ function DiscoverHeader({ windowHeight, navigation }) {
                         },
                     ]}
                 >
-                    <IconComp color={colors.logo} name={'plus'} />
+                    <IconComp color={colors.link} name={'plus'} />
                     <Text
                         style={[
                             styles.textLink,
@@ -159,7 +159,7 @@ function DiscoverHeader({ windowHeight, navigation }) {
                                 paddingBottom: '5%',
                                 borderBottomRightRadius: 12,
                                 borderBottomLeftRadius: 12,
-                                backgroundColor: colors.backgroundTextInput,
+                                backgroundColor: colors.backgroundsecondary,
                             },
                         ]}
                     >

@@ -260,7 +260,7 @@ export default function SearchScreen({ route, navigation }) {
                                     </Text>
                                     <TouchableWithoutFeedback onPress={() => removeFilter()}>
                                         <View>
-                                            <IconComp color={colors.logo} name={'filter'} pos={0} />
+                                            <IconComp color={colors.link} name={'filter'} pos={0} />
                                         </View>
                                     </TouchableWithoutFeedback>
                                 </View>

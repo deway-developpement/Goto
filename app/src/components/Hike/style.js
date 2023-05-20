@@ -16,7 +16,7 @@ const stylesheet = (colors) =>
         container: {
             width: '100%',
             height: '100%',
-            backgroundColor: colors.backgroundTextInput,
+            backgroundColor: colors.backgroundsecondary,
             flex: 1,
             flexDirection: 'column',
             alignItems: 'center',
@@ -27,7 +27,7 @@ const stylesheet = (colors) =>
         containerFocus: {
             width: '100%',
             height: '100%',
-            backgroundColor: colors.backgroundTextInput,
+            backgroundColor: colors.backgroundsecondary,
             flex: 1,
             flexDirection: 'column',
             alignItems: 'flex-start',
@@ -43,7 +43,7 @@ const stylesheet = (colors) =>
         logoContainer: {
             width: 50,
             height: 50,
-            backgroundColor: colors.logo,
+            backgroundColor: colors.link,
             borderRadius: 12,
             flex: 1,
             alignItems: 'center',

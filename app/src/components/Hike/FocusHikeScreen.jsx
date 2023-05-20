@@ -24,7 +24,7 @@ function Tag(props) {
                 borderRadius: 24,
             }}
         >
-            <Text style={{ color: colors.backgroundTextInput }}>{props.name}</Text>
+            <Text style={{ color: colors.backgroundsecondary }}>{props.name}</Text>
         </View>
     );
 }
@@ -258,7 +258,7 @@ export default function FocusHikeScreen({ route }) {
                                     </View>
                                     <View
                                         style={{
-                                            backgroundColor: colors.styleBar,
+                                            backgroundColor: colors.starEmpty,
                                             height: '100%',
                                             width: 2,
                                             marginTop: 5,
@@ -370,7 +370,7 @@ export default function FocusHikeScreen({ route }) {
                                         style={[
                                             styles.containerFocus,
                                             {
-                                                backgroundColor: colors.logo,
+                                                backgroundColor: colors.link,
                                                 marginTop: 15,
                                                 flexDirection: 'row',
                                                 justifyContent: 'center',
@@ -378,7 +378,7 @@ export default function FocusHikeScreen({ route }) {
                                         ]}
                                     >
                                         <IconComp
-                                            color={colors.backgroundTextInput}
+                                            color={colors.backgroundsecondary}
                                             name={'map'}
                                             size={20}
                                         />
@@ -388,7 +388,7 @@ export default function FocusHikeScreen({ route }) {
                                                 {
                                                     fontSize: 16,
                                                     marginTop: 0,
-                                                    color: colors.backgroundTextInput,
+                                                    color: colors.backgroundsecondary,
                                                     marginLeft: 20,
                                                 })
                                             }

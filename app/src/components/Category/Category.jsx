@@ -106,7 +106,7 @@ export default function Category(props) {
                         marginTop: 20,
                         marginRight: 40,
                         paddingRight: 40,
-                        backgroundColor: colors.backgroundTextInput,
+                        backgroundColor: colors.backgroundsecondary,
                         borderRadius: 12,
                     },
                     props.horizontal ? { width: windowWidth * 0.7 } : {},
