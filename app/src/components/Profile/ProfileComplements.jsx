@@ -112,7 +112,7 @@ function ProfileModal({ setModalVisible, profil, reload }) {
                         marginBottom: 16,
                     }}
                 >
-                    <Icon name="user" size={14} style={{ marginTop: 2 }} color={colors.link} />
+                    <Icon name="avatar" size={16} style={{ marginTop: 2 }} color={colors.link} />
                     <Text style={styles.smallModalText}>
                         {profil.whoami.avatar ? 'Change avatar' : 'Add avatar'}
                     </Text>
@@ -126,7 +126,7 @@ function ProfileModal({ setModalVisible, profil, reload }) {
                         marginBottom: 10,
                     }}
                 >
-                    <Icon name="user" size={14} style={{ marginTop: 2 }} color={colors.link} />
+                    <Icon name="pseudo" size={16} style={{ marginTop: 2 }} color={colors.link} />
                     <Text style={styles.smallModalText}>Change pseudo</Text>
                 </Pressable>
             </View>
@@ -329,7 +329,7 @@ function SettingsModal({ setModalVisible, reload }) {
                         marginBottom: 16,
                     }}
                 >
-                    <Icon name="reload" size={14} style={{ marginTop: 2 }} color={colors.link} />
+                    <Icon name="delete" size={14} style={{ marginTop: 2 }} color={colors.link} />
                     <Text style={styles.smallModalText}>Delete account</Text>
                 </Pressable>
                 <Pressable
@@ -378,11 +378,7 @@ function Stats({ count, distance, duration, elevation }) {
                             <Text style={styles.statLabel}>hikes</Text>
                         </View>
                         <View style={{ alignItems: 'center' }}>
-                            <Icon
-                                name="info" //TODO change to clock
-                                size={28}
-                                color={colors.stats}
-                            />
+                            <Icon name="clock" size={28} color={colors.stats} />
                             <Text style={styles.statNumber}>{duration}h</Text>
                             <Text style={styles.statLabel}>Total</Text>
                         </View>
