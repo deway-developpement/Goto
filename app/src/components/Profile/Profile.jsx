@@ -39,7 +39,7 @@ export default function ProfileScreen() {
     const lastMonth = new Date(today.getFullYear(), today.getMonth(), 1);
 
     const WHOAMI = gql`
-        query whoami($lastMonth: DateTime!) {
+        query whoami($lastMonth: DateTime!, $PseudoFilter: String!) {
             whoami {
                 id
                 pseudo
@@ -48,7 +48,10 @@ export default function ProfileScreen() {
                 avatar {
                     filename
                 }
-                friends(sorting: { field: pseudo, direction: ASC }) {
+                friends(
+                    filter: { pseudo: { like: $PseudoFilter } }
+                    sorting: { field: pseudo, direction: ASC }
+                ) {
                     id
                     pseudo
                     publicKey
@@ -93,8 +96,16 @@ export default function ProfileScreen() {
     } = useQuery(WHOAMI, {
         variables: {
             lastMonth: lastMonth.toISOString(),
+            PseudoFilter: '%',
         },
     });
+
+    function handleSearch(text) {
+        refetchProfile({
+            lastMonth: lastMonth.toISOString(),
+            PseudoFilter: '%' + text + '%',
+        });
+    }
 
     return (
         <KeyboardAvoidingView
@@ -120,22 +131,14 @@ export default function ProfileScreen() {
                         >
                             <Text style={styles.header}>Profile</Text>
                             <Pressable
-                                onPress={() =>
-                                    setModalVisible(modalActive.Settings)
-                                }
+                                onPress={() => setModalVisible(modalActive.Settings)}
                                 style={{
                                     width: 'auto',
                                     alignItems: 'center',
                                 }}
                             >
-                                <Icon
-                                    name="settings"
-                                    size={35}
-                                    color={colors.link}
-                                />
-                                <Text style={styles.textSettings}>
-                                    Settings
-                                </Text>
+                                <Icon name="settings" size={35} color={colors.link} />
+                                <Text style={styles.textSettings}>Settings</Text>
                             </Pressable>
                         </View>
                         {(() => {
@@ -154,20 +157,13 @@ export default function ProfileScreen() {
                                             <Modal
                                                 animationType="slide"
                                                 transparent={true}
-                                                visible={
-                                                    modalVisible ==
-                                                    modalActive.ModifyProfile
-                                                }
+                                                visible={modalVisible == modalActive.ModifyProfile}
                                                 onRequestClose={() => {
-                                                    setModalVisible(
-                                                        modalActive.None
-                                                    );
+                                                    setModalVisible(modalActive.None);
                                                 }}
                                             >
                                                 <ProfileModal
-                                                    setModalVisible={
-                                                        setModalVisible
-                                                    }
+                                                    setModalVisible={setModalVisible}
                                                     profil={profil}
                                                     reload={refetchProfile}
                                                 />
@@ -175,65 +171,41 @@ export default function ProfileScreen() {
                                             <Modal
                                                 animationType="slide"
                                                 transparent={true}
-                                                visible={
-                                                    modalVisible ==
-                                                    modalActive.Settings
-                                                }
+                                                visible={modalVisible == modalActive.Settings}
                                                 onRequestClose={() => {
-                                                    setModalVisible(
-                                                        modalActive.None
-                                                    );
+                                                    setModalVisible(modalActive.None);
                                                 }}
                                             >
                                                 <SettingsModal
-                                                    setModalVisible={
-                                                        setModalVisible
-                                                    }
+                                                    setModalVisible={setModalVisible}
                                                     reload={refetchProfile}
                                                 />
                                             </Modal>
                                             <Modal
                                                 animationType="slide"
                                                 transparent={true}
-                                                visible={
-                                                    modalVisible ==
-                                                    modalActive.ModifyPseudo
-                                                }
+                                                visible={modalVisible == modalActive.ModifyPseudo}
                                                 onRequestClose={() => {
-                                                    setModalVisible(
-                                                        modalActive.ModifyProfile
-                                                    );
+                                                    setModalVisible(modalActive.ModifyProfile);
                                                 }}
                                             >
                                                 <PseudoModal
-                                                    setModalVisible={
-                                                        setModalVisible
-                                                    }
+                                                    setModalVisible={setModalVisible}
                                                     profil={profil}
                                                     reload={refetchProfile}
                                                 />
                                             </Modal>
                                         </View>
                                         {(() => {
-                                            if (
-                                                modalVisible == modalActive.None
-                                            ) {
+                                            if (modalVisible == modalActive.None) {
                                                 return (
                                                     <>
                                                         {/* Avatar Part */}
-                                                        <View
-                                                            style={
-                                                                styles.avatarContainer
-                                                            }
-                                                        >
+                                                        <View style={styles.avatarContainer}>
                                                             <Image
-                                                                style={
-                                                                    styles.avatar
-                                                                }
+                                                                style={styles.avatar}
                                                                 source={
-                                                                    profil
-                                                                        .whoami
-                                                                        .avatar
+                                                                    profil.whoami.avatar
                                                                         ? {
                                                                               uri: `https://deway.fr/goto-api/files/photos/${profil.whoami.avatar.filename}`,
                                                                           }
@@ -241,31 +213,12 @@ export default function ProfileScreen() {
                                                                 }
                                                             />
                                                         </View>
-                                                        <Text
-                                                            style={
-                                                                styles.pseudo
-                                                            }
-                                                        >
-                                                            {
-                                                                profil.whoami
-                                                                    .pseudo
-                                                            }
-                                                            #
-                                                            {
-                                                                profil.whoami
-                                                                    .publicKey
-                                                            }
+                                                        <Text style={styles.pseudo}>
+                                                            {profil.whoami.pseudo}#
+                                                            {profil.whoami.publicKey}
                                                         </Text>
-                                                        <View
-                                                            style={
-                                                                styles.btnContainer
-                                                            }
-                                                        >
-                                                            <View
-                                                                style={
-                                                                    styles.btn
-                                                                }
-                                                            >
+                                                        <View style={styles.btnContainer}>
+                                                            <View style={styles.btn}>
                                                                 <Button
                                                                     title="Modify profile"
                                                                     onPress={() =>
@@ -273,14 +226,11 @@ export default function ProfileScreen() {
                                                                             modalActive.ModifyProfile
                                                                         )
                                                                     }
-                                                                    buttonStyle={
-                                                                        styles.btn
-                                                                    }
+                                                                    buttonStyle={styles.btn}
                                                                     titleStyle={{
                                                                         color: colors.link,
                                                                         fontSize: 12,
-                                                                        fontWeight:
-                                                                            '500',
+                                                                        fontWeight: '500',
                                                                     }}
                                                                 />
                                                             </View>
@@ -290,44 +240,34 @@ export default function ProfileScreen() {
                                                         <Stats
                                                             count={
                                                                 profil.whoami
-                                                                    .performancesAggregate[0]
-                                                                    .count.id
+                                                                    .performancesAggregate[0].count
+                                                                    .id
                                                             }
                                                             duration={
                                                                 profil.whoami
-                                                                    .performancesAggregate[0]
-                                                                    .sum
+                                                                    .performancesAggregate[0].sum
                                                                     .duration
                                                             }
                                                             distance={
                                                                 profil.whoami
-                                                                    .performancesAggregate[0]
-                                                                    .sum
+                                                                    .performancesAggregate[0].sum
                                                                     .distance
                                                             }
                                                             elevation={
                                                                 profil.whoami
-                                                                    .performancesAggregate[0]
-                                                                    .sum
+                                                                    .performancesAggregate[0].sum
                                                                     .elevation
                                                             }
                                                         />
                                                         {/* Historic Part */}
                                                         <Historic
-                                                            hikes={
-                                                                profil.whoami
-                                                                    .performances
-                                                            }
+                                                            hikes={profil.whoami.performances}
                                                         />
                                                         {/* Friends Part */}
                                                         <Friends
-                                                            friends={
-                                                                profil.whoami
-                                                                    .friends
-                                                            }
-                                                            MyID={
-                                                                profil.whoami.id
-                                                            }
+                                                            friends={profil.whoami.friends}
+                                                            MyID={profil.whoami.id}
+                                                            reload={handleSearch}
                                                         />
                                                     </>
                                                 );

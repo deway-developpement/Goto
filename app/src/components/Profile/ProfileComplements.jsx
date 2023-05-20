@@ -25,8 +25,7 @@ import { FlatList } from 'react-native-gesture-handler';
 function ProfileModal({ setModalVisible, profil, reload }) {
     const { colors } = useTheme();
     const styles = stylesheet(colors);
-    const [status, requestPermission] =
-        ImagePicker.useMediaLibraryPermissions();
+    const [status, requestPermission] = ImagePicker.useMediaLibraryPermissions();
     const client = useApolloClient();
     const modalActive = Object.freeze({
         None: 0,
@@ -38,9 +37,7 @@ function ProfileModal({ setModalVisible, profil, reload }) {
         if (status !== 'granted') {
             const { status } = await requestPermission();
             if (status !== 'granted') {
-                alert(
-                    'Sorry, we need camera roll permissions to make this work!'
-                );
+                alert('Sorry, we need camera roll permissions to make this work!');
                 return;
             }
         }
@@ -64,9 +61,7 @@ function ProfileModal({ setModalVisible, profil, reload }) {
 
             const MUTATION = gql`
                 mutation ($file: Upload!, $objId: String!, $objType: ObjType!) {
-                    createPhoto(
-                        input: { objId: $objId, objType: $objType, file: $file }
-                    ) {
+                    createPhoto(input: { objId: $objId, objType: $objType, file: $file }) {
                         id
                     }
                 }
@@ -74,9 +69,7 @@ function ProfileModal({ setModalVisible, profil, reload }) {
 
             const MUTATION_UPDATE = gql`
                 mutation ($file: Upload!, $objId: String!, $objType: ObjType!) {
-                    changeAvatar(
-                        input: { objId: $objId, objType: $objType, file: $file }
-                    ) {
+                    changeAvatar(input: { objId: $objId, objType: $objType, file: $file }) {
                         id
                     }
                 }
@@ -119,12 +112,7 @@ function ProfileModal({ setModalVisible, profil, reload }) {
                         marginBottom: 16,
                     }}
                 >
-                    <Icon
-                        name="user"
-                        size={14}
-                        style={{ marginTop: 2 }}
-                        color={colors.link}
-                    />
+                    <Icon name="user" size={14} style={{ marginTop: 2 }} color={colors.link} />
                     <Text style={styles.smallModalText}>
                         {profil.whoami.avatar ? 'Change avatar' : 'Add avatar'}
                     </Text>
@@ -138,12 +126,7 @@ function ProfileModal({ setModalVisible, profil, reload }) {
                         marginBottom: 10,
                     }}
                 >
-                    <Icon
-                        name="user"
-                        size={14}
-                        style={{ marginTop: 2 }}
-                        color={colors.link}
-                    />
+                    <Icon name="user" size={14} style={{ marginTop: 2 }} color={colors.link} />
                     <Text style={styles.smallModalText}>Change pseudo</Text>
                 </Pressable>
             </View>
@@ -189,10 +172,7 @@ function PseudoModal({ setModalVisible, profil, reload }) {
 
     return (
         <KeyboardDismissView>
-            <ScrollView
-                style={styles.modalView}
-                keyboardShouldPersistTaps={'handled'}
-            >
+            <ScrollView style={styles.modalView} keyboardShouldPersistTaps={'handled'}>
                 <View
                     style={{
                         flexDirection: 'row',
@@ -336,12 +316,7 @@ function SettingsModal({ setModalVisible, reload }) {
                         marginBottom: 16,
                     }}
                 >
-                    <Icon
-                        name="reload"
-                        size={14}
-                        style={{ marginTop: 2 }}
-                        color={colors.link}
-                    />
+                    <Icon name="reload" size={14} style={{ marginTop: 2 }} color={colors.link} />
                     <Text style={styles.smallModalText}>Actualize</Text>
                 </Pressable>
                 <Pressable
@@ -354,12 +329,7 @@ function SettingsModal({ setModalVisible, reload }) {
                         marginBottom: 16,
                     }}
                 >
-                    <Icon
-                        name="reload"
-                        size={14}
-                        style={{ marginTop: 2 }}
-                        color={colors.link}
-                    />
+                    <Icon name="reload" size={14} style={{ marginTop: 2 }} color={colors.link} />
                     <Text style={styles.smallModalText}>Delete account</Text>
                 </Pressable>
                 <Pressable
@@ -372,12 +342,7 @@ function SettingsModal({ setModalVisible, reload }) {
                         marginBottom: 10,
                     }}
                 >
-                    <Icon
-                        name="exit"
-                        size={14}
-                        style={{ marginTop: 2 }}
-                        color={colors.link}
-                    />
+                    <Icon name="exit" size={14} style={{ marginTop: 2 }} color={colors.link} />
                     <Text style={styles.smallModalText}>Log out</Text>
                 </Pressable>
             </View>
@@ -401,9 +366,7 @@ function Stats({ count, distance, duration, elevation }) {
                                 justifyContent: 'space-between',
                             }}
                         >
-                            <Text style={styles.statNumber}>
-                                No statistics for this month
-                            </Text>
+                            <Text style={styles.statNumber}>No statistics for this month</Text>
                             <View style={{ height: 10 }} />
                         </View>
                     </View>
@@ -475,8 +438,7 @@ function Historic({ hikes, FriendPseudo = '' }) {
         return (
             <View style={{ marginTop: 22 }}>
                 <Text style={styles.textContent}>
-                    Historic of{' '}
-                    {FriendPseudo == '' ? 'my' : FriendPseudo + '\'s'} hikes
+                    Historic of {FriendPseudo == '' ? 'my' : FriendPseudo + '\'s'} hikes
                 </Text>
                 <View style={styles.statContainer}>
                     <Text style={[styles.statNumber, { marginBottom: 10 }]}>
@@ -490,15 +452,12 @@ function Historic({ hikes, FriendPseudo = '' }) {
     return (
         <View style={{ marginTop: 22 }}>
             <Text style={styles.textContent}>
-                Historic of {FriendPseudo == '' ? 'my' : FriendPseudo + '\'s'}{' '}
-                hikes
+                Historic of {FriendPseudo == '' ? 'my' : FriendPseudo + '\'s'} hikes
             </Text>
             <FlatList
                 data={hikes}
                 style={{ marginBottom: 26 }}
-                renderItem={({ item }) => (
-                    <HikeCard hike={item.hike} key={item.hike.id} />
-                )}
+                renderItem={({ item }) => <HikeCard hike={item.hike} key={item.hike.id} />}
                 keyExtractor={(item) => item.hike.id}
                 horizontal={true}
                 showsHorizontalScrollIndicator={false}
@@ -559,19 +518,15 @@ function FriendCard({ friend }) {
     );
 }
 
-function Friends({ friends, MyID }) {
+function Friends({ friends, MyID, reload }) {
     const { colors } = useTheme();
     const styles = stylesheet(colors);
-    const limitByPage = 10;
+    const limitByPage = 6;
     let onEndReachedCalledDuringMomentum = false;
+    const [pseudoPart, setPseudoPart] = useState('');
 
     const GET_USERS = gql`
-        query users(
-            $pseudoPart: String!
-            $MyID: ID!
-            $limit: Int!
-            $cursor: ConnectionCursor!
-        ) {
+        query users($pseudoPart: String!, $MyID: ID!, $limit: Int!, $cursor: ConnectionCursor!) {
             users(
                 filter: {
                     pseudo: { like: $pseudoPart }
@@ -621,9 +576,10 @@ function Friends({ friends, MyID }) {
         );
     }
 
-    const nodes = data?.users?.edges.map((user) => user.node);
+    const nodes = data?.users?.edges.map((user) => user.node).filter((user) => !user.isFriend);
 
     function handleSearch(pseudoPart) {
+        reload(pseudoPart);
         if (pseudoPart === '') {
             refetch({ pseudoPart: '' });
             return;
@@ -639,15 +595,27 @@ function Friends({ friends, MyID }) {
                     style={styles.textInput}
                     placeholder="Search"
                     placeholderTextColor={colors.border}
-                    onChangeText={(text) => handleSearch(text)}
+                    onChangeText={(text) => setPseudoPart(text)}
+                    onSubmitEditing={() => handleSearch(pseudoPart)}
+                    value={pseudoPart}
                 />
-                <Icon name="search" size={15} color={colors.border} />
+                {pseudoPart !== '' ? (
+                    <Icon
+                        name="cross"
+                        size={15}
+                        color={colors.border}
+                        onPress={() => {
+                            setPseudoPart('');
+                            handleSearch('');
+                        }}
+                    />
+                ) : (
+                    <Icon name="search" size={15} color={colors.border} />
+                )}
             </View>
             <FlatList
                 data={[...friends, ...nodes]}
-                renderItem={({ item }) => (
-                    <FriendCard friend={item} allFriends={friends} />
-                )}
+                renderItem={({ item }) => <FriendCard friend={item} allFriends={friends} />}
                 style={styles.friendsContainer}
                 horizontal={true}
                 keyExtractor={(item) => item.id}

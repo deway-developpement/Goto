@@ -21,7 +21,6 @@ export default function FocusFriend({ route }) {
     const styles = stylesheet(colors);
     const navigation = useNavigation();
     const friendId = route.params?.friendId;
-    const isFriend = route.params?.isFriend;
     const client = useApolloClient();
     const today = new Date();
     const lastMonth = new Date(today.getFullYear(), today.getMonth(), 1);
@@ -31,6 +30,7 @@ export default function FocusFriend({ route }) {
             user(id: $id) {
                 pseudo
                 publicKey
+                isFriend
                 avatar {
                     filename
                 }
@@ -78,7 +78,7 @@ export default function FocusFriend({ route }) {
     `;
 
     function updateFriend() {
-        if (isFriend) {
+        if (profile.user.isFriend) {
             client.mutate({
                 mutation: REMOVE_FRIEND,
                 variables: {
@@ -95,9 +95,14 @@ export default function FocusFriend({ route }) {
                 errorPolicy: 'all',
             });
         }
+        refetch();
     }
 
-    const { data: profile, loading: loadingProfile } = useQuery(GET_FRIEND, {
+    const {
+        data: profile,
+        loading: loadingProfile,
+        refetch,
+    } = useQuery(GET_FRIEND, {
         variables: {
             id: friendId,
             lastMonth: lastMonth.toISOString(),
@@ -141,7 +146,9 @@ export default function FocusFriend({ route }) {
                         <View style={styles.btn}>
                             <Button
                                 title={
-                                    isFriend ? 'Remove Friend' : 'Add Friend'
+                                    profile.user.isFriend
+                                        ? 'Remove Friend'
+                                        : 'Add Friend'
                                 }
                                 onPress={() => {
                                     updateFriend();
