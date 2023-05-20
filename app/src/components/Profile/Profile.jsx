@@ -128,7 +128,7 @@ export default function ProfileScreen() {
                     backgroundColor:
                         modalVisible == modalActive.None
                             ? colors.background
-                            : colors.backgroundsecondary,
+                            : colors.backgroundmodal,
                 },
             ]}
         >
@@ -220,8 +220,8 @@ export default function ProfileScreen() {
                                                                 source={
                                                                     profil.whoami.avatar
                                                                         ? {
-                                                                            uri: `https://deway.fr/goto-api/files/photos/${profil.whoami.avatar.filename}`,
-                                                                        }
+                                                                              uri: `https://deway.fr/goto-api/files/photos/${profil.whoami.avatar.filename}`,
+                                                                          }
                                                                         : require('../../../assets/images/default_pp.jpeg')
                                                                 }
                                                             />

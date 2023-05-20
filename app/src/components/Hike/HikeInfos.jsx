@@ -58,7 +58,7 @@ export default function HikeInfos({ hike, borderRadius, inProfile = false }) {
                 {!inProfile ? (
                     <TouchableWithoutFeedback onPress={() => console.log('LIKE HIKE', hike.name)}>
                         <View>
-                            <IconComp color={colors.logo} name={'heartempty'} pos={0} />
+                            <IconComp color={colors.link} name={'heartempty'} pos={0} />
                         </View>
                     </TouchableWithoutFeedback>
                 ) : null}
