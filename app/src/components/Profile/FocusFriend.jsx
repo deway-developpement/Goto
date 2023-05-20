@@ -1,12 +1,5 @@
 import React from 'react';
-import {
-    View,
-    Text,
-    Pressable,
-    Image,
-    SafeAreaView,
-    ScrollView,
-} from 'react-native';
+import { View, Text, Pressable, Image, SafeAreaView, ScrollView } from 'react-native';
 import { gql, useApolloClient, useQuery } from '@apollo/client';
 import stylesheet from './style';
 import { useTheme } from '@react-navigation/native';
@@ -59,6 +52,7 @@ export default function FocusFriend({ route }) {
                         elevation
                     }
                 }
+                isFriend
             }
         }
     `;
@@ -77,9 +71,9 @@ export default function FocusFriend({ route }) {
         }
     `;
 
-    function updateFriend() {
+    async function updateFriend() {
         if (profile.user.isFriend) {
-            client.mutate({
+            await client.mutate({
                 mutation: REMOVE_FRIEND,
                 variables: {
                     id: friendId,
@@ -87,7 +81,7 @@ export default function FocusFriend({ route }) {
                 errorPolicy: 'all',
             });
         } else {
-            client.mutate({
+            await client.mutate({
                 mutation: ADD_FRIEND,
                 variables: {
                     id: friendId,
@@ -119,14 +113,20 @@ export default function FocusFriend({ route }) {
                 <ScrollView showsVerticalScrollIndicator={false}>
                     <Pressable onPress={() => navigation.navigate('Profile')}>
                         <View style={styles.logoContainer}>
-                            <Icon
-                                name="back"
-                                size={30}
-                                color={colors.background}
-                            />
+                            <Icon name="back" size={30} color={colors.background} />
                         </View>
                     </Pressable>
-                    <View style={styles.avatarContainer}>
+                    <View
+                        style={[
+                            styles.avatarContainer,
+                            profile.user.isFriend && {
+                                width: 68,
+                                height: 68,
+                                padding: 2,
+                                backgroundColor: colors.stats,
+                            },
+                        ]}
+                    >
                         <Image
                             style={styles.avatar}
                             source={
@@ -145,15 +145,11 @@ export default function FocusFriend({ route }) {
                     <View style={styles.btnContainer}>
                         <View style={styles.btn}>
                             <Button
-                                title={
-                                    profile.user.isFriend
-                                        ? 'Remove Friend'
-                                        : 'Add Friend'
-                                }
+                                title={profile.user.isFriend ? 'Remove Friend' : 'Add Friend'}
                                 onPress={() => {
                                     updateFriend();
                                 }}
-                                buttonStyle={styles.btn}
+                                buttonStyle={[styles.btn, !profile.user.isFriend && styles.btnAdd]}
                                 titleStyle={{
                                     color: colors.link,
                                     fontSize: 12,
@@ -165,15 +161,9 @@ export default function FocusFriend({ route }) {
 
                     <Stats
                         count={profile.user.performancesAggregate[0].count.id}
-                        duration={
-                            profile.user.performancesAggregate[0].sum.duration
-                        }
-                        distance={
-                            profile.user.performancesAggregate[0].sum.distance
-                        }
-                        elevation={
-                            profile.user.performancesAggregate[0].sum.elevation
-                        }
+                        duration={profile.user.performancesAggregate[0].sum.duration}
+                        distance={profile.user.performancesAggregate[0].sum.distance}
+                        elevation={profile.user.performancesAggregate[0].sum.elevation}
                     />
 
                     <Historic

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     View,
     Text,
@@ -14,7 +14,7 @@ import { Button } from 'react-native-elements';
 import { gql, useQuery } from '@apollo/client';
 import KeyboardDismissView from '../KeyboardDismissView/KeyboardDismissView';
 import stylesheet from './style';
-import { useTheme } from '@react-navigation/native';
+import { useIsFocused, useTheme } from '@react-navigation/native';
 import { Icon } from '../Icon/Icon';
 import {
     ProfileModal,
@@ -24,6 +24,7 @@ import {
     Historic,
     Friends,
 } from './ProfileComplements.jsx';
+import { set } from 'react-native-reanimated';
 
 export default function ProfileScreen() {
     const { colors } = useTheme();
@@ -37,6 +38,9 @@ export default function ProfileScreen() {
     const [modalVisible, setModalVisible] = useState(modalActive.None);
     const today = new Date();
     const lastMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+    const isFocused = useIsFocused();
+
+    const [search, setSearch] = useState('');
 
     const WHOAMI = gql`
         query whoami($lastMonth: DateTime!, $PseudoFilter: String!) {
@@ -106,6 +110,16 @@ export default function ProfileScreen() {
             PseudoFilter: '%' + text + '%',
         });
     }
+
+    useEffect(() => {
+        if (isFocused) {
+            setSearch('');
+            refetchProfile({
+                lastMonth: lastMonth.toISOString(),
+                PseudoFilter: '%',
+            });
+        }
+    }, [isFocused]);
 
     return (
         <KeyboardAvoidingView
@@ -207,8 +221,8 @@ export default function ProfileScreen() {
                                                                 source={
                                                                     profil.whoami.avatar
                                                                         ? {
-                                                                              uri: `https://deway.fr/goto-api/files/photos/${profil.whoami.avatar.filename}`,
-                                                                          }
+                                                                            uri: `https://deway.fr/goto-api/files/photos/${profil.whoami.avatar.filename}`,
+                                                                        }
                                                                         : require('../../../assets/images/default_pp.jpeg')
                                                                 }
                                                             />
@@ -268,6 +282,8 @@ export default function ProfileScreen() {
                                                             friends={profil.whoami.friends}
                                                             MyID={profil.whoami.id}
                                                             reload={handleSearch}
+                                                            search={search}
+                                                            setSearch={setSearch}
                                                         />
                                                     </>
                                                 );
