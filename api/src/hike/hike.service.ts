@@ -104,40 +104,86 @@ export class HikeService extends TypeOrmQueryService<HikeEntity> {
         cursor: string,
         search = ''
     ): Promise<HikeConnectionDTO> {
+        const formula = `6371 * 2 * ASIN(SQRT(POWER(SIN((${latitude} * PI()/180 - hike.latitude * PI()/180)/ 2), 2) + COS(${latitude} * PI()/180) * COS(hike.latitude * PI()/180) * POWER(SIN((${longitude} * PI()/180 - hike.longitude * PI()/180) / 2), 2)))`;
         //build query to find hikes within distance
         // the harvesine formula is used to calculate the distance between two points on a sphere
         // d = 2R × sin⁻¹(√[sin²((θ₂ - θ₁)/2) + cosθ₁ × cosθ₂ × sin²((φ₂ - φ₁)/2)]) where R is earth radius (6371 km), θ is latitude, φ is longitude
         const query = await this.repo.manager
             .createQueryBuilder(HikeEntity, 'hike') // select all columns from hikeQuery
-            .select(['hike.id'])
-            .addSelect(
-                '6371 * 2 * ASIN(SQRT(POWER(SIN((:latitude * PI()/180 - hike.latitude * PI()/180)/ 2), 2) + COS(:latitude * PI()/180) * COS(hike.latitude * PI()/180) * POWER(SIN((:longitude * PI()/180 - hike.longitude * PI()/180) / 2), 2)))',
-                'distance'
-            )
-            .where(
-                '6371 * 2 * ASIN(SQRT(POWER(SIN((:latitude * PI()/180 - hike.latitude * PI()/180)/ 2), 2) + COS(:latitude * PI()/180) * COS(hike.latitude * PI()/180) * POWER(SIN((:longitude * PI()/180 - hike.longitude * PI()/180) / 2), 2))) < :distance',
-                {
-                    distance: distance,
-                    latitude: latitude,
-                    longitude: longitude,
-                }
-            )
+            .select(['hike.id', 'hike.latitude', 'hike.longitude'])
+            .where(`${formula} < :distance`, {
+                distance: distance,
+            })
             .andWhere('hike.name LIKE :search', { search: `%${search}%` }) // search is the search string
-            .orderBy('distance', 'ASC'); // order by id
+            .orderBy('distance', 'ASC')
+            .addOrderBy('id', 'ASC'); // order by id
         const totalCount = await query.getCount(); // get total number of results
+
+        const ascii = Buffer.from(cursor, 'base64').toString('ascii');
+        const dataCursor =
+            ascii !== ''
+                ? JSON.parse(ascii)
+                : {
+                      distance: 0,
+                      id: '',
+                  }; // decode cursor
+
+        console.log(dataCursor);
+
         const beforeExist = await query
             .clone()
-            .andWhere('hike.id <= :cursor', { cursor: cursor })
+            .andWhere(`${formula} < :cursoDist OR (${formula} = :cursoDist AND hike.id <= :id)`, {
+                cursoDist: dataCursor.distance,
+                id: dataCursor.id,
+            })
             .getExists(); // check if there is a hike before the cursor
         const hikesId = await query
-            .andWhere('hike.id > :cursor', { cursor: cursor })
+            .andWhere(`${formula} > :cursoDist OR (${formula} = :cursoDist AND hike.id > :id)`, {
+                cursoDist: dataCursor.distance,
+                id: dataCursor.id,
+            })
             .limit(limit)
             .getMany(); // get all hikes id
+        console.log(query.getSql());
         const numberOfResults = await query.getCount();
         // get all hikes from ids found
         const hikes = await Promise.all(
-            hikesId.map(async (hike) => {
-                return await this.repo.findOne({ where: { id: hike.id } });
+            hikesId.map(async (hike: any) => {
+                console.log('result', hike);
+                const distanceFromCoords =
+                    6371 *
+                    2 *
+                    Math.asin(
+                        Math.sqrt(
+                            Math.pow(
+                                Math.sin(
+                                    ((latitude * Math.PI) / 180 - hike.latitude * (Math.PI / 180)) /
+                                        2
+                                ),
+                                2
+                            ) +
+                                Math.cos(latitude * (Math.PI / 180)) *
+                                    Math.cos(hike.latitude * (Math.PI / 180)) *
+                                    Math.pow(
+                                        Math.sin(
+                                            ((longitude * Math.PI) / 180 -
+                                                hike.longitude * (Math.PI / 180)) /
+                                                2
+                                        ),
+                                        2
+                                    )
+                        )
+                    );
+
+                return {
+                    cursor: Buffer.from(
+                        JSON.stringify({
+                            distance: distanceFromCoords,
+                            id: hike.id,
+                        })
+                    ).toString('base64'), // encode cursor
+                    ...(await this.repo.findOne({ where: { id: hike.id } })),
+                };
             })
         );
         // return connection
@@ -146,24 +192,22 @@ export class HikeService extends TypeOrmQueryService<HikeEntity> {
                 ...hikes.map((hike) => {
                     return {
                         node: hike,
-                        cursor: hike.id,
+                        cursor: hike.cursor, // cursor
                     };
                 }),
             ],
             pageInfo: {
                 hasNextPage: numberOfResults > limit,
                 hasPreviousPage: beforeExist,
-                startCursor: hikes.length > 0 ? hikes[0].id : '',
-                endCursor: hikes.length > 0 ? hikes[hikes.length - 1].id : '',
+                startCursor: hikes.length > 0 ? hikes[0].cursor : '',
+                endCursor: hikes.length > 0 ? hikes[hikes.length - 1].cursor : '',
             },
             totalCount,
         };
     }
 
     async findPopular(limit: number, cursor: string, search = ''): Promise<HikeConnectionDTO> {
-        //build query to find hikes within distance
-        // the harvesine formula is used to calculate the distance between two points on a sphere
-        // d = 2R × sin⁻¹(√[sin²((θ₂ - θ₁)/2) + cosθ₁ × cosθ₂ × sin²((φ₂ - φ₁)/2)]) where R is earth radius (6371 km), θ is latitude, φ is longitude
+        //build query to find hikes that have an average rating of 4 or more
         const query = await this.repo.manager
             .createQueryBuilder(HikeEntity, 'hike') // select all columns from hikeQuery
             .select(['hike.id'])
@@ -171,7 +215,7 @@ export class HikeService extends TypeOrmQueryService<HikeEntity> {
             .where('hike.name LIKE :search', { search: `%${search}%` }) // search is the search string
             .groupBy('hike.id')
             .having('AVG(review.rating) >= 4')
-            .orderBy('AVG(review.rating)', 'DESC');
+            .orderBy('hike.id', 'ASC');
         const totalCount =
             (await query.clone().select('COUNT(DISTINCT hike.id) as "totalCount"').getRawOne())
                 ?.totalCount || 0; // get total number of results
@@ -227,7 +271,7 @@ export class HikeService extends TypeOrmQueryService<HikeEntity> {
             .andWhere('performance.userId = :userId', { userId: userId })
             .groupBy('hike.id')
             .having('COUNT(performance.id) > 0')
-            .orderBy('COUNT(performance.id)', 'DESC');
+            .orderBy('hike.id', 'ASC');
         const totalCount =
             (await query.clone().select('COUNT(DISTINCT hike.id) as "totalCount"').getRawOne())
                 ?.totalCount || 0; // get total number of results
