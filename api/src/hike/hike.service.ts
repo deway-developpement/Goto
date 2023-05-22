@@ -111,11 +111,12 @@ export class HikeService extends TypeOrmQueryService<HikeEntity> {
         const query = await this.repo.manager
             .createQueryBuilder(HikeEntity, 'hike') // select all columns from hikeQuery
             .select(['hike.id', 'hike.latitude', 'hike.longitude'])
+            .addSelect(formula, 'dist') // add distance column
             .where(`${formula} < :distance`, {
                 distance: distance,
             })
             .andWhere('hike.name LIKE :search', { search: `%${search}%` }) // search is the search string
-            .orderBy('distance', 'ASC')
+            .orderBy('dist', 'ASC')
             .addOrderBy('id', 'ASC'); // order by id
         const totalCount = await query.getCount(); // get total number of results
 
