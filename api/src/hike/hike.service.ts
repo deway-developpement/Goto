@@ -104,7 +104,7 @@ export class HikeService extends TypeOrmQueryService<HikeEntity> {
         cursor: string,
         search = ''
     ): Promise<HikeConnectionDTO> {
-        const formula = `6371 * 2 * ASIN(SQRT(POWER(SIN((${latitude} * PI()/180 - hike.latitude * PI()/180)/ 2), 2) + COS(${latitude} * PI()/180) * COS(hike.latitude * PI()/180) * POWER(SIN((${longitude} * PI()/180 - hike.longitude * PI()/180) / 2), 2)))`;
+        const formula = `FLOOR(6371 * 2 * ASIN(SQRT(POWER(SIN((${latitude} * PI()/180 - hike.latitude * PI()/180)/ 2), 2) + COS(${latitude} * PI()/180) * COS(hike.latitude * PI()/180) * POWER(SIN((${longitude} * PI()/180 - hike.longitude * PI()/180) / 2), 2))))`;
         //build query to find hikes within distance
         // the harvesine formula is used to calculate the distance between two points on a sphere
         // d = 2R × sin⁻¹(√[sin²((θ₂ - θ₁)/2) + cosθ₁ × cosθ₂ × sin²((φ₂ - φ₁)/2)]) where R is earth radius (6371 km), θ is latitude, φ is longitude
@@ -151,31 +151,32 @@ export class HikeService extends TypeOrmQueryService<HikeEntity> {
         const hikes = await Promise.all(
             hikesId.map(async (hike: any) => {
                 console.log('result', hike);
-                const distanceFromCoords =
+                const distanceFromCoords = Math.floor(
                     6371 *
-                    2 *
-                    Math.asin(
-                        Math.sqrt(
-                            Math.pow(
-                                Math.sin(
-                                    ((latitude * Math.PI) / 180 - hike.latitude * (Math.PI / 180)) /
-                                        2
-                                ),
-                                2
-                            ) +
-                                Math.cos(latitude * (Math.PI / 180)) *
-                                    Math.cos(hike.latitude * (Math.PI / 180)) *
-                                    Math.pow(
-                                        Math.sin(
-                                            ((longitude * Math.PI) / 180 -
-                                                hike.longitude * (Math.PI / 180)) /
-                                                2
-                                        ),
-                                        2
-                                    )
+                        2 *
+                        Math.asin(
+                            Math.sqrt(
+                                Math.pow(
+                                    Math.sin(
+                                        ((latitude * Math.PI) / 180 -
+                                            hike.latitude * (Math.PI / 180)) /
+                                            2
+                                    ),
+                                    2
+                                ) +
+                                    Math.cos(latitude * (Math.PI / 180)) *
+                                        Math.cos(hike.latitude * (Math.PI / 180)) *
+                                        Math.pow(
+                                            Math.sin(
+                                                ((longitude * Math.PI) / 180 -
+                                                    hike.longitude * (Math.PI / 180)) /
+                                                    2
+                                            ),
+                                            2
+                                        )
+                            )
                         )
-                    );
-
+                );
                 return {
                     cursor: Buffer.from(
                         JSON.stringify({
