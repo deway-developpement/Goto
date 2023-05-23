@@ -24,8 +24,25 @@ import {
     Historic,
     Friends,
 } from './ProfileComplements.jsx';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import FocusUser from './FocusUser';
 
-export default function ProfileScreen() {
+const stack = createNativeStackNavigator();
+
+export default function ProfileWrapper() {
+    return (
+        <stack.Navigator
+            screenOptions={{
+                headerShown: false,
+            }}
+        >
+            <stack.Screen name="ProfileScreen" component={ProfileScreen} />
+            <stack.Screen name="FocusUser" component={FocusUser} />
+        </stack.Navigator>
+    );
+}
+
+function ProfileScreen() {
     const { colors } = useTheme();
     const styles = stylesheet(colors);
     const modalActive = Object.freeze({
@@ -220,8 +237,8 @@ export default function ProfileScreen() {
                                                                 source={
                                                                     profil.whoami.avatar
                                                                         ? {
-                                                                              uri: `https://deway.fr/goto-api/files/photos/${profil.whoami.avatar.filename}`,
-                                                                          }
+                                                                            uri: `https://deway.fr/goto-api/files/photos/${profil.whoami.avatar.filename}`,
+                                                                        }
                                                                         : require('../../../assets/images/default_pp.jpeg')
                                                                 }
                                                             />
