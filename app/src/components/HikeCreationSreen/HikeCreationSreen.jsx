@@ -17,6 +17,8 @@ import * as DocumentPicker from 'expo-document-picker';
 import { BlurView } from 'expo-blur';
 import { ReactNativeFile } from 'apollo-upload-client';
 import { FlatList } from 'react-native-gesture-handler';
+import { readAsStringAsync } from 'expo-file-system';
+import { DOMParser } from 'xmldom';
 
 function Tag(props) {
     const { colors } = useTheme();
@@ -37,28 +39,26 @@ function Tag(props) {
     );
 }
 
-export default function HikeCreationScreen({ setHikeCreation, navigation }) {
+export default function HikeCreationScreen({ navigation }) {
     const { colors } = useTheme();
     const styles = stylesheet(colors);
     const client = useApolloClient();
 
-    const [name, setName] = React.useState(null);
-    const [distance, setDistance] = React.useState(null);
+    const [name, setName] = React.useState('');
+    const [distance, setDistance] = React.useState('');
     const distanceRef = useRef(null);
-    const [elevation, setElevation] = React.useState(null);
+    const [elevation, setElevation] = React.useState('');
     const elevationRef = useRef(null);
-    const [description, setDescription] = React.useState(null);
+    const [description, setDescription] = React.useState('');
     const descriptionRef = useRef(null);
-    const [latitude, setLatitude] = React.useState(1.11111);
-    const [longitude, setLongitude] = React.useState(1.11111);
-    const [categoryId, setCategoryId] = React.useState(null);
-    const [tagsID, setTagsID] = React.useState(null);
+    const [categoryId, setCategoryId] = React.useState('');
+    const [tagsID, setTagsID] = React.useState('');
     const tagsIDRef = useRef(null);
     const [difficulty, setDifficulty] = React.useState('EASY');
 
     const [tagList, setTagList] = React.useState([]);
 
-    const [fileUri, setFileUri] = React.useState(null);
+    const [file, setFile] = React.useState(null);
 
     const GET_CATEGORIES = gql`
         query categories($field: CategorySortFields!, $direction: SortDirection!) {
@@ -83,53 +83,62 @@ export default function HikeCreationScreen({ setHikeCreation, navigation }) {
 
     const pickDocument = async () => {
         const file = await DocumentPicker.getDocumentAsync({});
-        console.log('file', file);
-        setFileUri(file);
+        setFile(file);
     };
 
-    function isInt(n, str) {
-        return n !== Infinity && String(n) === str && n > 0;
-    }
-
-    function isInDesiredForm(str) {
-        var n = Math.floor(Number(str));
-        return isInt(n, str) || (!isNaN(str) && str.toString().indexOf('.') != -1);
+    function getFirstPointOfGPX(content) {
+        const doc = new DOMParser().parseFromString(content, 'text/xml');
+        const trkpts = doc.getElementsByTagName('trkpt');
+        const trkptsArray = Array.from(trkpts);
+        const trkptsArrayLat = trkptsArray.map((trkpt) => trkpt.getAttribute('lat'));
+        const trkptsArrayLon = trkptsArray.map((trkpt) => trkpt.getAttribute('lon'));
+        return [parseFloat(trkptsArrayLat[0]), parseFloat(trkptsArrayLon[0])];
     }
 
     const submit = async () => {
         if (
-            name.length > 0 &&
-            distance.length > 0 &&
-            isInDesiredForm(distance) &&
-            elevation.length > 0 &&
-            isInDesiredForm(elevation) &&
+            name !== '' &&
+            !isNaN(parseFloat(distance)) &&
+            !isNaN(parseInt(elevation)) &&
             description.length > 0 &&
-            latitude !== null &&
-            longitude !== null &&
             categoryId !== null &&
-            fileUri !== null &&
-            fileUri.name.slice(-4) === '.gpx'
+            file !== null &&
+            file.name.slice(-4) === '.gpx'
         ) {
-            const file = new ReactNativeFile({
-                uri: fileUri.uri,
+            const reactFile = new ReactNativeFile({
+                uri: file.uri,
                 type: 'application/gpx+xml',
                 name: 'file.gpx',
             });
 
+            // read content of file
+            const fileData = await readAsStringAsync(file.uri);
+            const coordinates = getFirstPointOfGPX(fileData);
+
             const MUTATION = gql`
-                mutation ($file: Upload!, $categoryId: String!) {
+                mutation (
+                    $file: Upload!
+                    $categoryId: String!
+                    $name: String!
+                    $description: String!
+                    $distance: Float!
+                    $elevation: Float!
+                    $difficulty: Difficulty!
+                    $latitude: Float!
+                    $longitude: Float!
+                ) {
                     createHike(
                         input: {
-                            name: "test"
-                            description: "super hike"
-                            distance: 40
-                            elevation: 500
-                            difficulty: EASY
+                            name: $name
+                            description: $description
+                            distance: $distance
+                            elevation: $elevation
+                            difficulty: $difficulty
                             track: $file
                             tagsId: []
                             categoryId: $categoryId
-                            latitude: 47.99511
-                            longitude: 0.18544
+                            latitude: $latitude
+                            longitude: $longitude
                         }
                     ) {
                         id
@@ -139,16 +148,26 @@ export default function HikeCreationScreen({ setHikeCreation, navigation }) {
             const res = await client.mutate({
                 mutation: MUTATION,
                 variables: {
-                    file,
+                    file: reactFile,
                     categoryId,
+                    name,
+                    description,
+                    distance: parseFloat(distance),
+                    elevation: parseFloat(elevation),
+                    difficulty,
+                    latitude: coordinates[0],
+                    longitude: coordinates[1],
                 },
                 errorPolicy: 'all',
             });
             if (res.errors) {
                 console.log(res.errors);
+                return;
             }
-            const hikeId = res.data.createHike.id;
-            navigation.navigate('Hike', { hikeId });
+
+            const hikeId = res.data?.createHike.id;
+            if (hikeId) navigation.navigate('FocusHike', { hikeId });
+            else console.log('no hikeId');
         } else {
             console.log(
                 name.length > 0,
@@ -159,9 +178,9 @@ export default function HikeCreationScreen({ setHikeCreation, navigation }) {
                 description.length > 0,
                 latitude !== null,
                 longitude !== null,
-                categoryId.length > 0,
-                fileUri !== null,
-                fileUri.name.slice(-4, -1) + fileUri.name.slice(-1) === '.gpx'
+                categoryId !== '',
+                file !== null,
+                file.name.slice(-4) === '.gpx'
             );
         }
     };
@@ -179,7 +198,7 @@ export default function HikeCreationScreen({ setHikeCreation, navigation }) {
                 showsHorizontalScrollIndicator={false}
             >
                 <BlurView style={styles.containerLogin} intensity={100} tint="light">
-                    <TouchableWithoutFeedback onPress={() => setHikeCreation(false)}>
+                    <TouchableWithoutFeedback onPress={() => navigation.goBack()}>
                         <View
                             style={[
                                 styles.logoContainer,
@@ -347,10 +366,8 @@ export default function HikeCreationScreen({ setHikeCreation, navigation }) {
                     </View>
                     <Text style={[styles.textLoginMiddle, { marginBottom: 30 }]}>
                         GPX File :{' '}
-                        {fileUri !== null &&
-                            (fileUri?.name?.slice(-4, -1) + fileUri?.name?.slice(-1) === '.gpx'
-                                ? fileUri.name
-                                : 'Wrong file type')}
+                        {file !== null &&
+                            (file?.name?.slice(-4) === '.gpx' ? file.name : 'Wrong file type')}
                     </Text>
 
                     <Button

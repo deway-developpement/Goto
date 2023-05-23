@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Text, Image, View, ScrollView, Dimensions, TouchableWithoutFeedback } from 'react-native';
 import stylesheet from './style';
-import { useTheme } from '@react-navigation/native';
+import { useIsFocused, useTheme } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { gql, useQuery } from '@apollo/client';
 import { IconComp } from '../Icon/Icon';
@@ -12,7 +12,16 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 const stack = createNativeStackNavigator();
 
-export default function DiscoverWrapper() {
+export default function DiscoverWrapper({ navigation }) {
+    const isFocused = useIsFocused();
+
+    useEffect(() => {
+        if (isFocused) {
+            // go to DiscoverScreen when we come back to the screen from outside
+            navigation.navigate('DiscoverScreen');
+        }
+    }, [isFocused]);
+
     return (
         <stack.Navigator
             screenOptions={{
