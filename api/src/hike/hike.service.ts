@@ -129,8 +129,6 @@ export class HikeService extends TypeOrmQueryService<HikeEntity> {
                       id: '',
                   }; // decode cursor
 
-        console.log(dataCursor);
-
         const beforeExist = await query
             .clone()
             .andWhere(`${formula} < :cursoDist OR (${formula} = :cursoDist AND hike.id <= :id)`, {
@@ -145,12 +143,10 @@ export class HikeService extends TypeOrmQueryService<HikeEntity> {
             })
             .limit(limit)
             .getMany(); // get all hikes id
-        console.log(query.getSql());
         const numberOfResults = await query.getCount();
         // get all hikes from ids found
         const hikes = await Promise.all(
             hikesId.map(async (hike: any) => {
-                console.log('result', hike);
                 const distanceFromCoords = Math.floor(
                     6371 *
                         2 *
