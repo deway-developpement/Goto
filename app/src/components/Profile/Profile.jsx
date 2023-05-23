@@ -14,7 +14,7 @@ import { Button } from 'react-native-elements';
 import { gql, useQuery } from '@apollo/client';
 import KeyboardDismissView from '../KeyboardDismissView/KeyboardDismissView';
 import stylesheet from './style';
-import { useIsFocused, useTheme } from '@react-navigation/native';
+import { CommonActions, useIsFocused, useTheme } from '@react-navigation/native';
 import { Icon } from '../Icon/Icon';
 import {
     ProfileModal,
@@ -29,7 +29,20 @@ import FocusUser from './FocusUser';
 
 const stack = createNativeStackNavigator();
 
-export default function ProfileWrapper() {
+export default function ProfileWrapper({ navigation }) {
+    useEffect(() => {
+        const unsubscribe = navigation.addListener('focus', () => {
+            navigation.dispatch(
+                CommonActions.reset({
+                    index: 0,
+                    routes: [{ name: 'ProfileScreen' }],
+                })
+            );
+        });
+
+        return unsubscribe;
+    }, [navigation]);
+
     return (
         <stack.Navigator
             screenOptions={{
