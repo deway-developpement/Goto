@@ -15,7 +15,7 @@ VALUES (
         uuid(),
         'admin',
         '$2b$10$omYQk0C0C6wKi34usPe1xOVIOylraIn1uzO9RZMGHIiH1yF4YZ3.S',
-        'admin@localhost',
+        'admin@deway.fr',
         'ROOT',
         2,
         now()
@@ -36,7 +36,7 @@ VALUES (
         uuid(),
         'user',
         '$2b$10$omYQk0C0C6wKi34usPe1xOgv8Lka3rLjbYHd9V9lm0VPq6auAjSM.',
-        'user@localhost',
+        'user@deway.fr',
         'USER01',
         1,
         now()
@@ -56,7 +56,7 @@ VALUES (
         uuid(),
         'user2',
         '$2b$10$omYQk0C0C6wKi34usPe1xOgv8Lka3rLjbYHd9V9lm0VPq6auAjSM.',
-        'user2@localhost',
+        'user2@deway.fr',
         'USER02',
         1,
         now()

@@ -1,14 +1,40 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Text, Image, View, ScrollView, Dimensions, TouchableWithoutFeedback } from 'react-native';
 import stylesheet from './style';
-import { useTheme } from '@react-navigation/native';
+import { useIsFocused, useTheme } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { gql, useQuery } from '@apollo/client';
 import { IconComp } from '../Icon/Icon';
 import Category from '../Category/Category';
 import { FlatList } from 'react-native';
+import HikeCreationScreen from '../HikeCreationSreen/HikeCreationSreen';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-export default function DiscoverScreen({ navigation }) {
+const stack = createNativeStackNavigator();
+
+export default function DiscoverWrapper({ navigation }) {
+    const isFocused = useIsFocused();
+
+    useEffect(() => {
+        if (isFocused) {
+            // go to DiscoverScreen when we come back to the screen from outside
+            navigation.navigate('DiscoverScreen');
+        }
+    }, [isFocused]);
+
+    return (
+        <stack.Navigator
+            screenOptions={{
+                headerShown: false,
+            }}
+        >
+            <stack.Screen name="DiscoverScreen" component={DiscoverScreen} />
+            <stack.Screen name="HikeCreation" component={HikeCreationScreen} />
+        </stack.Navigator>
+    );
+}
+
+function DiscoverScreen({ navigation }) {
     const { colors } = useTheme();
     const styles = stylesheet(colors);
 
@@ -30,6 +56,11 @@ export default function DiscoverScreen({ navigation }) {
             field: 'id',
             direction: 'ASC',
         },
+    });
+
+    const categoryNameId = [];
+    categorie?.categories.map((category) => {
+        categoryNameId.push({ id: category.id, name: category.name });
     });
 
     const windowHeight = Dimensions.get('window').height;
@@ -85,7 +116,7 @@ function DiscoverHeader({ windowHeight, navigation }) {
     return (
         <View style={styles.container}>
             <Text style={[styles.textHeader, { marginTop: '6%' }]}>Discover</Text>
-            <TouchableWithoutFeedback onPress={() => console.log('DISCORVER')}>
+            <TouchableWithoutFeedback onPress={() => navigation.navigate('HikeCreation')}>
                 <View
                     style={[
                         styles.container,
