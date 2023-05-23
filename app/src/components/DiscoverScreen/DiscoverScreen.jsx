@@ -8,12 +8,26 @@ import { IconComp } from '../Icon/Icon';
 import Category from '../Category/Category';
 import { FlatList } from 'react-native';
 import HikeCreationScreen from '../HikeCreationSreen/HikeCreationSreen';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-export default function DiscoverScreen({ navigation }) {
+const stack = createNativeStackNavigator();
+
+export default function DiscoverWrapper() {
+    return (
+        <stack.Navigator
+            screenOptions={{
+                headerShown: false,
+            }}
+        >
+            <stack.Screen name="DiscoverScreen" component={DiscoverScreen} />
+            <stack.Screen name="HikeCreation" component={HikeCreationScreen} />
+        </stack.Navigator>
+    );
+}
+
+function DiscoverScreen({ navigation }) {
     const { colors } = useTheme();
     const styles = stylesheet(colors);
-
-    const [HikeCreation, setHikeCreation] = React.useState(false);
 
     const GET_CATEGORIES = gql`
         query categories($field: CategorySortFields!, $direction: SortDirection!) {
@@ -53,7 +67,9 @@ export default function DiscoverScreen({ navigation }) {
                 horizontal={false}
                 showsVerticalScrollIndicator={false}
                 emptyListComponent={<Text style={styles.textLink}>No categories</Text>}
-                ListHeaderComponent={<DiscoverHeader windowHeight={windowHeight} />}
+                ListHeaderComponent={
+                    <DiscoverHeader windowHeight={windowHeight} navigation={navigation} />
+                }
                 ListFooterComponent={
                     <View
                         style={{
@@ -91,7 +107,7 @@ function DiscoverHeader({ windowHeight, navigation }) {
     return (
         <View style={styles.container}>
             <Text style={[styles.textHeader, { marginTop: '6%' }]}>Discover</Text>
-            <TouchableWithoutFeedback onPress={() => console.log('DISCORVER')}>
+            <TouchableWithoutFeedback onPress={() => navigation.navigate('HikeCreation')}>
                 <View
                     style={[
                         styles.container,

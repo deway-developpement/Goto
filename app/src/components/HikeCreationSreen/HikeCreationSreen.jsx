@@ -1,4 +1,4 @@
-import React, {useRef} from 'react';
+import React, { useRef } from 'react';
 import {
     View,
     TextInput,
@@ -6,16 +6,17 @@ import {
     Text,
     ScrollView,
     Image,
-    StyleSheet
+    StyleSheet,
 } from 'react-native';
 import { Button } from 'react-native-elements';
 import stylesheet from './style';
 import { useTheme } from '@react-navigation/native';
-import { gql, useQuery, useApolloClient } from '@apollo/client';
+import { gql, useApolloClient, useQuery } from '@apollo/client';
 import { IconComp } from '../Icon/Icon';
 import * as DocumentPicker from 'expo-document-picker';
-import FileSystem from 'expo-file-system';
 import { BlurView } from 'expo-blur';
+import { ReactNativeFile } from 'apollo-upload-client';
+import { FlatList } from 'react-native-gesture-handler';
 
 function Tag(props) {
     const { colors } = useTheme();
@@ -31,112 +32,137 @@ function Tag(props) {
                 borderRadius: 24,
             }}
         >
-            <Text style={{ color: colors.backgroundTextInput}}>
-                {props.name}
-            </Text>
-
+            <Text style={{ color: colors.backgroundTextInput }}>{props.name}</Text>
         </View>
     );
 }
 
-export default function HikeCreationScreen({setHikeCreation, categories}) {
+export default function HikeCreationScreen({ setHikeCreation, navigation }) {
     const { colors } = useTheme();
     const styles = stylesheet(colors);
     const client = useApolloClient();
 
-    const [name, setName] = React.useState('');
-    const [distance, setDistance] = React.useState('');
+    const [name, setName] = React.useState(null);
+    const [distance, setDistance] = React.useState(null);
     const distanceRef = useRef(null);
-    const [elevation, setElevation] = React.useState('');
+    const [elevation, setElevation] = React.useState(null);
     const elevationRef = useRef(null);
-    const [description, setDescription] = React.useState('');
+    const [description, setDescription] = React.useState(null);
     const descriptionRef = useRef(null);
-    const [latitude, setLatitude] = React.useState('');
-    const [longitude, setLongitude] = React.useState('');
-    const [categoryName, setCategoryName] = React.useState('');
-    const [tagsID, setTagsID] = React.useState('');
+    const [latitude, setLatitude] = React.useState(1.11111);
+    const [longitude, setLongitude] = React.useState(1.11111);
+    const [categoryId, setCategoryId] = React.useState(null);
+    const [tagsID, setTagsID] = React.useState(null);
     const tagsIDRef = useRef(null);
     const [difficulty, setDifficulty] = React.useState('EASY');
 
     const [tagList, setTagList] = React.useState([]);
 
-    const [file, setFile] = React.useState(null);
-    const [result, setResult] = React.useState(null);
+    const [fileUri, setFileUri] = React.useState(null);
 
-    function addNewTag(){
+    const GET_CATEGORIES = gql`
+        query categories($field: CategorySortFields!, $direction: SortDirection!) {
+            categories(sorting: { field: $field, direction: $direction }) {
+                id
+                name
+            }
+        }
+    `;
+
+    const { data } = useQuery(GET_CATEGORIES, {
+        variables: {
+            field: 'id',
+            direction: 'ASC',
+        },
+    });
+
+    function addNewTag() {
         setTagList([...tagList, tagsID]);
         setTagsID('');
     }
 
     const pickDocument = async () => {
-        setFile(await DocumentPicker.getDocumentAsync({}));
-
-        // FileSystem.readAsStringAsync(file.uri, {
-        //     encoding: FileSystem.EncodingType.Base64
-        // }).then(data => {
-        //     console.log('getFile -> data', data);
-        // }).catch(err => {
-        //     console.log('getFile -> err', err);
-        // });
+        const file = await DocumentPicker.getDocumentAsync({});
+        console.log('file', file);
+        setFileUri(file);
     };
 
-    const read = async () => {
-        const r = await FileSystem.readAsStringAsync(file.uri);
-        return r;  
-    };                 
-
-    React.useEffect(() => {
-        if(file!==null){
-            console.log('file', file);
-            if (file.uri){
-                setResult(read());
-            }
-        }
-        
-    }, [file]);
-
-    React.useEffect(() => {
-        if (result!==null){
-            console.log(result);
-        }
-    }, [result]);
-
-    function isInt(n, str){
+    function isInt(n, str) {
         return n !== Infinity && String(n) === str && n > 0;
     }
 
-
     function isInDesiredForm(str) {
         var n = Math.floor(Number(str));
-        return (isInt(n, str)) || (!isNaN(str) && str.toString().indexOf('.') != -1);
+        return isInt(n, str) || (!isNaN(str) && str.toString().indexOf('.') != -1);
     }
 
     const submit = async () => {
-        if(name.length>0 && distance.length>0 && isInDesiredForm(distance) && elevation.length>0 && isInDesiredForm(elevation) && description.length>0 && latitude.length>0  && isInDesiredForm(latitude) && longitude.length>0  && isInDesiredForm(longitude) && categoryName.length>0 && tagList.length>0 && file!==null && file.name.slice(-4, -1)+ file.name.slice(-1)==='.gpx'){
-            // const MUTATION = gql`
-            //     mutation ($file: Upload!, $objId: String!, $objType: ObjType!) {
-            //         createPhoto(
-            //             input: { objId: $objId, objType: $objType, file: $file }
-            //         ) {
-            //             id
-            //         }
-            //     }
-            // `;
-            // await client.mutate({
-            //     mutation: MUTATION,
-            //     variables: {
-            //         file,
-            //         objId: profil.whoami.id,
-            //         objType: 'USER',
-            //     },
-            //     errorPolicy: 'all',
-            // });
+        if (
+            name.length > 0 &&
+            distance.length > 0 &&
+            isInDesiredForm(distance) &&
+            elevation.length > 0 &&
+            isInDesiredForm(elevation) &&
+            description.length > 0 &&
+            latitude !== null &&
+            longitude !== null &&
+            categoryId !== null &&
+            fileUri !== null &&
+            fileUri.name.slice(-4) === '.gpx'
+        ) {
+            const file = new ReactNativeFile({
+                uri: fileUri.uri,
+                type: 'application/gpx+xml',
+                name: 'file.gpx',
+            });
 
-            // if int CONVERT INTO FLOAT
-            
-            console.log('ok');
+            const MUTATION = gql`
+                mutation ($file: Upload!, $categoryId: String!) {
+                    createHike(
+                        input: {
+                            name: "test"
+                            description: "super hike"
+                            distance: 40
+                            elevation: 500
+                            difficulty: EASY
+                            track: $file
+                            tagsId: []
+                            categoryId: $categoryId
+                            latitude: 47.99511
+                            longitude: 0.18544
+                        }
+                    ) {
+                        id
+                    }
+                }
+            `;
+            const res = await client.mutate({
+                mutation: MUTATION,
+                variables: {
+                    file,
+                    categoryId,
+                },
+                errorPolicy: 'all',
+            });
+            if (res.errors) {
+                console.log(res.errors);
+            }
+            const hikeId = res.data.createHike.id;
+            navigation.navigate('Hike', { hikeId });
         } else {
-            console.log('not ok');
+            console.log(
+                name.length > 0,
+                distance.length > 0,
+                isInDesiredForm(distance),
+                elevation.length > 0,
+                isInDesiredForm(elevation),
+                description.length > 0,
+                latitude !== null,
+                longitude !== null,
+                categoryId.length > 0,
+                fileUri !== null,
+                fileUri.name.slice(-4, -1) + fileUri.name.slice(-1) === '.gpx'
+            );
         }
     };
 
@@ -144,25 +170,16 @@ export default function HikeCreationScreen({setHikeCreation, categories}) {
         <View style={{ flex: 1 }}>
             <Image
                 source={require('../../../assets/images/Dalle_background.png')}
-                style={[
-                    StyleSheet.absoluteFill,
-                    { width: '100%', height: '100%' },
-                ]}
+                style={[StyleSheet.absoluteFill, { width: '100%', height: '100%' }]}
             />
 
             <ScrollView
-                contentContainerStyle={{flexGrow: 1}}
+                contentContainerStyle={{ flexGrow: 1 }}
                 keyboardShouldPersistTaps={'handled'}
                 showsHorizontalScrollIndicator={false}
             >
-                <BlurView
-                    style={styles.containerLogin}
-                    intensity={100}
-                    tint="light"
-                >
-                    <TouchableWithoutFeedback
-                        onPress={() => setHikeCreation(false)}
-                    >
+                <BlurView style={styles.containerLogin} intensity={100} tint="light">
+                    <TouchableWithoutFeedback onPress={() => setHikeCreation(false)}>
                         <View
                             style={[
                                 styles.logoContainer,
@@ -174,20 +191,15 @@ export default function HikeCreationScreen({setHikeCreation, categories}) {
                                 },
                             ]}
                         >
-                            <IconComp
-                                color={colors.background}
-                                name={'back'}
-                                pos={0}
-                            />
+                            <IconComp color={colors.background} name={'back'} pos={0} />
                         </View>
                     </TouchableWithoutFeedback>
-                    <View style={[styles.header, {marginBottom:15}]}>
+                    <View style={[styles.header, { marginBottom: 15 }]}>
                         <Image
                             source={require('../../../assets/images/logo.png')}
                             style={styles.logo}
                         />
                         <Text style={styles.textHeader}>Create a Hike !</Text>
-                        
                     </View>
                     <Text style={styles.textLoginMiddle}>Name</Text>
                     <TextInput
@@ -195,9 +207,7 @@ export default function HikeCreationScreen({setHikeCreation, categories}) {
                         autoCapitalize="sentences"
                         placeholder="name"
                         placeholderTextColor={colors.border}
-                        style={[
-                            styles.textInput
-                        ]}
+                        style={[styles.textInput]}
                         onSubmitEditing={() => distanceRef.current.focus()}
                         onChangeText={(text) => setName(text)}
                         value={name}
@@ -207,11 +217,11 @@ export default function HikeCreationScreen({setHikeCreation, categories}) {
                         ref={distanceRef}
                         autoCorrect={false}
                         autoCapitalize="none"
-                        placeholder="distance"
+                        placeholder="distance (km)"
+                        keyboardType="decimal-pad"
+                        maxLength={4}
                         placeholderTextColor={colors.border}
-                        style={[
-                            styles.textInput
-                        ]}
+                        style={[styles.textInput]}
                         onChangeText={(text) => setDistance(text)}
                         value={distance}
                         onSubmitEditing={() => elevationRef.current.focus()}
@@ -221,11 +231,11 @@ export default function HikeCreationScreen({setHikeCreation, categories}) {
                         ref={elevationRef}
                         autoCorrect={false}
                         autoCapitalize="none"
-                        placeholder="elevation"
+                        placeholder="elevation (m)"
+                        keyboardType="number-pad"
+                        maxLength={4}
                         placeholderTextColor={colors.border}
-                        style={[
-                            styles.textInput
-                        ]}
+                        style={[styles.textInput]}
                         onChangeText={(text) => setElevation(text)}
                         value={elevation}
                         onSubmitEditing={() => descriptionRef.current.focus()}
@@ -237,66 +247,116 @@ export default function HikeCreationScreen({setHikeCreation, categories}) {
                         autoCapitalize="sentences"
                         placeholder="description"
                         placeholderTextColor={colors.border}
-                        style={[
-                            styles.textInput
-                        ]}
+                        style={[styles.textInput]}
                         onChangeText={(text) => setDescription(text)}
                         value={description}
                         onSubmitEditing={() => tagsIDRef.current.focus()}
                     />
-                    <View style={{backgroundColor:colors.backgroundTextInput, borderRadius:15, marginTop:15, paddingHorizontal:15}}>
-                        <Text style={[styles.textLoginMiddle, {alignSelf:'center'}]}>Difficulty</Text>
-                        <View style={{flexDirection:'row', justifyContent:'space-evenly'}}>
-                            <TouchableWithoutFeedback
-                                onPress={() => setDifficulty('EASY')}
-                            >
+                    <View
+                        style={{
+                            backgroundColor: colors.backgroundTextInput,
+                            borderRadius: 15,
+                            marginTop: 15,
+                            paddingHorizontal: 15,
+                        }}
+                    >
+                        <Text style={[styles.textLoginMiddle, { alignSelf: 'center' }]}>
+                            Difficulty
+                        </Text>
+                        <View
+                            style={{
+                                flexDirection: 'row',
+                                justifyContent: 'space-evenly',
+                            }}
+                        >
+                            <TouchableWithoutFeedback onPress={() => setDifficulty('EASY')}>
                                 <View>
-                                    <Text style={[styles.textLoginMiddle, difficulty!=='EASY' ? {color:colors.border} : {}]}>EASY</Text>
+                                    <Text
+                                        style={[
+                                            styles.textLoginMiddle,
+                                            difficulty !== 'EASY' ? { color: colors.border } : {},
+                                        ]}
+                                    >
+                                        EASY
+                                    </Text>
                                 </View>
                             </TouchableWithoutFeedback>
-                            <TouchableWithoutFeedback
-                                onPress={() => setDifficulty('MEDIUM')}
-                            >
+                            <TouchableWithoutFeedback onPress={() => setDifficulty('MEDIUM')}>
                                 <View>
-                                    <Text style={[styles.textLoginMiddle, difficulty!=='MEDIUM' ? {color:colors.border} : {}]}>MEDIUM</Text>
+                                    <Text
+                                        style={[
+                                            styles.textLoginMiddle,
+                                            difficulty !== 'MEDIUM' ? { color: colors.border } : {},
+                                        ]}
+                                    >
+                                        MEDIUM
+                                    </Text>
                                 </View>
                             </TouchableWithoutFeedback>
-                            <TouchableWithoutFeedback
-                                onPress={() => setDifficulty('HARD')}
-                            >
+                            <TouchableWithoutFeedback onPress={() => setDifficulty('HARD')}>
                                 <View>
-                                    <Text style={[styles.textLoginMiddle, difficulty!=='HARD' ? {color:colors.border} : {}]}>HARD</Text>
+                                    <Text
+                                        style={[
+                                            styles.textLoginMiddle,
+                                            difficulty !== 'HARD' ? { color: colors.border } : {},
+                                        ]}
+                                    >
+                                        HARD
+                                    </Text>
                                 </View>
                             </TouchableWithoutFeedback>
                         </View>
                     </View>
-                    <View style={{backgroundColor:colors.backgroundTextInput, borderRadius:15, marginTop:15, paddingHorizontal:15}}>
-                        <Text style={[styles.textLoginMiddle, {alignSelf:'center'}]}>Category</Text>
-                        <ScrollView
-                            contentContainerStyle={{flexGrow: 1, marginBottom:15, marginHorizontal:15}}
-                            keyboardShouldPersistTaps={'handled'}
+                    <View
+                        style={{
+                            backgroundColor: colors.backgroundTextInput,
+                            borderRadius: 15,
+                            marginTop: 15,
+                            paddingHorizontal: 15,
+                        }}
+                    >
+                        <Text style={[styles.textLoginMiddle, { alignSelf: 'center' }]}>
+                            Category
+                        </Text>
+                        <FlatList
+                            data={data?.categories}
+                            keyExtractor={(item) => item.id}
+                            renderItem={({ item }) => (
+                                <TouchableWithoutFeedback onPress={() => setCategoryId(item.id)}>
+                                    <View>
+                                        <Text
+                                            style={[
+                                                styles.textLoginMiddle,
+                                                {
+                                                    marginRight: 30,
+                                                    paddingVertical: 15,
+                                                },
+                                                categoryId !== item.id
+                                                    ? { color: colors.border }
+                                                    : {},
+                                            ]}
+                                        >
+                                            {item.name}
+                                        </Text>
+                                    </View>
+                                </TouchableWithoutFeedback>
+                            )}
                             horizontal={true}
                             showsHorizontalScrollIndicator={false}
-                        >
-
-                            {categories.map((category) => (
-                                <TouchableWithoutFeedback
-                                    onPress={() => setCategoryName(category.name)}
-                                    key={category.name}
-                                >
-                                    <View>
-                                        <Text style={[styles.textLoginMiddle,{marginRight:30, paddingVertical:15}, categoryName!==category.name ? {color:colors.border} : {}]}>{category.name}</Text>
-                                    </View>
-                                    
-                                </TouchableWithoutFeedback>))}
-                        </ScrollView>
+                        />
                     </View>
-                    <Text style={[styles.textLoginMiddle, {marginBottom:30}]}>GPX File : {file !== null && (file.name.slice(-4, -1)+ file.name.slice(-1)==='.gpx' ? file.name : 'Wrong file type')}</Text>
-                    
+                    <Text style={[styles.textLoginMiddle, { marginBottom: 30 }]}>
+                        GPX File :{' '}
+                        {fileUri !== null &&
+                            (fileUri?.name?.slice(-4, -1) + fileUri?.name?.slice(-1) === '.gpx'
+                                ? fileUri.name
+                                : 'Wrong file type')}
+                    </Text>
+
                     <Button
                         title="Select Document"
                         onPress={() => pickDocument()}
-                        buttonStyle={[styles.btn,{marginBottom:30, width:200}]}
+                        buttonStyle={[styles.btn, { marginBottom: 30, width: 200 }]}
                         titleStyle={styles.btnText}
                     />
 
@@ -306,24 +366,27 @@ export default function HikeCreationScreen({setHikeCreation, categories}) {
                         autoCapitalize="none"
                         placeholder="tagsID"
                         placeholderTextColor={colors.border}
-                        style={[
-                            styles.textInput,
-                            {marginBottom:20}
-                        ]}
+                        style={[styles.textInput, { marginBottom: 20 }]}
                         onChangeText={(text) => setTagsID(text)}
                         value={tagsID}
                         onSubmitEditing={() => addNewTag()}
                     />
-                    <View style={{flexDirection:'row', flexWrap:'wrap', justifyContent:'center'}}>
-                        {tagList.length>0 && tagList.map((tag) => (<Tag key={tag} name={tag}/>))}
+                    <View
+                        style={{
+                            flexDirection: 'row',
+                            flexWrap: 'wrap',
+                            justifyContent: 'center',
+                        }}
+                    >
+                        {tagList.length > 0 && tagList.map((tag) => <Tag key={tag} name={tag} />)}
                     </View>
                     <Button
                         title="Submit"
                         onPress={() => submit()}
-                        buttonStyle={[styles.btn,{width:200, marginTop:30}]}
+                        buttonStyle={[styles.btn, { width: 200, marginTop: 30 }]}
                         titleStyle={styles.btnText}
                     />
-                    <View style={{height:100}}/>
+                    <View style={{ height: 100 }} />
                 </BlurView>
             </ScrollView>
         </View>

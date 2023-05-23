@@ -29,7 +29,9 @@ export class FilesService {
         ) {
             return this.worker.nextId().toString() + '.' + mimetype.split('/').pop();
         } else if (
-            ['application/gpx+xml', 'application/gpx'].includes(mimetype) &&
+            ['application/gpx+xml', 'application/gpx', 'application/octet-stream'].includes(
+                mimetype
+            ) &&
             type === FileType.GPX
         ) {
             return this.worker.nextId().toString() + '.gpx';
