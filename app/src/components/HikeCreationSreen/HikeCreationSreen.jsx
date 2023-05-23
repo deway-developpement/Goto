@@ -28,13 +28,13 @@ function Tag(props) {
             style={{
                 marginHorizontal: 10,
                 marginTop: 10,
-                backgroundColor: colors.starFill,
+                backgroundColor: colors.filled,
                 paddingHorizontal: 20,
                 paddingVertical: 4,
                 borderRadius: 24,
             }}
         >
-            <Text style={{ color: colors.backgroundTextInput }}>{props.name}</Text>
+            <Text style={{ color: colors.backgroundSecondary }}>{props.name}</Text>
         </View>
     );
 }
@@ -259,7 +259,7 @@ export default function HikeCreationScreen({ navigation }) {
                     />
                     <View
                         style={{
-                            backgroundColor: colors.backgroundTextInput,
+                            backgroundColor: colors.backgroundSecondary,
                             borderRadius: 15,
                             marginTop: 15,
                             paddingHorizontal: 15,
@@ -314,7 +314,7 @@ export default function HikeCreationScreen({ navigation }) {
                     </View>
                     <View
                         style={{
-                            backgroundColor: colors.backgroundTextInput,
+                            backgroundColor: colors.backgroundSecondary,
                             borderRadius: 15,
                             marginTop: 15,
                             paddingHorizontal: 15,
