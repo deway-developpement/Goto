@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import {
     View,
     TextInput,
@@ -19,71 +19,84 @@ import { ReactNativeFile } from 'apollo-upload-client';
 import { FlatList } from 'react-native-gesture-handler';
 import { readAsStringAsync } from 'expo-file-system';
 import { DOMParser } from 'xmldom';
-
-function Tag(props) {
-    const { colors } = useTheme();
-    console.log('props', props);
-    return (
-        <View
-            style={{
-                marginHorizontal: 10,
-                marginTop: 10,
-                backgroundColor: colors.filled,
-                paddingHorizontal: 20,
-                paddingVertical: 4,
-                borderRadius: 24,
-            }}
-        >
-            <Text style={{ color: colors.backgroundSecondary }}>{props.name}</Text>
-        </View>
-    );
-}
+import * as ImagePicker from 'expo-image-picker';
 
 export default function HikeCreationScreen({ navigation }) {
     const { colors } = useTheme();
     const styles = stylesheet(colors);
     const client = useApolloClient();
 
-    const [name, setName] = React.useState('');
-    const [distance, setDistance] = React.useState('');
+    const [name, setName] = useState('');
+    const [distance, setDistance] = useState('');
     const distanceRef = useRef(null);
-    const [elevation, setElevation] = React.useState('');
+    const [elevation, setElevation] = useState('');
     const elevationRef = useRef(null);
-    const [description, setDescription] = React.useState('');
+    const [description, setDescription] = useState('');
     const descriptionRef = useRef(null);
-    const [categoryId, setCategoryId] = React.useState('');
-    const [tagsID, setTagsID] = React.useState('');
-    const tagsIDRef = useRef(null);
-    const [difficulty, setDifficulty] = React.useState('EASY');
+    const [categoryId, setCategoryId] = useState('');
+    const [difficulty, setDifficulty] = useState('EASY');
 
-    const [tagList, setTagList] = React.useState([]);
+    const [tagList, setTagList] = useState([]);
 
-    const [file, setFile] = React.useState(null);
+    const [file, setFile] = useState(null);
+    const [image, setImage] = useState(null);
+    const [status, requestPermission] = ImagePicker.useMediaLibraryPermissions();
+
+    const [error, setError] = useState(null);
 
     const GET_CATEGORIES = gql`
-        query categories($field: CategorySortFields!, $direction: SortDirection!) {
-            categories(sorting: { field: $field, direction: $direction }) {
+        query {
+            categories {
                 id
                 name
             }
         }
     `;
 
-    const { data } = useQuery(GET_CATEGORIES, {
-        variables: {
-            field: 'id',
-            direction: 'ASC',
-        },
-    });
+    const { data: categories } = useQuery(GET_CATEGORIES);
 
-    function addNewTag() {
-        setTagList([...tagList, tagsID]);
-        setTagsID('');
+    const GET_TAGS = gql`
+        query {
+            tags {
+                id
+                name
+            }
+        }
+    `;
+
+    const { data: tags } = useQuery(GET_TAGS);
+
+    function toggleTag(tagId) {
+        console.log(tagId);
+        if (tagList.includes(tagId)) {
+            setTagList(tagList.filter((id) => id !== tagId));
+        } else {
+            setTagList([...tagList, tagId]);
+        }
     }
 
     const pickDocument = async () => {
         const file = await DocumentPicker.getDocumentAsync({});
+        if (file.type !== 'success') return;
         setFile(file);
+    };
+
+    const pickImage = async () => {
+        if (status !== 'granted') {
+            const { status } = await requestPermission();
+            if (status !== 'granted') {
+                alert('Sorry, we need camera roll permissions to make this work!');
+                return;
+            }
+        }
+        const file = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.All,
+            allowsEditing: true,
+            aspect: [3, 3],
+            quality: 1,
+        });
+
+        setImage(file);
     };
 
     function getFirstPointOfGPX(content) {
@@ -126,6 +139,7 @@ export default function HikeCreationScreen({ navigation }) {
                     $difficulty: Difficulty!
                     $latitude: Float!
                     $longitude: Float!
+                    $tagsId: [String!]!
                 ) {
                     createHike(
                         input: {
@@ -135,10 +149,10 @@ export default function HikeCreationScreen({ navigation }) {
                             elevation: $elevation
                             difficulty: $difficulty
                             track: $file
-                            tagsId: []
                             categoryId: $categoryId
                             latitude: $latitude
                             longitude: $longitude
+                            tagsId: $tagsId
                         }
                     ) {
                         id
@@ -157,6 +171,7 @@ export default function HikeCreationScreen({ navigation }) {
                     difficulty,
                     latitude: coordinates[0],
                     longitude: coordinates[1],
+                    tagsId: tagList,
                 },
                 errorPolicy: 'all',
             });
@@ -166,8 +181,57 @@ export default function HikeCreationScreen({ navigation }) {
             }
 
             const hikeId = res.data?.createHike.id;
-            if (hikeId) navigation.navigate('FocusHike', { hikeId });
-            else console.log('no hikeId');
+            if (hikeId) {
+                if (image !== null && !image.canceled) {
+                    const reactImage = new ReactNativeFile({
+                        uri: image.assets[0].uri,
+                        type: 'image/jpeg',
+                        name: 'file.jpg',
+                    });
+                    const MUTATION = gql`
+                        mutation ($file: Upload!, $hikeId: String!) {
+                            createPhoto(input: { file: $file, objId: $hikeId, objType: HIKE }) {
+                                id
+                            }
+                        }
+                    `;
+                    const res = await client.mutate({
+                        mutation: MUTATION,
+                        variables: {
+                            file: reactImage,
+                            hikeId,
+                        },
+                        errorPolicy: 'all',
+                    });
+                    if (res.errors) {
+                        console.log(res.errors);
+                        return;
+                    }
+                }
+                navigation.navigate('FocusHike', { hikeId });
+            }
+        } else {
+            if (name === '') {
+                setError('Le nom ne peut pas être vide');
+            }
+            if (isNaN(parseFloat(distance))) {
+                setError('La distance doit être un nombre');
+            }
+            if (isNaN(parseInt(elevation))) {
+                setError('Le dénivelé doit être un nombre');
+            }
+            if (description.length === 0) {
+                setError('La description ne peut pas être vide');
+            }
+            if (categoryId === null) {
+                setError('La catégorie ne peut pas être vide');
+            }
+            if (file === null) {
+                setError('Le fichier ne peut pas être vide');
+            }
+            if (file !== null && file.name.slice(-4) !== '.gpx') {
+                setError('Le fichier doit être un fichier GPX');
+            }
         }
     };
 
@@ -255,7 +319,6 @@ export default function HikeCreationScreen({ navigation }) {
                         style={[styles.textInput]}
                         onChangeText={(text) => setDescription(text)}
                         value={description}
-                        onSubmitEditing={() => tagsIDRef.current.focus()}
                     />
                     <View
                         style={{
@@ -324,7 +387,7 @@ export default function HikeCreationScreen({ navigation }) {
                             Category
                         </Text>
                         <FlatList
-                            data={data?.categories}
+                            data={categories?.categories}
                             keyExtractor={(item) => item.id}
                             renderItem={({ item }) => (
                                 <TouchableWithoutFeedback onPress={() => setCategoryId(item.id)}>
@@ -350,12 +413,49 @@ export default function HikeCreationScreen({ navigation }) {
                             showsHorizontalScrollIndicator={false}
                         />
                     </View>
+
+                    <View
+                        style={{
+                            backgroundColor: colors.backgroundSecondary,
+                            borderRadius: 15,
+                            marginTop: 15,
+                            paddingHorizontal: 15,
+                        }}
+                    >
+                        <Text style={[styles.textLoginMiddle, { alignSelf: 'center' }]}>Tags</Text>
+                        <FlatList
+                            data={tags?.tags}
+                            keyExtractor={(item) => item.id}
+                            renderItem={({ item }) => (
+                                <TouchableWithoutFeedback onPress={() => toggleTag(item.id)}>
+                                    <View>
+                                        <Text
+                                            style={[
+                                                styles.textLoginMiddle,
+                                                {
+                                                    marginRight: 30,
+                                                    paddingVertical: 15,
+                                                },
+                                                tagList.includes(item.id)
+                                                    ? {}
+                                                    : { color: colors.border },
+                                            ]}
+                                        >
+                                            {item.name}
+                                        </Text>
+                                    </View>
+                                </TouchableWithoutFeedback>
+                            )}
+                            horizontal={true}
+                            showsHorizontalScrollIndicator={false}
+                        />
+                    </View>
+
                     <Text style={[styles.textLoginMiddle, { marginBottom: 30 }]}>
                         GPX File :{' '}
                         {file !== null &&
                             (file?.name?.slice(-4) === '.gpx' ? file.name : 'Wrong file type')}
                     </Text>
-
                     <Button
                         title="Select Document"
                         onPress={() => pickDocument()}
@@ -363,26 +463,22 @@ export default function HikeCreationScreen({ navigation }) {
                         titleStyle={styles.btnText}
                     />
 
-                    <TextInput
-                        ref={tagsIDRef}
-                        autoCorrect={false}
-                        autoCapitalize="none"
-                        placeholder="tagsID"
-                        placeholderTextColor={colors.border}
-                        style={[styles.textInput, { marginBottom: 20 }]}
-                        onChangeText={(text) => setTagsID(text)}
-                        value={tagsID}
-                        onSubmitEditing={() => addNewTag()}
+                    <Text style={[styles.textLoginMiddle, { marginBottom: 30 }]}>
+                        Photo :{' '}
+                        {file !== null &&
+                            (file?.name?.split('.')[1] in ['jpeg', 'jpg', 'png']
+                                ? file.name
+                                : 'Wrong file type')}
+                    </Text>
+                    <Button
+                        title="Select Image"
+                        onPress={() => pickImage()}
+                        buttonStyle={[styles.btn, { marginBottom: 30, width: 200 }]}
+                        titleStyle={styles.btnText}
                     />
-                    <View
-                        style={{
-                            flexDirection: 'row',
-                            flexWrap: 'wrap',
-                            justifyContent: 'center',
-                        }}
-                    >
-                        {tagList.length > 0 && tagList.map((tag) => <Tag key={tag} name={tag} />)}
-                    </View>
+                    {error !== '' && (
+                        <Text style={[styles.textLoginMiddle, { color: 'red' }]}>{error}</Text>
+                    )}
                     <Button
                         title="Submit"
                         onPress={() => submit()}

@@ -15,13 +15,12 @@ function Tag(props) {
     return (
         <View
             style={{
-                marginLeft: 25,
                 marginTop: 5,
                 backgroundColor: colors.filled,
-                flex: 1,
                 paddingHorizontal: 15,
                 paddingVertical: 4,
                 borderRadius: 24,
+                marginHorizontal: 5,
             }}
         >
             <Text style={{ color: colors.backgroundSecondary }}>{props.name}</Text>
@@ -317,9 +316,20 @@ export default function FocusHikeScreen({ route }) {
                                         </Text>
                                     </View>
                                 </View>
-                                {data?.hike?.tags.map((item) => (
-                                    <Tag key={item.name} name={item.name} />
-                                ))}
+                                <View
+                                    style={{
+                                        flexDirection: 'row',
+                                        flexWrap: 'wrap',
+                                        justifyContent: 'center',
+                                        gap: 10,
+                                        marginTop: 10,
+                                        marginHorizontal: 28,
+                                    }}
+                                >
+                                    {data?.hike?.tags.map((item) => (
+                                        <Tag key={item.name} name={item.name} />
+                                    ))}
+                                </View>
                             </View>
                             <View style={[styles.containerFocus, { flexDirection: 'column' }]}>
                                 <Text style={styles.textDescription}>
