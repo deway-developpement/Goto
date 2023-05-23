@@ -468,7 +468,7 @@ function FriendCard({ friend }) {
     const navigation = useNavigation();
 
     function handleClick({ friendId, isFriend }) {
-        navigation.navigate('FocusFriend', { friendId, isFriend });
+        navigation.navigate('FocusUser', { friendId, isFriend });
     }
 
     return (

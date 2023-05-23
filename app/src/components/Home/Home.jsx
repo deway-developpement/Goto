@@ -23,7 +23,6 @@ import ProfileScreen from '../Profile/Profile';
 import { Icon } from '../Icon/Icon';
 import SearchScreen from '../SearchScreen/SearchScreen';
 import FocusHikeScreen from '../Hike/FocusHikeScreen';
-import FocusFriend from '../Profile/FocusFriend';
 
 function MapScreen({ route }) {
     const [permission, request] = Location.useForegroundPermissions();
@@ -214,14 +213,6 @@ function HomeScreen({ navigation }) {
                         <Tab.Screen
                             name="FocusHike"
                             component={FocusHikeScreen}
-                            options={{
-                                headerShown: false,
-                                tabBarButton: () => null,
-                            }}
-                        />
-                        <Tab.Screen
-                            name="FocusFriend"
-                            component={FocusFriend}
                             options={{
                                 headerShown: false,
                                 tabBarButton: () => null,

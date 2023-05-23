@@ -9,7 +9,7 @@ import SplashScreen from '../SplashScreen/SplashScreen';
 import { Historic, Stats } from './ProfileComplements';
 import { Button } from 'react-native-elements';
 
-export default function FocusFriend({ route }) {
+export default function FocusUser({ route }) {
     const { colors } = useTheme();
     const styles = stylesheet(colors);
     const navigation = useNavigation();
