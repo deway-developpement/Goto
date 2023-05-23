@@ -38,12 +38,12 @@ const stylesheet = (colors) =>
         textDescription: {
             fontSize: 16,
             fontWeight: '400',
-            color: colors.description,
+            color: colors.borderLineSecondary,
         },
         logoContainer: {
             width: 50,
             height: 50,
-            backgroundColor: colors.link,
+            backgroundColor: colors.primary,
             borderRadius: 12,
             flex: 1,
             alignItems: 'center',

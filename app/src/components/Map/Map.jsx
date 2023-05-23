@@ -13,12 +13,8 @@ export default function Map({ location, image }) {
         const doc = new DOMParser().parseFromString(CONTENTGPX, 'text/xml');
         const trkpts = doc.getElementsByTagName('trkpt');
         const trkptsArray = Array.from(trkpts);
-        const trkptsArrayLat = trkptsArray.map((trkpt) =>
-            trkpt.getAttribute('lat')
-        );
-        const trkptsArrayLon = trkptsArray.map((trkpt) =>
-            trkpt.getAttribute('lon')
-        );
+        const trkptsArrayLat = trkptsArray.map((trkpt) => trkpt.getAttribute('lat'));
+        const trkptsArrayLon = trkptsArray.map((trkpt) => trkpt.getAttribute('lon'));
         return trkptsArrayLat.map((lat, index) => {
             return {
                 latitude: parseFloat(lat),
@@ -63,24 +59,20 @@ export default function Map({ location, image }) {
         >
             <Polyline
                 coordinates={passedPoints}
-                strokeColor={colors.borderlinesecondary}
+                strokeColor={colors.borderLineSecondary}
                 strokeWidth={6}
             />
             <Polyline
                 coordinates={passedPoints}
-                strokeColor={colors.linesecondary}
+                strokeColor={colors.lineSecondary}
                 strokeWidth={4}
             />
             <Polyline
                 coordinates={leftPoints}
-                strokeColor={colors.borderlineprimary}
+                strokeColor={colors.borderLinePrimary}
                 strokeWidth={6}
             />
-            <Polyline
-                coordinates={leftPoints}
-                strokeColor={colors.lineprimary}
-                strokeWidth={4}
-            />
+            <Polyline coordinates={leftPoints} strokeColor={colors.linePrimary} strokeWidth={4} />
             <Marker
                 coordinate={{
                     latitude: parseFloat(location?.coords?.latitude),

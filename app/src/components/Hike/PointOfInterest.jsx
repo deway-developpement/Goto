@@ -13,7 +13,7 @@ export default function PointsOfInterests(props) {
         <View style={{ flex: 1, marginTop: 10 }}>
             <View
                 style={{
-                    backgroundColor: colors.starEmpty,
+                    backgroundColor: colors.empty,
                     width: windowWidth * 0.8,
                     height: 2,
                     marginTop: 5,

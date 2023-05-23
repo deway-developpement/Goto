@@ -150,7 +150,7 @@ export default function ProfileScreen() {
                                     alignItems: 'center',
                                 }}
                             >
-                                <Icon name="settings" size={35} color={colors.link} />
+                                <Icon name="settings" size={35} color={colors.primary} />
                                 <Text style={styles.textSettings}>Settings</Text>
                             </Pressable>
                         </View>
@@ -159,7 +159,7 @@ export default function ProfileScreen() {
                                 return (
                                     <ActivityIndicator
                                         size="large"
-                                        color={colors.primary}
+                                        color={colors.loading}
                                         style={{ flex: 3, width: '100%' }}
                                     />
                                 );
@@ -241,7 +241,7 @@ export default function ProfileScreen() {
                                                                     }
                                                                     buttonStyle={styles.btn}
                                                                     titleStyle={{
-                                                                        color: colors.link,
+                                                                        color: colors.primary,
                                                                         fontSize: 12,
                                                                         fontWeight: '500',
                                                                     }}

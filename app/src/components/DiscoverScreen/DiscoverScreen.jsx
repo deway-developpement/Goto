@@ -96,7 +96,7 @@ function DiscoverHeader({ windowHeight, navigation }) {
                         },
                     ]}
                 >
-                    <IconComp color={colors.link} name={'plus'} />
+                    <IconComp color={colors.primary} name={'plus'} />
                     <Text
                         style={[
                             styles.textLink,

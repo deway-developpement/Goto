@@ -10,7 +10,7 @@ const stylesheet = (colors) =>
             paddingLeft:'3%'
         },
         textLink: {
-            color: colors.link,
+            color: colors.primary,
             fontSize: 16,
             fontWeight: '400',
             textDecorationLine:'underline'

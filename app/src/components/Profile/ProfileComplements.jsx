@@ -112,7 +112,7 @@ function ProfileModal({ setModalVisible, profil, reload }) {
                         marginBottom: 16,
                     }}
                 >
-                    <Icon name="avatar" size={16} style={{ marginTop: 2 }} color={colors.link} />
+                    <Icon name="avatar" size={16} style={{ marginTop: 2 }} color={colors.primary} />
                     <Text style={styles.smallModalText}>
                         {profil.whoami.avatar ? 'Change avatar' : 'Add avatar'}
                     </Text>
@@ -126,7 +126,7 @@ function ProfileModal({ setModalVisible, profil, reload }) {
                         marginBottom: 10,
                     }}
                 >
-                    <Icon name="pseudo" size={16} style={{ marginTop: 2 }} color={colors.link} />
+                    <Icon name="pseudo" size={16} style={{ marginTop: 2 }} color={colors.primary} />
                     <Text style={styles.smallModalText}>Change pseudo</Text>
                 </Pressable>
             </View>
@@ -316,7 +316,7 @@ function SettingsModal({ setModalVisible, reload }) {
                         marginBottom: 16,
                     }}
                 >
-                    <Icon name="reload" size={14} style={{ marginTop: 2 }} color={colors.link} />
+                    <Icon name="reload" size={14} style={{ marginTop: 2 }} color={colors.primary} />
                     <Text style={styles.smallModalText}>Actualize</Text>
                 </Pressable>
                 <Pressable
@@ -329,7 +329,7 @@ function SettingsModal({ setModalVisible, reload }) {
                         marginBottom: 16,
                     }}
                 >
-                    <Icon name="delete" size={14} style={{ marginTop: 2 }} color={colors.link} />
+                    <Icon name="delete" size={14} style={{ marginTop: 2 }} color={colors.primary} />
                     <Text style={styles.smallModalText}>Delete account</Text>
                 </Pressable>
                 <Pressable
@@ -342,7 +342,7 @@ function SettingsModal({ setModalVisible, reload }) {
                         marginBottom: 10,
                     }}
                 >
-                    <Icon name="exit" size={14} style={{ marginTop: 2 }} color={colors.link} />
+                    <Icon name="exit" size={14} style={{ marginTop: 2 }} color={colors.primary} />
                     <Text style={styles.smallModalText}>Log out</Text>
                 </Pressable>
             </View>
@@ -564,7 +564,7 @@ function Friends({ friends, MyID, reload, search, setSearch }) {
         return (
             <ActivityIndicator
                 size="large"
-                color={colors.primary}
+                color={colors.loading}
                 style={{ flex: 3, width: '100%' }}
             />
         );

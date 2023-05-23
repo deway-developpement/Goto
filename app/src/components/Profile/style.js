@@ -10,7 +10,7 @@ const stylesheet = (colors) =>
         logoContainer: {
             width: 50,
             height: 50,
-            backgroundColor: colors.link,
+            backgroundColor: colors.primary,
             borderRadius: 12,
             paddingRight: 2,
             justifyContent: 'center',
@@ -25,7 +25,7 @@ const stylesheet = (colors) =>
         textContent: {
             fontSize: 22,
             fontWeight: '800',
-            color: colors.link,
+            color: colors.primary,
             marginLeft: 2,
             marginBottom: 14,
         },
@@ -51,14 +51,14 @@ const stylesheet = (colors) =>
             marginTop: 7.5,
             fontSize: 14,
             fontWeight: '500',
-            color: colors.link,
+            color: colors.primary,
         },
         input: {
             height: 40,
-            color: colors.link,
+            color: colors.primary,
             fontSize: 14,
             fontWeight: '400',
-            borderColor: colors.accentuated,
+            borderColor: colors.lineSecondary,
             borderWidth: 1,
             borderRadius: 6,
             paddingHorizontal: 8,
@@ -67,8 +67,8 @@ const stylesheet = (colors) =>
         buttonText: {
             fontSize: 14,
             fontWeight: '500',
-            backgroundColor: colors.link,
-            color: colors.label,
+            backgroundColor: colors.primary,
+            color: colors.backgroundSecondary,
             paddingHorizontal: 16,
             paddingVertical: 8,
             borderRadius: 6,
@@ -91,7 +91,7 @@ const stylesheet = (colors) =>
         pseudo: {
             fontSize: 20,
             fontWeight: '700',
-            color: colors.link,
+            color: colors.primary,
             alignSelf: 'center',
             marginTop: 12,
             marginBottom: 12,
@@ -99,7 +99,7 @@ const stylesheet = (colors) =>
         smallpseudo: {
             fontSize: 14,
             fontWeight: '500',
-            color: colors.link,
+            color: colors.primary,
             alignSelf: 'center',
             marginBottom: 12,
             marginTop: 4,
@@ -109,12 +109,12 @@ const stylesheet = (colors) =>
             alignItems: 'center',
         },
         btn: {
-            backgroundColor: colors.label,
-            color: colors.link,
+            backgroundColor: colors.backgroundSecondary,
+            color: colors.primary,
             borderRadius: 6,
         },
         btnAdd: {
-            backgroundColor: colors.primary,
+            backgroundColor: colors.loading,
             borderRadius: 6,
         },
         modalView: {
@@ -137,12 +137,12 @@ const stylesheet = (colors) =>
         },
         closeIcon: {
             marginTop: 11,
-            color: colors.link,
+            color: colors.primary,
         },
         smallModalText: {
             fontSize: 14,
             fontWeight: '400',
-            color: colors.link,
+            color: colors.primary,
             marginLeft: 13,
         },
         statContainer: {
@@ -156,7 +156,7 @@ const stylesheet = (colors) =>
         statLabel: {
             fontSize: 12,
             fontWeight: '400',
-            color: colors.link,
+            color: colors.primary,
             marginTop: 4,
         },
         statNumber: {

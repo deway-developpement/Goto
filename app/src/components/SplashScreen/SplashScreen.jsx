@@ -10,20 +10,14 @@ export default function SplashScreen() {
 
     return (
         <SafeAreaView
-            style={[
-                styles.container,
-                { alignItems: 'center', justifyContent: 'center' },
-            ]}
+            style={[styles.container, { alignItems: 'center', justifyContent: 'center' }]}
         >
             <View style={{ flexDirection: 'row', alignItems: 'flex-start' }}>
-                <Image
-                    source={require('../../../assets/images/logo.png')}
-                    style={styles.logo}
-                />
+                <Image source={require('../../../assets/images/logo.png')} style={styles.logo} />
                 <Text style={[styles.header, { marginBottom: 10 }]}>Gotò</Text>
             </View>
             <Text style={{ fontSize: 20, marginBottom: 10 }}>Loading...</Text>
-            <ActivityIndicator size={'large'} color={colors.primary} />
+            <ActivityIndicator size={'large'} color={colors.loading} />
         </SafeAreaView>
     );
 }

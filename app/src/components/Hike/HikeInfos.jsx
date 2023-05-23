@@ -58,7 +58,7 @@ export default function HikeInfos({ hike, borderRadius, inProfile = false }) {
                 {!inProfile ? (
                     <TouchableWithoutFeedback onPress={() => console.log('LIKE HIKE', hike.name)}>
                         <View>
-                            <IconComp color={colors.link} name={'heartempty'} pos={0} />
+                            <IconComp color={colors.primary} name={'heartempty'} pos={0} />
                         </View>
                     </TouchableWithoutFeedback>
                 ) : null}
@@ -97,9 +97,7 @@ export default function HikeInfos({ hike, borderRadius, inProfile = false }) {
                         Array.from({ length: 5 }, () => 0).map((_, index) => {
                             return (
                                 <IconComp
-                                    color={
-                                        index < avgRating - 1 ? colors.starFill : colors.starEmpty
-                                    }
+                                    color={index < avgRating - 1 ? colors.filled : colors.empty}
                                     key={index}
                                     name={'star'}
                                     marginRight={7}

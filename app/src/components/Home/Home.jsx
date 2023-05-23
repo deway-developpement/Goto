@@ -74,7 +74,7 @@ function MapScreen({ route }) {
                         return (
                             <ActivityIndicator
                                 size="large"
-                                color={colors.primary}
+                                color={colors.loading}
                                 style={{ flex: 3, width: '100%' }}
                             />
                         );
@@ -154,15 +154,15 @@ function HomeScreen({ navigation }) {
             <KeyboardDismissView>
                 <View style={styles.inner}>
                     <Tab.Navigator
-                        initialRouteName={'Profile'}
+                        initialRouteName={'Discover'}
                         backBehavior="history"
                         screenOptions={{
                             tabBarStyle: styles.tabBar,
                             headerShown: false,
                             tabBarIconStyle: styles.tabBarIcon,
                             tabBarLabelStyle: styles.tabBarLabel,
-                            tabBarActiveTintColor: colors.iconprimary,
-                            tabBarInactiveTintColor: colors.label,
+                            tabBarActiveTintColor: colors.active,
+                            tabBarInactiveTintColor: colors.backgroundSecondary,
                             tabBarHideOnKeyboard: true,
                         }}
                     >
