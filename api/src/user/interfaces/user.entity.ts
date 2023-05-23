@@ -10,6 +10,7 @@ import {
 } from 'typeorm';
 import { PhotoEntity } from '../../photo/interfaces/photo.entity';
 import { PerformanceEntity } from '../../performance/interfaces/performance.entity';
+import { ReviewEntity } from '../../review/interfaces/review.entity';
 
 @Entity('user')
 @Unique(['pseudo', 'publicKey'])
@@ -43,6 +44,9 @@ export class UserEntity {
 
     @OneToOne(() => PhotoEntity, (photo) => photo.user, { cascade: ['remove'] })
     avatar?: PhotoEntity;
+
+    @OneToMany(() => ReviewEntity, (review) => review.user, { cascade: ['remove'] })
+    reviews?: ReviewEntity[];
 
     @Column({ nullable: true })
     readonly refresh_token?: string;
