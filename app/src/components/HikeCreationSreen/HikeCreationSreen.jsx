@@ -168,20 +168,6 @@ export default function HikeCreationScreen({ navigation }) {
             const hikeId = res.data?.createHike.id;
             if (hikeId) navigation.navigate('FocusHike', { hikeId });
             else console.log('no hikeId');
-        } else {
-            console.log(
-                name.length > 0,
-                distance.length > 0,
-                isInDesiredForm(distance),
-                elevation.length > 0,
-                isInDesiredForm(elevation),
-                description.length > 0,
-                latitude !== null,
-                longitude !== null,
-                categoryId !== '',
-                file !== null,
-                file.name.slice(-4) === '.gpx'
-            );
         }
     };
 
