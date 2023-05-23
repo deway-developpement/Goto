@@ -21,7 +21,8 @@ export class PhotoResolver {
     ): Promise<PhotoDTO> {
         if (
             user.credidential < AuthType.superAdmin &&
-            !(query.objType === ObjType.USER || query.objId === user.id) // if not superAdmin, only allow to create photo for himself
+            !(query.objType === ObjType.USER || query.objId === user.id) && // if not superAdmin, only allow to create photo for himself
+            !(query.objType === ObjType.HIKE) // if not superAdmin, only allow to create photo for hike
         ) {
             throw new UnauthorizedException();
         }

@@ -132,7 +132,7 @@ function DiscoverHeader({ windowHeight, navigation }) {
                         style={[
                             styles.textLink,
                             {
-                                textDecorationLine: '',
+                                textDecorationLine: 'none',
                                 marginLeft: '5%',
                                 alignSelf: 'center',
                             },
