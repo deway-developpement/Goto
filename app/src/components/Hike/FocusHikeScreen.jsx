@@ -42,6 +42,33 @@ export default function FocusHikeScreen({ route }) {
     const windowWidth = Dimensions.get('window').width;
     const windowHeight = Dimensions.get('window').height;
 
+    // const WHOAMI = gql`
+    //     query whoami($lastMonth: DateTime!, $PseudoFilter: String!){
+    //         whoami {
+    //             id
+    //         }
+    //     }
+    // `;
+
+    const WHOAMI = gql `
+        query whoami($hikeID:ID) {
+            whoami {
+                reviews(filter:{hike:{id:{eq:$hikeID}}}){
+                        rating
+                }
+            }
+        }
+    `;
+
+    const { 
+        data:DataReview, 
+        loading:loadingReview 
+    } = useQuery(WHOAMI, {
+        variables: {
+            hikeID: hikeId,
+        },
+    });
+
     const GET_HIKE = gql`
         query hike($id: ID!) {
             hike(id: $id) {
@@ -148,7 +175,7 @@ export default function FocusHikeScreen({ route }) {
                             ]}
                         >
                             <View style={{ height: windowHeight * 0.6 }} />
-                            <HikeInfos hike={data.hike} borderRadius={true} />
+                            <HikeInfos hike={data.hike} borderRadius={true} rating={(DataReview?.whoami?.reviews.length>0 && DataReview?.whoami?.reviews[0]?.rating) || 0} />
                             <View style={[styles.containerFocus, { paddingHorizontal: 0 }]}>
                                 <Text
                                     style={[

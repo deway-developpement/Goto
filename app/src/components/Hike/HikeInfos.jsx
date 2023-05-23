@@ -5,7 +5,7 @@ import stylesheet from './style';
 import { gql, useQuery } from '@apollo/client';
 import { IconComp } from '../Icon/Icon';
 
-export default function HikeInfos({ hike, borderRadius, inProfile = false }) {
+export default function HikeInfos({ hike, borderRadius, rating=69, inProfile = false }) {
     const { colors } = useTheme();
     const styles = stylesheet(colors);
 
@@ -27,8 +27,8 @@ export default function HikeInfos({ hike, borderRadius, inProfile = false }) {
         },
     });
 
-    const avgRating = data?.hike?.reviewsAggregate[0]?.avg?.rating || 0;
-
+    const avgRating = (rating===69 && data?.hike?.reviewsAggregate[0]?.avg?.rating || 0) || rating;
+    console.log('avgRating', avgRating);
     return (
         <View
             style={[
@@ -98,7 +98,7 @@ export default function HikeInfos({ hike, borderRadius, inProfile = false }) {
                             return (
                                 <IconComp
                                     color={
-                                        index < avgRating - 1 ? colors.starFill : colors.starEmpty
+                                        index < avgRating ? colors.starFill : colors.starEmpty
                                     }
                                     key={index}
                                     name={'star'}
