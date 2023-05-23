@@ -77,7 +77,7 @@ const stylesheet = (colors) =>
             marginTop: '5%',
         },
         btn: {
-            backgroundColor: colors.link,
+            backgroundColor: colors.primary,
             borderRadius: 6,
             padding: 10,
         },
@@ -89,7 +89,7 @@ const stylesheet = (colors) =>
             display: 'none',
         },
         textBtn_text: {
-            color: colors.link,
+            color: colors.primary,
         },
     });
 export default stylesheet;

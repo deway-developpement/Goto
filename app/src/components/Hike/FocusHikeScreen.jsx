@@ -17,7 +17,7 @@ function Tag(props) {
             style={{
                 marginLeft: 25,
                 marginTop: 5,
-                backgroundColor: colors.starFill,
+                backgroundColor: colors.filled,
                 flex: 1,
                 paddingHorizontal: 15,
                 paddingVertical: 4,
@@ -258,7 +258,7 @@ export default function FocusHikeScreen({ route }) {
                                     </View>
                                     <View
                                         style={{
-                                            backgroundColor: colors.starEmpty,
+                                            backgroundColor: colors.empty,
                                             height: '100%',
                                             width: 2,
                                             marginTop: 5,
@@ -293,10 +293,10 @@ export default function FocusHikeScreen({ route }) {
                                                         },
                                                         item
                                                             ? {
-                                                                backgroundColor: colors.starFill,
+                                                                backgroundColor: colors.filled,
                                                             }
                                                             : {
-                                                                backgroundColor: colors.starEmpty,
+                                                                backgroundColor: colors.empty,
                                                             },
                                                     ]}
                                                     key={index}
@@ -330,7 +330,7 @@ export default function FocusHikeScreen({ route }) {
                                 ))}
                                 <View
                                     style={{
-                                        backgroundColor: colors.starEmpty,
+                                        backgroundColor: colors.empty,
                                         width: windowWidth * 0.8,
                                         height: 2,
                                         marginTop: 15,
@@ -370,7 +370,7 @@ export default function FocusHikeScreen({ route }) {
                                         style={[
                                             styles.containerFocus,
                                             {
-                                                backgroundColor: colors.link,
+                                                backgroundColor: colors.primary,
                                                 marginTop: 15,
                                                 flexDirection: 'row',
                                                 justifyContent: 'center',

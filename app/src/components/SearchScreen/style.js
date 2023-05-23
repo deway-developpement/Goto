@@ -32,7 +32,7 @@ const stylesheet = (colors) =>
         logoContainer: {
             width: 50,
             height: 50,
-            backgroundColor: colors.link,
+            backgroundColor: colors.primary,
             borderRadius: 12,
             flex: 1,
             alignItems: 'center',

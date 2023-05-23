@@ -151,7 +151,7 @@ export default function FocusFriend({ route }) {
                                 }}
                                 buttonStyle={[styles.btn, !profile.user.isFriend && styles.btnAdd]}
                                 titleStyle={{
-                                    color: colors.link,
+                                    color: colors.primary,
                                     fontSize: 12,
                                     fontWeight: '500',
                                 }}

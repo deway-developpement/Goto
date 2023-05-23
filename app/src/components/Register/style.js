@@ -76,7 +76,7 @@ const stylesheet = (colors) =>
             display: 'none',
         },
         textBtn_text: {
-            color: colors.link,
+            color: colors.primary,
             alignSelf: 'center',
         },
         logo: {
