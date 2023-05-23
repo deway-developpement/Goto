@@ -17,7 +17,7 @@ const stylesheet = (colors) =>
         },
         textInput: {
             height: 40,
-            borderColor: colors.borders,
+            borderColor: colors.border,
             borderRadius: 4,
             borderWidth: 1,
             marginBottom: 10,
@@ -31,7 +31,7 @@ const stylesheet = (colors) =>
             display: 'none',
         },
         textBtn_text: {
-            color: colors.link,
+            color: colors.primary,
             alignSelf: 'center',
         },
         logo: {
@@ -39,7 +39,7 @@ const stylesheet = (colors) =>
             height: 36,
         },
         tabBar: {
-            backgroundColor: colors.link,
+            backgroundColor: colors.primary,
             borderTopEndRadius: 12,
             borderTopStartRadius: 12,
             flex: 1,
@@ -47,7 +47,7 @@ const stylesheet = (colors) =>
             position: 'absolute',
         },
         btn: {
-            backgroundColor: colors.link,
+            backgroundColor: colors.primary,
             borderRadius: 6,
             padding: 10,
         },

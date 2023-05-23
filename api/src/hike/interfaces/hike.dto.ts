@@ -3,8 +3,7 @@ import {
     FilterableRelation,
     FilterableUnPagedRelation,
     IDField,
-    PagingStrategies,
-    QueryOptions,
+    KeySet,
     Relation,
     UnPagedRelation,
 } from '@nestjs-query/query-graphql';
@@ -17,9 +16,10 @@ import { PointOfInterestDTO } from '../../pointOfInterest/interfaces/poi.dto';
 import { ReviewDTO } from '../../review/interfaces/review.dto';
 import { AlertDTO } from '../../alert/interfaces/alert.dto';
 import { CategoryDTO } from '../../category/interfaces/category.dto';
+import { PerformanceDTO } from '../../performance/interfaces/performance.dto';
 
 @ObjectType('Hike')
-@QueryOptions({ pagingStrategy: PagingStrategies.NONE })
+@KeySet(['id'])
 @Relation('owner', () => UserDTO, { disableRemove: true, disableUpdate: true })
 @FilterableUnPagedRelation('tags', () => TagDTO, {
     nullable: true,
@@ -52,6 +52,12 @@ import { CategoryDTO } from '../../category/interfaces/category.dto';
     disableUpdate: true,
 })
 @FilterableRelation('category', () => CategoryDTO, {
+    nullable: true,
+    disableRemove: true,
+    disableUpdate: true,
+    enableAggregate: false,
+})
+@FilterableUnPagedRelation('performances', () => PerformanceDTO, {
     nullable: true,
     disableRemove: true,
     disableUpdate: true,

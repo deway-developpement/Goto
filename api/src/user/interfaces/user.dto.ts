@@ -1,8 +1,8 @@
 import {
     FilterableField,
     IDField,
+    KeySet,
     PagingStrategies,
-    QueryOptions,
     Relation,
     UnPagedRelation,
 } from '@nestjs-query/query-graphql';
@@ -10,12 +10,14 @@ import { ObjectType, ID } from '@nestjs/graphql';
 import { fieldMiddleware } from '../../auth/auth.middleware';
 import { PhotoDTO } from '../../photo/interfaces/photo.dto';
 import { PerformanceDTO } from '../../performance/interfaces/performance.dto';
+import { ReviewDTO } from '../../review/interfaces/review.dto';
 
 @ObjectType('User')
-@QueryOptions({ pagingStrategy: PagingStrategies.NONE })
+@KeySet(['id'])
 @UnPagedRelation('friends', () => UserDTO, {
     disableRemove: true,
     disableUpdate: true,
+    pagingStrategy: PagingStrategies.NONE,
     enableAggregate: true,
     enableTotalCount: true,
 })
@@ -26,8 +28,14 @@ import { PerformanceDTO } from '../../performance/interfaces/performance.dto';
     enableTotalCount: true,
 })
 @Relation('avatar', () => PhotoDTO, { disableRemove: true, disableUpdate: true, nullable: true })
+@UnPagedRelation('reviews', () => ReviewDTO, {
+    disableRemove: true,
+    disableUpdate: true,
+    enableAggregate: true,
+    enableTotalCount: true,
+})
 export class UserDTO {
-    @IDField(() => ID, { middleware: [fieldMiddleware] })
+    @IDField(() => ID)
     id!: string;
 
     @FilterableField()
@@ -42,7 +50,7 @@ export class UserDTO {
     @FilterableField()
     publicKey!: string;
 
-    @FilterableField({ middleware: [fieldMiddleware] })
+    @FilterableField()
     credidential!: number;
 
     @FilterableField(() => Date)

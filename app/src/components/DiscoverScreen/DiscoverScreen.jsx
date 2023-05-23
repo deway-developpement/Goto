@@ -1,29 +1,45 @@
-import React from 'react';
-import {
-    Text,
-    Image,
-    View,
-    ScrollView,
-    Dimensions,
-    TouchableWithoutFeedback,
-} from 'react-native';
+import React, { useEffect } from 'react';
+import { Text, Image, View, ScrollView, Dimensions, TouchableWithoutFeedback } from 'react-native';
 import stylesheet from './style';
-import { useTheme } from '@react-navigation/native';
+import { useIsFocused, useTheme } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { gql, useQuery } from '@apollo/client';
 import { IconComp } from '../Icon/Icon';
-import CategorieScreen from '../CategorieScreen/CategorieScreen';
+import Category from '../Category/Category';
 import { FlatList } from 'react-native';
+import HikeCreationScreen from '../HikeCreationSreen/HikeCreationSreen';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-export default function DiscoverScreen() {
+const stack = createNativeStackNavigator();
+
+export default function DiscoverWrapper({ navigation }) {
+    const isFocused = useIsFocused();
+
+    useEffect(() => {
+        if (isFocused) {
+            // go to DiscoverScreen when we come back to the screen from outside
+            navigation.navigate('DiscoverScreen');
+        }
+    }, [isFocused]);
+
+    return (
+        <stack.Navigator
+            screenOptions={{
+                headerShown: false,
+            }}
+        >
+            <stack.Screen name="DiscoverScreen" component={DiscoverScreen} />
+            <stack.Screen name="HikeCreation" component={HikeCreationScreen} />
+        </stack.Navigator>
+    );
+}
+
+function DiscoverScreen({ navigation }) {
     const { colors } = useTheme();
     const styles = stylesheet(colors);
 
     const GET_CATEGORIES = gql`
-        query categories(
-            $field: CategorySortFields!
-            $direction: SortDirection!
-        ) {
+        query categories($field: CategorySortFields!, $direction: SortDirection!) {
             categories(sorting: { field: $field, direction: $direction }) {
                 id
                 name
@@ -42,6 +58,11 @@ export default function DiscoverScreen() {
         },
     });
 
+    const categoryNameId = [];
+    categorie?.categories.map((category) => {
+        categoryNameId.push({ id: category.id, name: category.name });
+    });
+
     const windowHeight = Dimensions.get('window').height;
 
     return (
@@ -49,21 +70,14 @@ export default function DiscoverScreen() {
             <FlatList
                 data={categorie?.categories}
                 renderItem={({ item }) => (
-                    <CategorieScreen
-                        key={item.id}
-                        styles={styles}
-                        horizontal={false}
-                        {...item}
-                    />
+                    <Category key={item.id} styles={styles} horizontal={false} {...item} />
                 )}
                 keyExtractor={(item) => item.id}
                 horizontal={false}
                 showsVerticalScrollIndicator={false}
-                emptyListComponent={
-                    <Text style={styles.textLink}>No categories</Text>
-                }
+                emptyListComponent={<Text style={styles.textLink}>No categories</Text>}
                 ListHeaderComponent={
-                    <DiscoverHeader windowHeight={windowHeight} />
+                    <DiscoverHeader windowHeight={windowHeight} navigation={navigation} />
                 }
                 ListFooterComponent={
                     <View
@@ -79,16 +93,30 @@ export default function DiscoverScreen() {
     );
 }
 
-function DiscoverHeader({ windowHeight }) {
+function DiscoverHeader({ windowHeight, navigation }) {
     const { colors } = useTheme();
     const styles = stylesheet(colors);
 
+    const GET_POPULAR_IMAGE = gql`
+        query {
+            getHikePopular(limit: 1) {
+                edges {
+                    node {
+                        photos {
+                            filename
+                        }
+                    }
+                }
+            }
+        }
+    `;
+
+    const { data: popularImage } = useQuery(GET_POPULAR_IMAGE);
+
     return (
         <View style={styles.container}>
-            <Text style={[styles.textHeader, { marginTop: '6%' }]}>
-                Discover
-            </Text>
-            <TouchableWithoutFeedback onPress={() => console.log('DISCORVER')}>
+            <Text style={[styles.textHeader, { marginTop: '6%' }]}>Discover</Text>
+            <TouchableWithoutFeedback onPress={() => navigation.navigate('HikeCreation')}>
                 <View
                     style={[
                         styles.container,
@@ -99,12 +127,12 @@ function DiscoverHeader({ windowHeight }) {
                         },
                     ]}
                 >
-                    <IconComp color={colors.logo} name={'plus'} />
+                    <IconComp color={colors.primary} name={'plus'} />
                     <Text
                         style={[
                             styles.textLink,
                             {
-                                textDecorationLine: '',
+                                textDecorationLine: 'none',
                                 marginLeft: '5%',
                                 alignSelf: 'center',
                             },
@@ -120,62 +148,63 @@ function DiscoverHeader({ windowHeight }) {
                 horizontal={true}
                 showsHorizontalScrollIndicator={false}
             >
-                <CategorieScreen
-                    styles={styles}
-                    horizontal={true}
-                    name={'Around you'}
-                    id={'around-you'}
-                />
-                <CategorieScreen
+                <Category styles={styles} horizontal={true} name={'Around you'} id={'around-you'} />
+                <Category
                     styles={styles}
                     horizontal={true}
                     name={'Added this month'}
                     id={'added-this-month'}
                 />
-                <CategorieScreen
-                    styles={styles}
-                    horizontal={true}
-                    name={'To redo'}
-                    id={'to-redo'}
-                />
+                <Category styles={styles} horizontal={true} name={'To redo'} id={'to-redo'} />
             </ScrollView>
-            <Image
-                source={require('../../../assets/images/Dalle_background.png')}
-                style={[
-                    {
-                        width: '100%',
-                        height: windowHeight * 0.5,
-                        borderTopLeftRadius: 12,
-                        borderTopRightRadius: 12,
-                    },
-                ]}
-            />
-            <View
-                style={[
-                    styles.container,
-                    {
-                        paddingBottom: '5%',
-                        borderBottomRightRadius: 12,
-                        borderBottomLeftRadius: 12,
-                        backgroundColor: colors.backgroundTextInput,
-                    },
-                ]}
+            <TouchableWithoutFeedback
+                onPress={() => {
+                    console.log('DISCORVER');
+                    navigation.navigate('Search', {
+                        category: 'Popular',
+                    });
+                }}
             >
-                <Text style={[styles.textHeader, { alignSelf: 'center' }]}>
-                    Most popular
-                </Text>
-                <Text
-                    style={[
-                        styles.textLink,
-                        { alignSelf: 'center', marginTop: 5 },
-                    ]}
-                >
-                    Discover
-                </Text>
-            </View>
-            <Text style={[styles.textHeader, { marginTop: 40 }]}>
-                Unique places
-            </Text>
+                <View>
+                    <Image
+                        source={
+                            popularImage?.getHikePopular?.edges[0]?.node.photos[0]?.filename
+                                ? {
+                                    uri: `https://deway.fr/goto-api/files/photos/${popularImage?.getHikePopular?.edges[0]?.node?.photos[0]?.filename}`,
+                                }
+                                : require('../../../assets/images/Dalle_background.png')
+                        }
+                        style={[
+                            {
+                                width: '100%',
+                                height: windowHeight * 0.5,
+                                borderTopLeftRadius: 12,
+                                borderTopRightRadius: 12,
+                            },
+                        ]}
+                    />
+                    <View
+                        style={[
+                            styles.container,
+                            {
+                                paddingBottom: '5%',
+                                borderBottomRightRadius: 12,
+                                borderBottomLeftRadius: 12,
+                                backgroundColor: colors.backgroundSecondary,
+                            },
+                        ]}
+                    >
+                        <Text style={[styles.textHeader, { alignSelf: 'center' }]}>
+                            Most popular
+                        </Text>
+                        <Text style={[styles.textLink, { alignSelf: 'center', marginTop: 5 }]}>
+                            {' '}
+                            Discover{' '}
+                        </Text>
+                    </View>
+                </View>
+            </TouchableWithoutFeedback>
+            <Text style={[styles.textHeader, { marginTop: 40 }]}>Unique places</Text>
         </View>
     );
 }

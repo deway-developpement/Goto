@@ -1,4 +1,4 @@
-import { Args, Mutation, Resolver, Query } from '@nestjs/graphql';
+import { Args, Mutation, Resolver, Query, ResolveField, Parent } from '@nestjs/graphql';
 import { UserService } from './user.service';
 import { CRUDResolver } from '@nestjs-query/query-graphql';
 import { UserDTO } from './interfaces/user.dto';
@@ -68,5 +68,11 @@ export class UserResolver extends CRUDResolver(UserDTO, {
     @Mutation(() => UserDTO)
     async deleteAccount(@CurrentUser() user: UserDTO): Promise<UserDTO> {
         return this.usersService.delete(user.id);
+    }
+
+    @UseGuards(GqlAuthGuard)
+    @ResolveField(() => Boolean)
+    async isFriend(@CurrentUser() user: UserDTO, @Parent() quser: UserDTO): Promise<boolean> {
+        return this.usersService.isFriend(user.id, quser.id);
     }
 }

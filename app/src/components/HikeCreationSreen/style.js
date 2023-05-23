@@ -2,13 +2,6 @@ import { StyleSheet } from 'react-native';
 
 const stylesheet = (colors) =>
     StyleSheet.create({
-        blur: {
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            bottom: 0,
-            right: 0,
-        },
         containerLogin: {
             flex: 1,
             marginTop: '28%',
@@ -33,8 +26,10 @@ const stylesheet = (colors) =>
             color: colors.text,
         },
         container: {
-            flex: 1,
-            backgroundColor: colors.background,
+            width:'100%',
+            height:'100%',
+            backgroundColor:colors.background,
+            flex:1
         },
         inner: {
             paddingTop: 24,
@@ -80,6 +75,7 @@ const stylesheet = (colors) =>
             backgroundColor: colors.primary,
             borderRadius: 6,
             padding: 10,
+            alignSelf:'center'
         },
         btnText: {
             fontWeight: '600',
@@ -90,6 +86,14 @@ const stylesheet = (colors) =>
         },
         textBtn_text: {
             color: colors.primary,
+        },
+        logoContainer: {
+            width: 50,
+            height: 50,
+            backgroundColor: colors.primary,
+            borderRadius: 12,
+            alignItems: 'center',
+            justifyContent: 'center',
         },
     });
 export default stylesheet;

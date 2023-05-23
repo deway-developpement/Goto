@@ -56,4 +56,18 @@ export class PhotoService {
         await this.photoRepository.delete(id);
         return tag;
     }
+
+    async changeAvatar(query: PhotoInput, userId: string): Promise<PhotoEntity> {
+        const user = await this.userService.findById(userId);
+        if (!user) {
+            throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+        }
+        const avatar = await this.photoRepository.findOne({ where: { user } });
+        if (avatar) {
+            await this.filesService.deleteFile(avatar.filename, FileType.IMAGE);
+            await this.remove(avatar.id);
+            return await this.create(query);
+        }
+        throw new HttpException('Error while saving photo', HttpStatus.NOT_FOUND);
+    }
 }

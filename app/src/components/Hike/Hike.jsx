@@ -1,10 +1,5 @@
 import React from 'react';
-import {
-    Image,
-    View,
-    TouchableWithoutFeedback,
-    Dimensions,
-} from 'react-native';
+import { Image, View, TouchableWithoutFeedback, Dimensions } from 'react-native';
 import { useTheme } from '@react-navigation/native';
 import stylesheet from './style';
 import { useNavigation } from '@react-navigation/native';
@@ -50,12 +45,7 @@ export default function Hike({ id }) {
     else {
         return (
             <TouchableWithoutFeedback onPress={() => handleClickHike(id)}>
-                <View
-                    style={[
-                        styles.container,
-                        { marginTop: 30, borderRadius: 12 },
-                    ]}
-                >
+                <View style={[styles.container, { marginTop: 30, borderRadius: 12 }]}>
                     <Image
                         source={
                             data?.hike.photos.length > 0

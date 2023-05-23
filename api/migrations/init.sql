@@ -15,7 +15,7 @@ VALUES (
         uuid(),
         'admin',
         '$2b$10$omYQk0C0C6wKi34usPe1xOVIOylraIn1uzO9RZMGHIiH1yF4YZ3.S',
-        'admin@localhost',
+        'admin@deway.fr',
         'ROOT',
         2,
         now()
@@ -36,8 +36,28 @@ VALUES (
         uuid(),
         'user',
         '$2b$10$omYQk0C0C6wKi34usPe1xOgv8Lka3rLjbYHd9V9lm0VPq6auAjSM.',
-        'user@localhost',
+        'user@deway.fr',
         'USER01',
+        1,
+        now()
+    );
+
+INSERT INTO
+    user (
+        id,
+        pseudo,
+        password,
+        email,
+        publicKey,
+        credidential,
+        createdAt
+    )
+VALUES (
+        uuid(),
+        'user2',
+        '$2b$10$omYQk0C0C6wKi34usPe1xOgv8Lka3rLjbYHd9V9lm0VPq6auAjSM.',
+        'user2@deway.fr',
+        'USER02',
         1,
         now()
     );
@@ -126,6 +146,86 @@ VALUES (
             FROM user
             WHERE
                 pseudo = 'user'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM category
+            LIMIT 1
+        )
+    );
+
+INSERT INTO
+    hike (
+        id,
+        name,
+        distance,
+        elevation,
+        duration,
+        description,
+        difficulty,
+        track,
+        createdAt,
+        latitude,
+        longitude,
+        ownerId,
+        categoryId
+    )
+VALUES (
+        uuid(),
+        'Hike 3',
+        40,
+        500,
+        11,
+        'Hike 3 description',
+        1,
+        'track3.gpx',
+        now(),
+        1.234567,
+        1.234567, (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'admin'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM category
+            LIMIT 1
+        )
+    );
+
+INSERT INTO
+    hike (
+        id,
+        name,
+        distance,
+        elevation,
+        duration,
+        description,
+        difficulty,
+        track,
+        createdAt,
+        latitude,
+        longitude,
+        ownerId,
+        categoryId
+    )
+VALUES (
+        uuid(),
+        'Hike 4',
+        40,
+        500,
+        11,
+        'Hike 4 description',
+        1,
+        'track4.gpx',
+        now(),
+        1.234567,
+        1.234567, (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'admin'
             LIMIT 1
         ), (
             SELECT id

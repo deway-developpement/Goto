@@ -35,6 +35,7 @@ input HikeFilter {
   longitude: NumberFieldComparison
   createdAt: DateFieldComparison
   category: HikeFilterCategoryFilter
+  performances: HikeFilterPerformanceFilter
   alerts: HikeFilterAlertFilter
   reviews: HikeFilterReviewFilter
   pointsOfInterest: HikeFilterPointOfInterestFilter
@@ -143,6 +144,17 @@ input HikeFilterCategoryFilter {
   or: [HikeFilterCategoryFilter!]
   id: IDFilterComparison
   name: StringFieldComparison
+  createdAt: DateFieldComparison
+}
+
+input HikeFilterPerformanceFilter {
+  and: [HikeFilterPerformanceFilter!]
+  or: [HikeFilterPerformanceFilter!]
+  id: IDFilterComparison
+  date: DateFieldComparison
+  distance: NumberFieldComparison
+  elevation: NumberFieldComparison
+  duration: NumberFieldComparison
   createdAt: DateFieldComparison
 }
 
@@ -265,6 +277,18 @@ type Category {
   defaultPhoto: Photo
 }
 
+type Performance {
+  id: ID!
+  date: DateTime!
+  distance: Float!
+  elevation: Float!
+  duration: Float!
+  track: String!
+  createdAt: DateTime!
+  user: User!
+  hike: Hike!
+}
+
 type Hike {
   id: ID!
   name: String!
@@ -322,6 +346,13 @@ type Hike {
     """Specify to sort results."""
     sorting: [AlertSort!] = []
   ): [Alert!]
+  performances(
+    """Specify to filter the records returned."""
+    filter: PerformanceFilter = {}
+
+    """Specify to sort results."""
+    sorting: [PerformanceSort!] = []
+  ): [Performance!]
   distanceFrom(lat: Float!, lon: Float!): Float!
 }
 
@@ -522,6 +553,60 @@ enum AlertSortFields {
   createdAt
 }
 
+input PerformanceFilter {
+  and: [PerformanceFilter!]
+  or: [PerformanceFilter!]
+  id: IDFilterComparison
+  date: DateFieldComparison
+  distance: NumberFieldComparison
+  elevation: NumberFieldComparison
+  duration: NumberFieldComparison
+  createdAt: DateFieldComparison
+  hike: PerformanceFilterHikeFilter
+  user: PerformanceFilterUserFilter
+}
+
+input PerformanceFilterHikeFilter {
+  and: [PerformanceFilterHikeFilter!]
+  or: [PerformanceFilterHikeFilter!]
+  id: IDFilterComparison
+  name: StringFieldComparison
+  distance: NumberFieldComparison
+  elevation: NumberFieldComparison
+  difficulty: DifficultyFilterComparison
+  duration: NumberFieldComparison
+  latitude: NumberFieldComparison
+  longitude: NumberFieldComparison
+  createdAt: DateFieldComparison
+}
+
+input PerformanceFilterUserFilter {
+  and: [PerformanceFilterUserFilter!]
+  or: [PerformanceFilterUserFilter!]
+  id: IDFilterComparison
+  pseudo: StringFieldComparison
+  email: StringFieldComparison
+  password: StringFieldComparison
+  publicKey: StringFieldComparison
+  credidential: NumberFieldComparison
+  createdAt: DateFieldComparison
+}
+
+input PerformanceSort {
+  field: PerformanceSortFields!
+  direction: SortDirection!
+  nulls: SortNulls
+}
+
+enum PerformanceSortFields {
+  id
+  date
+  distance
+  elevation
+  duration
+  createdAt
+}
+
 type PointOfInterest {
   id: ID!
   name: String!
@@ -546,18 +631,6 @@ type Photo {
   createdAt: DateTime!
 }
 
-type Performance {
-  id: ID!
-  date: DateTime!
-  distance: Float!
-  elevation: Float!
-  duration: Float!
-  track: String!
-  createdAt: DateTime!
-  user: User!
-  hike: Hike!
-}
-
 type User {
   id: ID!
   pseudo: String!
@@ -574,6 +647,10 @@ type User {
     """Filter to find records to aggregate on"""
     filter: PerformanceAggregateFilter
   ): [UserPerformancesAggregateResponse!]!
+  reviewsAggregate(
+    """Filter to find records to aggregate on"""
+    filter: ReviewAggregateFilter
+  ): [UserReviewsAggregateResponse!]!
   avatar: Photo
   friends(
     """Specify to filter the records returned."""
@@ -589,6 +666,14 @@ type User {
     """Specify to sort results."""
     sorting: [PerformanceSort!] = []
   ): [Performance!]!
+  reviews(
+    """Specify to filter the records returned."""
+    filter: ReviewFilter = {}
+
+    """Specify to sort results."""
+    sorting: [ReviewSort!] = []
+  ): [Review!]!
+  isFriend: Boolean!
 }
 
 input UserAggregateFilter {
@@ -642,58 +727,40 @@ enum UserSortFields {
   createdAt
 }
 
-input PerformanceFilter {
-  and: [PerformanceFilter!]
-  or: [PerformanceFilter!]
-  id: IDFilterComparison
-  date: DateFieldComparison
-  distance: NumberFieldComparison
-  elevation: NumberFieldComparison
-  duration: NumberFieldComparison
-  createdAt: DateFieldComparison
-  hike: PerformanceFilterHikeFilter
-  user: PerformanceFilterUserFilter
+type UserEdge {
+  """The node containing the User"""
+  node: User!
+
+  """Cursor for this node."""
+  cursor: ConnectionCursor!
 }
 
-input PerformanceFilterHikeFilter {
-  and: [PerformanceFilterHikeFilter!]
-  or: [PerformanceFilterHikeFilter!]
-  id: IDFilterComparison
-  name: StringFieldComparison
-  distance: NumberFieldComparison
-  elevation: NumberFieldComparison
-  difficulty: DifficultyFilterComparison
-  duration: NumberFieldComparison
-  latitude: NumberFieldComparison
-  longitude: NumberFieldComparison
-  createdAt: DateFieldComparison
+"""Cursor for paging through collections"""
+scalar ConnectionCursor
+
+type PageInfo {
+  """true if paging forward and there are more records."""
+  hasNextPage: Boolean
+
+  """true if paging backwards and there are more records."""
+  hasPreviousPage: Boolean
+
+  """The cursor of the first returned record."""
+  startCursor: ConnectionCursor
+
+  """The cursor of the last returned record."""
+  endCursor: ConnectionCursor
 }
 
-input PerformanceFilterUserFilter {
-  and: [PerformanceFilterUserFilter!]
-  or: [PerformanceFilterUserFilter!]
-  id: IDFilterComparison
-  pseudo: StringFieldComparison
-  email: StringFieldComparison
-  password: StringFieldComparison
-  publicKey: StringFieldComparison
-  credidential: NumberFieldComparison
-  createdAt: DateFieldComparison
-}
+type UserConnection {
+  """Paging information"""
+  pageInfo: PageInfo!
 
-input PerformanceSort {
-  field: PerformanceSortFields!
-  direction: SortDirection!
-  nulls: SortNulls
-}
+  """Array of edges."""
+  edges: [UserEdge!]!
 
-enum PerformanceSortFields {
-  id
-  date
-  distance
-  elevation
-  duration
-  createdAt
+  """Fetch total count of records"""
+  totalCount: Int!
 }
 
 type UserAggregateGroupBy {
@@ -751,6 +818,47 @@ type UserAggregateResponse {
   avg: UserAvgAggregate
   min: UserMinAggregate
   max: UserMaxAggregate
+}
+
+type UserReviewsAggregateGroupBy {
+  id: ID
+  rating: Float
+  createdAt: DateTime
+}
+
+type UserReviewsCountAggregate {
+  id: Int
+  rating: Int
+  createdAt: Int
+}
+
+type UserReviewsSumAggregate {
+  rating: Float
+}
+
+type UserReviewsAvgAggregate {
+  rating: Float
+}
+
+type UserReviewsMinAggregate {
+  id: ID
+  rating: Float
+  createdAt: DateTime
+}
+
+type UserReviewsMaxAggregate {
+  id: ID
+  rating: Float
+  createdAt: DateTime
+}
+
+type UserReviewsAggregateResponse {
+  groupBy: UserReviewsAggregateGroupBy
+  count: UserReviewsCountAggregate
+  sum: UserReviewsSumAggregate
+  avg: UserReviewsAvgAggregate
+  min: UserReviewsMinAggregate
+  max: UserReviewsMaxAggregate
 }
 
 type UserPerformancesAggregateGroupBy {
@@ -865,6 +973,43 @@ type UserFriendsAggregateResponse {
   avg: UserFriendsAvgAggregate
   min: UserFriendsMinAggregate
   max: UserFriendsMaxAggregate
+}
+
+type CustomPageInfo {
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  startCursor: String!
+  endCursor: String!
+}
+
+type CustomHikeConnection {
+  pageInfo: CustomPageInfo!
+  edges: [CustomHikeEdge!]!
+  totalCount: Float!
+}
+
+type CustomHikeEdge {
+  cursor: String!
+  node: Hike!
+}
+
+type HikeEdge {
+  """The node containing the Hike"""
+  node: Hike!
+
+  """Cursor for this node."""
+  cursor: ConnectionCursor!
+}
+
+type HikeConnection {
+  """Paging information"""
+  pageInfo: PageInfo!
+
+  """Array of edges."""
+  edges: [HikeEdge!]!
+
+  """Fetch total count of records"""
+  totalCount: Int!
 }
 
 type HikeAggregateGroupBy {
@@ -1276,12 +1421,15 @@ type Query {
     id: ID!
   ): User
   users(
+    """Limit or page results."""
+    paging: CursorPaging = {first: 10}
+
     """Specify to filter the records returned."""
     filter: UserFilter = {}
 
     """Specify to sort results."""
     sorting: [UserSort!] = []
-  ): [User!]!
+  ): UserConnection!
   exist(email: String!): Boolean!
   whoami: User!
   hikeAggregate(
@@ -1293,19 +1441,27 @@ type Query {
     id: ID!
   ): Hike
   hikes(
+    """Limit or page results."""
+    paging: CursorPaging = {first: 10}
+
     """Specify to filter the records returned."""
     filter: HikeFilter = {}
 
     """Specify to sort results."""
     sorting: [HikeSort!] = []
-  ): [Hike!]!
+  ): HikeConnection!
   getHikeAround(
     lat: Float!
     lon: Float!
 
     """Distance in kilometers"""
     distance: Float = 50
-  ): [Hike!]!
+    search: String
+    limit: Int!
+    cursor: String = ""
+  ): CustomHikeConnection!
+  getHikePopular(search: String, limit: Int!, cursor: String = ""): CustomHikeConnection!
+  getHikeAlreadyDone(search: String, limit: Int!, cursor: String = ""): CustomHikeConnection!
   tag(
     """The id of the record to find."""
     id: ID!
@@ -1382,6 +1538,20 @@ type Query {
   ): [Alert!]!
 }
 
+input CursorPaging {
+  """Paginate before opaque cursor"""
+  before: ConnectionCursor
+
+  """Paginate after opaque cursor"""
+  after: ConnectionCursor
+
+  """Paginate first"""
+  first: Int
+
+  """Paginate last"""
+  last: Int
+}
+
 input HikeAggregateFilter {
   and: [HikeAggregateFilter!]
   or: [HikeAggregateFilter!]
@@ -1439,6 +1609,7 @@ type Mutation {
   postAlert(input: AlertInput!): Alert!
   deleteAlert(id: String!): Alert!
   createPhoto(input: PhotoInput!): Photo!
+  changeAvatar(input: PhotoInput!): Photo!
 }
 
 input UserInput {
