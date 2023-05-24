@@ -6,14 +6,12 @@ import {
     Text,
     View,
     Platform,
-    ActivityIndicator,
     TouchableWithoutFeedback,
 } from 'react-native';
 import { Button } from 'react-native-elements';
 import { AuthContext } from '../../providers/AuthContext';
 import { useTheme } from '@react-navigation/native';
 import KeyboardDismissView from '../KeyboardDismissView/KeyboardDismissView';
-import * as Location from 'expo-location';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import CameraScreen from '../Camera/CameraScreen';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -27,9 +25,6 @@ import FocusHikeScreen from '../Hike/FocusHikeScreen';
 import { Slider, Icon as IconThemed, CheckBox } from '@rneui/themed';
 
 function MapScreen({ route }) {
-    const [permission, request] = Location.useForegroundPermissions();
-    const [location, setLocation] = useState(null);
-    const [errorMsg, setErrorMsg] = useState(null);
     const [isCamera, setIsCamera] = useState(false);
 
     const [leftImage, setLeftImage] = useState(0);
@@ -235,45 +230,16 @@ function MapScreen({ route }) {
         });
     }
 
-    useEffect(() => {
-        if (permission === null) {
-            request();
-        } else if (permission.granted === false && permission.canAskAgain === false) {
-            setErrorMsg('Permission to access location was denied');
-        } else if (permission.granted === false && permission.canAskAgain === true) {
-            request();
-        } else if (permission.granted === true) {
-            Location.getLastKnownPositionAsync({}).then((response) => {
-                setLocation(response);
-            });
-            Location.watchPositionAsync({}, (response) => {
-                setLocation(response);
-            });
-        }
-    }, [permission]);
     console.log(angleImage);
     return (
         <View style={{ width: '100%', height: '100%', flex: 1 }}>
             {(() => {
                 if (isCamera) {
                     return <CameraScreen setIsCamera={setIsCamera} />;
-                } else if (location == null) {
-                    if (errorMsg != null) {
-                        return <Text style={{ alignSelf: 'center' }}>{errorMsg}</Text>;
-                    } else {
-                        return (
-                            <ActivityIndicator
-                                size="large"
-                                color={colors.loading}
-                                style={{ flex: 3, width: '100%' }}
-                            />
-                        );
-                    }
                 } else {
                     return (
-                        <View style={{ width: '100%', height: '100%' }}>
+                        <View style={{ flex: 1 }}>
                             <Map
-                                location={location}
                                 setIsCamera={setIsCamera}
                                 image={image}
                                 styles={styles}
@@ -398,6 +364,7 @@ function MapScreen({ route }) {
                                     </>
                                 )}
                             </View>
+                            <SafeAreaView />
                         </View>
                     );
                 }

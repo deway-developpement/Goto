@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { Text, Image, View, ScrollView, Dimensions, TouchableWithoutFeedback } from 'react-native';
 import stylesheet from './style';
 import { useIsFocused, useTheme } from '@react-navigation/native';
@@ -9,6 +9,7 @@ import Category from '../Category/Category';
 import { FlatList } from 'react-native';
 import HikeCreationScreen from '../HikeCreationSreen/HikeCreationSreen';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { LocationContext } from '../../providers/LocationProvider';
 
 const stack = createNativeStackNavigator();
 
@@ -97,6 +98,8 @@ function DiscoverHeader({ windowHeight, navigation }) {
     const { colors } = useTheme();
     const styles = stylesheet(colors);
 
+    const { permission } = useContext(LocationContext);
+
     const GET_POPULAR_IMAGE = gql`
         query {
             getHikePopular(limit: 1) {
@@ -148,7 +151,14 @@ function DiscoverHeader({ windowHeight, navigation }) {
                 horizontal={true}
                 showsHorizontalScrollIndicator={false}
             >
-                <Category styles={styles} horizontal={true} name={'Around you'} id={'around-you'} />
+                {permission.granted && (
+                    <Category
+                        styles={styles}
+                        horizontal={true}
+                        name={'Around you'}
+                        id={'around-you'}
+                    />
+                )}
                 <Category
                     styles={styles}
                     horizontal={true}

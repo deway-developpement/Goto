@@ -1,18 +1,30 @@
-import React, { useState, useEffect } from 'react';
-import MapView, { Marker, Polyline, Overlay } from 'react-native-maps';
+import React, { useState, useEffect, useContext } from 'react';
+import MapView, { Polyline, Overlay, PROVIDER_GOOGLE } from 'react-native-maps';
+import { default as MAP_STYLE } from '../../../assets/maps/style.json';
 import { useTheme } from '@react-navigation/native';
 import CONTENTGPX from './gpx';
 import { DOMParser } from 'xmldom';
+import { LocationContext } from '../../providers/LocationProvider';
 
-export default function Map({ location, image, leftImage, topImage, widthImage, setWidthImage, heightImage, setHeightImage, angleImage}) {
+export default function Map({
+    image,
+    leftImage,
+    topImage,
+    widthImage,
+    setWidthImage,
+    heightImage,
+    setHeightImage,
+    angleImage,
+}) {
     const { colors } = useTheme();
     let [leftPoints, setLeftPoints] = useState([]);
     let [passedPoints, setPassedPoints] = useState([]);
 
+    const { location, permission } = useContext(LocationContext);
+
     useEffect(() => {
         setWidthImage(0.01);
         setHeightImage(0.01);
-        //image.height / image.width) * widthImage
     }, [image]);
 
     function parseFile() {
@@ -44,30 +56,37 @@ export default function Map({ location, image, leftImage, topImage, widthImage, 
         setPassedPoints(gpxPathpassedPoints);
         setLeftPoints(gpxPathLeft);
     }
-    const y1=parseFloat(location?.coords?.latitude) + topImage;
-    const x1=parseFloat(location?.coords?.longitude) + leftImage;
-    const y2=parseFloat(location?.coords?.latitude) + topImage + heightImage;
-    const x2=parseFloat(location?.coords?.longitude) + leftImage + widthImage;
-    
+
+    advance();
+
+    const y1 = parseFloat(location?.coords?.latitude) + topImage;
+    const x1 = parseFloat(location?.coords?.longitude) + leftImage;
+    const y2 = parseFloat(location?.coords?.latitude) + topImage + heightImage;
+    const x2 = parseFloat(location?.coords?.longitude) + leftImage + widthImage;
+
     console.log(y1, x1, y2, x2);
-    console.log(y1-parseFloat(location?.coords?.latitude), x1-parseFloat(location?.coords?.longitude), y2-parseFloat(location?.coords?.latitude), x2-parseFloat(location?.coords?.longitude));
+    console.log(
+        y1 - parseFloat(location?.coords?.latitude),
+        x1 - parseFloat(location?.coords?.longitude),
+        y2 - parseFloat(location?.coords?.latitude),
+        x2 - parseFloat(location?.coords?.longitude)
+    );
+
     return (
         <MapView
             initialRegion={{
-                latitude: 0,
-                longitude: 0,
-                latitudeDelta: 0.00922,
-                longitudeDelta: 0.00421,
-            }}
-            region={{
                 latitude: parseFloat(location?.coords?.latitude),
                 longitude: parseFloat(location?.coords?.longitude),
-                latitudeDelta: 0.00922,
-                longitudeDelta: 0.00421,
+                latitudeDelta: 0.02,
+                longitudeDelta: 0.02,
             }}
             showsPointsOfInterest={false}
+            showsUserLocation={permission.granted === true}
+            pitchEnabled={false}
+            provider={PROVIDER_GOOGLE}
+            customMapStyle={MAP_STYLE}
             style={{ flex: 1, width: '100%' }}
-            maxZoomLevel={17}
+            maxZoomLevel={18}
         >
             <Polyline
                 coordinates={passedPoints}
@@ -85,26 +104,11 @@ export default function Map({ location, image, leftImage, topImage, widthImage, 
                 strokeWidth={6}
             />
             <Polyline coordinates={leftPoints} strokeColor={colors.linePrimary} strokeWidth={4} />
-            <Marker
-                coordinate={{
-                    latitude: parseFloat(location?.coords?.latitude),
-                    longitude: parseFloat(location?.coords?.longitude),
-                }}
-                onPress={() => {
-                    advance();
-                }}
-            />
             {image && (
                 <Overlay
                     bounds={[
-                        [
-                            y1,
-                            x1,
-                        ],
-                        [
-                            y2,
-                            x2,
-                        ],
+                        [y1, x1],
+                        [y2, x2],
                     ]}
                     image={{ uri: image.uri }}
                     bearing={angleImage}
