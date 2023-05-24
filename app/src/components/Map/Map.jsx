@@ -57,7 +57,9 @@ export default function Map({
         setLeftPoints(gpxPathLeft);
     }
 
-    advance();
+    useEffect(() => {
+        advance();
+    }, []);
 
     const y1 = parseFloat(location?.coords?.latitude) + topImage;
     const x1 = parseFloat(location?.coords?.longitude) + leftImage;
