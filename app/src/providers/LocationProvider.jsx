@@ -26,7 +26,7 @@ const LocationProvider = ({ children }) => {
             watchPositionAsync({}, (response) => {
                 setLocation(response);
             });
-            watchHeadingAsync({}, (response) => {
+            watchHeadingAsync((response) => {
                 setHeading(response);
             });
         }
