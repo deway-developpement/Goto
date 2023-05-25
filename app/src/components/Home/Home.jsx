@@ -21,9 +21,12 @@ import OverlayModification from '../Map/Menu/OverlayModification';
 import GpxPathLine from '../Map/GpxPathLine';
 import CameraOverlay from '../Camera/menu/CameraOverlay';
 import TrackFocusOverlay from '../Map/Menu/TrackFocusOverlay';
+import { MapState } from '../Map/enum';
 
 function MapScreen({ route }) {
     const [isCamera, setIsCamera] = useState(false);
+
+    const [mapState, setMapState] = useState(MapState.NONE);
 
     const { colors } = useTheme();
     const styles = stylesheet(colors);
@@ -41,6 +44,7 @@ function MapScreen({ route }) {
             width: route.params.dataImg.width,
         });
         route.params.fileData = null;
+        setMapState(MapState.NONE);
     } else if (image !== null && route.params?.dataImg === null) {
         setImage(null);
     }
@@ -48,6 +52,7 @@ function MapScreen({ route }) {
     if (route.params?.fileData && (file == null || file.paraUri != route.params.fileData.uri)) {
         setFile(route.params.fileData);
         route.params.dataImg = null;
+        setMapState(MapState.FOCUS_HIKE);
     } else if (file !== null && route.params?.fileData === null) {
         setFile(null);
     }
@@ -61,7 +66,7 @@ function MapScreen({ route }) {
                     return (
                         <Provider store={store}>
                             <View style={{ flex: 1 }}>
-                                <Map>
+                                <Map mapState={mapState}>
                                     <OverlayImage image={image} />
                                     {file && <GpxPathLine fileData={file} />}
                                 </Map>
@@ -80,7 +85,12 @@ function MapScreen({ route }) {
                                         <CameraOverlay setIsCamera={setIsCamera} styles={styles} />
                                     )}
                                     {image !== null && <OverlayModification />}
-                                    {file !== null && <TrackFocusOverlay styles={styles} />}
+                                    {file !== null && (
+                                        <TrackFocusOverlay
+                                            styles={styles}
+                                            setMapState={setMapState}
+                                        />
+                                    )}
                                 </View>
                                 <SafeAreaView />
                             </View>

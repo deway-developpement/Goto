@@ -1,8 +1,9 @@
 import { useNavigation } from '@react-navigation/native';
 import React from 'react';
 import { Button } from 'react-native-elements';
+import { MapState } from '../enum';
 
-export default function TrackFocusOverlay({ styles }) {
+export default function TrackFocusOverlay({ styles, setMapState }) {
     const navigation = useNavigation();
 
     return (
@@ -11,6 +12,7 @@ export default function TrackFocusOverlay({ styles }) {
             titleStyle={styles.btnText}
             title={'Close'}
             onPress={() => {
+                setMapState(MapState.FOLLOW_POSITION);
                 navigation.navigate('Directions', { fileData: null });
             }}
         />
