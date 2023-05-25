@@ -85,7 +85,8 @@ console.log = function (...args) {
                 username: configService.get('database.username'),
                 password: configService.get('database.password'),
                 database: 'Goto',
-                entities: ['dist/**/*.entity.js'],
+                entities: ['dist/**/*.entity{.ts,.js}'],
+                migrations: ['./migrations/**/*.js'],
                 synchronize: process.env.NODE_ENV === 'development',
                 charset: 'utf8mb4',
                 // load default values into the database

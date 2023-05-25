@@ -5,26 +5,22 @@ import stylesheet from './style';
 import { IconComp } from '../Icon/Icon';
 import { gql, useApolloClient, useQuery } from '@apollo/client';
 
-
-export default function HikeInfos({ hike, borderRadius, inProfile = false, inSearch}) {
+export default function HikeInfos({ hike, borderRadius, inProfile = false, inSearch }) {
     const { colors } = useTheme();
     const styles = stylesheet(colors);
     const client = useApolloClient();
 
-    const WHOAMI = gql `
-        query whoami($hikeID:ID) {
+    const WHOAMI = gql`
+        query whoami($hikeID: ID) {
             whoami {
-                reviews(filter:{hike:{id:{eq:$hikeID}}}){
+                reviews(filter: { hike: { id: { eq: $hikeID } } }) {
                     rating
                 }
             }
         }
     `;
     //rating={(DataReview?.whoami?.reviews.length>0 && DataReview?.whoami?.reviews[0]?.rating) || 0} canRate={DataReview?.whoami?.reviews.length>0 && DataReview?.whoami?.reviews[0]?.rating ? false : true
-    const { 
-        data:DataReview, 
-        loading:loadingReview 
-    } = useQuery(WHOAMI, {
+    const { data: DataReview, loading: loadingReview } = useQuery(WHOAMI, {
         variables: {
             hikeID: hike.id,
         },
@@ -47,46 +43,51 @@ export default function HikeInfos({ hike, borderRadius, inProfile = false, inSea
             hikeId: hike.id,
         },
     });
-    const [avgRatingState, setAvgRatingState] = React.useState(0);    
+    const [avgRatingState, setAvgRatingState] = React.useState(0);
     const [canRateState, setCanRateState] = React.useState(true);
-    
+
     React.useEffect(() => {
-        if(!loading && avgRatingState!=data?.hike?.reviewsAggregate[0]?.avg?.rating && (!canRateState || inSearch)){
+        if (
+            !loading &&
+            avgRatingState != data?.hike?.reviewsAggregate[0]?.avg?.rating &&
+            (!canRateState || inSearch)
+        ) {
             setAvgRatingState(data?.hike?.reviewsAggregate[0]?.avg?.rating);
         }
     }, [loading]);
-    
+
     React.useEffect(() => {
-        if (!inSearch && !loadingReview && DataReview?.whoami?.reviews.length>0 && DataReview?.whoami?.reviews[0]?.rating){
+        if (
+            !inSearch &&
+            !loadingReview &&
+            DataReview?.whoami?.reviews.length > 0 &&
+            DataReview?.whoami?.reviews[0]?.rating
+        ) {
             setCanRateState(false);
             setAvgRatingState(DataReview?.whoami?.reviews[0]?.rating);
         }
     }, [loadingReview]);
 
-    async function rate(star){
-        if (!inSearch && canRateState){
+    async function rate(star) {
+        if (!inSearch && canRateState) {
             setCanRateState(false);
-            const ADD_REVIEW = gql `
-            mutation addReview($id: String!, $rating: Float!){
-                addReview(input:{
-                    rating:$rating
-                    hikeId:$id
-                }) {
-                    id
-                }
+            const ADD_REVIEW = gql`
+                mutation addReview($id: String!, $rating: Float!) {
+                    addReview(input: { rating: $rating, hikeId: $id }) {
+                        id
+                    }
                 }
             `;
-            setAvgRatingState(star+1);
+            setAvgRatingState(star + 1);
             await client.mutate({
                 mutation: ADD_REVIEW,
                 variables: {
                     id: hike.id,
-                    rating: star+1,
+                    rating: star + 1,
                 },
                 errorPolicy: 'all',
             });
-            
-        }       
+        }
     }
     return (
         <View
@@ -117,7 +118,7 @@ export default function HikeInfos({ hike, borderRadius, inProfile = false, inSea
                 {!inProfile ? (
                     <TouchableWithoutFeedback onPress={() => console.log('LIKE HIKE', hike.name)}>
                         <View>
-                            <IconComp color={colors.logo} name={'heartempty'} pos={0} />
+                            <IconComp color={colors.primary} name={'heartempty'} pos={0} />
                         </View>
                     </TouchableWithoutFeedback>
                 ) : null}
@@ -155,11 +156,15 @@ export default function HikeInfos({ hike, borderRadius, inProfile = false, inSea
                     {!loading &&
                         Array.from({ length: 5 }, () => 0).map((_, index) => {
                             return (
-                                <TouchableWithoutFeedback key={index} onPress={()=>rate(index)}>
-                                    <View style={{marginRight:7}}>
+                                <TouchableWithoutFeedback key={index} onPress={() => rate(index)}>
+                                    <View style={{ marginRight: 7 }}>
                                         <IconComp
                                             color={
-                                                index < avgRatingState ? ((inSearch || canRateState) ? colors.starFill : colors.logo) : colors.starEmpty
+                                                index < avgRatingState
+                                                    ? inSearch || canRateState
+                                                        ? colors.starFill
+                                                        : colors.logo
+                                                    : colors.starEmpty
                                             }
                                             name={'star'}
                                             size={22}

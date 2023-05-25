@@ -14,7 +14,7 @@ import { Button } from 'react-native-elements';
 import { gql, useQuery } from '@apollo/client';
 import KeyboardDismissView from '../KeyboardDismissView/KeyboardDismissView';
 import stylesheet from './style';
-import { useIsFocused, useTheme } from '@react-navigation/native';
+import { CommonActions, useIsFocused, useTheme } from '@react-navigation/native';
 import { Icon } from '../Icon/Icon';
 import {
     ProfileModal,
@@ -24,8 +24,38 @@ import {
     Historic,
     Friends,
 } from './ProfileComplements.jsx';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import FocusUser from './FocusUser';
 
-export default function ProfileScreen() {
+const stack = createNativeStackNavigator();
+
+export default function ProfileWrapper({ navigation }) {
+    useEffect(() => {
+        const unsubscribe = navigation.addListener('blur', () => {
+            navigation.dispatch(
+                CommonActions.reset({
+                    index: 0,
+                    routes: [{ name: 'ProfileScreen' }],
+                })
+            );
+        });
+
+        return unsubscribe;
+    }, [navigation]);
+
+    return (
+        <stack.Navigator
+            screenOptions={{
+                headerShown: false,
+            }}
+        >
+            <stack.Screen name="ProfileScreen" component={ProfileScreen} />
+            <stack.Screen name="FocusUser" component={FocusUser} />
+        </stack.Navigator>
+    );
+}
+
+function ProfileScreen() {
     const { colors } = useTheme();
     const styles = stylesheet(colors);
     const modalActive = Object.freeze({
@@ -128,7 +158,7 @@ export default function ProfileScreen() {
                     backgroundColor:
                         modalVisible == modalActive.None
                             ? colors.background
-                            : colors.backgroundsecondary,
+                            : colors.backgroundModal,
                 },
             ]}
         >
@@ -150,7 +180,7 @@ export default function ProfileScreen() {
                                     alignItems: 'center',
                                 }}
                             >
-                                <Icon name="settings" size={35} color={colors.link} />
+                                <Icon name="settings" size={35} color={colors.primary} />
                                 <Text style={styles.textSettings}>Settings</Text>
                             </Pressable>
                         </View>
@@ -159,7 +189,7 @@ export default function ProfileScreen() {
                                 return (
                                     <ActivityIndicator
                                         size="large"
-                                        color={colors.primary}
+                                        color={colors.loading}
                                         style={{ flex: 3, width: '100%' }}
                                     />
                                 );
@@ -241,7 +271,7 @@ export default function ProfileScreen() {
                                                                     }
                                                                     buttonStyle={styles.btn}
                                                                     titleStyle={{
-                                                                        color: colors.link,
+                                                                        color: colors.primary,
                                                                         fontSize: 12,
                                                                         fontWeight: '500',
                                                                     }}

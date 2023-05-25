@@ -9,6 +9,7 @@ import { HikeEntity } from './interfaces/hike.entity';
 import { TagModule } from '../tag/tag.module';
 import { FilesModule } from '../file/file.module';
 import { CategoryModule } from '../category/category.module';
+import { UserModule } from '../user/user.module';
 
 @Module({
     providers: [HikeResolver, HikeService],
@@ -19,6 +20,7 @@ import { CategoryModule } from '../category/category.module';
                 TagModule,
                 FilesModule,
                 CategoryModule,
+                UserModule,
             ],
             services: [HikeService],
             resolvers: [],

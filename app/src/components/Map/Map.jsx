@@ -1,111 +1,59 @@
-import React, { useState, useEffect } from 'react';
-import MapView, { Marker, Polyline, Overlay } from 'react-native-maps';
-import { useTheme } from '@react-navigation/native';
-import CONTENTGPX from './gpx';
-import { DOMParser } from 'xmldom';
+import React, { useContext, cloneElement, useRef, isValidElement, useEffect } from 'react';
+import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
+import { default as MAP_STYLE } from '../../../assets/maps/style.json';
+import { LocationContext } from '../../providers/LocationProvider';
+import { connect } from 'react-redux';
+import { MapState } from './enum';
 
-export default function Map({ location, image }) {
-    const { colors } = useTheme();
-    let [leftPoints, setLeftPoints] = useState([]);
-    let [passedPoints, setPassedPoints] = useState([]);
+function Map({ children, mapState }) {
+    const { location, permission } = useContext(LocationContext);
+    const cameraRef = useRef(null);
 
-    function parseFile() {
-        const doc = new DOMParser().parseFromString(CONTENTGPX, 'text/xml');
-        const trkpts = doc.getElementsByTagName('trkpt');
-        const trkptsArray = Array.from(trkpts);
-        const trkptsArrayLat = trkptsArray.map((trkpt) =>
-            trkpt.getAttribute('lat')
-        );
-        const trkptsArrayLon = trkptsArray.map((trkpt) =>
-            trkpt.getAttribute('lon')
-        );
-        return trkptsArrayLat.map((lat, index) => {
-            return {
-                latitude: parseFloat(lat),
-                longitude: parseFloat(trkptsArrayLon[index]),
-            };
-        });
-    }
+    const childrenWithProps = children.map((child, index) => {
+        if (isValidElement(child)) {
+            return cloneElement(child, {
+                cameraRef,
+                key: index,
+            });
+        }
+    });
 
     useEffect(() => {
-        setLeftPoints(parseFile());
-    }, []);
-
-    function advance() {
-        if (leftPoints.length == 0) {
-            return;
+        if (mapState === MapState.FOLLOW_POSITION) {
+            cameraRef.current.animateCamera({
+                center: {
+                    latitude: parseFloat(location?.coords?.latitude),
+                    longitude: parseFloat(location?.coords?.longitude),
+                },
+            });
         }
-        const gpxPathLeft = leftPoints.slice();
-        const gpxPathpassedPoints = passedPoints.slice();
-        gpxPathpassedPoints.push(gpxPathLeft.shift());
-        gpxPathpassedPoints.push(gpxPathLeft[0]);
-        setPassedPoints(gpxPathpassedPoints);
-        setLeftPoints(gpxPathLeft);
-    }
+    }, [mapState]);
 
     return (
         <MapView
             initialRegion={{
-                latitude: 0,
-                longitude: 0,
-                latitudeDelta: 0.00922,
-                longitudeDelta: 0.00421,
-            }}
-            region={{
                 latitude: parseFloat(location?.coords?.latitude),
                 longitude: parseFloat(location?.coords?.longitude),
-                latitudeDelta: 0.00922,
-                longitudeDelta: 0.00421,
+                latitudeDelta: 0.02,
+                longitudeDelta: 0.02,
             }}
             showsPointsOfInterest={false}
+            showsUserLocation={permission.granted === true}
+            showsMyLocationButton={false}
+            pitchEnabled={false}
+            provider={PROVIDER_GOOGLE}
+            customMapStyle={MAP_STYLE}
             style={{ flex: 1, width: '100%' }}
-            maxZoomLevel={17}
+            maxZoomLevel={18}
+            ref={cameraRef}
         >
-            <Polyline
-                coordinates={passedPoints}
-                strokeColor={colors.borderlinesecondary}
-                strokeWidth={6}
-            />
-            <Polyline
-                coordinates={passedPoints}
-                strokeColor={colors.linesecondary}
-                strokeWidth={4}
-            />
-            <Polyline
-                coordinates={leftPoints}
-                strokeColor={colors.borderlineprimary}
-                strokeWidth={6}
-            />
-            <Polyline
-                coordinates={leftPoints}
-                strokeColor={colors.lineprimary}
-                strokeWidth={4}
-            />
-            <Marker
-                coordinate={{
-                    latitude: parseFloat(location?.coords?.latitude),
-                    longitude: parseFloat(location?.coords?.longitude),
-                }}
-                onPress={() => {
-                    advance();
-                }}
-            />
-            {image && (
-                <Overlay
-                    bounds={[
-                        [
-                            parseFloat(location?.coords?.latitude),
-                            parseFloat(location?.coords?.longitude),
-                        ],
-                        [
-                            parseFloat(location?.coords?.latitude) + 0.01,
-                            parseFloat(location?.coords?.longitude) + 0.01,
-                        ],
-                    ]}
-                    image={{ uri: image.uri }}
-                    opacity={0.5}
-                />
-            )}
+            {childrenWithProps}
         </MapView>
     );
 }
+
+const mapStateToProps = (state) => {
+    return { overlay: state };
+};
+
+export default connect(mapStateToProps)(Map);

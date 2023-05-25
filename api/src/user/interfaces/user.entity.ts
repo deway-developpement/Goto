@@ -10,6 +10,8 @@ import {
 } from 'typeorm';
 import { PhotoEntity } from '../../photo/interfaces/photo.entity';
 import { PerformanceEntity } from '../../performance/interfaces/performance.entity';
+import { ReviewEntity } from '../../review/interfaces/review.entity';
+import { HikeEntity } from '../../hike/interfaces/hike.entity';
 
 @Entity('user')
 @Unique(['pseudo', 'publicKey'])
@@ -44,8 +46,18 @@ export class UserEntity {
     @OneToOne(() => PhotoEntity, (photo) => photo.user, { cascade: ['remove'] })
     avatar?: PhotoEntity;
 
+    @OneToMany(() => ReviewEntity, (review) => review.user, { cascade: ['remove'] })
+    reviews?: ReviewEntity[];
+
+    @ManyToMany(() => HikeEntity, { onDelete: 'CASCADE' })
+    @JoinTable({ name: 'users_likes' })
+    likes?: HikeEntity[];
+
     @Column({ nullable: true })
     readonly refresh_token?: string;
+
+    @Column({ nullable: true })
+    public: boolean;
 
     @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
     createdAt: Date;

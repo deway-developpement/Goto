@@ -1,10 +1,14 @@
 import { StyleSheet } from 'react-native';
 
-const stylesheet = (colors) =>
+const stylesheet = () =>
     StyleSheet.create({
         container: {
             flex: 1,
-            backgroundColor: colors.background,
+        },
+        logoContainer: {
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
         },
     });
 

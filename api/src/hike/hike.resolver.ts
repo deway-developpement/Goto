@@ -107,4 +107,21 @@ export class HikeResolver extends CRUDResolver(HikeDTO, {
     ): Promise<number> {
         return this.service.computeDistance(hike, lat, lon);
     }
+
+    @ResolveField(() => Boolean)
+    async isLiked(@CurrentUser() user: UserDTO, @Parent() hike: HikeDTO): Promise<boolean> {
+        return this.service.isLiked(user.id, hike.id);
+    }
+
+    @UseGuards(GqlAuthGuard)
+    @Mutation(() => HikeDTO)
+    async likeHike(@CurrentUser() user: UserDTO, @Args('id') id: string): Promise<HikeDTO> {
+        return this.service.like(user, id);
+    }
+
+    @UseGuards(GqlAuthGuard)
+    @Mutation(() => HikeDTO)
+    async unlikeHike(@CurrentUser() user: UserDTO, @Args('id') id: string): Promise<HikeDTO> {
+        return this.service.unlike(user, id);
+    }
 }

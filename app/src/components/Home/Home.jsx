@@ -1,35 +1,32 @@
 import React, { useContext, useEffect, useState } from 'react';
 import stylesheet from './style';
-import {
-    SafeAreaView,
-    KeyboardAvoidingView,
-    Text,
-    View,
-    Platform,
-    ActivityIndicator,
-} from 'react-native';
-import { Button } from 'react-native-elements';
+import { SafeAreaView, KeyboardAvoidingView, Text, View, Platform } from 'react-native';
 import { AuthContext } from '../../providers/AuthContext';
 import { useTheme } from '@react-navigation/native';
 import KeyboardDismissView from '../KeyboardDismissView/KeyboardDismissView';
-import * as Location from 'expo-location';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import CameraScreen from '../Camera/CameraScreen';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Map from '../Map/Map';
 import DiscoverScreen from '../DiscoverScreen/DiscoverScreen';
 import { useFonts } from 'expo-font';
-import ProfileScreen from '../Profile/Profile';
 import { Icon } from '../Icon/Icon';
+import ProfileScreen from '../Profile/Profile';
 import SearchScreen from '../SearchScreen/SearchScreen';
 import FocusHikeScreen from '../Hike/FocusHikeScreen';
-import FocusFriend from '../Profile/FocusFriend';
+import { Provider } from 'react-redux';
+import store from '../../store/overlay.store.js';
+import OverlayImage from '../Map/OverlayImage';
+import OverlayModification from '../Map/Menu/OverlayModification';
+import GpxPathLine from '../Map/GpxPathLine';
+import CameraOverlay from '../Camera/menu/CameraOverlay';
+import TrackFocusOverlay from '../Map/Menu/TrackFocusOverlay';
+import { MapState } from '../Map/enum';
 
 function MapScreen({ route }) {
-    const [permission, request] = Location.useForegroundPermissions();
-    const [location, setLocation] = useState(null);
-    const [errorMsg, setErrorMsg] = useState(null);
     const [isCamera, setIsCamera] = useState(false);
+
+    const [mapState, setMapState] = useState(MapState.NONE);
 
     const { colors } = useTheme();
     const styles = stylesheet(colors);
@@ -37,78 +34,67 @@ function MapScreen({ route }) {
     const insets = useSafeAreaInsets();
 
     const [image, setImage] = useState(null);
+    const [file, setFile] = useState(null);
 
     if (route.params?.dataImg && (image == null || image.paraUri != route.params.dataImg.uri)) {
         setImage({
             paraUri: route.params?.dataImg.uri,
             uri: 'data:image/jpg;base64,' + route.params.dataImg.base64,
+            heigth: route.params.dataImg.height,
+            width: route.params.dataImg.width,
         });
+        route.params.fileData = null;
+        setMapState(MapState.NONE);
+    } else if (image !== null && route.params?.dataImg === null) {
+        setImage(null);
     }
 
-    useEffect(() => {
-        if (permission === null) {
-            request();
-        } else if (permission.granted === false && permission.canAskAgain === false) {
-            setErrorMsg('Permission to access location was denied');
-        } else if (permission.granted === false && permission.canAskAgain === true) {
-            request();
-        } else if (permission.granted === true) {
-            Location.getLastKnownPositionAsync({}).then((response) => {
-                setLocation(response);
-            });
-            Location.watchPositionAsync({}, (response) => {
-                setLocation(response);
-            });
-        }
-    }, [permission]);
+    if (route.params?.fileData && (file == null || file.paraUri != route.params.fileData.uri)) {
+        setFile(route.params.fileData);
+        route.params.dataImg = null;
+        setMapState(MapState.FOCUS_HIKE);
+    } else if (file !== null && route.params?.fileData === null) {
+        setFile(null);
+    }
 
     return (
         <View style={{ width: '100%', height: '100%', flex: 1 }}>
             {(() => {
                 if (isCamera) {
                     return <CameraScreen setIsCamera={setIsCamera} />;
-                } else if (location == null) {
-                    if (errorMsg != null) {
-                        return <Text style={{ alignSelf: 'center' }}>{errorMsg}</Text>;
-                    } else {
-                        return (
-                            <ActivityIndicator
-                                size="large"
-                                color={colors.primary}
-                                style={{ flex: 3, width: '100%' }}
-                            />
-                        );
-                    }
                 } else {
                     return (
-                        <View style={{ width: '100%', height: '100%' }}>
-                            <Map
-                                location={location}
-                                setIsCamera={setIsCamera}
-                                image={image}
-                                styles={styles}
-                            />
-                            <View
-                                style={[
-                                    styles.btnContainer,
-                                    {
-                                        position: 'absolute',
-                                        top: 0 + insets.top,
-                                        right: 10,
-                                        backgroundColor: 'transparent',
-                                    },
-                                ]}
-                            >
-                                <Button
-                                    buttonStyle={[styles.btn, { width: 200 }]}
-                                    titleStyle={styles.btnText}
-                                    title={'Open your camera'}
-                                    onPress={() => {
-                                        setIsCamera(true);
-                                    }}
-                                />
+                        <Provider store={store}>
+                            <View style={{ flex: 1 }}>
+                                <Map mapState={mapState}>
+                                    <OverlayImage image={image} />
+                                    {file && <GpxPathLine fileData={file} />}
+                                </Map>
+                                <View
+                                    style={[
+                                        styles.btnContainer,
+                                        {
+                                            position: 'absolute',
+                                            top: 0 + insets.top,
+                                            right: 10,
+                                            backgroundColor: 'transparent',
+                                        },
+                                    ]}
+                                >
+                                    {file === null && (
+                                        <CameraOverlay setIsCamera={setIsCamera} styles={styles} />
+                                    )}
+                                    {image !== null && <OverlayModification />}
+                                    {file !== null && (
+                                        <TrackFocusOverlay
+                                            styles={styles}
+                                            setMapState={setMapState}
+                                        />
+                                    )}
+                                </View>
+                                <SafeAreaView />
                             </View>
-                        </View>
+                        </Provider>
                     );
                 }
             })()}
@@ -154,15 +140,15 @@ function HomeScreen({ navigation }) {
             <KeyboardDismissView>
                 <View style={styles.inner}>
                     <Tab.Navigator
-                        initialRouteName={'Profile'}
+                        initialRouteName={'Discover'}
                         backBehavior="history"
                         screenOptions={{
                             tabBarStyle: styles.tabBar,
                             headerShown: false,
                             tabBarIconStyle: styles.tabBarIcon,
                             tabBarLabelStyle: styles.tabBarLabel,
-                            tabBarActiveTintColor: colors.iconprimary,
-                            tabBarInactiveTintColor: colors.label,
+                            tabBarActiveTintColor: colors.active,
+                            tabBarInactiveTintColor: colors.backgroundSecondary,
                             tabBarHideOnKeyboard: true,
                         }}
                     >
@@ -214,14 +200,6 @@ function HomeScreen({ navigation }) {
                         <Tab.Screen
                             name="FocusHike"
                             component={FocusHikeScreen}
-                            options={{
-                                headerShown: false,
-                                tabBarButton: () => null,
-                            }}
-                        />
-                        <Tab.Screen
-                            name="FocusFriend"
-                            component={FocusFriend}
                             options={{
                                 headerShown: false,
                                 tabBarButton: () => null,

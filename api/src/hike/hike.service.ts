@@ -12,6 +12,7 @@ import { FileType, FilesService } from '../file/file.service';
 import { CategoryService } from '../category/category.service';
 import { HikeDTO } from './interfaces/hike.dto';
 import { HikeConnectionDTO } from '../CustomScalar/hikeConnection/interface/hikeconnection.dto';
+import { UserService } from '../user/user.service';
 
 @QueryService(HikeEntity)
 export class HikeService extends TypeOrmQueryService<HikeEntity> {
@@ -19,7 +20,8 @@ export class HikeService extends TypeOrmQueryService<HikeEntity> {
         @InjectRepository(HikeEntity) repo: Repository<HikeEntity>,
         @Inject(TagService) private readonly tagService: TagService,
         @Inject(FilesService) private readonly filesService: FilesService,
-        @Inject(CategoryService) private readonly categoryModule: CategoryService
+        @Inject(CategoryService) private readonly categoryModule: CategoryService,
+        @Inject(UserService) private readonly userService: UserService
     ) {
         super(repo);
     }
@@ -129,8 +131,6 @@ export class HikeService extends TypeOrmQueryService<HikeEntity> {
                       id: '',
                   }; // decode cursor
 
-        console.log(dataCursor);
-
         const beforeExist = await query
             .clone()
             .andWhere(`${formula} < :cursoDist OR (${formula} = :cursoDist AND hike.id <= :id)`, {
@@ -145,12 +145,10 @@ export class HikeService extends TypeOrmQueryService<HikeEntity> {
             })
             .limit(limit)
             .getMany(); // get all hikes id
-        console.log(query.getSql());
         const numberOfResults = await query.getCount();
         // get all hikes from ids found
         const hikes = await Promise.all(
             hikesId.map(async (hike: any) => {
-                console.log('result', hike);
                 const distanceFromCoords = Math.floor(
                     6371 *
                         2 *
@@ -337,5 +335,46 @@ export class HikeService extends TypeOrmQueryService<HikeEntity> {
                 )
             )
         );
+    }
+
+    async isLiked(userId: string, hikeId: string): Promise<boolean> {
+        const hike = await this.repo.findOne({ where: { id: hikeId } });
+        if (!hike) {
+            console.log('hike not found');
+            throw new HttpException('Hike not found', HttpStatus.BAD_REQUEST);
+        }
+        const user = await this.userService.repo.findOne({
+            where: { id: userId },
+            relations: ['likes'],
+        });
+        return user.likes.find((like) => like.id === hike.id) !== undefined;
+    }
+
+    async like(user: UserEntity, hikeId: string): Promise<HikeEntity> {
+        const hike = await this.repo.findOne({ where: { id: hikeId } });
+        if (!hike) {
+            throw new HttpException('Hike not found', HttpStatus.BAD_REQUEST);
+        }
+        try {
+            await this.userService.addRelations('likes', user.id, [hikeId]);
+        } catch (err) {
+            throw new HttpException('Hike already liked', HttpStatus.BAD_REQUEST);
+        }
+        return hike;
+    }
+
+    async unlike(user: UserEntity, hikeId: string): Promise<HikeEntity> {
+        const hike = await this.userService.findRelation(HikeEntity, 'likes', user, {
+            filter: { id: { eq: hikeId } },
+        });
+        if (!hike) {
+            throw new HttpException('Hike not found or not liked', HttpStatus.BAD_REQUEST);
+        }
+        try {
+            await this.userService.removeRelation('likes', user.id, hikeId);
+        } catch (err) {
+            throw new HttpException('Hike not liked', HttpStatus.BAD_REQUEST);
+        }
+        return hike;
     }
 }
