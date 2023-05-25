@@ -9,6 +9,8 @@ export default function PointsOfInterests(props) {
 
     const windowWidth = Dimensions.get('window').width;
 
+    console.log(props.photo.filename);
+
     return (
         <View style={{ flex: 1, marginTop: 10 }}>
             <View
@@ -27,18 +29,18 @@ export default function PointsOfInterests(props) {
                         marginTop: 20,
                         marginRight: 40,
                         paddingRight: 40,
-                        backgroundColor: colors.backgroundSecondary,
                         borderTopLeftRadius: 12,
                         borderBottomLeftRadius: 12,
-                        width: windowWidth * 0.7,
+                        width: windowWidth * 0.9,
+                        backgroundColor: '#00000000',
                     },
                 ]}
             >
                 <Image
                     source={
-                        props.photos
+                        props.photo
                             ? {
-                                uri: `https://deway.fr/goto-api/files/photos/${props.photos.filename}`,
+                                uri: `https://deway.fr/goto-api/files/photos/${props.photo.filename}`,
                             }
                             : require('../../../assets/images/Dalle_background.png')
                     }
@@ -52,17 +54,26 @@ export default function PointsOfInterests(props) {
                         width: windowWidth * 0.5,
                         height: windowWidth * 0.2,
                         marginLeft: 15,
+                        overflow: 'hidden',
                     }}
                 >
                     <Text
                         style={[
                             styles.textHeader,
-                            { fontSize: 20, marginLeft: 0, paddingLeft: 0, marginBottom: 5 },
+                            {
+                                fontSize: 20,
+                                marginLeft: 0,
+                                paddingLeft: 0,
+                                marginBottom: 5,
+                                marginTop: 0,
+                            },
                         ]}
                     >
                         {props.name}
                     </Text>
-                    <Text style={[styles.textDescription]}>{props.description}</Text>
+                    <Text style={[styles.textDescription]} numberOfLines={2}>
+                        {props.description}
+                    </Text>
                 </View>
             </View>
         </View>
