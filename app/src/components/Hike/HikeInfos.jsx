@@ -2,12 +2,14 @@ import React from 'react';
 import { Text, View, TouchableWithoutFeedback } from 'react-native';
 import { useTheme } from '@react-navigation/native';
 import stylesheet from './style';
-import { gql, useQuery } from '@apollo/client';
 import { IconComp } from '../Icon/Icon';
+import { gql, useApolloClient, useQuery } from '@apollo/client';
 
-export default function HikeInfos({ hike, borderRadius, rating=69, inProfile = false }) {
+
+export default function HikeInfos({ hike, borderRadius, rating=69, inProfile = false, canRate=false }) {
     const { colors } = useTheme();
     const styles = stylesheet(colors);
+    const client = useApolloClient();
 
     const GET_REVIEWS = gql`
         query hike($hikeId: ID!) {
@@ -27,8 +29,37 @@ export default function HikeInfos({ hike, borderRadius, rating=69, inProfile = f
         },
     });
 
-    const avgRating = (rating===69 && data?.hike?.reviewsAggregate[0]?.avg?.rating || 0) || rating;
-    console.log('avgRating', avgRating);
+    const [avgRatingState, setAvgRatingState] = React.useState(rating===69  ? data?.hike?.reviewsAggregate[0]?.avg?.rating || 0 : rating);
+    const [canRateState, setCanRateState] = React.useState(canRate);
+    async function rate(star){
+        if (canRateState){
+            console.log('rate', star+1);
+            const ADD_REVIEW = gql `
+            mutation addReview($id: String!, $rating: Float!){
+                addReview(input:{
+                    rating:$rating
+                    hikeId:$id
+                }) {
+                    id
+                }
+                }
+            `;
+            setAvgRatingState(star+1);
+            await client.mutate({
+                mutation: ADD_REVIEW,
+                variables: {
+                    id: hike.id,
+                    rating: star+1,
+                },
+                errorPolicy: 'all',
+            });
+            setCanRateState(false);
+        }
+
+        
+
+    }
+    
     return (
         <View
             style={[
@@ -96,15 +127,18 @@ export default function HikeInfos({ hike, borderRadius, rating=69, inProfile = f
                     {!loading &&
                         Array.from({ length: 5 }, () => 0).map((_, index) => {
                             return (
-                                <IconComp
-                                    color={
-                                        index < avgRating ? colors.starFill : colors.starEmpty
-                                    }
-                                    key={index}
-                                    name={'star'}
-                                    marginRight={7}
-                                    size={22}
-                                />
+                                <TouchableWithoutFeedback key={index} onPress={()=>rate(index)}>
+                                    <View style={{backgroundColor:'#FF0000', marginRight:7}}>
+                                        <IconComp
+                                            color={
+                                                index < avgRatingState ? colors.starFill : colors.starEmpty
+                                            }
+                                            name={'star'}
+                                            size={22}
+                                            pos={0}
+                                        />
+                                    </View>
+                                </TouchableWithoutFeedback>
                             );
                         })}
                     <Text

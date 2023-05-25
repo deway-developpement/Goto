@@ -175,7 +175,7 @@ export default function FocusHikeScreen({ route }) {
                             ]}
                         >
                             <View style={{ height: windowHeight * 0.6 }} />
-                            <HikeInfos hike={data.hike} borderRadius={true} rating={(DataReview?.whoami?.reviews.length>0 && DataReview?.whoami?.reviews[0]?.rating) || 0} />
+                            <HikeInfos hike={data.hike} borderRadius={true} rating={(DataReview?.whoami?.reviews.length>0 && DataReview?.whoami?.reviews[0]?.rating) || 0} canRate={DataReview?.whoami?.reviews.length>0 && DataReview?.whoami?.reviews[0]?.rating ? false : true}/>
                             <View style={[styles.containerFocus, { paddingHorizontal: 0 }]}>
                                 <Text
                                     style={[
