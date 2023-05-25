@@ -24,15 +24,6 @@ import { AlertModule } from './alert/alert.module';
 import { FilesModule } from './file/file.module';
 import { PageInfoModule } from './CustomScalar/pageInfo/pageinfo.module';
 import { HikeConnectionModule } from './CustomScalar/hikeConnection/hikeconnection.module';
-import { UserEntity } from './src/user/interfaces/user.entity';
-import { HikeEntity } from './src/hike/interfaces/hike.entity';
-import { PhotoEntity } from './src/photo/interfaces/photo.entity';
-import { PointOfInterestEntity } from './src/pointOfInterest/interfaces/poi.entity';
-import { PerformanceEntity } from './src/performance/interfaces/performance.entity';
-import { ReviewEntity } from './src/review/interfaces/review.entity';
-import { AlertEntity } from './src/alert/interfaces/alert.entity';
-import { TagEntity } from './src/tag/interfaces/tag.entity';
-import { CategoryEntity } from './src/category/interfaces/category.entity';
 
 const armor = new ApolloArmor();
 const protection = armor.protect();
@@ -94,7 +85,7 @@ console.log = function (...args) {
                 username: configService.get('database.username'),
                 password: configService.get('database.password'),
                 database: 'Goto',
-                entities: [UserEntity, HikeEntity, PhotoEntity, PointOfInterestEntity, PerformanceEntity, ReviewEntity, AlertEntity, TagEntity, CategoryEntity],
+                entities: ['dist/**/*.entity{.ts,.js}'],
                 migrations: ['./migrations/**/*.js'],
                 synchronize: process.env.NODE_ENV === 'development',
                 charset: 'utf8mb4',

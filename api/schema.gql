@@ -354,6 +354,7 @@ type Hike {
     sorting: [PerformanceSort!] = []
   ): [Performance!]
   distanceFrom(lat: Float!, lon: Float!): Float!
+  isLiked: Boolean!
 }
 
 input ReviewAggregateFilter {
@@ -486,7 +487,13 @@ input ReviewFilterUserFilter {
   password: StringFieldComparison
   publicKey: StringFieldComparison
   credidential: NumberFieldComparison
+  public: BooleanFieldComparison
   createdAt: DateFieldComparison
+}
+
+input BooleanFieldComparison {
+  is: Boolean
+  isNot: Boolean
 }
 
 input ReviewSort {
@@ -522,6 +529,7 @@ input AlertFilterUserFilter {
   password: StringFieldComparison
   publicKey: StringFieldComparison
   credidential: NumberFieldComparison
+  public: BooleanFieldComparison
   createdAt: DateFieldComparison
 }
 
@@ -589,6 +597,7 @@ input PerformanceFilterUserFilter {
   password: StringFieldComparison
   publicKey: StringFieldComparison
   credidential: NumberFieldComparison
+  public: BooleanFieldComparison
   createdAt: DateFieldComparison
 }
 
@@ -638,6 +647,7 @@ type User {
   password: String!
   publicKey: String!
   credidential: Float!
+  public: Boolean!
   createdAt: DateTime!
   friendsAggregate(
     """Filter to find records to aggregate on"""
@@ -651,6 +661,10 @@ type User {
     """Filter to find records to aggregate on"""
     filter: ReviewAggregateFilter
   ): [UserReviewsAggregateResponse!]!
+  likesAggregate(
+    """Filter to find records to aggregate on"""
+    filter: HikeAggregateFilter
+  ): [UserLikesAggregateResponse!]!
   avatar: Photo
   friends(
     """Specify to filter the records returned."""
@@ -673,6 +687,13 @@ type User {
     """Specify to sort results."""
     sorting: [ReviewSort!] = []
   ): [Review!]!
+  likes(
+    """Specify to filter the records returned."""
+    filter: HikeFilter = {}
+
+    """Specify to sort results."""
+    sorting: [HikeSort!] = []
+  ): [Hike!]!
   isFriend: Boolean!
 }
 
@@ -685,6 +706,7 @@ input UserAggregateFilter {
   password: StringFieldComparison
   publicKey: StringFieldComparison
   credidential: NumberFieldComparison
+  public: BooleanFieldComparison
   createdAt: DateFieldComparison
 }
 
@@ -699,6 +721,20 @@ input PerformanceAggregateFilter {
   createdAt: DateFieldComparison
 }
 
+input HikeAggregateFilter {
+  and: [HikeAggregateFilter!]
+  or: [HikeAggregateFilter!]
+  id: IDFilterComparison
+  name: StringFieldComparison
+  distance: NumberFieldComparison
+  elevation: NumberFieldComparison
+  difficulty: DifficultyFilterComparison
+  duration: NumberFieldComparison
+  latitude: NumberFieldComparison
+  longitude: NumberFieldComparison
+  createdAt: DateFieldComparison
+}
+
 input UserFilter {
   and: [UserFilter!]
   or: [UserFilter!]
@@ -708,6 +744,7 @@ input UserFilter {
   password: StringFieldComparison
   publicKey: StringFieldComparison
   credidential: NumberFieldComparison
+  public: BooleanFieldComparison
   createdAt: DateFieldComparison
 }
 
@@ -724,6 +761,7 @@ enum UserSortFields {
   password
   publicKey
   credidential
+  public
   createdAt
 }
 
@@ -770,6 +808,7 @@ type UserAggregateGroupBy {
   password: String
   publicKey: String
   credidential: Float
+  public: Boolean
   createdAt: DateTime
 }
 
@@ -780,6 +819,7 @@ type UserCountAggregate {
   password: Int
   publicKey: Int
   credidential: Int
+  public: Int
   createdAt: Int
 }
 
@@ -818,6 +858,79 @@ type UserAggregateResponse {
   avg: UserAvgAggregate
   min: UserMinAggregate
   max: UserMaxAggregate
+}
+
+type UserLikesAggregateGroupBy {
+  id: ID
+  name: String
+  distance: Float
+  elevation: Float
+  difficulty: Difficulty
+  duration: Float
+  latitude: Float
+  longitude: Float
+  createdAt: DateTime
+}
+
+type UserLikesCountAggregate {
+  id: Int
+  name: Int
+  distance: Int
+  elevation: Int
+  difficulty: Int
+  duration: Int
+  latitude: Int
+  longitude: Int
+  createdAt: Int
+}
+
+type UserLikesSumAggregate {
+  distance: Float
+  elevation: Float
+  duration: Float
+  latitude: Float
+  longitude: Float
+}
+
+type UserLikesAvgAggregate {
+  distance: Float
+  elevation: Float
+  duration: Float
+  latitude: Float
+  longitude: Float
+}
+
+type UserLikesMinAggregate {
+  id: ID
+  name: String
+  distance: Float
+  elevation: Float
+  difficulty: Difficulty
+  duration: Float
+  latitude: Float
+  longitude: Float
+  createdAt: DateTime
+}
+
+type UserLikesMaxAggregate {
+  id: ID
+  name: String
+  distance: Float
+  elevation: Float
+  difficulty: Difficulty
+  duration: Float
+  latitude: Float
+  longitude: Float
+  createdAt: DateTime
+}
+
+type UserLikesAggregateResponse {
+  groupBy: UserLikesAggregateGroupBy
+  count: UserLikesCountAggregate
+  sum: UserLikesSumAggregate
+  avg: UserLikesAvgAggregate
+  min: UserLikesMinAggregate
+  max: UserLikesMaxAggregate
 }
 
 type UserReviewsAggregateGroupBy {
@@ -925,6 +1038,7 @@ type UserFriendsAggregateGroupBy {
   password: String
   publicKey: String
   credidential: Float
+  public: Boolean
   createdAt: DateTime
 }
 
@@ -935,6 +1049,7 @@ type UserFriendsCountAggregate {
   password: Int
   publicKey: Int
   credidential: Int
+  public: Int
   createdAt: Int
 }
 
@@ -1550,20 +1665,6 @@ input CursorPaging {
 
   """Paginate last"""
   last: Int
-}
-
-input HikeAggregateFilter {
-  and: [HikeAggregateFilter!]
-  or: [HikeAggregateFilter!]
-  id: IDFilterComparison
-  name: StringFieldComparison
-  distance: NumberFieldComparison
-  elevation: NumberFieldComparison
-  difficulty: DifficultyFilterComparison
-  duration: NumberFieldComparison
-  latitude: NumberFieldComparison
-  longitude: NumberFieldComparison
-  createdAt: DateFieldComparison
 }
 
 input CategoryFilter {

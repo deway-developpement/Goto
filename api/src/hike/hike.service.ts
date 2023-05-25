@@ -334,4 +334,12 @@ export class HikeService extends TypeOrmQueryService<HikeEntity> {
             )
         );
     }
+
+    async isLiked(user: UserEntity, hikeId: string): Promise<boolean> {
+        const hike = await this.repo.findOne({ where: { id: hikeId } });
+        if (!hike) {
+            throw new HttpException('Hike not found', HttpStatus.BAD_REQUEST);
+        }
+        return user.likes.includes(hike);
+    }
 }
