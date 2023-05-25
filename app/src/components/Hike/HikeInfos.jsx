@@ -95,7 +95,6 @@ export default function HikeInfos({ hike, borderRadius, inProfile = false }) {
                 errorPolicy: 'all',
             });
             refetch();
-            setStarsMode(StarsMode.reviewed);
         }
     }
 
