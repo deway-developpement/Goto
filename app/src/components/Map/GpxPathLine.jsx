@@ -3,10 +3,16 @@ import { Polyline } from 'react-native-maps';
 import { useTheme } from '@react-navigation/native';
 import { DOMParser } from 'xmldom';
 
-export default function GpxPathLine({ fileData }) {
+export default function GpxPathLine({ fileData, cameraRef }) {
     const { colors } = useTheme();
-    let [leftPoints, setLeftPoints] = useState([]);
-    let [passedPoints, setPassedPoints] = useState([]);
+    const [leftPoints, setLeftPoints] = useState([]);
+    const [passedPoints, setPassedPoints] = useState([]);
+    const [loaded, setLoaded] = useState(false);
+
+    let maxLat = null;
+    let maxLon = null;
+    let minLat = null;
+    let minLon = null;
 
     function parseFile() {
         const doc = new DOMParser().parseFromString(fileData, 'text/xml');
@@ -24,7 +30,43 @@ export default function GpxPathLine({ fileData }) {
 
     useEffect(() => {
         setLeftPoints(parseFile());
+        setLoaded(false);
     }, []);
+
+    useEffect(() => {
+        if (!loaded) {
+            const points = [...leftPoints, ...passedPoints];
+            points.map((point) => {
+                if (point.latitude > maxLat || maxLat == null) {
+                    maxLat = point.latitude;
+                }
+                if (point.latitude < minLat || minLat == null) {
+                    minLat = point.latitude;
+                }
+                if (point.longitude > maxLon || maxLon == null) {
+                    maxLon = point.longitude;
+                }
+                if (point.longitude < minLon || minLon == null) {
+                    minLon = point.longitude;
+                }
+            });
+            if (cameraRef.current == null) {
+                return;
+            } else if (maxLat != null && maxLon != null && minLat != null && minLon != null) {
+                cameraRef.current.fitToCoordinates(
+                    [
+                        { latitude: maxLat, longitude: maxLon },
+                        { latitude: minLat, longitude: minLon },
+                    ],
+                    {
+                        edgePadding: { top: 100, right: 100, bottom: 100, left: 100 },
+                        animated: true,
+                    }
+                );
+                setLoaded(true);
+            }
+        }
+    }, [leftPoints]);
 
     function advance() {
         if (leftPoints.length == 0) {
