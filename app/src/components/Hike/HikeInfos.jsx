@@ -64,6 +64,7 @@ export default function HikeInfos({ hike, borderRadius, inProfile = false }) {
                 ) : null}
             </View>
             <Text
+                numberOfLines={2}
                 style={[
                     styles.textHeader,
                     {
@@ -77,6 +78,7 @@ export default function HikeInfos({ hike, borderRadius, inProfile = false }) {
                 {hike.name}
             </Text>
             <Text
+                numberOfLines={3}
                 style={[
                     styles.textDescription,
                     { alignSelf: 'flex-start', marginTop: 8, paddingBottom: 8 },
