@@ -19,6 +19,8 @@ import { Provider } from 'react-redux';
 import store from '../../store/overlay.store.js';
 import OverlayImage from '../Map/OverlayImage';
 import OverlayModification from '../Map/Menu/OverlayModification';
+import CONTENTGPX from '../Map/gpx';
+import GpxPathLine from '../Map/GpxPathLine';
 
 function MapScreen({ route }) {
     const [isCamera, setIsCamera] = useState(false);
@@ -50,6 +52,7 @@ function MapScreen({ route }) {
                             <View style={{ flex: 1 }}>
                                 <Map>
                                     <OverlayImage image={image} />
+                                    <GpxPathLine fileData={CONTENTGPX} />
                                 </Map>
                                 <View
                                     style={[
