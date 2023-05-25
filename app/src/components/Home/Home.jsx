@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import stylesheet from './style';
 import { SafeAreaView, KeyboardAvoidingView, Text, View, Platform } from 'react-native';
-import { Button } from 'react-native-elements';
 import { AuthContext } from '../../providers/AuthContext';
 import { useTheme } from '@react-navigation/native';
 import KeyboardDismissView from '../KeyboardDismissView/KeyboardDismissView';
@@ -19,8 +18,9 @@ import { Provider } from 'react-redux';
 import store from '../../store/overlay.store.js';
 import OverlayImage from '../Map/OverlayImage';
 import OverlayModification from '../Map/Menu/OverlayModification';
-import CONTENTGPX from '../Map/gpx';
 import GpxPathLine from '../Map/GpxPathLine';
+import CameraOverlay from '../Camera/menu/CameraOverlay';
+import TrackFocusOverlay from '../Map/Menu/TrackFocusOverlay';
 
 function MapScreen({ route }) {
     const [isCamera, setIsCamera] = useState(false);
@@ -31,6 +31,7 @@ function MapScreen({ route }) {
     const insets = useSafeAreaInsets();
 
     const [image, setImage] = useState(null);
+    const [file, setFile] = useState(null);
 
     if (route.params?.dataImg && (image == null || image.paraUri != route.params.dataImg.uri)) {
         setImage({
@@ -39,6 +40,16 @@ function MapScreen({ route }) {
             heigth: route.params.dataImg.height,
             width: route.params.dataImg.width,
         });
+        route.params.fileData = null;
+    } else if (image !== null && route.params?.dataImg === null) {
+        setImage(null);
+    }
+
+    if (route.params?.fileData && (file == null || file.paraUri != route.params.fileData.uri)) {
+        setFile(route.params.fileData);
+        route.params.dataImg = null;
+    } else if (file !== null && route.params?.fileData === null) {
+        setFile(null);
     }
 
     return (
@@ -52,7 +63,7 @@ function MapScreen({ route }) {
                             <View style={{ flex: 1 }}>
                                 <Map>
                                     <OverlayImage image={image} />
-                                    <GpxPathLine fileData={CONTENTGPX} />
+                                    {file && <GpxPathLine fileData={file} />}
                                 </Map>
                                 <View
                                     style={[
@@ -65,15 +76,11 @@ function MapScreen({ route }) {
                                         },
                                     ]}
                                 >
-                                    <Button
-                                        buttonStyle={[styles.btn, { width: 200 }]}
-                                        titleStyle={styles.btnText}
-                                        title={'Open your camera'}
-                                        onPress={() => {
-                                            setIsCamera(true);
-                                        }}
-                                    />
+                                    {file === null && (
+                                        <CameraOverlay setIsCamera={setIsCamera} styles={styles} />
+                                    )}
                                     {image !== null && <OverlayModification />}
+                                    {file !== null && <TrackFocusOverlay styles={styles} />}
                                 </View>
                                 <SafeAreaView />
                             </View>
