@@ -10,6 +10,7 @@ import PointsOfInterests from './PointOfInterest';
 import SplashScreen from '../SplashScreen/SplashScreen';
 import { ScrollView } from 'react-native';
 import { LocationContext } from '../../providers/LocationProvider';
+import { AxiosContext } from '../../providers/AxiosContext';
 
 function Tag(props) {
     const { colors } = useTheme();
@@ -35,6 +36,7 @@ export default function FocusHikeScreen({ route }) {
     const navigation = useNavigation();
     const hikeId = route.params?.hikeId;
     const { location, permission } = useContext(LocationContext);
+    const { authAxios } = useContext(AxiosContext);
 
     if (!hikeId) {
         navigation.goBack();
@@ -51,6 +53,7 @@ export default function FocusHikeScreen({ route }) {
                 description
                 duration
                 distance
+                track
                 difficulty
                 createdAt
                 elevation
@@ -94,6 +97,15 @@ export default function FocusHikeScreen({ route }) {
     });
 
     const difficulties = ['EASY', 'MEDIUM', 'HARD'];
+
+    async function loadHike() {
+        if (!data.hike.track) {
+            return;
+        }
+        const res = await authAxios.get('files/tracks/' + data.hike.track);
+        const fileData = res.data;
+        navigation.navigate('Directions', { fileData });
+    }
 
     if (loading) {
         return <SplashScreen />;
@@ -382,9 +394,7 @@ export default function FocusHikeScreen({ route }) {
                                         </Text>
                                     </>
                                 )}
-                                <TouchableWithoutFeedback
-                                    onPress={() => console.log('OPEN HIKE PATH')}
-                                >
+                                <TouchableWithoutFeedback onPress={() => loadHike()}>
                                     <View
                                         style={[
                                             styles.containerFocus,
