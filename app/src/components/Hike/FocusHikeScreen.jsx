@@ -70,6 +70,7 @@ export default function FocusHikeScreen({ route }) {
                     name
                 }
                 owner {
+                    id
                     pseudo
                     avatar {
                         filename
@@ -460,9 +461,28 @@ export default function FocusHikeScreen({ route }) {
                                 </Text>
                                 <Text style={styles.textDescription}>
                                     by{' '}
-                                    <Text style={[styles.textDescription, { color: colors.text }]}>
-                                        {data?.hike?.owner?.pseudo}
-                                    </Text>
+                                    <TouchableWithoutFeedback
+                                        onPress={() =>
+                                            navigation.navigate('Profile', {
+                                                screen: 'FocusUser',
+                                                params: {
+                                                    friendId: data.hike.owner.id,
+                                                },
+                                            })
+                                        }
+                                    >
+                                        <Text
+                                            style={[
+                                                styles.textDescription,
+                                                {
+                                                    color: colors.text,
+                                                    textDecorationLine: 'underline',
+                                                },
+                                            ]}
+                                        >
+                                            {data.hike.owner.pseudo}
+                                        </Text>
+                                    </TouchableWithoutFeedback>
                                 </Text>
                             </View>
                         </View>

@@ -31,7 +31,7 @@ const stack = createNativeStackNavigator();
 
 export default function ProfileWrapper({ navigation }) {
     useEffect(() => {
-        const unsubscribe = navigation.addListener('focus', () => {
+        const unsubscribe = navigation.addListener('blur', () => {
             navigation.dispatch(
                 CommonActions.reset({
                     index: 0,
