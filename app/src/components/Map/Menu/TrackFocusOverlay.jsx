@@ -11,7 +11,6 @@ export default function TrackFocusOverlay({ styles }) {
             titleStyle={styles.btnText}
             title={'Close'}
             onPress={() => {
-                console.log('TrackFocusOverlay');
                 navigation.navigate('Directions', { fileData: null });
             }}
         />

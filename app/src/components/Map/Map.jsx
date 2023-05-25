@@ -1,50 +1,28 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useContext, cloneElement, useRef, isValidElement, useEffect } from 'react';
 import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
 import { default as MAP_STYLE } from '../../../assets/maps/style.json';
-import CONTENTGPX from './gpx';
-import { DOMParser } from 'xmldom';
 import { LocationContext } from '../../providers/LocationProvider';
 import { connect } from 'react-redux';
 
 function Map({ children }) {
-    let [leftPoints, setLeftPoints] = useState([]);
-    let [passedPoints, setPassedPoints] = useState([]);
-
     const { location, permission } = useContext(LocationContext);
+    const cameraRef = useRef(null);
 
-    function parseFile() {
-        const doc = new DOMParser().parseFromString(CONTENTGPX, 'text/xml');
-        const trkpts = doc.getElementsByTagName('trkpt');
-        const trkptsArray = Array.from(trkpts);
-        const trkptsArrayLat = trkptsArray.map((trkpt) => trkpt.getAttribute('lat'));
-        const trkptsArrayLon = trkptsArray.map((trkpt) => trkpt.getAttribute('lon'));
-        return trkptsArrayLat.map((lat, index) => {
-            return {
-                latitude: parseFloat(lat),
-                longitude: parseFloat(trkptsArrayLon[index]),
-            };
+    const fitToCoordinates = (coordinates) => {
+        cameraRef.current.fitToCoordinates(coordinates, {
+            edgePadding: { top: 100, right: 100, bottom: 100, left: 100 },
+            animated: true,
         });
-    }
+    };
 
-    useEffect(() => {
-        setLeftPoints(parseFile());
-    }, []);
-
-    function advance() {
-        if (leftPoints.length == 0) {
-            return;
+    const childrenWithProps = children.map((child, index) => {
+        if (isValidElement(child)) {
+            return cloneElement(child, {
+                cameraRef,
+                key: index,
+            });
         }
-        const gpxPathLeft = leftPoints.slice();
-        const gpxPathpassedPoints = passedPoints.slice();
-        gpxPathpassedPoints.push(gpxPathLeft.shift());
-        gpxPathpassedPoints.push(gpxPathLeft[0]);
-        setPassedPoints(gpxPathpassedPoints);
-        setLeftPoints(gpxPathLeft);
-    }
-
-    useEffect(() => {
-        advance();
-    }, []);
+    });
 
     return (
         <MapView
@@ -61,8 +39,9 @@ function Map({ children }) {
             customMapStyle={MAP_STYLE}
             style={{ flex: 1, width: '100%' }}
             maxZoomLevel={18}
+            ref={cameraRef}
         >
-            {children}
+            {childrenWithProps}
         </MapView>
     );
 }
