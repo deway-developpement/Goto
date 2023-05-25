@@ -9,8 +9,6 @@ export default function PointsOfInterests(props) {
 
     const windowWidth = Dimensions.get('window').width;
 
-    console.log(props.photo.filename);
-
     return (
         <View style={{ flex: 1, marginTop: 10 }}>
             <View

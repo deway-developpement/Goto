@@ -8,6 +8,7 @@ import { Icon } from '../Icon/Icon';
 import SplashScreen from '../SplashScreen/SplashScreen';
 import { Historic, Stats } from './ProfileComplements';
 import { Button } from 'react-native-elements';
+import { TouchableWithoutFeedback } from 'react-native';
 
 export default function FocusUser({ route }) {
     const { colors } = useTheme();
@@ -72,6 +73,7 @@ export default function FocusUser({ route }) {
     `;
 
     async function updateFriend() {
+        if (!profile) return;
         if (profile.user.isFriend) {
             await client.mutate({
                 mutation: REMOVE_FRIEND,
@@ -95,6 +97,7 @@ export default function FocusUser({ route }) {
     const {
         data: profile,
         loading: loadingProfile,
+        error: errorProfile,
         refetch,
     } = useQuery(GET_FRIEND, {
         variables: {
@@ -105,6 +108,52 @@ export default function FocusUser({ route }) {
 
     if (loadingProfile) {
         return <SplashScreen />;
+    }
+
+    if (errorProfile || !profile.user) {
+        return (
+            <View
+                style={[
+                    styles.container,
+                    {
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        flexDirection: 'column',
+                    },
+                ]}
+            >
+                <Text
+                    style={{
+                        color: colors.text,
+                        fontSize: 20,
+                    }}
+                >
+                    Une erreur est survenue
+                </Text>
+                <Pressable onPress={() => navigation.goBack()}>
+                    <View
+                        style={{
+                            marginTop: 20,
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            flexDirection: 'column',
+                            backgroundColor: colors.primary,
+                            padding: 20,
+                            borderRadius: 10,
+                        }}
+                    >
+                        <Text
+                            style={{
+                                color: colors.background,
+                                fontSize: 20,
+                            }}
+                        >
+                            Retour
+                        </Text>
+                    </View>
+                </Pressable>
+            </View>
+        );
     }
 
     return (
