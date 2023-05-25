@@ -1,4 +1,4 @@
-import React, { useContext, cloneElement, useRef, isValidElement, useEffect } from 'react';
+import React, { useContext, cloneElement, useRef, isValidElement } from 'react';
 import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
 import { default as MAP_STYLE } from '../../../assets/maps/style.json';
 import { LocationContext } from '../../providers/LocationProvider';
@@ -7,13 +7,6 @@ import { connect } from 'react-redux';
 function Map({ children }) {
     const { location, permission } = useContext(LocationContext);
     const cameraRef = useRef(null);
-
-    const fitToCoordinates = (coordinates) => {
-        cameraRef.current.fitToCoordinates(coordinates, {
-            edgePadding: { top: 100, right: 100, bottom: 100, left: 100 },
-            animated: true,
-        });
-    };
 
     const childrenWithProps = children.map((child, index) => {
         if (isValidElement(child)) {
