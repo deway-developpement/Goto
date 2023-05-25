@@ -99,8 +99,6 @@ export default function HikeInfos({ hike, borderRadius, inProfile = false }) {
         }
     }
 
-    console.log('HikeInfos', dataReview?.whoami.reviews[0]);
-
     return (
         <View
             style={[
