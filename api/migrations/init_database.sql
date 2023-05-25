@@ -4998,3 +4998,4066 @@ VALUES ( (
             LIMIT 1
         ), (
             SELECT id
+            FROM
+                pointOfInterest
+            WHERE
+                name = 'Queenstown'
+            LIMIT 1
+        )
+    );
+
+# Add a POI to a hike 18
+INSERT INTO
+    hikes_pointsOfInterest (hikeId, pointOfInterestId)
+VALUES ( (
+            SELECT id
+            FROM hike
+            WHERE
+                name = 'Desert discovery tour'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM
+                pointOfInterest
+            WHERE
+                name = 'Santorini'
+            LIMIT 1
+        )
+    );
+
+# Add a POI to a hike 19
+INSERT INTO
+    hikes_pointsOfInterest (hikeId, pointOfInterestId)
+VALUES ( (
+            SELECT id
+            FROM hike
+            WHERE
+                name = 'Lake visit'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM
+                pointOfInterest
+            WHERE
+                name = 'Uluru'
+            LIMIT 1
+        )
+    );
+
+# Add a POI to a hike 20
+INSERT INTO
+    hikes_pointsOfInterest (hikeId, pointOfInterestId)
+VALUES ( (
+            SELECT id
+            FROM hike
+            WHERE
+                name =  'Riverside walk'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM
+                pointOfInterest
+            WHERE
+                name = 'Victoria Falls'
+            LIMIT 1
+        )
+    );
+
+# Add a POI to a hike 21
+INSERT INTO
+    hikes_pointsOfInterest (hikeId, pointOfInterestId)
+VALUES ( (
+            SELECT id
+            FROM hike
+            WHERE
+                name = 'Riverside walk'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM
+                pointOfInterest
+            WHERE
+                name = 'Wulingyuan'
+            LIMIT 1
+        )
+    );
+
+# Add a POI to a hike 22
+INSERT INTO
+    hikes_pointsOfInterest (hikeId, pointOfInterestId)
+VALUES ( (
+            SELECT id
+            FROM hike
+            WHERE
+                name = 'Village tour'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM
+                pointOfInterest
+            WHERE
+                name = 'Xochicalco'
+            LIMIT 1
+        )
+    );
+
+# Add a POI to a hike 23
+INSERT INTO
+    hikes_pointsOfInterest (hikeId, pointOfInterestId)
+VALUES ( (
+            SELECT id
+            FROM hike
+            WHERE
+                name = 'Mountain climb'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM
+                pointOfInterest
+            WHERE
+                name = 'Yosemite Valley'
+            LIMIT 1
+        )
+    );
+
+# Add a POI to a hike 24
+INSERT INTO
+    hikes_pointsOfInterest (hikeId, pointOfInterestId)
+VALUES ( (
+            SELECT id
+            FROM hike
+            WHERE
+                name = 'Mountain climb'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM
+                pointOfInterest
+            WHERE
+                name = 'Eiffel Tower'
+            LIMIT 1
+        )
+    );
+
+# Add a POI to a hike 25
+INSERT INTO
+    hikes_pointsOfInterest (hikeId, pointOfInterestId)
+VALUES ( (
+            SELECT id
+            FROM hike
+            WHERE
+                name = 'A walk in the plains'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM
+                pointOfInterest
+            WHERE
+                name = 'Versailles Castle'
+            LIMIT 1
+        )
+    );
+
+# Add a POI to a hike 26
+INSERT INTO
+    hikes_pointsOfInterest (hikeId, pointOfInterestId)
+VALUES ( (
+            SELECT id
+            FROM hike
+            WHERE
+                name = 'Sightseeing tour'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM
+                pointOfInterest
+            WHERE
+                name = 'Giza Pyramid'
+            LIMIT 1
+        )
+    );
+
+# Add a POI to a hike 27
+INSERT INTO
+    hikes_pointsOfInterest (hikeId, pointOfInterestId)
+VALUES ( (
+            SELECT id
+            FROM hike
+            WHERE
+                name = 'Sightseeing tour'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM
+                pointOfInterest
+            WHERE
+                name = 'Notre Dame de Paris'
+            LIMIT 1
+        )
+    );
+
+# Add a POI to a hike 28
+INSERT INTO
+    hikes_pointsOfInterest (hikeId, pointOfInterestId)
+VALUES ( (
+            SELECT id
+            FROM hike
+            WHERE
+                name = 'Forest hike'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM
+                pointOfInterest
+            WHERE
+                name = 'Rome Colosseum'
+            LIMIT 1
+        )
+    );
+
+# Add a POI to a hike 29
+INSERT INTO
+    hikes_pointsOfInterest (hikeId, pointOfInterestId)
+VALUES ( (
+            SELECT id
+            FROM hike
+            WHERE
+                name = 'Forest hike'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM
+                pointOfInterest
+            WHERE
+                name = 'Stonehenge'
+            LIMIT 1
+        )
+    );
+
+# Add a POI to a hike 30
+INSERT INTO
+    hikes_pointsOfInterest (hikeId, pointOfInterestId)
+VALUES ( (
+            SELECT id
+            FROM hike
+            WHERE
+                name = 'Around the lake'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM
+                pointOfInterest
+            WHERE
+                name = 'Athens Acropolis'
+            LIMIT 1
+        )
+    );
+
+# Add a POI to a hike 31
+INSERT INTO
+    hikes_pointsOfInterest (hikeId, pointOfInterestId)
+VALUES ( (
+            SELECT id
+            FROM hike
+            WHERE
+                name = 'Cliffside hike'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM
+                pointOfInterest
+            WHERE
+                name = 'Cologne Cathedral'
+            LIMIT 1
+        )
+    );
+
+# Add a POI to a hike 32
+INSERT INTO
+    hikes_pointsOfInterest (hikeId, pointOfInterestId)
+VALUES ( (
+            SELECT id
+            FROM hike
+            WHERE
+                name = 'Cliffside hike'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM
+                pointOfInterest
+            WHERE
+                name = 'Berlin Wall'
+            LIMIT 1
+        )
+    );
+
+# Add a POI to a hike 33
+INSERT INTO
+    hikes_pointsOfInterest (hikeId, pointOfInterestId)
+VALUES ( (
+            SELECT id
+            FROM hike
+            WHERE
+                name = 'Cliffside hike'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM
+                pointOfInterest
+            WHERE
+                name = 'Kremlin'
+            LIMIT 1
+        )
+    );
+
+# Add a POI to a hike 34
+INSERT INTO
+    hikes_pointsOfInterest (hikeId, pointOfInterestId)
+VALUES ( (
+            SELECT id
+            FROM hike
+            WHERE
+                name = 'Walk next to the lake'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM
+                pointOfInterest
+            WHERE
+                name = 'London Tower'
+            LIMIT 1
+        )
+    );
+
+# Add a POI to a hike 35
+INSERT INTO
+    hikes_pointsOfInterest (hikeId, pointOfInterestId)
+VALUES ( (
+            SELECT id
+            FROM hike
+            WHERE
+                name = 'Walk next to the lake'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM
+                pointOfInterest
+            WHERE
+                name = 'Machu Picchu'
+            LIMIT 1
+        )
+    );
+
+# Add a POI to a hike 36
+INSERT INTO
+    hikes_pointsOfInterest (hikeId, pointOfInterestId)
+VALUES ( (
+            SELECT id
+            FROM hike
+            WHERE
+                name = 'Hot walk'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM
+                pointOfInterest
+            WHERE
+                name = 'Neuschwanstein Castle'
+            LIMIT 1
+        )
+    );
+
+# Add a POI to a hike 37
+INSERT INTO
+    hikes_pointsOfInterest (hikeId, pointOfInterestId)
+VALUES ( (
+            SELECT id
+            FROM hike
+            WHERE
+                name = 'Hot walk'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM
+                pointOfInterest
+            WHERE
+                name = 'Pompeii'
+            LIMIT 1
+        )
+    );
+
+# Add a POI to a hike 38
+INSERT INTO
+    hikes_pointsOfInterest (hikeId, pointOfInterestId)
+VALUES ( (
+            SELECT id
+            FROM hike
+            WHERE
+                name = 'Cold walk'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM
+                pointOfInterest
+            WHERE
+                name = 'Queenstown'
+            LIMIT 1
+        )
+    );
+
+# Add a POI to a hike 39
+INSERT INTO
+    hikes_pointsOfInterest (hikeId, pointOfInterestId)
+VALUES ( (
+            SELECT id
+            FROM hike
+            WHERE
+                name = 'Track the wildlife'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM
+                pointOfInterest
+            WHERE
+                name = 'Santorini'
+            LIMIT 1
+        )
+    );
+
+# Add a POI to a hike 40
+INSERT INTO
+    hikes_pointsOfInterest (hikeId, pointOfInterestId)
+VALUES ( (
+            SELECT id
+            FROM hike
+            WHERE
+                name = 'Track the wildlife'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM
+                pointOfInterest
+            WHERE
+                name = 'Uluru'
+            LIMIT 1
+        )
+    );
+
+# Add a POI to a hike 41
+INSERT INTO
+    hikes_pointsOfInterest (hikeId, pointOfInterestId)
+VALUES ( (
+            SELECT id
+            FROM hike
+            WHERE
+                name = 'Track the wildlife'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM
+                pointOfInterest
+            WHERE
+                name = 'Victoria Falls'
+            LIMIT 1
+        )
+    );
+
+# Add a POI to a hike 42
+INSERT INTO
+    hikes_pointsOfInterest (hikeId, pointOfInterestId)
+VALUES ( (
+            SELECT id
+            FROM hike
+            WHERE
+                name = 'Maritime escape'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM
+                pointOfInterest
+            WHERE
+                name = 'Wulingyuan'
+            LIMIT 1
+        )
+    );
+
+# Add a POI to a hike 43
+INSERT INTO
+    hikes_pointsOfInterest (hikeId, pointOfInterestId)
+VALUES ( (
+            SELECT id
+            FROM hike
+            WHERE
+                name = 'Wild walk'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM
+                pointOfInterest
+            WHERE
+                name = 'Wulingyuan'
+            LIMIT 1
+        )
+    );
+
+# Add a POI to a hike 44
+INSERT INTO
+    hikes_pointsOfInterest (hikeId, pointOfInterestId)
+VALUES ( (
+            SELECT id
+            FROM hike
+            WHERE
+                name = 'Cold hike'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM
+                pointOfInterest
+            WHERE
+                name = 'Xochicalco'
+            LIMIT 1
+        )
+    );
+
+# Add a POI to a hike 45
+INSERT INTO
+    hikes_pointsOfInterest (hikeId, pointOfInterestId)
+VALUES ( (
+            SELECT id
+            FROM hike
+            WHERE
+                name = 'Cold hike'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM
+                pointOfInterest
+            WHERE
+                name = 'Eiffel Tower'
+            LIMIT 1
+        )
+    );
+
+# Add a POI to a hike 46
+INSERT INTO
+    hikes_pointsOfInterest (hikeId, pointOfInterestId)
+VALUES ( (
+            SELECT id
+            FROM hike
+            WHERE
+                name = 'Cold hike'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM
+                pointOfInterest
+            WHERE
+                name = 'Versailles Castle'
+            LIMIT 1
+        )
+    );
+
+# Add a POI to a hike 47
+INSERT INTO
+    hikes_pointsOfInterest (hikeId, pointOfInterestId)
+VALUES ( (
+            SELECT id
+            FROM hike
+            WHERE
+                name = 'Challenging the mountain'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM
+                pointOfInterest
+            WHERE
+                name = 'Notre Dame de Paris'
+            LIMIT 1
+        )
+    );
+# Add a POI to a hike 48
+INSERT INTO
+    hikes_pointsOfInterest (hikeId, pointOfInterestId)
+VALUES ( (
+            SELECT id
+            FROM hike
+            WHERE
+                name = 'River challenge'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM
+                pointOfInterest
+            WHERE
+                name = 'Rome Colosseum'
+            LIMIT 1
+        )
+    );
+
+# Add a POI to a hike 49
+INSERT INTO
+    hikes_pointsOfInterest (hikeId, pointOfInterestId)
+VALUES ( (
+            SELECT id
+            FROM hike
+            WHERE
+                name = 'River challenge'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM
+                pointOfInterest
+            WHERE
+                name = 'Stonehenge'
+            LIMIT 1
+        )
+    );
+
+# Add a POI to a hike 50
+INSERT INTO
+    hikes_pointsOfInterest (hikeId, pointOfInterestId)
+VALUES ( (
+            SELECT id
+            FROM hike
+            WHERE
+                name = 'River challenge'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM
+                pointOfInterest
+            WHERE
+                name = 'Athens Acropolis'
+            LIMIT 1
+        )
+    );
+
+# Add a POI to a hike 51
+INSERT INTO
+    hikes_pointsOfInterest (hikeId, pointOfInterestId)
+VALUES ( (
+            SELECT id
+            FROM hike
+            WHERE
+                name = 'River challenge'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM
+                pointOfInterest
+            WHERE
+                name = 'Berlin Wall'
+            LIMIT 1
+        )
+    );
+
+# Add a POI to a hike 52
+INSERT INTO
+    hikes_pointsOfInterest (hikeId, pointOfInterestId)
+VALUES ( (
+            SELECT id
+            FROM hike
+            WHERE
+                name = 'Beach walk'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM
+                pointOfInterest
+            WHERE
+                name = 'Cologne Cathedral'
+            LIMIT 1
+        )
+    );
+
+# Add a POI to a hike 53
+INSERT INTO
+    hikes_pointsOfInterest (hikeId, pointOfInterestId)
+VALUES ( (
+            SELECT id
+            FROM hike
+            WHERE
+                name = 'Simple sightseeing tour'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM
+                pointOfInterest
+            WHERE
+                name = 'Kremlin'
+            LIMIT 1
+        )
+    );
+
+# Add a POI to a hike 54
+INSERT INTO
+    hikes_pointsOfInterest (hikeId, pointOfInterestId)
+VALUES ( (
+            SELECT id
+            FROM hike
+            WHERE
+                name = 'Simple sightseeing tour'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM
+                pointOfInterest
+            WHERE
+                name = 'London Tower'
+            LIMIT 1
+        )
+    );
+
+# Add a POI to a hike 55
+INSERT INTO
+    hikes_pointsOfInterest (hikeId, pointOfInterestId)
+VALUES ( (
+            SELECT id
+            FROM hike
+            WHERE
+                name = 'Stump walk'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM
+                pointOfInterest
+            WHERE
+                name = 'Queenstown'
+            LIMIT 1
+        )
+    );
+
+# Add a POI to a hike 56
+INSERT INTO
+    hikes_pointsOfInterest (hikeId, pointOfInterestId)
+VALUES ( (
+            SELECT id
+            FROM hike
+            WHERE
+                name = 'Stump walk'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM
+                pointOfInterest
+            WHERE
+                name = 'Pompeii'
+            LIMIT 1
+        )
+    );
+
+# Add a POI to a hike 57
+INSERT INTO
+    hikes_pointsOfInterest (hikeId, pointOfInterestId)
+VALUES ( (
+            SELECT id
+            FROM hike
+            WHERE
+                name = 'Stump walk'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM
+                pointOfInterest
+            WHERE
+                name = 'Neuschwanstein Castle'
+            LIMIT 1
+        )
+    );
+
+# Add a POI to a hike 58
+INSERT INTO
+    hikes_pointsOfInterest (hikeId, pointOfInterestId)
+VALUES ( (
+            SELECT id
+            FROM hike
+            WHERE
+                name = 'Stump walk'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM
+                pointOfInterest
+            WHERE
+                name = 'Machu Picchu'
+            LIMIT 1
+        )
+    );
+
+# Add a performance to a hike 1
+INSERT INTO
+    performance (
+        id,
+        date,
+        distance,
+        duration,
+        elevation,
+        track,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(),
+        now(),
+        2,
+        0.5,
+        100,
+        '119967546323880647.gpx',
+        now(), (
+            SELECT id
+            FROM hike
+            WHERE
+                name = 'Forest tour'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'admin'
+            LIMIT 1
+        )
+    );
+
+# Add a performance to a hike 2
+INSERT INTO
+    performance (
+        id,
+        date,
+        distance,
+        duration,
+        elevation,
+        track,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(),
+        now(),
+        22,
+        10.5,
+        500,
+        '544788107478814292.gpx',
+        now(), (
+            SELECT id
+            FROM hike
+            WHERE
+                name = 'Cliffside walk'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'Jeanne'
+            LIMIT 1
+        )
+    );
+# Add a performance to a hike 3
+INSERT INTO
+    performance (
+        id,
+        date,
+        distance,
+        duration,
+        elevation,
+        track,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(),
+        now(),
+        10,
+        3,
+        200,
+        '495385891592999984.gpx',
+        now(), (
+            SELECT id
+            FROM hike
+            WHERE
+                name = 'Seaside walk'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'Jeanne'
+            LIMIT 1
+        )
+    );
+# Add a performance to a hike 4
+INSERT INTO
+    performance (
+        id,
+        date,
+        distance,
+        duration,
+        elevation,
+        track,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(),
+        now(),
+        59,
+        20,
+        2000,
+        '514106900840295724.gpx',
+        now(), (
+            SELECT id
+            FROM hike
+            WHERE
+                name = 'Frost encounter'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'Jeanne'
+            LIMIT 1
+        )
+    );
+# Add a performance to a hike 5
+INSERT INTO
+    performance (
+        id,
+        date,
+        distance,
+        duration,
+        elevation,
+        track,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(),
+        now(),
+        4,
+        1,
+        50,
+        '419973701745457474.gpx',
+        now(), (
+            SELECT id
+            FROM hike
+            WHERE
+                name = 'Lake tour'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'Jeanne'
+            LIMIT 1
+        )
+    );
+# Add a performance to a hike 6
+INSERT INTO
+    performance (
+        id,
+        date,
+        distance,
+        duration,
+        elevation,
+        track,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(),
+        now(),
+        7,
+        2,
+        100,
+        '373158958072184818.gpx',
+        now(), (
+            SELECT id
+            FROM hike
+            WHERE
+                name = 'Tour around the lake'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'Lea'
+            LIMIT 1
+        )
+    );
+# Add a performance to a hike 7
+INSERT INTO
+    performance (
+        id,
+        date,
+        distance,
+        duration,
+        elevation,
+        track,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(),
+        now(),
+        10,
+        2.5,
+        200,
+        '926735909369588564.gpx',
+        now(), (
+            SELECT id
+            FROM hike
+            WHERE
+                name = 'Tour around the city'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'Lea'
+            LIMIT 1
+        )
+    );
+# Add a performance to a hike 8
+INSERT INTO
+    performance (
+        id,
+        date,
+        distance,
+        duration,
+        elevation,
+        track,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(),
+        now(),
+        14,
+        6,
+        1400,
+        '645117252567792649.gpx',
+        now(), (
+            SELECT id
+            FROM hike
+            WHERE
+                name = 'Mountain challenge'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'Lea'
+            LIMIT 1
+        )
+    );
+# Add a performance to a hike 9
+INSERT INTO
+    performance (
+        id,
+        date,
+        distance,
+        duration,
+        elevation,
+        track,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(),
+        now(),
+        2.2,
+        0.6,
+        60,
+        '472993022782147631.gpx',
+        now(), (
+            SELECT id
+            FROM hike
+            WHERE
+                name = 'Enjoy the river'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'Tom'
+            LIMIT 1
+        )
+    );
+# Add a performance to a hike 10
+INSERT INTO
+    performance (
+        id,
+        date,
+        distance,
+        duration,
+        elevation,
+        track,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(),
+        now(),
+        15,
+        8,
+        800,
+        '781186673160078000.gpx',
+        now(), (
+            SELECT id
+            FROM hike
+            WHERE
+                name = 'Desert discovery'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'Tom'
+            LIMIT 1
+        )
+    );
+# Add a performance to a hike 11
+INSERT INTO
+    performance (
+        id,
+        date,
+        distance,
+        duration,
+        elevation,
+        track,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(),
+        now(),
+        31,
+        14,
+        900,
+        '914814813167629249.gpx',
+        now(), (
+            SELECT id
+            FROM hike
+            WHERE
+                name = 'Countriside tour'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'James'
+            LIMIT 1
+        )
+    );
+# Add a performance to a hike 12
+INSERT INTO
+    performance (
+        id,
+        date,
+        distance,
+        duration,
+        elevation,
+        track,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(),
+        now(),
+        5,
+        0.5,
+        300,
+        '930567485006079198.gpx',
+        now(), (
+            SELECT id
+            FROM hike
+            WHERE
+                name = 'Desert encounter'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'James'
+            LIMIT 1
+        )
+    );
+# Add a performance to a hike 13
+INSERT INTO
+    performance (
+        id,
+        date,
+        distance,
+        duration,
+        elevation,
+        track,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(),
+        now(),
+        29,
+        13,
+        1950,
+        '396822159105403089.gpx',
+        now(), (
+            SELECT id
+            FROM hike
+            WHERE
+                name = 'Coastal walk'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'James'
+            LIMIT 1
+        )
+    );
+# Add a performance to a hike 14
+INSERT INTO
+    performance (
+        id,
+        date,
+        distance,
+        duration,
+        elevation,
+        track,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(),
+        now(),
+        20,
+        9,
+        1300,
+        '701704109106772176.gpx',
+        now(), (
+            SELECT id
+            FROM hike
+            WHERE
+                name = 'Mountain tour'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'James'
+            LIMIT 1
+        )
+    );
+# Add a performance to a hike 15
+INSERT INTO
+    performance (
+        id,
+        date,
+        distance,
+        duration,
+        elevation,
+        track,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(),
+        now(),
+        12,
+        4,
+        250,
+        '440512793897022359.gpx',
+        now(), (
+            SELECT id
+            FROM hike
+            WHERE
+                name = 'River tour'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'James'
+            LIMIT 1
+        )
+    );
+# Add a performance to a hike 16
+INSERT INTO
+    performance (
+        id,
+        date,
+        distance,
+        duration,
+        elevation,
+        track,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(),
+        now(),
+        6,
+        2,
+        120,
+        '851403187520298648.gpx',
+        now(), (
+            SELECT id
+            FROM hike
+            WHERE
+                name = 'Tundra tour'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'Mike'
+            LIMIT 1
+        )
+    );
+# Add a performance to a hike 17
+INSERT INTO
+    performance (
+        id,
+        date,
+        distance,
+        duration,
+        elevation,
+        track,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(),
+        now(),
+        10,
+        300,
+        3,
+        '856830624186211911.gpx',
+        now(), (
+            SELECT id
+            FROM hike
+            WHERE
+                name = 'Desert discovery tour'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'admin'
+            LIMIT 1
+        )
+    );
+# Add a performance to a hike 18
+INSERT INTO
+    performance (
+        id,
+        date,
+        distance,
+        duration,
+        elevation,
+        track,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(),
+        now(),
+        2,
+        0.7,
+        100,
+        '783207525602140317.gpx',
+        now(), (
+            SELECT id
+            FROM hike
+            WHERE
+                name = 'walk along the seaside'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'admin'
+            LIMIT 1
+        )
+    );
+# Add a performance to a hike 19
+INSERT INTO
+    performance (
+        id,
+        date,
+        distance,
+        duration,
+        elevation,
+        track,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(),
+        now(),
+        6,
+        1.5,
+        300,
+        '954903225231572609.gpx',
+        now(), (
+            SELECT id
+            FROM hike
+            WHERE
+                name = 'City discovery'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'admin'
+            LIMIT 1
+        )
+    );
+# Add a performance to a hike 20
+INSERT INTO
+    performance (
+        id,
+        date,
+        distance,
+        duration,
+        elevation,
+        track,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(),
+        now(),
+        7,
+        2,
+        400,
+        '690269030716993180.gpx',
+        now(), (
+            SELECT id
+            FROM hike
+            WHERE
+                name = 'Monument tour'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'admin'
+            LIMIT 1
+        )
+    );
+# Add a performance to a hike 21
+INSERT INTO
+    performance (
+        id,
+        date,
+        distance,
+        duration,
+        elevation,
+        track,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(),
+        now(),
+        15,
+        7,
+        900,
+        '707551639512049627.gpx',
+        now(), (
+            SELECT id
+            FROM hike
+            WHERE
+                name = 'Lake visit'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'Jeanne'
+            LIMIT 1
+        )
+    );
+
+# Add a review to a hike 1
+INSERT INTO
+    review (
+        id,
+        rating,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(), 5, now(), (
+            SELECT id
+            FROM hike
+            WHERE
+                name = 'Forest tour'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'admin'
+            LIMIT 1
+        )
+    );
+
+# Add a review to a hike 2
+INSERT INTO
+    review (
+        id,
+        rating,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(), 4, now(), (
+            SELECT id
+            FROM hike
+            WHERE
+                name = 'Forest tour'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'Mike'
+            LIMIT 1
+        )
+    );
+
+# Add a review to a hike 3
+INSERT INTO
+    review (
+        id,
+        rating,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(), 4, now(), (
+            SELECT id
+            FROM hike
+            WHERE
+                name = 'Cliffside walk'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'James'
+            LIMIT 1
+        )
+    );
+
+# Add a review to a hike 4
+INSERT INTO
+    review (
+        id,
+        rating,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(), 4, now(), (
+            SELECT id
+            FROM hike
+            WHERE
+                name = 'Cliffside walk'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'Lea'
+            LIMIT 1
+        )
+    );
+
+# Add a review to a hike 5
+INSERT INTO
+    review (
+        id,
+        rating,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(), 4, now(), (
+            SELECT id
+            FROM hike
+            WHERE
+                name = 'Seaside walk'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'Tom'
+            LIMIT 1
+        )
+    );
+
+# Add a review to a hike 6
+INSERT INTO
+    review (
+        id,
+        rating,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(), 2, now(), (
+            SELECT id
+            FROM hike
+            WHERE
+                name = 'Seaside walk'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'Jeanne'
+            LIMIT 1
+        )
+    );
+
+# Add a review to a hike 7
+INSERT INTO
+    review (
+        id,
+        rating,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(), 2, now(), (
+            SELECT id
+            FROM hike
+            WHERE
+                name = 'Frost encounter'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'admin'
+            LIMIT 1
+        )
+    );
+
+# Add a review to a hike 8
+INSERT INTO
+    review (
+        id,
+        rating,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(), 2, now(), (
+            SELECT id
+            FROM hike
+            WHERE
+                name = 'Frost encounter'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'Mike'
+            LIMIT 1
+        )
+    );
+
+# Add a review to a hike 9
+INSERT INTO
+    review (
+        id,
+        rating,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(), 3, now(), (
+            SELECT id
+            FROM hike
+            WHERE 
+                name = 'Lake tour'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'James'
+            LIMIT 1
+        )
+    );
+
+# Add a review to a hike 10
+INSERT INTO
+    review (
+        id,
+        rating,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(), 4, now(), (
+            SELECT id
+            FROM hike
+            WHERE 
+                name = 'Lake tour'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'Lea'
+            LIMIT 1
+        )
+    );
+
+# Add a review to a hike 11
+INSERT INTO
+    review (
+        id,
+        rating,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(), 1, now(), (
+            SELECT id
+            FROM hike
+            WHERE 
+                name = 'Tour around the lake'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'Tom'
+            LIMIT 1
+        )
+    );
+
+# Add a review to a hike 12
+INSERT INTO
+    review (
+        id,
+        rating,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(), 2, now(), (
+            SELECT id
+            FROM hike
+            WHERE 
+                name = 'Tour around the lake'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'Jeanne'
+            LIMIT 1
+        )
+    );
+
+# Add a review to a hike 13
+INSERT INTO
+    review (
+        id,
+        rating,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(), 4, now(), (
+            SELECT id
+            FROM hike
+            WHERE 
+                name = 'Tour around the city'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'admin'
+            LIMIT 1
+        )
+    );
+
+# Add a review to a hike 14
+INSERT INTO
+    review (
+        id,
+        rating,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(), 1, now(), (
+            SELECT id
+            FROM hike
+            WHERE 
+                name = 'Tour around the city'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'Mike'
+            LIMIT 1
+        )
+    );
+
+# Add a review to a hike 15
+INSERT INTO
+    review (
+        id,
+        rating,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(), 5, now(), (
+            SELECT id
+            FROM hike
+            WHERE 
+                name = 'Mountain challenge'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'James'
+            LIMIT 1
+        )
+    );
+
+# Add a review to a hike 16
+INSERT INTO
+    review (
+        id,
+        rating,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(), 2, now(), (
+            SELECT id
+            FROM hike
+            WHERE 
+                name = 'Mountain challenge'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'Lea'
+            LIMIT 1
+        )
+    );
+
+# Add a review to a hike 17
+INSERT INTO
+    review (
+        id,
+        rating,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(), 5, now(), (
+            SELECT id
+            FROM hike
+            WHERE 
+                name = 'Desert discovery'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'Tom'
+            LIMIT 1
+        )
+    );
+
+# Add a review to a hike 18
+INSERT INTO
+    review (
+        id,
+        rating,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(), 5, now(), (
+            SELECT id
+            FROM hike
+            WHERE 
+                name = 'Desert discovery'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'Jeanne'
+            LIMIT 1
+        )
+    );
+
+# Add a review to a hike 19
+INSERT INTO
+    review (
+        id,
+        rating,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(), 5, now(), (
+            SELECT id
+            FROM hike
+            WHERE
+                name = 'Enjoy the river'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'admin'
+            LIMIT 1
+        )
+    );
+
+# Add a review to a hike 20
+INSERT INTO
+    review (
+        id,
+        rating,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(), 4, now(), (
+            SELECT id
+            FROM hike
+            WHERE 
+                name = 'Enjoy the river'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'Mike'
+            LIMIT 1
+        )
+    );
+
+# Add a review to a hike 21
+INSERT INTO
+    review (
+        id,
+        rating,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(), 5, now(), (
+            SELECT id
+            FROM hike
+            WHERE 
+                name ='Countriside tour'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'James'
+            LIMIT 1
+        )
+    );
+
+# Add a review to a hike 22
+INSERT INTO
+    review (
+        id,
+        rating,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(), 3, now(), (
+            SELECT id
+            FROM hike
+            WHERE
+               name = 'Countriside tour'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'Lea'
+            LIMIT 1
+        )
+    );
+
+# Add a review to a hike 23
+INSERT INTO
+    review (
+        id,
+        rating,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(), 2, now(), (
+            SELECT id
+            FROM hike
+            WHERE 
+               name = 'Desert encounter'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'Tom'
+            LIMIT 1
+        )
+    );
+
+# Add a review to a hike 24
+INSERT INTO
+    review (
+        id,
+        rating,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(), 3, now(), (
+            SELECT id
+            FROM hike
+            WHERE 
+               name = 'Desert encounter'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'Jeanne'
+            LIMIT 1
+        )
+    );
+
+# Add a review to a hike 25
+INSERT INTO
+    review (
+        id,
+        rating,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(), 2, now(), (
+            SELECT id
+            FROM hike
+            WHERE
+               name = 'Coastal walk'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'admin'
+            LIMIT 1
+        )
+    );
+
+# Add a review to a hike 26
+INSERT INTO
+    review (
+        id,
+        rating,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(), 1, now(), (
+            SELECT id
+            FROM hike
+            WHERE 
+               name = 'Coastal walk'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'Mike'
+            LIMIT 1
+        )
+    );
+
+# Add a review to a hike 27
+INSERT INTO
+    review (
+        id,
+        rating,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(), 1, now(), (
+            SELECT id
+            FROM hike
+            WHERE
+               name = 'Mountain tour'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'James'
+            LIMIT 1
+        )
+    );
+
+# Add a review to a hike 28
+INSERT INTO
+    review (
+        id,
+        rating,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(), 1, now(), (
+            SELECT id
+            FROM hike
+            WHERE 
+               name = 'Mountain tour'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'Lea'
+            LIMIT 1
+        )
+    );
+
+# Add a review to a hike 29
+INSERT INTO
+    review (
+        id,
+        rating,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(), 2, now(), (
+            SELECT id
+            FROM hike
+            WHERE
+               name = 'River tour'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'Tom'
+            LIMIT 1
+        )
+    );
+
+# Add a review to a hike 30
+INSERT INTO
+    review (
+        id,
+        rating,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(), 4, now(), (
+            SELECT id
+            FROM hike
+            WHERE 
+               name = 'River tour'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'Jeanne'
+            LIMIT 1
+        )
+    );
+
+# Add a review to a hike 31 
+INSERT INTO
+    review (
+        id,
+        rating,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(), 4, now(), (
+            SELECT id
+            FROM hike
+            WHERE
+               name = 'Tundra tour'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'admin'
+            LIMIT 1
+        )
+    );
+
+# Add a review to a hike 32
+INSERT INTO
+    review (
+        id,
+        rating,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(), 4, now(), (
+            SELECT id
+            FROM hike
+            WHERE 
+               name = 'Tundra tour'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'Mike'
+            LIMIT 1
+        )
+    );
+
+# Add a review to a hike 33
+INSERT INTO
+    review (
+        id,
+        rating,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(), 3, now(), (
+            SELECT id
+            FROM hike
+            WHERE 
+               name = 'Desert discovery tour'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'James'
+            LIMIT 1
+        )
+    );
+
+# Add a review to a hike 34
+INSERT INTO
+    review (
+        id,
+        rating,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(), 3, now(), (
+            SELECT id
+            FROM hike
+            WHERE 
+               name = 'Desert discovery tour'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'Lea'
+            LIMIT 1
+        )
+    );
+
+# Add a review to a hike 35
+INSERT INTO
+    review (
+        id,
+        rating,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(), 5, now(), (
+            SELECT id
+            FROM hike
+            WHERE
+               name = 'walk along the seaside'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'Tom'
+            LIMIT 1
+        )
+    );
+
+# Add a review to a hike 36
+INSERT INTO
+    review (
+        id,
+        rating,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(), 4, now(), (
+            SELECT id
+            FROM hike
+            WHERE 
+               name = 'walk along the seaside'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'Jeanne'
+            LIMIT 1
+        )
+    );
+
+# Add a review to a hike 37
+INSERT INTO
+    review (
+        id,
+        rating,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(), 4, now(), (
+            SELECT id
+            FROM hike
+            WHERE
+               name ='City discovery'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'admin'
+            LIMIT 1
+        )
+    );
+
+# Add a review to a hike 38
+INSERT INTO
+    review (
+        id,
+        rating,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(), 2, now(), (
+            SELECT id
+            FROM hike
+            WHERE 
+               name ='City discovery'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'Mike'
+            LIMIT 1
+        )
+    );
+
+# Add a review to a hike 39
+INSERT INTO
+    review (
+        id,
+        rating,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(), 2, now(), (
+            SELECT id
+            FROM hike
+            WHERE 
+               name ='Monument tour'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'James'
+            LIMIT 1
+        )
+    );
+
+# Add a review to a hike 40
+INSERT INTO
+    review (
+        id,
+        rating,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(), 3, now(), (
+            SELECT id
+            FROM hike
+            WHERE
+               name ='Monument tour'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'Lea'
+            LIMIT 1
+        )
+    );
+
+# Add a review to a hike 41
+INSERT INTO
+    review (
+        id,
+        rating,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(), 1, now(), (
+            SELECT id
+            FROM hike
+            WHERE 
+               name ='Lake visit'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'Tom'
+            LIMIT 1
+        )
+    );
+
+# Add a review to a hike 42
+INSERT INTO
+    review (
+        id,
+        rating,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(), 5, now(), (
+            SELECT id
+            FROM hike
+            WHERE 
+               name ='Lake visit'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'Jeanne'
+            LIMIT 1
+        )
+    );
+
+# Add a review to a hike 43
+INSERT INTO
+    review (
+        id,
+        rating,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(), 5, now(), (
+            SELECT id
+            FROM hike
+            WHERE 
+                name = 'Riverside walk'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'admin'
+            LIMIT 1
+        )
+    );
+
+# Add a review to a hike 44
+INSERT INTO
+    review (
+        id,
+        rating,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(), 2, now(), (
+            SELECT id
+            FROM hike
+            WHERE
+                name = 'Riverside walk'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'Mike'
+            LIMIT 1
+        )
+    );
+
+# Add a review to a hike 45
+INSERT INTO
+    review (
+        id,
+        rating,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(), 3, now(), (
+            SELECT id
+            FROM hike
+            WHERE 
+                name = 'Village tour'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'James'
+            LIMIT 1
+        )
+    );
+
+# Add a review to a hike 46
+INSERT INTO
+    review (
+        id,
+        rating,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(), 3, now(), (
+            SELECT id
+            FROM hike
+            WHERE 
+                name = 'Village tour'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'Lea'
+            LIMIT 1
+        )
+    );
+
+# Add a review to a hike 47
+INSERT INTO
+    review (
+        id,
+        rating,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(), 3, now(), (
+            SELECT id
+            FROM hike
+            WHERE 
+                name = 'Mountain climb'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'Tom'
+            LIMIT 1
+        )
+    );
+
+# Add a review to a hike 48
+INSERT INTO
+    review (
+        id,
+        rating,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(), 1, now(), (
+            SELECT id
+            FROM hike
+            WHERE
+               name = 'Mountain climb'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'Jeanne'
+            LIMIT 1
+        )
+    );
+
+# Add a review to a hike 49
+INSERT INTO
+    review (
+        id,
+        rating,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(), 1, now(), (
+            SELECT id
+            FROM hike
+            WHERE 
+                name = 'A walk in the plains'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'admin'
+            LIMIT 1
+        )
+    );
+
+# Add a review to a hike 50
+INSERT INTO
+    review (
+        id,
+        rating,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(), 1, now(), (
+            SELECT id
+            FROM hike
+            WHERE
+               name = 'A walk in the plains'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'Mike'
+            LIMIT 1
+        )
+    );
+
+# Add a review to a hike 51
+INSERT INTO
+    review (
+        id,
+        rating,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(), 1, now(), (
+            SELECT id
+            FROM hike
+            WHERE
+               name ='Maritime walk'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'James'
+            LIMIT 1
+        )
+    );
+
+# Add a review to a hike 52
+INSERT INTO
+    review (
+        id,
+        rating,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(), 2, now(), (
+            SELECT id
+            FROM hike
+            WHERE 
+               name ='Maritime walk'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'Lea'
+            LIMIT 1
+        )
+    );
+
+# Add a review to a hike 53
+INSERT INTO
+    review (
+        id,
+        rating,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(), 2, now(), (
+            SELECT id
+            FROM hike
+            WHERE
+               name ='Sightseeing tour'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'Tom'
+            LIMIT 1
+        )
+    );
+
+# Add a review to a hike 54
+INSERT INTO
+    review (
+        id,
+        rating,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(), 2, now(), (
+            SELECT id
+            FROM hike
+            WHERE 
+               name ='Sightseeing tour'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'Jeanne'
+            LIMIT 1
+        )
+    );
+
+# Add a review to a hike 55
+INSERT INTO
+    review (
+        id,
+        rating,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(), 3, now(), (
+            SELECT id
+            FROM hike
+            WHERE
+               name ='Forest hike'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'admin'
+            LIMIT 1
+        )
+    );
+
+# Add a review to a hike 56
+INSERT INTO
+    review (
+        id,
+        rating,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(), 4, now(), (
+            SELECT id
+            FROM hike
+            WHERE
+               name ='Forest hike'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'Mike'
+            LIMIT 1
+        )
+    );
+
+# Add a review to a hike 57
+INSERT INTO
+    review (
+        id,
+        rating,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(), 4, now(), (
+            SELECT id
+            FROM hike
+            WHERE
+                name ='Around the lake'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'James'
+            LIMIT 1
+        )
+    );
+
+# Add a review to a hike 58
+INSERT INTO
+    review (
+        id,
+        rating,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(), 5, now(), (
+            SELECT id
+            FROM hike
+            WHERE 
+                name ='Around the lake'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'Lea'
+            LIMIT 1
+        )
+    );
+
+# Add a review to a hike 59
+INSERT INTO
+    review (
+        id,
+        rating,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(), 4, now(), (
+            SELECT id
+            FROM hike
+            WHERE  
+                name ='Cliffside hike'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'Tom'
+            LIMIT 1
+        )
+    );
+
+# Add a review to a hike 60
+INSERT INTO
+    review (
+        id,
+        rating,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(), 1, now(), (
+            SELECT id
+            FROM hike
+            WHERE  
+                name ='Cliffside hike'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'Jeanne'
+            LIMIT 1
+        )
+    );
+
+# Add a review to a hike 61
+INSERT INTO
+    review (
+        id,
+        rating,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(), 3, now(), (
+            SELECT id
+            FROM hike
+            WHERE  
+                name ='Walk next to the lake'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'admin'
+            LIMIT 1
+        )
+    );
+
+# Add a review to a hike 62
+INSERT INTO
+    review (
+        id,
+        rating,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(), 1, now(), (
+            SELECT id
+            FROM hike
+            WHERE  
+                name ='Walk next to the lake'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'Mike'
+            LIMIT 1
+        )
+    );
+
+# Add a review to a hike 63
+INSERT INTO
+    review (
+        id,
+        rating,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(), 4, now(), (
+            SELECT id
+            FROM hike
+            WHERE  
+                name ='To the top'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'James'
+            LIMIT 1
+        )
+    );
+
+# Add a review to a hike 64
+INSERT INTO
+    review (
+        id,
+        rating,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(), 5, now(), (
+            SELECT id
+            FROM hike
+            WHERE  
+                name ='To the top'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'Lea'
+            LIMIT 1
+        )
+    );
+
+# Add a review to a hike 65
+INSERT INTO
+    review (
+        id,
+        rating,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(), 2, now(), (
+            SELECT id
+            FROM hike
+            WHERE  
+                name ='Hot walk'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'Tom'
+            LIMIT 1
+        )
+    );
+
+# Add a review to a hike 66
+INSERT INTO
+    review (
+        id,
+        rating,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(), 4, now(), (
+            SELECT id
+            FROM hike
+            WHERE  
+                name ='Hot walk'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'Jeanne'
+            LIMIT 1
+        )
+    );
+
+# Add a review to a hike 67
+INSERT INTO
+    review (
+        id,
+        rating,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(), 2, now(), (
+            SELECT id
+            FROM hike
+            WHERE  
+                name ='Cold walk'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'admin'
+            LIMIT 1
+        )
+    );
+
+# Add a review to a hike 68
+INSERT INTO
+    review (
+        id,
+        rating,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(), 2, now(), (
+            SELECT id
+            FROM hike
+            WHERE  
+                name ='Cold walk'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'Mike'
+            LIMIT 1
+        )
+    );
+
+# Add a review to a hike 69
+INSERT INTO
+    review (
+        id,
+        rating,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(), 5, now(), (
+            SELECT id
+            FROM hike
+            WHERE  
+                name = 'Track the wildlife'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'James'
+            LIMIT 1
+        )
+    );
+
+# Add a review to a hike 70
+INSERT INTO
+    review (
+        id,
+        rating,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(), 5, now(), (
+            SELECT id
+            FROM hike
+            WHERE  
+                name = 'Track the wildlife'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'Lea'
+            LIMIT 1
+        )
+    );
+
+# Add a review to a hike 71
+INSERT INTO
+    review (
+        id,
+        rating,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(), 1, now(), (
+            SELECT id
+            FROM hike
+            WHERE  
+                name = 'Tree walk'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'Tom'
+            LIMIT 1
+        )
+    );
+
+# Add a review to a hike 72
+INSERT INTO
+    review (
+        id,
+        rating,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(), 1, now(), (
+            SELECT id
+            FROM hike
+            WHERE  
+                name = 'Tree walk'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'Jeanne'
+            LIMIT 1
+        )
+    );
+
+# Add a review to a hike 73
+INSERT INTO
+    review (
+        id,
+        rating,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(), 1, now(), (
+            SELECT id
+            FROM hike
+            WHERE
+                 name = 'Arid walk'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'admin'
+            LIMIT 1
+        )
+    );
+
+# Add a review to a hike 74
+INSERT INTO
+    review (
+        id,
+        rating,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(), 3, now(), (
+            SELECT id
+            FROM hike
+            WHERE 
+                 name = 'Arid walk'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'Mike'
+            LIMIT 1
+        )
+    );
+
+# Add a review to a hike 75
+INSERT INTO
+    review (
+        id,
+        rating,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(), 2, now(), (
+            SELECT id
+            FROM hike
+            WHERE  
+                 name = 'Maritime escape'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'James'
+            LIMIT 1
+        )
+    );
+
+# Add a review to a hike 76
+INSERT INTO
+    review (
+        id,
+        rating,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(), 3, now(), (
+            SELECT id
+            FROM hike
+            WHERE  
+                 name = 'Maritime escape'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'Lea'
+            LIMIT 1
+        )
+    );
+
+# Add a review to a hike 77
+INSERT INTO
+    review (
+        id,
+        rating,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(), 2, now(), (
+            SELECT id
+            FROM hike
+            WHERE  
+                 name = 'Hike along the lake'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'Tom'
+            LIMIT 1
+        )
+    );
+
+# Add a review to a hike 78
+INSERT INTO
+    review (
+        id,
+        rating,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(), 2, now(), (
+            SELECT id
+            FROM hike
+            WHERE  
+                 name = 'Hike along the lake'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'Jeanne'
+            LIMIT 1
+        )
+    );
+
+# Add a review to a hike 79
+INSERT INTO
+    review (
+        id,
+        rating,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(), 3, now(), (
+            SELECT id
+            FROM hike
+            WHERE  
+                 name = 'Wild walk'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'admin'
+            LIMIT 1
+        )
+    );
+
+# Add a review to a hike 80
+INSERT INTO
+    review (
+        id,
+        rating,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(), 4, now(), (
+            SELECT id
+            FROM hike
+            WHERE  
+                 name = 'Wild walk'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'Mike'
+            LIMIT 1
+        )
+    );
+
+# Add a review to a hike 81
+INSERT INTO
+    review (
+        id,
+        rating,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(), 4, now(), (
+            SELECT id
+            FROM hike
+            WHERE 
+                 name = 'Cold hike'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'James'
+            LIMIT 1
+        )
+    );
+
+# Add a review to a hike 82
+INSERT INTO
+    review (
+        id,
+        rating,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(), 1, now(), (
+            SELECT id
+            FROM hike
+            WHERE 
+                 name = 'Cold hike'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'Lea'
+            LIMIT 1
+        )
+    );
+
+# Add a review to a hike 83
+INSERT INTO
+    review (
+        id,
+        rating,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(), 5, now(), (
+            SELECT id
+            FROM hike
+            WHERE 
+                 name = 'Challenging the mountain'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'Tom'
+            LIMIT 1
+        )
+    );
+
+# Add a review to a hike 84
+INSERT INTO
+    review (
+        id,
+        rating,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(), 1, now(), (
+            SELECT id
+            FROM hike
+            WHERE 
+                 name = 'Challenging the mountain'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'Jeanne'
+            LIMIT 1
+        )
+    );
+
+# Add a review to a hike 85
+INSERT INTO
+    review (
+        id,
+        rating,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(), 5, now(), (
+            SELECT id
+            FROM hike
+            WHERE  
+                 name = 'River challenge'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'admin'
+            LIMIT 1
+        )
+    );
+
+# Add a review to a hike 86
+INSERT INTO
+    review (
+        id,
+        rating,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(), 5, now(), (
+            SELECT id
+            FROM hike
+            WHERE  
+                 name = 'River challenge'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'Mike'
+            LIMIT 1
+        )
+    );
+
+# Add a review to a hike 87
+INSERT INTO
+    review (
+        id,
+        rating,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(), 4, now(), (
+            SELECT id
+            FROM hike
+            WHERE  
+                 name = 'Beach walk'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'James'
+            LIMIT 1
+        )
+    );
+
+# Add a review to a hike 88
+INSERT INTO
+    review (
+        id,
+        rating,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(), 5, now(), (
+            SELECT id
+            FROM hike
+            WHERE  
+                 name = 'Beach walk'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'Lea'
+            LIMIT 1
+        )
+    );
+
+# Add a review to a hike 89
+INSERT INTO
+    review (
+        id,
+        rating,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(), 4, now(), (
+            SELECT id
+            FROM hike
+            WHERE  
+                 name = 'Simple sightseeing tour'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'Tom'
+            LIMIT 1
+        )
+    );
+
+# Add a review to a hike 90
+INSERT INTO
+    review (
+        id,
+        rating,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(), 4, now(), (
+            SELECT id
+            FROM hike
+            WHERE  
+                 name = 'Simple sightseeing tour'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'Jeanne'
+            LIMIT 1
+        )
+    );
+
+# Add a review to a hike 91
+INSERT INTO
+    review (
+        id,
+        rating,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(), 3, now(), (
+            SELECT id
+            FROM hike
+            WHERE  
+                 name = 'Village escape'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'admin'
+            LIMIT 1
+        )
+    );
+
+# Add a review to a hike 92
+INSERT INTO
+    review (
+        id,
+        rating,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(), 5, now(), (
+            SELECT id
+            FROM hike
+            WHERE 
+                 name = 'Village escape'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'Mike'
+            LIMIT 1
+        )
+    );
+
+# Add a review to a hike 93
+INSERT INTO
+    review (
+        id,
+        rating,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(), 3, now(), (
+            SELECT id
+            FROM hike
+            WHERE 
+                 name = 'Monument discovery hike'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'James'
+            LIMIT 1
+        )
+    );
+
+# Add a review to a hike 94
+INSERT INTO
+    review (
+        id,
+        rating,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(), 3, now(), (
+            SELECT id
+            FROM hike
+            WHERE 
+                 name = 'Monument discovery hike'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'Lea'
+            LIMIT 1
+        )
+    );
+
+# Add a review to a hike 95
+INSERT INTO
+    review (
+        id,
+        rating,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(), 1, now(), (
+            SELECT id
+            FROM hike
+            WHERE 
+                 name = 'Maritime hike'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'Tom'
+            LIMIT 1
+        )
+    );
+
+# Add a review to a hike 96
+INSERT INTO
+    review (
+        id,
+        rating,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(), 2, now(), (
+            SELECT id
+            FROM hike
+            WHERE  
+                 name = 'Maritime hike'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'Jeanne'
+            LIMIT 1
+        )
+    );
+
+# Add a review to a hike 97
+INSERT INTO
+    review (
+        id,
+        rating,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(), 1, now(), (
+            SELECT id
+            FROM hike
+            WHERE 
+                  name = 'Field view'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'admin'
+            LIMIT 1
+        )
+    );
+
+# Add a review to a hike 98
+INSERT INTO
+    review (
+        id,
+        rating,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(), 1, now(), (
+            SELECT id
+            FROM hike
+            WHERE  
+                  name = 'Field view'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'Mike'
+            LIMIT 1
+        )
+    );
+
+# Add a review to a hike 99
+INSERT INTO
+    review (
+        id,
+        rating,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(), 5, now(), (
+            SELECT id
+            FROM hike
+            WHERE  
+                  name = 'Stump walk'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'James'
+            LIMIT 1
+        )
+    );
+
+# Add a review to a hike 100
+INSERT INTO
+    review (
+        id,
+        rating,
+        createdAt,
+        hikeId,
+        userId
+    )
+VALUES (
+        uuid(), 3, now(), (
+            SELECT id
+            FROM hike
+            WHERE  
+                  name = 'Stump walk'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'Lea'
+            LIMIT 1
+        )
+    );
+
+# Create an alert
+INSERT INTO
+    alert (
+        id,
+        type,
+        latitude,
+        longitude,
+        createdAt,
+        authorId,
+        hikeId
+    )
+VALUES (
+        uuid(),
+        1,
+        1,
+        1,
+        now(), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'admin'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM hike
+            WHERE
+                name = 'Field view'
+            LIMIT 1
+        )
+    );
+
+# Create an alert
+INSERT INTO
+    alert (
+        id,
+        type,
+        latitude,
+        longitude,
+        createdAt,
+        authorId,
+        hikeId
+    )
+VALUES (
+        uuid(),
+        4,
+        1.1,
+        1.2,
+        now(), (
+            SELECT id
+            FROM user
+            WHERE
+                pseudo = 'admin'
+            LIMIT 1
+        ), (
+            SELECT id
+            FROM hike
+            WHERE
+                name = 'Simple sightseeing tour'
+            LIMIT 1
+        )
+    );
