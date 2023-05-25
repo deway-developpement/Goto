@@ -55,8 +55,8 @@ export default function HikeInfos({ hike, borderRadius, inProfile = false }) {
     });
 
     const StarsMode = Object.freeze({
-        average: 'average',
-        reviewed: 'reviewed',
+        average: true,
+        reviewed: false,
     });
 
     const [starsMode, setStarsMode] = useState(StarsMode.average);
@@ -98,6 +98,8 @@ export default function HikeInfos({ hike, borderRadius, inProfile = false }) {
             setStarsMode(StarsMode.reviewed);
         }
     }
+
+    console.log('HikeInfos', dataReview?.whoami.reviews[0]);
 
     return (
         <View
@@ -184,18 +186,6 @@ export default function HikeInfos({ hike, borderRadius, inProfile = false }) {
                             </TouchableWithoutFeedback>
                         );
                     })}
-                    <Text
-                        style={[
-                            styles.textDescription,
-                            {
-                                color: styles.text,
-                                paddingTop: 2,
-                                marginLeft: 10,
-                            },
-                        ]}
-                    >
-                        See reviews
-                    </Text>
                 </View>
             ) : null}
         </View>
