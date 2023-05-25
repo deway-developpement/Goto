@@ -65,12 +65,12 @@ function Stats({ count, distance, duration, elevation }) {
     );
 }
 
-function HikeCard({ performance, MyID }) {
+function HikeCard({ performance, MyID, FriendPseudo }) {
     const hike = performance.hike;
     const navigation = useNavigation();
 
     function handleClickHike(performanceId) {
-        navigation.navigate('Performance', { performanceId, MyID });
+        navigation.navigate('Performance', { performanceId, MyID, FriendPseudo });
     }
 
     return (
@@ -120,7 +120,9 @@ function Historic({ hikes, MyID, FriendPseudo = '' }) {
             <FlatList
                 data={hikes}
                 style={{ marginBottom: 26 }}
-                renderItem={({ item }) => <HikeCard performance={item} MyID={MyID} />}
+                renderItem={({ item }) => (
+                    <HikeCard performance={item} MyID={MyID} FriendPseudo={FriendPseudo} />
+                )}
                 keyExtractor={(item) => item.id}
                 horizontal={true}
                 showsHorizontalScrollIndicator={false}

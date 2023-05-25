@@ -21,6 +21,7 @@ export default function Performance({ route }) {
     const navigation = useNavigation();
     const performanceId = route.params?.performanceId;
     const MyID = route.params?.MyID;
+    const FriendPseudo = route.params?.FriendPseudo;
 
     const windowHeight = Dimensions.get('window').height;
 
@@ -55,6 +56,7 @@ export default function Performance({ route }) {
 
     const { data: performance, loading } = useQuery(GET_PERFORMANCE, {
         variables: { PerfId: performanceId, UserId: MyID },
+        errorPolicy: 'all',
     });
 
     if (loading) {
@@ -119,12 +121,7 @@ export default function Performance({ route }) {
                                     width: '100%',
                                 }}
                             >
-                                <Text
-                                    style={[
-                                        styles.textDescription,
-                                        // { marginLeft: 0, marginBottom: 4 },
-                                    ]}
-                                >
+                                <Text style={[styles.textDescription]}>
                                     {new Date(performance.performance.date).toUTCString()}
                                 </Text>
                             </View>
@@ -177,7 +174,7 @@ export default function Performance({ route }) {
                                     },
                                 ]}
                             >
-                                Your performance
+                                {FriendPseudo === '' ? 'Your' : FriendPseudo + '\'s'} performance
                             </Text>
                             <View
                                 style={{

@@ -91,7 +91,7 @@ function ProfileScreen() {
                 performances(sorting: { field: date, direction: DESC }) {
                     id
                     hike {
-                        # id
+                        id
                         name
                         description
                         category {
