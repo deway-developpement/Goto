@@ -1,9 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Text, View, TouchableWithoutFeedback } from 'react-native';
 import { useTheme } from '@react-navigation/native';
 import stylesheet from './style';
 import { IconComp } from '../Icon/Icon';
 import { gql, useApolloClient, useQuery } from '@apollo/client';
+import { Share } from 'react-native';
+import { AxiosContext } from '../../providers/AxiosContext';
+import { Buffer } from 'buffer';
 
 const WHOAMI = gql`
     query whoami($hikeID: ID) {
@@ -25,6 +28,7 @@ const GET_REVIEWS = gql`
                     rating
                 }
             }
+            track
         }
     }
 `;
@@ -41,6 +45,7 @@ export default function HikeInfos({ hike, borderRadius, inProfile = false }) {
     const { colors } = useTheme();
     const styles = stylesheet(colors);
     const client = useApolloClient();
+    const { authAxios } = useContext(AxiosContext);
 
     const { data: dataReview, refetch } = useQuery(WHOAMI, {
         variables: {
@@ -98,6 +103,20 @@ export default function HikeInfos({ hike, borderRadius, inProfile = false }) {
         }
     }
 
+    async function share(filename) {
+        //     // read content of file to base64
+        //     const res = await authAxios.get('files/tracks/' + filename);
+        //     const fileData = res.data;
+        //     const base64Data = Buffer.from(fileData, 'ascii').toString('base64');
+
+        //     const base64 = 'data:application/gpx+xml;base64,' + base64Data;
+
+        Share.share({
+            title: hike.name,
+            url: 'https://deway.fr/goto-api/files/tracks/' + filename,
+        });
+    }
+
     return (
         <View
             style={[
@@ -118,6 +137,7 @@ export default function HikeInfos({ hike, borderRadius, inProfile = false }) {
                     flex: 1,
                     flexDirection: 'row',
                     justifyContent: 'space-between',
+                    alignItems: 'flex-start',
                     width: '100%',
                 }}
             >
@@ -125,11 +145,32 @@ export default function HikeInfos({ hike, borderRadius, inProfile = false }) {
                     {hike.category.name}
                 </Text>
                 {!inProfile ? (
-                    <TouchableWithoutFeedback onPress={() => console.log('LIKE HIKE', hike.name)}>
-                        <View>
-                            <IconComp color={colors.primary} name={'heartempty'} pos={0} />
-                        </View>
-                    </TouchableWithoutFeedback>
+                    <View
+                        style={{
+                            justifyContent: 'flex-end',
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                        }}
+                    >
+                        <TouchableWithoutFeedback onPress={() => share(dataAvg.hike.track)}>
+                            <View>
+                                <IconComp color={colors.primary} name={'share'} pos={0} size={18} />
+                            </View>
+                        </TouchableWithoutFeedback>
+                        <View style={{ width: 10 }} />
+                        <TouchableWithoutFeedback
+                            onPress={() => console.log('LIKE HIKE', hike.name)}
+                        >
+                            <View>
+                                <IconComp
+                                    color={colors.primary}
+                                    name={'heartempty'}
+                                    pos={0}
+                                    size={18}
+                                />
+                            </View>
+                        </TouchableWithoutFeedback>
+                    </View>
                 ) : null}
             </View>
             <Text
