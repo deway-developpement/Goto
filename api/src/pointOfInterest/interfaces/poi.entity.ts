@@ -19,7 +19,7 @@ export class PointOfInterestEntity {
     @Column()
     name: string;
 
-    @Column()
+    @Column('text')
     description: string;
 
     @Column()
