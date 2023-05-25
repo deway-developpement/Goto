@@ -1,16 +1,20 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Text, Image, View, TouchableWithoutFeedback, Dimensions } from 'react-native';
 import { useTheme } from '@react-navigation/native';
 import stylesheet from './style';
 import { useNavigation } from '@react-navigation/native';
 import { gql, useQuery } from '@apollo/client';
+import { LocationContext } from '../../providers/LocationProvider';
 
-const GET_IMAGE_CATEGORIES = (categoryName) => {
+const GET_IMAGE_CATEGORIES = (categoryName, location) => {
     if (categoryName == 'Around you') {
+        if (!location?.coords) {
+            return null;
+        }
         return {
             query: gql`
-                query {
-                    hikes: getHikeAround(lat: 1, lon: 1, distance: 50, limit: 1) {
+                query getHikeAround($lat: Float!, $lon: Float!) {
+                    hikes: getHikeAround(lat: $lat, lon: $lon, distance: 50, limit: 1) {
                         edges {
                             node {
                                 photos {
@@ -21,7 +25,10 @@ const GET_IMAGE_CATEGORIES = (categoryName) => {
                     }
                 }
             `,
-            variables: {},
+            variables: {
+                lat: location?.coords.latitude,
+                lon: location?.coords.longitude,
+            },
         };
     }
     if (categoryName == 'Added this month') {
@@ -84,15 +91,17 @@ export default function Category(props) {
 
     const windowWidth = Dimensions.get('window').width;
 
+    const { location } = useContext(LocationContext);
+
     function handleClickCategory(category, categoryName) {
         navigation.navigate('Search', {
             category: categoryName,
         });
     }
 
-    if (GET_IMAGE_CATEGORIES(props.name) !== null) {
-        var { data: imageCategory } = useQuery(GET_IMAGE_CATEGORIES(props.name).query, {
-            variables: GET_IMAGE_CATEGORIES(props.name).variables,
+    if (GET_IMAGE_CATEGORIES(props.name, location) !== null) {
+        var { data: imageCategory } = useQuery(GET_IMAGE_CATEGORIES(props.name, location).query, {
+            variables: GET_IMAGE_CATEGORIES(props.name, location).variables,
         });
     }
 

@@ -20,6 +20,7 @@
     "@react-navigation/drawer": "^6.6.0",
     "@react-navigation/native": "^6.1.4",
     "@react-navigation/native-stack": "^6.9.10",
+    "@rneui/themed": "^4.0.0-rc.7",
     "@types/react-native": "~0.70.6",
     "apollo-link": "^1.2.14",
     "apollo-link-logger": "^2.0.0",
@@ -54,6 +55,8 @@
     "react-native-safe-area-context": "4.4.1",
     "react-native-screens": "~3.18.0",
     "react-native-web": "0.18.12",
+    "react-redux": "^8.0.5",
+    "redux": "^4.2.1",
     "typings": "^2.1.1",
     "xmldom": "^0.6.0"
   },

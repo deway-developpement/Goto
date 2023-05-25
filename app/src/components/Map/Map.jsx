@@ -1,13 +1,16 @@
-import React, { useState, useEffect } from 'react';
-import MapView, { Marker, Polyline, Overlay } from 'react-native-maps';
-import { useTheme } from '@react-navigation/native';
+import React, { useState, useEffect, useContext } from 'react';
+import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
+import { default as MAP_STYLE } from '../../../assets/maps/style.json';
 import CONTENTGPX from './gpx';
 import { DOMParser } from 'xmldom';
+import { LocationContext } from '../../providers/LocationProvider';
+import { connect } from 'react-redux';
 
-export default function Map({ location, image }) {
-    const { colors } = useTheme();
+function Map({ children }) {
     let [leftPoints, setLeftPoints] = useState([]);
     let [passedPoints, setPassedPoints] = useState([]);
+
+    const { location, permission } = useContext(LocationContext);
 
     function parseFile() {
         const doc = new DOMParser().parseFromString(CONTENTGPX, 'text/xml');
@@ -39,65 +42,33 @@ export default function Map({ location, image }) {
         setLeftPoints(gpxPathLeft);
     }
 
+    useEffect(() => {
+        advance();
+    }, []);
+
     return (
         <MapView
             initialRegion={{
-                latitude: 0,
-                longitude: 0,
-                latitudeDelta: 0.00922,
-                longitudeDelta: 0.00421,
-            }}
-            region={{
                 latitude: parseFloat(location?.coords?.latitude),
                 longitude: parseFloat(location?.coords?.longitude),
-                latitudeDelta: 0.00922,
-                longitudeDelta: 0.00421,
+                latitudeDelta: 0.02,
+                longitudeDelta: 0.02,
             }}
             showsPointsOfInterest={false}
+            showsUserLocation={permission.granted === true}
+            pitchEnabled={false}
+            provider={PROVIDER_GOOGLE}
+            customMapStyle={MAP_STYLE}
             style={{ flex: 1, width: '100%' }}
-            maxZoomLevel={17}
+            maxZoomLevel={18}
         >
-            <Polyline
-                coordinates={passedPoints}
-                strokeColor={colors.borderLineSecondary}
-                strokeWidth={6}
-            />
-            <Polyline
-                coordinates={passedPoints}
-                strokeColor={colors.lineSecondary}
-                strokeWidth={4}
-            />
-            <Polyline
-                coordinates={leftPoints}
-                strokeColor={colors.borderLinePrimary}
-                strokeWidth={6}
-            />
-            <Polyline coordinates={leftPoints} strokeColor={colors.linePrimary} strokeWidth={4} />
-            <Marker
-                coordinate={{
-                    latitude: parseFloat(location?.coords?.latitude),
-                    longitude: parseFloat(location?.coords?.longitude),
-                }}
-                onPress={() => {
-                    advance();
-                }}
-            />
-            {image && (
-                <Overlay
-                    bounds={[
-                        [
-                            parseFloat(location?.coords?.latitude),
-                            parseFloat(location?.coords?.longitude),
-                        ],
-                        [
-                            parseFloat(location?.coords?.latitude) + 0.01,
-                            parseFloat(location?.coords?.longitude) + 0.01,
-                        ],
-                    ]}
-                    image={{ uri: image.uri }}
-                    opacity={0.5}
-                />
-            )}
+            {children}
         </MapView>
     );
 }
+
+const mapStateToProps = (state) => {
+    return { overlay: state };
+};
+
+export default connect(mapStateToProps)(Map);

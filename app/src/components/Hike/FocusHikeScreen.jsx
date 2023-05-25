@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Text, Image, View, TouchableWithoutFeedback, StyleSheet, Dimensions } from 'react-native';
 import { useTheme } from '@react-navigation/native';
 import stylesheet from './style';
@@ -9,6 +9,7 @@ import HikeInfos from './HikeInfos';
 import PointsOfInterests from './PointOfInterest';
 import SplashScreen from '../SplashScreen/SplashScreen';
 import { ScrollView } from 'react-native';
+import { LocationContext } from '../../providers/LocationProvider';
 
 function Tag(props) {
     const { colors } = useTheme();
@@ -33,6 +34,7 @@ export default function FocusHikeScreen({ route }) {
     const styles = stylesheet(colors);
     const navigation = useNavigation();
     const hikeId = route.params?.hikeId;
+    const { location, permission } = useContext(LocationContext);
 
     if (!hikeId) {
         navigation.goBack();
@@ -42,7 +44,7 @@ export default function FocusHikeScreen({ route }) {
     const windowHeight = Dimensions.get('window').height;
 
     const GET_HIKE = gql`
-        query hike($id: ID!) {
+        query hike($id: ID!, $lat: Float!, $lon: Float!) {
             hike(id: $id) {
                 id
                 name
@@ -78,7 +80,7 @@ export default function FocusHikeScreen({ route }) {
                         filename
                     }
                 }
-                distanceFrom(lat: 1, lon: 1)
+                distanceFrom(lat: $lat, lon: $lon)
             }
         }
     `;
@@ -86,6 +88,8 @@ export default function FocusHikeScreen({ route }) {
     const { data, loading } = useQuery(GET_HIKE, {
         variables: {
             id: hikeId,
+            lat: location?.coords.latitude,
+            lon: location?.coords.longitude,
         },
     });
 
@@ -346,33 +350,38 @@ export default function FocusHikeScreen({ route }) {
                                         marginTop: 15,
                                     }}
                                 />
-                                <Text
-                                    style={[
-                                        styles.textDescription,
-                                        {
-                                            marginTop: 15,
-                                            marginBottom: 10,
-                                        },
-                                    ]}
-                                >
-                                    Distance from here
-                                </Text>
-                                <Text
-                                    style={[
-                                        styles.textDescription,
-                                        {
-                                            color: colors.text,
-                                        },
-                                    ]}
-                                >
-                                    {
-                                        // round to 2 decimals
-                                        Math.round(
-                                            (data?.hike?.distanceFrom + Number.EPSILON) * 100
-                                        ) / 100
-                                    }{' '}
-                                    Km
-                                </Text>
+                                {permission.granted && (
+                                    <>
+                                        <Text
+                                            style={[
+                                                styles.textDescription,
+                                                {
+                                                    marginTop: 15,
+                                                    marginBottom: 10,
+                                                },
+                                            ]}
+                                        >
+                                            Distance from here
+                                        </Text>
+                                        <Text
+                                            style={[
+                                                styles.textDescription,
+                                                {
+                                                    color: colors.text,
+                                                },
+                                            ]}
+                                        >
+                                            {
+                                                // round to 2 decimals
+                                                Math.round(
+                                                    (data?.hike?.distanceFrom + Number.EPSILON) *
+                                                        100
+                                                ) / 100
+                                            }{' '}
+                                            Km
+                                        </Text>
+                                    </>
+                                )}
                                 <TouchableWithoutFeedback
                                     onPress={() => console.log('OPEN HIKE PATH')}
                                 >

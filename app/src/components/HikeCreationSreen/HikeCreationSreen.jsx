@@ -67,7 +67,6 @@ export default function HikeCreationScreen({ navigation }) {
     const { data: tags } = useQuery(GET_TAGS);
 
     function toggleTag(tagId) {
-        console.log(tagId);
         if (tagList.includes(tagId)) {
             setTagList(tagList.filter((id) => id !== tagId));
         } else {

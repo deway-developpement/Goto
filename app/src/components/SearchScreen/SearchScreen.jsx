@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useContext, useRef } from 'react';
 import { Text, TouchableWithoutFeedback } from 'react-native';
 import { useTheme } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -9,12 +9,13 @@ import { FlatList } from 'react-native-gesture-handler';
 import { View } from 'react-native';
 import { TextInput } from 'react-native';
 import { IconComp } from '../Icon/Icon';
+import { LocationContext } from '../../providers/LocationProvider';
 
 const GET_HIKES_AROUND_ME = gql`
-    query hikes($limit: Int!, $cursor: String, $search: String) {
+    query hikes($lon: Float!, $lat: Float!, $limit: Int!, $cursor: String, $search: String) {
         hikes: getHikeAround(
-            lon: 1
-            lat: 1
+            lon: $lon
+            lat: $lat
             distance: 69
             limit: $limit
             cursor: $cursor
@@ -91,18 +92,22 @@ const GET_HIKES = gql`
     }
 `;
 
-export const QUERIES_CONFIG = (category, search, cursor, limit) => {
-    if (category === 'Around you') {
+export const QUERIES_CONFIG = (category, search, cursor, limit, location) => {
+    if (category === 'Around you' && location?.coords) {
         return {
             query: GET_HIKES_AROUND_ME,
             variables: {
                 limit: limit,
                 cursor: cursor,
+                lon: location?.coords.longitude,
+                lat: location?.coords.latitude,
             },
             variablesSearch: {
                 search: search.split(' ').join('%') + '%',
                 limit: limit,
                 cursor: cursor,
+                lon: location?.coords.longitude,
+                lat: location?.coords.latitude,
             },
         };
     }
@@ -199,8 +204,9 @@ export default function SearchScreen({ route, navigation }) {
     const searchBarRef = useRef(null);
 
     const limitByPage = 2;
+    const { location } = useContext(LocationContext);
 
-    const CONFIG = QUERIES_CONFIG(route.params?.category, '', '', limitByPage);
+    const CONFIG = QUERIES_CONFIG(route.params?.category, '', '', limitByPage, location);
 
     const { data, loading, fetchMore, refetch } = useQuery(CONFIG.query, {
         variables: CONFIG.variables,
@@ -214,7 +220,7 @@ export default function SearchScreen({ route, navigation }) {
     }
 
     function handleSearch(text) {
-        const CONFIG = QUERIES_CONFIG(route.params?.category, text, '', limitByPage);
+        const CONFIG = QUERIES_CONFIG(route.params?.category, text, '', limitByPage, location);
         refetch(CONFIG.variablesSearch);
     }
 
