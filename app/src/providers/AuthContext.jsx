@@ -1,5 +1,5 @@
-import React, { createContext, useEffect, useState } from 'react'; 
-import { storeAuth, getAuth } from '../store/authStore';
+import React, { createContext, useEffect, useState } from 'react';
+import { storeAuth, getAuth } from '../storage/authStore';
 
 const AuthContext = createContext(null);
 const { Provider } = AuthContext;

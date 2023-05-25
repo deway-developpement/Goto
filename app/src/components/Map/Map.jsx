@@ -1,31 +1,18 @@
 import React, { useState, useEffect, useContext } from 'react';
-import MapView, { Polyline, Overlay, PROVIDER_GOOGLE } from 'react-native-maps';
+import MapView, { Polyline, PROVIDER_GOOGLE } from 'react-native-maps';
 import { default as MAP_STYLE } from '../../../assets/maps/style.json';
 import { useTheme } from '@react-navigation/native';
 import CONTENTGPX from './gpx';
 import { DOMParser } from 'xmldom';
 import { LocationContext } from '../../providers/LocationProvider';
+import { connect } from 'react-redux';
 
-export default function Map({
-    image,
-    leftImage,
-    topImage,
-    widthImage,
-    setWidthImage,
-    heightImage,
-    setHeightImage,
-    angleImage,
-}) {
+function Map({ children }) {
     const { colors } = useTheme();
     let [leftPoints, setLeftPoints] = useState([]);
     let [passedPoints, setPassedPoints] = useState([]);
 
     const { location, permission } = useContext(LocationContext);
-
-    useEffect(() => {
-        setWidthImage(0.01);
-        setHeightImage(0.01);
-    }, [image]);
 
     function parseFile() {
         const doc = new DOMParser().parseFromString(CONTENTGPX, 'text/xml');
@@ -61,19 +48,6 @@ export default function Map({
         advance();
     }, []);
 
-    const y1 = parseFloat(location?.coords?.latitude) + topImage;
-    const x1 = parseFloat(location?.coords?.longitude) + leftImage;
-    const y2 = parseFloat(location?.coords?.latitude) + topImage + heightImage;
-    const x2 = parseFloat(location?.coords?.longitude) + leftImage + widthImage;
-
-    console.log(y1, x1, y2, x2);
-    console.log(
-        y1 - parseFloat(location?.coords?.latitude),
-        x1 - parseFloat(location?.coords?.longitude),
-        y2 - parseFloat(location?.coords?.latitude),
-        x2 - parseFloat(location?.coords?.longitude)
-    );
-
     return (
         <MapView
             initialRegion={{
@@ -106,17 +80,13 @@ export default function Map({
                 strokeWidth={6}
             />
             <Polyline coordinates={leftPoints} strokeColor={colors.linePrimary} strokeWidth={4} />
-            {image && (
-                <Overlay
-                    bounds={[
-                        [y1, x1],
-                        [y2, x2],
-                    ]}
-                    image={{ uri: image.uri }}
-                    bearing={angleImage}
-                    opacity={0.8}
-                />
-            )}
+            {children}
         </MapView>
     );
 }
+
+const mapStateToProps = (state) => {
+    return { overlay: state };
+};
+
+export default connect(mapStateToProps)(Map);
