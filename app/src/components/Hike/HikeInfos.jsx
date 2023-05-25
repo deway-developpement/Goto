@@ -6,10 +6,29 @@ import { IconComp } from '../Icon/Icon';
 import { gql, useApolloClient, useQuery } from '@apollo/client';
 
 
-export default function HikeInfos({ hike, borderRadius, rating=69, inProfile = false, canRate=false }) {
+export default function HikeInfos({ hike, borderRadius, inProfile = false, inSearch}) {
     const { colors } = useTheme();
     const styles = stylesheet(colors);
     const client = useApolloClient();
+
+    const WHOAMI = gql `
+        query whoami($hikeID:ID) {
+            whoami {
+                reviews(filter:{hike:{id:{eq:$hikeID}}}){
+                    rating
+                }
+            }
+        }
+    `;
+    //rating={(DataReview?.whoami?.reviews.length>0 && DataReview?.whoami?.reviews[0]?.rating) || 0} canRate={DataReview?.whoami?.reviews.length>0 && DataReview?.whoami?.reviews[0]?.rating ? false : true
+    const { 
+        data:DataReview, 
+        loading:loadingReview 
+    } = useQuery(WHOAMI, {
+        variables: {
+            hikeID: hike.id,
+        },
+    });
 
     const GET_REVIEWS = gql`
         query hike($hikeId: ID!) {
@@ -28,12 +47,25 @@ export default function HikeInfos({ hike, borderRadius, rating=69, inProfile = f
             hikeId: hike.id,
         },
     });
+    const [avgRatingState, setAvgRatingState] = React.useState(0);    
+    const [canRateState, setCanRateState] = React.useState(true);
+    
+    React.useEffect(() => {
+        if(!loading && avgRatingState!=data?.hike?.reviewsAggregate[0]?.avg?.rating && (!canRateState || inSearch)){
+            setAvgRatingState(data?.hike?.reviewsAggregate[0]?.avg?.rating);
+        }
+    }, [loading]);
+    
+    React.useEffect(() => {
+        if (!inSearch && !loadingReview && DataReview?.whoami?.reviews.length>0 && DataReview?.whoami?.reviews[0]?.rating){
+            setCanRateState(false);
+            setAvgRatingState(DataReview?.whoami?.reviews[0]?.rating);
+        }
+    }, [loadingReview]);
 
-    const [avgRatingState, setAvgRatingState] = React.useState(rating===69  ? data?.hike?.reviewsAggregate[0]?.avg?.rating || 0 : rating);
-    const [canRateState, setCanRateState] = React.useState(canRate);
     async function rate(star){
-        if (canRateState){
-            console.log('rate', star+1);
+        if (!inSearch && canRateState){
+            setCanRateState(false);
             const ADD_REVIEW = gql `
             mutation addReview($id: String!, $rating: Float!){
                 addReview(input:{
@@ -53,13 +85,9 @@ export default function HikeInfos({ hike, borderRadius, rating=69, inProfile = f
                 },
                 errorPolicy: 'all',
             });
-            setCanRateState(false);
-        }
-
-        
-
+            
+        }       
     }
-    
     return (
         <View
             style={[
@@ -128,10 +156,10 @@ export default function HikeInfos({ hike, borderRadius, rating=69, inProfile = f
                         Array.from({ length: 5 }, () => 0).map((_, index) => {
                             return (
                                 <TouchableWithoutFeedback key={index} onPress={()=>rate(index)}>
-                                    <View style={{backgroundColor:'#FF0000', marginRight:7}}>
+                                    <View style={{marginRight:7}}>
                                         <IconComp
                                             color={
-                                                index < avgRatingState ? colors.starFill : colors.starEmpty
+                                                index < avgRatingState ? ((inSearch || canRateState) ? colors.starFill : colors.logo) : colors.starEmpty
                                             }
                                             name={'star'}
                                             size={22}

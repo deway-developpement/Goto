@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import { Text, TouchableWithoutFeedback } from 'react-native';
-import { useTheme } from '@react-navigation/native';
+import { useTheme, useIsFocused } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import stylesheet from './style';
 import { gql, useQuery } from '@apollo/client';

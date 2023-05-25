@@ -50,25 +50,6 @@ export default function FocusHikeScreen({ route }) {
     //     }
     // `;
 
-    const WHOAMI = gql `
-        query whoami($hikeID:ID) {
-            whoami {
-                reviews(filter:{hike:{id:{eq:$hikeID}}}){
-                        rating
-                }
-            }
-        }
-    `;
-
-    const { 
-        data:DataReview, 
-        loading:loadingReview 
-    } = useQuery(WHOAMI, {
-        variables: {
-            hikeID: hikeId,
-        },
-    });
-
     const GET_HIKE = gql`
         query hike($id: ID!) {
             hike(id: $id) {
@@ -175,7 +156,7 @@ export default function FocusHikeScreen({ route }) {
                             ]}
                         >
                             <View style={{ height: windowHeight * 0.6 }} />
-                            <HikeInfos hike={data.hike} borderRadius={true} rating={(DataReview?.whoami?.reviews.length>0 && DataReview?.whoami?.reviews[0]?.rating) || 0} canRate={DataReview?.whoami?.reviews.length>0 && DataReview?.whoami?.reviews[0]?.rating ? false : true}/>
+                            <HikeInfos hike={data.hike} borderRadius={true} inSearch={false} />
                             <View style={[styles.containerFocus, { paddingHorizontal: 0 }]}>
                                 <Text
                                     style={[
