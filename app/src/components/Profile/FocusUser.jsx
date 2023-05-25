@@ -8,7 +8,6 @@ import { Icon } from '../Icon/Icon';
 import SplashScreen from '../SplashScreen/SplashScreen';
 import { Historic, Stats } from './ProfileComplements';
 import { Button } from 'react-native-elements';
-import { TouchableWithoutFeedback } from 'react-native';
 
 export default function FocusUser({ route }) {
     const { colors } = useTheme();

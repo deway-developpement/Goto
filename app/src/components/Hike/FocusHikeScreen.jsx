@@ -172,7 +172,7 @@ export default function FocusHikeScreen({ route }) {
                             ]}
                         >
                             <View style={{ height: windowHeight * 0.6 }} />
-                            <HikeInfos hike={data.hike} borderRadius={true} inSearch={false} />
+                            <HikeInfos hike={data.hike} borderRadius={true} interactif={true} />
                             <View style={[styles.containerFocus, { paddingHorizontal: 0 }]}>
                                 <Text
                                     style={[

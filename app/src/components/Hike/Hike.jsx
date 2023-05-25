@@ -63,7 +63,7 @@ export default function Hike({ id }) {
                             },
                         ]}
                     />
-                    <HikeInfos hike={data.hike} inSearch={true}/>
+                    <HikeInfos hike={data.hike} />
                 </View>
             </TouchableWithoutFeedback>
         );
