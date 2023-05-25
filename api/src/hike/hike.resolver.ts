@@ -107,4 +107,9 @@ export class HikeResolver extends CRUDResolver(HikeDTO, {
     ): Promise<number> {
         return this.service.computeDistance(hike, lat, lon);
     }
+
+    @ResolveField(() => Boolean)
+    async isLiked(@CurrentUser() user: UserDTO, @Parent() hike: HikeDTO): Promise<boolean> {
+        return this.service.isLiked(user, hike.id);
+    }
 }

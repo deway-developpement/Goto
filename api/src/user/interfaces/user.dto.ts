@@ -11,6 +11,7 @@ import { fieldMiddleware } from '../../auth/auth.middleware';
 import { PhotoDTO } from '../../photo/interfaces/photo.dto';
 import { PerformanceDTO } from '../../performance/interfaces/performance.dto';
 import { ReviewDTO } from '../../review/interfaces/review.dto';
+import { HikeDTO } from '../../hike/interfaces/hike.dto';
 
 @ObjectType('User')
 @KeySet(['id'])
@@ -34,6 +35,12 @@ import { ReviewDTO } from '../../review/interfaces/review.dto';
     enableAggregate: true,
     enableTotalCount: true,
 })
+@UnPagedRelation('likes', () => HikeDTO, {
+    disableRemove: true,
+    disableUpdate: true,
+    enableAggregate: true,
+    enableTotalCount: true,
+})
 export class UserDTO {
     @IDField(() => ID)
     id!: string;
@@ -52,6 +59,9 @@ export class UserDTO {
 
     @FilterableField()
     credidential!: number;
+
+    @FilterableField()
+    public!: boolean;
 
     @FilterableField(() => Date)
     createdAt!: Date;
