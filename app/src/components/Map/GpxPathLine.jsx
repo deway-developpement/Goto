@@ -3,7 +3,12 @@ import { Polyline } from 'react-native-maps';
 import { useTheme } from '@react-navigation/native';
 import { DOMParser } from 'xmldom';
 
-export default function GpxPathLine({ fileData, cameraRef }) {
+export default function GpxPathLine({
+    fileData,
+    cameraRef,
+    edgePadding = { top: 100, right: 100, bottom: 100, left: 100 },
+    animated = true,
+}) {
     const { colors } = useTheme();
     const [leftPoints, setLeftPoints] = useState([]);
     const [passedPoints, setPassedPoints] = useState([]);
@@ -59,8 +64,8 @@ export default function GpxPathLine({ fileData, cameraRef }) {
                         { latitude: minLat, longitude: minLon },
                     ],
                     {
-                        edgePadding: { top: 100, right: 100, bottom: 100, left: 100 },
-                        animated: true,
+                        edgePadding,
+                        animated,
                     }
                 );
                 setLoaded(true);
