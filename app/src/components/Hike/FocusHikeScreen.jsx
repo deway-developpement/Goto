@@ -45,6 +45,14 @@ export default function FocusHikeScreen({ route }) {
     const windowWidth = Dimensions.get('window').width;
     const windowHeight = Dimensions.get('window').height;
 
+    // const WHOAMI = gql`
+    //     query whoami($lastMonth: DateTime!, $PseudoFilter: String!){
+    //         whoami {
+    //             id
+    //         }
+    //     }
+    // `;
+
     const GET_HIKE = gql`
         query hike($id: ID!, $lat: Float!, $lon: Float!) {
             hike(id: $id) {
@@ -164,7 +172,7 @@ export default function FocusHikeScreen({ route }) {
                             ]}
                         >
                             <View style={{ height: windowHeight * 0.6 }} />
-                            <HikeInfos hike={data.hike} borderRadius={true} />
+                            <HikeInfos hike={data.hike} borderRadius={true} interactif={true} />
                             <View style={[styles.containerFocus, { paddingHorizontal: 0 }]}>
                                 <Text
                                     style={[
