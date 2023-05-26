@@ -193,7 +193,6 @@ export default function HikeInfos({ hike, borderRadius, inProfile = false }) {
                     styles.textDescription,
                     { alignSelf: 'flex-start', marginTop: 8, paddingBottom: 8 },
                 ]}
-                numberOfLines={2}
             >
                 {hike.description}
             </Text>

@@ -67,6 +67,11 @@ export default function Performance({ route }) {
     const rating = performance?.performance?.hike?.reviews[0]?.rating
         ? performance?.performance?.hike?.reviews[0]?.rating
         : avgRating;
+    const hikeId = performance?.performance?.hike?.id;
+
+    function handleClick() {
+        navigation.navigate('FocusHike', { hikeId });
+    }
 
     return (
         <>
@@ -125,9 +130,30 @@ export default function Performance({ route }) {
                                     {new Date(performance.performance.date).toUTCString()}
                                 </Text>
                             </View>
-                            <Text style={[styles.textHeader, { alignSelf: 'flex-start' }]}>
-                                {performance.performance.hike.name}
-                            </Text>
+                            <View
+                                style={{
+                                    alignItems: 'center',
+                                    flexDirection: 'row',
+                                    justifyContent: 'space-between',
+                                    display: 'flex',
+                                    width: '100%',
+                                }}
+                            >
+                                <Text style={[styles.textHeader, { alignSelf: 'flex-start' }]}>
+                                    {performance.performance.hike.name}
+                                </Text>
+                                <TouchableWithoutFeedback
+                                    onPress={handleClick}
+                                    style={{ marginRight: 7 }}
+                                >
+                                    <Icon
+                                        name="export"
+                                        color={colors.primary}
+                                        size={25}
+                                        style={{ marginRight: 7 }}
+                                    />
+                                </TouchableWithoutFeedback>
+                            </View>
                             <Text style={[styles.textDescription]}>
                                 {performance.performance.hike.description}
                             </Text>

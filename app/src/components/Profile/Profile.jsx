@@ -21,6 +21,7 @@ import { Stats, Historic, Friends } from './ProfileComplements.jsx';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Performance from './Performance';
 import FocusUser from './FocusUser';
+import FocusHikeScreen from '../Hike/FocusHikeScreen';
 
 const stack = createNativeStackNavigator();
 
@@ -47,6 +48,7 @@ export default function ProfileWrapper({ navigation }) {
             <stack.Screen name="ProfileScreen" component={ProfileScreen} />
             <stack.Screen name="FocusUser" component={FocusUser} />
             <stack.Screen name="Performance" component={Performance} />
+            <stack.Screen name="FocusHike" component={FocusHikeScreen} />
         </stack.Navigator>
     );
 }
