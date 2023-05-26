@@ -386,7 +386,19 @@ export default function Performance({ route }) {
                                     pitchEnabled={false}
                                     ref={mapRef}
                                 >
-                                    {file && <GpxPathLine fileData={file} cameraRef={mapRef} />}
+                                    {file && (
+                                        <GpxPathLine
+                                            fileData={file}
+                                            cameraRef={mapRef}
+                                            edgePadding={{
+                                                top: 50,
+                                                right: 50,
+                                                bottom: 50,
+                                                left: 50,
+                                            }}
+                                            animated={false}
+                                        />
+                                    )}
                                 </MapView>
                             </View>
                         </View>
