@@ -194,7 +194,12 @@ export default function Performance({ route }) {
                                 }}
                             >
                                 <Text style={[styles.textDescription]}>
-                                    {new Date(data.performance.date).toUTCString()}
+                                    {new Date(data.performance.date).toLocaleDateString('en-EN', {
+                                        year: 'numeric',
+                                        month: 'long',
+                                        day: 'numeric',
+                                        weekday: 'long',
+                                    })}
                                 </Text>
                             </View>
                             <View
