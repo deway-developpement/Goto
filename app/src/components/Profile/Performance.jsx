@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import {
     TouchableWithoutFeedback,
     View,
@@ -14,63 +14,131 @@ import { useNavigation } from '@react-navigation/native';
 import { gql, useQuery } from '@apollo/client';
 import SplashScreen from '../SplashScreen/SplashScreen';
 import { Icon } from '../Icon/Icon';
+import GpxPathLine from '../Map/GpxPathLine';
+import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
+import { AxiosContext } from '../../providers/AxiosContext';
+import { default as MAP_STYLE } from '../../../assets/maps/style.json';
+import { Pressable } from 'react-native';
+
+const GET_PERFORMANCE = gql`
+    query performance($PerfId: ID!, $UserId: ID!) {
+        performance(id: $PerfId) {
+            id
+            elevation
+            duration
+            distance
+            date
+            track
+            hike {
+                id
+                name
+                description
+                photos {
+                    id
+                    filename
+                }
+                reviews(filter: { user: { id: { eq: $UserId } } }) {
+                    rating
+                }
+                reviewsAggregate {
+                    avg {
+                        rating
+                    }
+                }
+            }
+        }
+    }
+`;
 
 export default function Performance({ route }) {
     const { colors } = useTheme();
     const styles = stylesheet(colors);
     const navigation = useNavigation();
+    const mapRef = useRef(null);
+    const { authAxios } = useContext(AxiosContext);
+
+    const [file, setFile] = useState(null);
+
     const performanceId = route.params?.performanceId;
     const MyID = route.params?.MyID;
     const FriendPseudo = route.params?.FriendPseudo;
 
     const windowHeight = Dimensions.get('window').height;
 
-    const GET_PERFORMANCE = gql`
-        query performance($PerfId: ID!, $UserId: ID!) {
-            performance(id: $PerfId) {
-                id
-                elevation
-                duration
-                distance
-                date
-                hike {
-                    id
-                    name
-                    description
-                    photos {
-                        id
-                        filename
-                    }
-                    reviews(filter: { user: { id: { eq: $UserId } } }) {
-                        rating
-                    }
-                    reviewsAggregate {
-                        avg {
-                            rating
-                        }
-                    }
-                }
-            }
-        }
-    `;
-
-    const { data: performance, loading } = useQuery(GET_PERFORMANCE, {
+    const { data, loading, error } = useQuery(GET_PERFORMANCE, {
         variables: { PerfId: performanceId, UserId: MyID },
         errorPolicy: 'all',
     });
+
+    const hikeId = data?.performance.hike.id;
+
+    function handleClick() {
+        navigation.navigate('FocusHike', { hikeId });
+    }
+
+    async function loadTrack() {
+        const res = await authAxios.get('files/tracks/' + data?.performance.track);
+        if (res.status === 200) {
+            return res.data;
+        }
+    }
+
+    useEffect(() => {
+        if (mapRef.current) {
+            loadTrack().then((track) => {
+                setFile(track);
+            });
+        }
+    }, [mapRef.current, data?.performance.track]);
 
     if (loading) {
         return <SplashScreen />;
     }
 
-    const avgRating = performance?.performance?.hike?.reviewsAggregate[0]?.avg?.rating || 0;
-    const rating = performance?.performance?.hike?.reviews[0]?.rating
-        ? performance?.performance?.hike?.reviews[0]?.rating
-        : avgRating;
-    const hikeId = performance?.performance?.hike?.id;
-
-    function handleClick() {
-        navigation.navigate('FocusHike', { hikeId });
+    if (error || !data.performance) {
+        return (
+            <View
+                style={[
+                    styles.container,
+                    {
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        flexDirection: 'column',
+                    },
+                ]}
+            >
+                <Text
+                    style={{
+                        color: colors.text,
+                        fontSize: 20,
+                    }}
+                >
+                    Une erreur est survenue
+                </Text>
+                <Pressable onPress={() => navigation.goBack()}>
+                    <View
+                        style={{
+                            marginTop: 20,
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            flexDirection: 'column',
+                            backgroundColor: colors.primary,
+                            padding: 20,
+                            borderRadius: 10,
+                        }}
+                    >
+                        <Text
+                            style={{
+                                color: colors.background,
+                                fontSize: 20,
+                            }}
+                        >
+                            Retour
+                        </Text>
+                    </View>
+                </Pressable>
+            </View>
+        );
     }
 
     return (
@@ -84,10 +152,9 @@ export default function Performance({ route }) {
             </TouchableWithoutFeedback>
             <Image
                 source={
-                    performance.performance.hike.photos &&
-                    performance.performance.hike.photos.length > 0
+                    data.performance.hike.photos && data.performance.hike.photos.length > 0
                         ? {
-                            uri: `https://deway.fr/goto-api/files/photos/${performance.performance.hike.photos[0].filename}`,
+                            uri: `https://deway.fr/goto-api/files/photos/${data.performance.hike.photos[0].filename}`,
                         }
                         : require('../../../assets/images/Dalle_background.png')
                 }
@@ -127,7 +194,7 @@ export default function Performance({ route }) {
                                 }}
                             >
                                 <Text style={[styles.textDescription]}>
-                                    {new Date(performance.performance.date).toUTCString()}
+                                    {new Date(data.performance.date).toUTCString()}
                                 </Text>
                             </View>
                             <View
@@ -145,7 +212,7 @@ export default function Performance({ route }) {
                                         { alignSelf: 'flex-start', maxWidth: '80%' },
                                     ]}
                                 >
-                                    {performance.performance.hike.name}
+                                    {data.performance.hike.name}
                                 </Text>
                                 <TouchableWithoutFeedback
                                     onPress={handleClick}
@@ -160,40 +227,8 @@ export default function Performance({ route }) {
                                 </TouchableWithoutFeedback>
                             </View>
                             <Text style={[styles.textDescription]}>
-                                {performance.performance.hike.description}
+                                {data.performance.hike.description}
                             </Text>
-                            <View
-                                style={{
-                                    flex: 1,
-                                    flexDirection: 'row',
-                                    alignSelf: 'flex-start',
-                                    marginTop: 16,
-                                }}
-                            >
-                                {Array.from({ length: 5 }, () => 0).map((_, index) => {
-                                    return (
-                                        <Icon
-                                            color={index < rating ? colors.filled : colors.empty}
-                                            key={index}
-                                            name={'star'}
-                                            style={{ marginRight: 7 }}
-                                            size={22}
-                                        />
-                                    );
-                                })}
-                                <Text
-                                    style={[
-                                        styles.textDescription,
-                                        {
-                                            color: styles.textContent,
-                                            marginLeft: 10,
-                                            paddingTop: 2,
-                                        },
-                                    ]}
-                                >
-                                    See reviews
-                                </Text>
-                            </View>
                         </View>
                         {/*Perf*/}
                         <View style={[styles.containerFocus]}>
@@ -223,7 +258,7 @@ export default function Performance({ route }) {
                                     }}
                                 >
                                     <Text style={[styles.header]}>
-                                        {performance.performance.duration}h
+                                        {data.performance.duration}h
                                     </Text>
                                     <Text style={[styles.textDescription]}>of walking</Text>
                                 </View>
@@ -236,7 +271,7 @@ export default function Performance({ route }) {
                                     }}
                                 >
                                     <Text style={[styles.header]}>
-                                        {performance.performance.distance}km
+                                        {data.performance.distance}km
                                     </Text>
                                     <Text style={[styles.textDescription]}>covered</Text>
                                 </View>
@@ -249,10 +284,49 @@ export default function Performance({ route }) {
                                     }}
                                 >
                                     <Text style={[styles.header]}>
-                                        {performance.performance.elevation}m
+                                        {data.performance.elevation}m
                                     </Text>
                                     <Text style={[styles.textDescription]}>of elevation</Text>
                                 </View>
+                            </View>
+                        </View>
+                        {/*Track*/}
+                        <View style={[styles.containerFocus]}>
+                            <Text
+                                style={[
+                                    styles.textDescription,
+                                    {
+                                        marginBottom: 10,
+                                    },
+                                ]}
+                            >
+                                {FriendPseudo === '' ? 'Your' : FriendPseudo + '\'s'} Track
+                            </Text>
+                            <View
+                                style={{
+                                    flexDirection: 'row',
+                                    width: '100%',
+                                    justifyContent: 'space-between',
+                                }}
+                            >
+                                <MapView
+                                    style={{ width: '100%', height: 300 }}
+                                    liteMode={true}
+                                    initialRegion={{
+                                        latitude: 48.856614,
+                                        longitude: 2.3522219,
+                                        latitudeDelta: 0.0922,
+                                        longitudeDelta: 0.0421,
+                                    }}
+                                    provider={PROVIDER_GOOGLE}
+                                    customMapStyle={MAP_STYLE}
+                                    panEnabled={false}
+                                    scrollEnabled={false}
+                                    pitchEnabled={false}
+                                    ref={mapRef}
+                                >
+                                    {file && <GpxPathLine fileData={file} cameraRef={mapRef} />}
+                                </MapView>
                             </View>
                         </View>
                     </View>
