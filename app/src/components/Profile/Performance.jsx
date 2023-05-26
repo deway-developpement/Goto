@@ -139,18 +139,23 @@ export default function Performance({ route }) {
                                     width: '100%',
                                 }}
                             >
-                                <Text style={[styles.textHeader, { alignSelf: 'flex-start' }]}>
+                                <Text
+                                    style={[
+                                        styles.textHeader,
+                                        { alignSelf: 'flex-start', maxWidth: '80%' },
+                                    ]}
+                                >
                                     {performance.performance.hike.name}
                                 </Text>
                                 <TouchableWithoutFeedback
                                     onPress={handleClick}
-                                    style={{ marginRight: 7 }}
+                                    style={{ marginRHorizontal: 7 }}
                                 >
                                     <Icon
                                         name="export"
                                         color={colors.primary}
                                         size={25}
-                                        style={{ marginRight: 7 }}
+                                        style={{ marginHorizontal: 7 }}
                                     />
                                 </TouchableWithoutFeedback>
                             </View>
