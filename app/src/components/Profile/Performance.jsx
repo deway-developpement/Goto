@@ -34,6 +34,7 @@ const GET_PERFORMANCE = gql`
                 id
                 name
                 description
+                difficulty
                 photos {
                     id
                     filename
@@ -63,6 +64,7 @@ export default function Performance({ route }) {
     const performanceId = route.params?.performanceId;
     const MyID = route.params?.MyID;
     const FriendPseudo = route.params?.FriendPseudo;
+    const difficulties = ['EASY', 'MEDIUM', 'HARD'];
 
     const windowHeight = Dimensions.get('window').height;
 
@@ -302,6 +304,61 @@ export default function Performance({ route }) {
                                         {data.performance.elevation}m
                                     </Text>
                                     <Text style={[styles.textDescription]}>of elevation</Text>
+                                </View>
+                            </View>
+                            <View
+                                style={{
+                                    height: 4,
+                                    width: '100%',
+                                    alignSelf: 'center',
+                                    marginVertical: 10,
+                                    backgroundColor: colors.empty,
+                                    borderRadius: 12,
+                                }}
+                            />
+                            <View
+                                style={{
+                                    flexDirection: 'row',
+                                    width: '100%',
+                                    justifyContent: 'space-between',
+                                }}
+                            >
+                                <View
+                                    style={{
+                                        flex: 1,
+                                        justifyContent: 'center',
+                                        alignItems: 'center',
+                                        paddingBottom: 10,
+                                    }}
+                                >
+                                    <Text style={[styles.header]}>
+                                        {data.performance.distance / data.performance.duration}km/h
+                                    </Text>
+                                    <Text style={[styles.textDescription]}>as mean speed</Text>
+                                </View>
+                                <View
+                                    style={{
+                                        flex: 1,
+                                        justifyContent: 'center',
+                                        alignItems: 'center',
+                                        paddingBottom: 10,
+                                    }}
+                                >
+                                    <Text style={[styles.header]}>
+                                        {Math.round(
+                                            (((difficulties.indexOf(
+                                                data.performance.hike.difficulty
+                                            ) +
+                                                1) *
+                                                2 +
+                                                2) *
+                                                3.5 *
+                                                65) /
+                                                ((20 / 6) * data.performance.duration) +
+                                                Number.EPSILON
+                                        )}
+                                    </Text>
+                                    <Text style={[styles.textDescription]}>calories burned</Text>
                                 </View>
                             </View>
                         </View>
