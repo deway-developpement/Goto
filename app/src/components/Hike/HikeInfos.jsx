@@ -40,19 +40,19 @@ const ADD_REVIEW = gql`
 `;
 
 const LIKE_HIKE = gql`
-mutation likeHike($id: String!) {
-    likeHike(id: $id) {
-        id
+    mutation likeHike($id: String!) {
+        likeHike(id: $id) {
+            id
+        }
     }
-}
 `;
 
 const UNLIKE_HIKE = gql`
-mutation unlikeHike($id: String!) {
-    unlikeHike(id: $id) {
-        id
+    mutation unlikeHike($id: String!) {
+        unlikeHike(id: $id) {
+            id
+        }
     }
-}
 `;
 
 export default function HikeInfos({ hike, borderRadius, inProfile = false }) {
@@ -187,7 +187,7 @@ export default function HikeInfos({ hike, borderRadius, inProfile = false }) {
                         </TouchableWithoutFeedback>
                         <View style={{ width: 10 }} />
                         <TouchableWithoutFeedback
-                            onPress={() => like ? unlikeHike() : likeHike()}
+                            onPress={() => (like ? unlikeHike() : likeHike())}
                         >
                             <View>
                                 <IconComp
