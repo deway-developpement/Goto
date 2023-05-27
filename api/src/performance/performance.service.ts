@@ -21,7 +21,6 @@ export class PerfomanceService extends TypeOrmQueryService<PerformanceEntity> {
         @Inject(FilesService) private readonly filesService: FilesService
     ) {
         super(repo);
-        this.correctData();
     }
 
     async create(perf: PerformanceInput, user: UserEntity): Promise<PerformanceEntity> {
