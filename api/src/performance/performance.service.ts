@@ -21,7 +21,6 @@ export class PerfomanceService extends TypeOrmQueryService<PerformanceEntity> {
         @Inject(FilesService) private readonly filesService: FilesService
     ) {
         super(repo);
-        this.correctData();
     }
 
     async create(perf: PerformanceInput, user: UserEntity): Promise<PerformanceEntity> {
@@ -58,21 +57,32 @@ export class PerfomanceService extends TypeOrmQueryService<PerformanceEntity> {
 
         let previousTime = startDate;
         trkptsArray.forEach((trkpt, index) => {
-            const time = doc.createElement('time');
-            time.textContent = previousTime.toISOString();
-            const etime =
-                previousTime.getTime() +
-                ((totalTime - (previousTime.getTime() - startDate.getTime())) /
-                    (trkptsArray.length - index)) *
+            const elt = trkpt.getElementsByTagName('time');
+            if (elt.length > 0) {
+                console.log('time already exists');
+                return;
+            }
+            else {
+                const time = doc.createElement('time');
+                time.textContent = previousTime.toISOString();
+                const etime =
+                    previousTime.getTime() +
+                    ((totalTime - (previousTime.getTime() - startDate.getTime())) /
+                        (trkptsArray.length - index)) *
                     (index === trkptsArray.length - 1 ? 1 + Math.random() * 0.2 : 1);
-            previousTime = new Date(etime);
-            trkpt.appendChild(time);
+                previousTime = new Date(etime);
+                trkpt.appendChild(time);
+            }
         });
         return doc.toString();
     }
 
     parseFile(fileString) {
         const doc = new DOMParser().parseFromString(fileString, 'text/xml');
+        if (doc === null) {
+            console.log('Could not parse GPX file', doc)
+            throw new HttpException('Could not parse GPX file', HttpStatus.BAD_REQUEST);
+        }
         const trkpts = doc.getElementsByTagName('trkpt');
         const trkptsArray = Array.from(trkpts);
 
@@ -96,20 +106,20 @@ export class PerfomanceService extends TypeOrmQueryService<PerformanceEntity> {
                         Math.sin(
                             ((point1.latitude * Math.PI) / 180 -
                                 (point2.latitude * Math.PI) / 180) /
-                                2
+                            2
                         ),
                         2
                     ) +
-                        Math.cos((point1.latitude * Math.PI) / 180) *
-                            Math.cos((point2.latitude * Math.PI) / 180) *
-                            Math.pow(
-                                Math.sin(
-                                    ((point1.longitude * Math.PI) / 180 -
-                                        (point2.longitude * Math.PI) / 180) /
-                                        2
-                                ),
-                                2
-                            )
+                    Math.cos((point1.latitude * Math.PI) / 180) *
+                    Math.cos((point2.latitude * Math.PI) / 180) *
+                    Math.pow(
+                        Math.sin(
+                            ((point1.longitude * Math.PI) / 180 -
+                                (point2.longitude * Math.PI) / 180) /
+                            2
+                        ),
+                        2
+                    )
                 )
             )
         );
@@ -155,12 +165,14 @@ export class PerfomanceService extends TypeOrmQueryService<PerformanceEntity> {
         stats.theoricalMeanSpeed = stats.distance / (stats.time / 3600 / 1000);
         stats.maxSpeed = Math.max(...stats.speedDeltas);
         stats.minSpeed = Math.min(...stats.speedDeltas);
+        stats.latitude = points[0].latitude;
+        stats.longitude = points[0].longitude;
         return stats;
     }
 
     async correctData(): Promise<void> {
         const performances = await this.repo.find();
-        performances.forEach(async (perf) => {
+        for (const perf of performances) {
             const stream = createReadStream(join(process.cwd(), `./data/tracks/${perf.track}`));
             const fileString = await new Promise((resolve) => {
                 let data = '';
@@ -171,35 +183,150 @@ export class PerfomanceService extends TypeOrmQueryService<PerformanceEntity> {
                     resolve(data);
                 });
             });
+            console.log(perf.track);
             const stats = this.performanceStats(this.parseFile(fileString));
-            const rHike = await this.hikeService.repo.findOne({
-                where: { difficulty: Difficulty.EASY },
-            });
-            rHike.distance = stats.distance;
-            rHike.elevation = stats.elevation;
-            const duration = this.hikeService.duration(rHike);
-            const newFileString = this.addTimeTagToGPXFile(
-                fileString,
-                duration > 0.5 ? duration * 1000 * 3600 : 0.5 * 1000 * 3600,
-                perf.date
+            if (stats.time === 0) {
+                const rHike = await this.hikeService.repo.findOne({
+                    where: { difficulty: Difficulty.EASY },
+                });
+                rHike.distance = stats.distance;
+                rHike.elevation = stats.elevation;
+                const duration = this.hikeService.duration(rHike);
+                const newFileString = this.addTimeTagToGPXFile(
+                    fileString,
+                    duration > 0.5 ? duration * 1000 * 3600 : 0.5 * 1000 * 3600,
+                    perf.date
+                );
+                const newStats = this.performanceStats(this.parseFile(newFileString));
+                console.log(
+                    perf.date,
+                    perf.distance,
+                    newStats.distance,
+                    perf.duration,
+                    Math.round(newStats.time / 1000 / 3600 * 100) / 100,
+                    duration,
+                    perf.elevation,
+                    newStats.elevation
+                );
+                this.filesService.overwriteFile(newFileString, perf.track, FileType.GPX);
+                const newPerf = await this.repo.findOne({ where: { id: perf.id } });
+                newPerf.distance = newStats.distance;
+                newPerf.duration = Math.round(newStats.time / 1000 / 3600 * 100) / 100;
+                newPerf.elevation = newStats.elevation;
+                await this.repo.save(newPerf);
+            } else {
+                console.log('perf with time', stats.time);
+                const newPerf = await this.repo.findOne({ where: { id: perf.id } });
+                console.log(stats.distance, Math.round(stats.time / 1000 / 3600 * 100) / 100, stats.elevation);
+                newPerf.distance = stats.distance;
+                newPerf.duration = Math.round(stats.time / 1000 / 3600 * 100) / 100;
+                newPerf.elevation = stats.elevation;
+                await this.repo.save(newPerf);
+            }
+        };
+        const hikes = await this.hikeService.repo.find();
+        for (const hike of hikes) {
+            const stream = createReadStream(join(process.cwd(), `./data/tracks/${hike.track}`));
+            const fileString = await new Promise((resolve) => {
+                let data = '';
+                stream.on('data', (chunk) => {
+                    data += chunk;
+                });
+                stream.on('end', () => {
+                    resolve(data);
+                });
+            }
             );
-            const newStats = this.performanceStats(this.parseFile(newFileString));
+            console.log(hike.track);
+            const stats = this.performanceStats(this.parseFile(fileString));
+            if (stats.time === 0) {
+                const duration = this.hikeService.duration(hike);
+                const newFileString = this.addTimeTagToGPXFile(
+                    fileString,
+                    duration > 0.5 ? duration * 1000 * 3600 : 0.5 * 1000 * 3600,
+                    hike.createdAt
+                );
+                const newStats = this.performanceStats(this.parseFile(newFileString));
+                console.log(
+                    hike.createdAt,
+                    hike.distance,
+                    newStats.distance,
+                    hike.duration,
+                    Math.round(newStats.time / 1000 / 3600 * 100) / 100,
+                    duration,
+                    hike.elevation,
+                    newStats.elevation
+                );
+                this.filesService.overwriteFile(newFileString, hike.track, FileType.GPX);
+                const newHike = await this.hikeService.repo.findOne({ where: { id: hike.id } });
+                newHike.distance = newStats.distance;
+                newHike.duration = Math.round(newStats.time / 1000 / 3600 * 100) / 100;
+                newHike.elevation = newStats.elevation;
+                await this.hikeService.repo.save(newHike);
+
+            } else {
+                console.log('hike with time', stats.time);
+                const newHike = await this.hikeService.repo.findOne({ where: { id: hike.id } });
+                console.log(stats.distance, Math.round(stats.time / 1000 / 3600 * 100) / 100, stats.elevation, stats.latitude, stats.longitude);
+                newHike.distance = stats.distance;
+                newHike.duration = Math.round(stats.time / 1000 / 3600 * 100) / 100;
+                newHike.elevation = stats.elevation;
+                newHike.latitude = stats.latitude;
+                newHike.longitude = stats.longitude;
+                await this.hikeService.repo.save(newHike);
+            }
+        };
+    }
+
+    async checkData(): Promise<void> {
+        const performances = await this.repo.find();
+        for (const perf of performances) {
+            const stream = createReadStream(join(process.cwd(), `./data/tracks/${perf.track}`));
+            const fileString = await new Promise((resolve) => {
+                let data = '';
+                stream.on('data', (chunk) => {
+                    data += chunk;
+                });
+                stream.on('end', () => {
+                    resolve(data);
+                });
+            });
+            console.log(perf.track);
+            const stats = this.performanceStats(this.parseFile(fileString));
             console.log(
                 perf.date,
                 perf.distance,
-                newStats.distance,
+                stats.distance,
                 perf.duration,
-                newStats.time / 1000 / 3600,
-                duration,
+                Math.round(stats.time / 1000 / 3600 * 100) / 100,
                 perf.elevation,
-                newStats.elevation
+                stats.elevation
             );
-            this.filesService.overwriteFile(newFileString, perf.track, FileType.GPX);
-            const newPerf = await this.repo.findOne({ where: { id: perf.id } });
-            newPerf.distance = newStats.distance;
-            newPerf.duration = newStats.time;
-            newPerf.elevation = newStats.elevation;
-            await this.repo.save(newPerf);
-        });
+        };
+        const hikes = await this.hikeService.repo.find();
+        for (const hike of hikes) {
+            const stream = createReadStream(join(process.cwd(), `./data/tracks/${hike.track}`));
+            const fileString = await new Promise((resolve) => {
+                let data = '';
+                stream.on('data', (chunk) => {
+                    data += chunk;
+                });
+                stream.on('end', () => {
+                    resolve(data);
+                });
+            }
+            );
+            console.log(hike.track);
+            const stats = this.performanceStats(this.parseFile(fileString));
+            console.log(
+                hike.createdAt,
+                hike.distance,
+                stats.distance,
+                hike.duration,
+                Math.round(stats.time / 1000 / 3600 * 100) / 100,
+                hike.elevation,
+                stats.elevation
+            );
+        };
     }
 }
