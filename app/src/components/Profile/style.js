@@ -18,9 +18,27 @@ const stylesheet = (colors) =>
             zIndex: 1000,
         },
         header: {
-            fontSize: 36,
+            fontSize: 20,
             fontWeight: '700',
             color: colors.text,
+        },
+        containerFocus: {
+            width: '100%',
+            height: '100%',
+            backgroundColor: colors.backgroundSecondary,
+            flexDirection: 'column',
+            alignItems: 'flex-start',
+            borderRadius: 12,
+            flex: 1,
+            padding: 20,
+            marginBottom: 35,
+        },
+        textHeader: {
+            marginTop: 12,
+            color: colors.text,
+            fontSize: 32,
+            fontWeight: '700',
+            marginBottom: 8,
         },
         textContent: {
             fontSize: 22,
@@ -28,6 +46,11 @@ const stylesheet = (colors) =>
             color: colors.primary,
             marginLeft: 2,
             marginBottom: 14,
+        },
+        textDescription: {
+            fontSize: 15,
+            fontWeight: '400',
+            color: colors.borderLineSecondary,
         },
         textInputContainer: {
             flexDirection: 'row',

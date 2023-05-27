@@ -10,10 +10,10 @@ export class PerformanceEntity {
     @Column()
     date: Date;
 
-    @Column()
+    @Column({type:"decimal", precision:5, scale:2})
     duration: number;
 
-    @Column()
+    @Column({type:"decimal", precision:5, scale:1})
     distance: number;
 
     @Column()

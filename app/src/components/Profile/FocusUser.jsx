@@ -21,6 +21,7 @@ export default function FocusUser({ route }) {
     const GET_FRIEND = gql`
         query user($id: ID!, $lastMonth: DateTime!) {
             user(id: $id) {
+                id
                 pseudo
                 publicKey
                 isFriend
@@ -28,6 +29,7 @@ export default function FocusUser({ route }) {
                     filename
                 }
                 performances(sorting: { field: date, direction: DESC }) {
+                    id
                     hike {
                         id
                         name
@@ -216,6 +218,7 @@ export default function FocusUser({ route }) {
 
                     <Historic
                         hikes={profile.user.performances}
+                        MyID={profile.user.id}
                         FriendPseudo={profile.user.pseudo}
                     />
 

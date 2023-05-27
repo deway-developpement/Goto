@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { Worker } from 'snowflake-uuid';
 import { FileUpload } from './interfaces/fileupload.type';
-import { createReadStream, createWriteStream, existsSync, unlinkSync } from 'fs';
+import { createReadStream, createWriteStream, existsSync, unlinkSync, writeFile } from 'fs';
 import { join } from 'path';
 
 export enum FileType {
@@ -94,5 +94,15 @@ export class FilesService {
         console.log('throwing error');
         // else throw error
         throw new UnauthorizedException("You don't have access to this file");
+    }
+
+    overwriteFile(content: string, filename: string, type: FileType) {
+        const path = join(process.cwd(), `./data/${type}/${filename}`);
+        writeFile(path, content, (err) => {
+            if (err) {
+                console.log(err);
+                throw new HttpException('Error overwriting file', HttpStatus.BAD_REQUEST);
+            }
+        });
     }
 }
