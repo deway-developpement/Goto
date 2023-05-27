@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Polyline } from 'react-native-maps';
 import { useTheme } from '@react-navigation/native';
-import { DOMParser } from 'xmldom';
+import { parseFile } from '../../services/gpx.services';
 
 export default function GpxPathLine({
     fileData,
@@ -19,22 +19,8 @@ export default function GpxPathLine({
     let minLat = null;
     let minLon = null;
 
-    function parseFile() {
-        const doc = new DOMParser().parseFromString(fileData, 'text/xml');
-        const trkpts = doc.getElementsByTagName('trkpt');
-        const trkptsArray = Array.from(trkpts);
-        const trkptsArrayLat = trkptsArray.map((trkpt) => trkpt.getAttribute('lat'));
-        const trkptsArrayLon = trkptsArray.map((trkpt) => trkpt.getAttribute('lon'));
-        return trkptsArrayLat.map((lat, index) => {
-            return {
-                latitude: parseFloat(lat),
-                longitude: parseFloat(trkptsArrayLon[index]),
-            };
-        });
-    }
-
     useEffect(() => {
-        setLeftPoints(parseFile());
+        setLeftPoints(parseFile(fileData));
         setLoaded(false);
     }, []);
 

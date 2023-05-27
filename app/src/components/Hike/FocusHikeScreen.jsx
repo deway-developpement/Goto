@@ -65,6 +65,8 @@ export default function FocusHikeScreen({ route }) {
                 difficulty
                 createdAt
                 elevation
+                latitude
+                longitude
                 photos {
                     id
                     filename

@@ -19,6 +19,7 @@ import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
 import { AxiosContext } from '../../providers/AxiosContext';
 import { default as MAP_STYLE } from '../../../assets/maps/style.json';
 import { Pressable } from 'react-native';
+import { addTimeTagToGPXFile, parseFile, performanceStats } from '../../services/gpx.services';
 
 const GET_PERFORMANCE = gql`
     query performance($PerfId: ID!, $UserId: ID!) {
@@ -87,6 +88,15 @@ export default function Performance({ route }) {
         if (mapRef.current) {
             loadTrack().then((track) => {
                 setFile(track);
+                performanceStats(
+                    parseFile(
+                        addTimeTagToGPXFile(
+                            track,
+                            data?.performance.duration * 1000 * 3600,
+                            new Date(data?.performance.date)
+                        )
+                    )
+                );
             });
         }
     }, [mapRef.current, data?.performance.track]);
