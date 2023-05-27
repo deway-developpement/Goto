@@ -26,7 +26,7 @@ export class HikeEntity {
     @Column()
     name: string;
 
-    @Column()
+    @Column({ type: "decimal", precision: 5, scale: 1 })
     distance: number;
 
     @ManyToOne(() => UserEntity, { onDelete: 'CASCADE' })
@@ -44,7 +44,7 @@ export class HikeEntity {
     })
     difficulty: Difficulty;
 
-    @Column()
+    @Column({ type: "decimal", precision: 5, scale: 2 })
     duration: number;
 
     @Column()

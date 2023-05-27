@@ -39,6 +39,7 @@
         "@nestjs/passport": "^8.2.1",
         "@nestjs/platform-express": "^8.4.3",
         "@nestjs/typeorm": "^7.1.5",
+        "@xmldom/xmldom": "^0.8.7",
         "apollo-server-express": "^3.6.6",
         "bcrypt": "^5.0.1",
         "class-transformer": "^0.5.1",

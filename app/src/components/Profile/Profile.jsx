@@ -16,16 +16,12 @@ import KeyboardDismissView from '../KeyboardDismissView/KeyboardDismissView';
 import stylesheet from './style';
 import { CommonActions, useIsFocused, useTheme } from '@react-navigation/native';
 import { Icon } from '../Icon/Icon';
-import {
-    ProfileModal,
-    PseudoModal,
-    SettingsModal,
-    Stats,
-    Historic,
-    Friends,
-} from './ProfileComplements.jsx';
+import { ProfileModal, SettingsModal, PseudoModal } from './Modals';
+import { Stats, Historic, Friends } from './ProfileComplements.jsx';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import Performance from './Performance';
 import FocusUser from './FocusUser';
+import FocusHikeScreen from '../Hike/FocusHikeScreen';
 
 const stack = createNativeStackNavigator();
 
@@ -51,6 +47,8 @@ export default function ProfileWrapper({ navigation }) {
         >
             <stack.Screen name="ProfileScreen" component={ProfileScreen} />
             <stack.Screen name="FocusUser" component={FocusUser} />
+            <stack.Screen name="Performance" component={Performance} />
+            <stack.Screen name="FocusHike" component={FocusHikeScreen} />
         </stack.Navigator>
     );
 }
@@ -68,7 +66,6 @@ function ProfileScreen() {
     const today = new Date();
     const lastMonth = new Date(today.getFullYear(), today.getMonth(), 1);
     const isFocused = useIsFocused();
-
     const [search, setSearch] = useState('');
 
     const WHOAMI = gql`
@@ -94,6 +91,7 @@ function ProfileScreen() {
                     }
                 }
                 performances(sorting: { field: date, direction: DESC }) {
+                    id
                     hike {
                         id
                         name
@@ -103,7 +101,6 @@ function ProfileScreen() {
                             name
                         }
                         photos {
-                            id
                             filename
                         }
                     }
@@ -238,6 +235,14 @@ function ProfileScreen() {
                                                     reload={refetchProfile}
                                                 />
                                             </Modal>
+                                            <Modal
+                                                animationType="slide"
+                                                transparent={true}
+                                                visible={modalVisible == modalActive.Performance}
+                                                onRequestClose={() => {
+                                                    setModalVisible(modalActive.None);
+                                                }}
+                                            ></Modal>
                                         </View>
                                         {(() => {
                                             if (modalVisible == modalActive.None) {
@@ -305,6 +310,7 @@ function ProfileScreen() {
                                                         {/* Historic Part */}
                                                         <Historic
                                                             hikes={profil.whoami.performances}
+                                                            MyID={profil.whoami.id}
                                                         />
                                                         {/* Friends Part */}
                                                         <Friends
