@@ -21,6 +21,7 @@ export default function Hike({ id }) {
                     id
                     filename
                 }
+                isLiked
             }
         }
     `;
