@@ -20,6 +20,8 @@ import { AxiosContext } from '../../providers/AxiosContext';
 import { default as MAP_STYLE } from '../../../assets/maps/style.json';
 import { Pressable } from 'react-native';
 import { addTimeTagToGPXFile, parseFile, performanceStats } from '../../services/gpx.services';
+import { getCalorie } from '../../services/stats.service';
+import Charts, { ChartMode } from '../Chart/Chart';
 
 const GET_PERFORMANCE = gql`
     query performance($PerfId: ID!, $UserId: ID!) {
@@ -60,11 +62,11 @@ export default function Performance({ route }) {
     const { authAxios } = useContext(AxiosContext);
 
     const [file, setFile] = useState(null);
+    const [stats, setStats] = useState(null);
 
     const performanceId = route.params?.performanceId;
     const MyID = route.params?.MyID;
     const FriendPseudo = route.params?.FriendPseudo;
-    const difficulties = ['EASY', 'MEDIUM', 'HARD'];
 
     const windowHeight = Dimensions.get('window').height;
 
@@ -90,12 +92,14 @@ export default function Performance({ route }) {
         if (mapRef.current) {
             loadTrack().then((track) => {
                 setFile(track);
-                performanceStats(
-                    parseFile(
-                        addTimeTagToGPXFile(
-                            track,
-                            data?.performance.duration * 1000 * 3600,
-                            new Date(data?.performance.date)
+                setStats(
+                    performanceStats(
+                        parseFile(
+                            addTimeTagToGPXFile(
+                                track,
+                                data?.performance.duration * 1000 * 3600,
+                                new Date(data?.performance.date)
+                            )
                         )
                     )
                 );
@@ -308,7 +312,7 @@ export default function Performance({ route }) {
                             </View>
                             <View
                                 style={{
-                                    height: 4,
+                                    height: 2,
                                     width: '100%',
                                     alignSelf: 'center',
                                     marginVertical: 10,
@@ -332,7 +336,12 @@ export default function Performance({ route }) {
                                     }}
                                 >
                                     <Text style={[styles.header]}>
-                                        {data.performance.distance / data.performance.duration}km/h
+                                        {Math.round(
+                                            (data.performance.distance /
+                                                data.performance.duration) *
+                                                10
+                                        ) / 10}
+                                        km/h
                                     </Text>
                                     <Text style={[styles.textDescription]}>as mean speed</Text>
                                 </View>
@@ -345,17 +354,11 @@ export default function Performance({ route }) {
                                     }}
                                 >
                                     <Text style={[styles.header]}>
-                                        {Math.round(
-                                            (((difficulties.indexOf(
-                                                data.performance.hike.difficulty
-                                            ) +
-                                                1) *
-                                                2 +
-                                                2) *
-                                                3.5 *
-                                                65) /
-                                                ((20 / 6) * data.performance.duration) +
-                                                Number.EPSILON
+                                        {getCalorie(
+                                            data?.performance?.distance,
+                                            data?.performance?.elevation,
+                                            data?.performance?.duration,
+                                            data?.performance?.hike?.difficulty
                                         )}
                                     </Text>
                                     <Text style={[styles.textDescription]}>calories burned</Text>
@@ -394,6 +397,7 @@ export default function Performance({ route }) {
                                     panEnabled={false}
                                     scrollEnabled={false}
                                     pitchEnabled={false}
+                                    zoomEnabled={false}
                                     ref={mapRef}
                                 >
                                     {file && (
@@ -410,6 +414,64 @@ export default function Performance({ route }) {
                                         />
                                     )}
                                 </MapView>
+                            </View>
+                        </View>
+                        {/*Charts*/}
+                        <View style={[styles.containerFocus]}>
+                            <Text
+                                style={[
+                                    styles.textDescription,
+                                    {
+                                        marginBottom: 10,
+                                    },
+                                ]}
+                            >
+                                {FriendPseudo === '' ? 'Your' : FriendPseudo + '\'s'} Charts
+                            </Text>
+                            <View
+                                style={{
+                                    flexDirection: 'row',
+                                    width: '100%',
+                                    justifyContent: 'space-between',
+                                }}
+                            >
+                                <View
+                                    style={{
+                                        flex: 1,
+                                        justifyContent: 'center',
+                                        alignItems: 'center',
+                                        paddingHorizontal: 10,
+                                    }}
+                                >
+                                    <Text style={[styles.header]}>Elevation</Text>
+                                    <Charts
+                                        absciissa={stats?.distanceDeltas}
+                                        ordinate={stats?.elevationDeltas}
+                                        xLen={5}
+                                        yLen={20}
+                                        title="Elevation"
+                                        colors={colors}
+                                        xUnit="km"
+                                        yUnit="m"
+                                        width={Dimensions.get('window').width - 60}
+                                        xMode={ChartMode.cumulative}
+                                        yMode={ChartMode.cumulative}
+                                    />
+                                    <Text style={[styles.header]}>Speed</Text>
+                                    <Charts
+                                        absciissa={stats?.distanceDeltas}
+                                        ordinate={stats?.speedDeltas}
+                                        xLen={5}
+                                        yLen={20}
+                                        title="Elevation"
+                                        colors={colors}
+                                        xUnit="km"
+                                        yUnit="m"
+                                        width={Dimensions.get('window').width - 60}
+                                        xMode={ChartMode.cumulative}
+                                        yMode={ChartMode.average}
+                                    />
+                                </View>
                             </View>
                         </View>
                     </View>
