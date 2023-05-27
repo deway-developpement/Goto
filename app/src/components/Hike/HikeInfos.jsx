@@ -41,11 +41,29 @@ const ADD_REVIEW = gql`
     }
 `;
 
+const LIKE_HIKE = gql`
+mutation likeHike($id: String!) {
+    likeHike(id: $id) {
+        id
+    }
+}
+`;
+
+const UNLIKE_HIKE = gql`
+mutation unlikeHike($id: String!) {
+    unlikeHike(id: $id) {
+        id
+    }
+}
+`;
+
 export default function HikeInfos({ hike, borderRadius, inProfile = false }) {
     const { colors } = useTheme();
     const styles = stylesheet(colors);
     const client = useApolloClient();
     const { authAxios } = useContext(AxiosContext);
+
+    const [like, setLike] = useState(hike.isLiked);
 
     const { data: dataReview, refetch } = useQuery(WHOAMI, {
         variables: {
@@ -117,6 +135,27 @@ export default function HikeInfos({ hike, borderRadius, inProfile = false }) {
         });
     }
 
+    async function likeHike() {
+        await client.mutate({
+            mutation: LIKE_HIKE,
+            variables: {
+                id: hike.id,
+            },
+            errorPolicy: 'all',
+        });
+        setLike(true);
+    }
+
+    async function unlikeHike() {
+        await client.mutate({
+            mutation: UNLIKE_HIKE,
+            variables: {
+                id: hike.id,
+            },
+            errorPolicy: 'all',
+        });
+        setLike(false);
+    }
     return (
         <View
             style={[
@@ -159,12 +198,12 @@ export default function HikeInfos({ hike, borderRadius, inProfile = false }) {
                         </TouchableWithoutFeedback>
                         <View style={{ width: 10 }} />
                         <TouchableWithoutFeedback
-                            onPress={() => console.log('LIKE HIKE', hike.name)}
+                            onPress={() => like ? unlikeHike() : likeHike()}
                         >
                             <View>
                                 <IconComp
-                                    color={colors.primary}
-                                    name={'heartempty'}
+                                    color={like ? colors.filled : colors.primary}
+                                    name={like ? 'heartfilled' : 'heartempty'}
                                     pos={0}
                                     size={18}
                                 />
