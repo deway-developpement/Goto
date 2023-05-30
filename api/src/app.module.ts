@@ -24,6 +24,8 @@ import { AlertModule } from './alert/alert.module';
 import { FilesModule } from './file/file.module';
 import { PageInfoModule } from './CustomScalar/pageInfo/pageinfo.module';
 import { HikeConnectionModule } from './CustomScalar/hikeConnection/hikeconnection.module';
+import { TableModule } from './table/table.module';
+import { CategoryModule } from './category/category.module';
 
 const armor = new ApolloArmor();
 const protection = armor.protect();
@@ -105,6 +107,8 @@ console.log = function (...args) {
         FilesModule,
         PageInfoModule,
         HikeConnectionModule,
+        TableModule,
+        CategoryModule,
     ],
     controllers: [AppController],
     providers: [AppService],

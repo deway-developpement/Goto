@@ -25,7 +25,7 @@ export class TableResolver extends CRUDResolver(TableDTO, {
 
     @UseGuards(GqlAuthGuard)
     @Mutation(() => TableDTO)
-    async createCategory(
+    async createTable(
         @Args('input') query: TableInput,
         @CurrentUser() user: UserDTO
     ): Promise<TableDTO> {
@@ -34,7 +34,7 @@ export class TableResolver extends CRUDResolver(TableDTO, {
 
     @UseGuards(GqlAuthGuard)
     @Mutation(() => TableDTO)
-    async deleteTag(@Args('id') id: string, @CurrentUser() user: UserDTO): Promise<TableDTO> {
+    async deleteTable(@Args('id') id: string, @CurrentUser() user: UserDTO): Promise<TableDTO> {
         const table = await this.service.repo.findOne({ where: { id }, relations: ['owner'] });
         if (user.credidential < AuthType.superAdmin && user.id !== table.owner.id) {
             throw new UnauthorizedException();

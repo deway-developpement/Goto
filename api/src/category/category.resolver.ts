@@ -37,7 +37,7 @@ export class CategoryResolver extends CRUDResolver(CategoryDTO, {
 
     @UseGuards(GqlAuthGuard)
     @Mutation(() => CategoryDTO)
-    async deleteTag(@Args('id') id: string, @CurrentUser() user: UserDTO): Promise<CategoryDTO> {
+    async deleteCategory(@Args('id') id: string, @CurrentUser() user: UserDTO): Promise<CategoryDTO> {
         if (user.credidential < AuthType.superAdmin) {
             throw new UnauthorizedException();
         }
