@@ -12,6 +12,7 @@ import { PhotoEntity } from '../../photo/interfaces/photo.entity';
 import { PerformanceEntity } from '../../performance/interfaces/performance.entity';
 import { ReviewEntity } from '../../review/interfaces/review.entity';
 import { HikeEntity } from '../../hike/interfaces/hike.entity';
+import { TableEntity } from '../../table/interfaces/table.entity';
 
 @Entity('user')
 @Unique(['pseudo', 'publicKey'])
@@ -52,6 +53,9 @@ export class UserEntity {
     @ManyToMany(() => HikeEntity, { onDelete: 'CASCADE' })
     @JoinTable({ name: 'users_likes' })
     likes?: HikeEntity[];
+
+    @OneToMany(() => TableEntity, (table) => table.owner, { onDelete: 'CASCADE' })
+    tables?: TableEntity[];
 
     @Column({ nullable: true })
     readonly refresh_token?: string;

@@ -12,6 +12,7 @@ import { PhotoDTO } from '../../photo/interfaces/photo.dto';
 import { PerformanceDTO } from '../../performance/interfaces/performance.dto';
 import { ReviewDTO } from '../../review/interfaces/review.dto';
 import { HikeDTO } from '../../hike/interfaces/hike.dto';
+import { TableDTO } from '../../table/interfaces/table.dto';
 
 @ObjectType('User')
 @KeySet(['id'])
@@ -36,6 +37,13 @@ import { HikeDTO } from '../../hike/interfaces/hike.dto';
     enableTotalCount: true,
 })
 @UnPagedRelation('likes', () => HikeDTO, {
+    disableRemove: true,
+    disableUpdate: true,
+    enableAggregate: true,
+    enableTotalCount: true,
+    pagingStrategy: PagingStrategies.CURSOR,
+})
+@UnPagedRelation('tables', () => TableDTO, {
     disableRemove: true,
     disableUpdate: true,
     enableAggregate: true,
