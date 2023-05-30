@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import stylesheet from './style';
-import { SafeAreaView, KeyboardAvoidingView, Text, View, Platform } from 'react-native';
+import { SafeAreaView, KeyboardAvoidingView, View, Platform } from 'react-native';
 import { AuthContext } from '../../providers/AuthContext';
 import { useTheme } from '@react-navigation/native';
 import KeyboardDismissView from '../KeyboardDismissView/KeyboardDismissView';
@@ -22,6 +22,7 @@ import GpxPathLine from '../Map/GpxPathLine';
 import CameraOverlay from '../Camera/menu/CameraOverlay';
 import TrackFocusOverlay from '../Map/Menu/TrackFocusOverlay';
 import { MapState } from '../Map/enum';
+import FavoritesScreen from '../FavoriteScreen/FavoriteScreen';
 
 function MapScreen({ route }) {
     const [isCamera, setIsCamera] = useState(false);
@@ -102,14 +103,7 @@ function MapScreen({ route }) {
     );
 }
 
-function FavoritesScreen() {
-    return (
-        <View style={{ flex: 1, backgroundColor: '' }}>
-            <SafeAreaView />
-            <Text>Favorites</Text>
-        </View>
-    );
-}
+
 
 const Tab = createBottomTabNavigator();
 
