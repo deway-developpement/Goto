@@ -1,12 +1,15 @@
-import React, {useEffect} from 'react';
-import { SafeAreaView, Text, View } from 'react-native';
+import React, {useEffect,useState} from 'react';
+import { SafeAreaView, Text, View,TouchableWithoutFeedback,Modal,TextInput } from 'react-native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { useTheme } from '@react-navigation/native';
 import stylesheet from './style';
-import { gql, useQuery } from '@apollo/client';
+import { gql, useQuery, useApolloClient } from '@apollo/client';
 import { FlatList } from 'react-native-gesture-handler';
 import Hike from '../Hike/Hike';
 import { useIsFocused } from '@react-navigation/native';
+import { IconComp, Icon } from '../Icon/Icon';
+import { Button } from 'react-native-elements';
+import Table from './Table';
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -107,9 +110,145 @@ function Scroll(){
 function List(){
     const { colors } = useTheme();
     const styles = stylesheet(colors);
+    const [modalVisible, setModalVisible] = useState(false);
+    const [name, setName] = useState('');
+    const client = useApolloClient();
+
+    const ADD_TABLE = gql`
+        mutation createTable($name: String!) {
+            createTable(input: { name: $name}) {
+                id
+            }
+        }
+    `;
+
+    async function create_table() {
+        await client.mutate({
+            mutation: ADD_TABLE,
+            variables: {
+                name: name,
+            },
+            errorPolicy: 'all',
+        });
+        //refetch();
+        setModalVisible(false);
+        setName('');
+    }
+
+    const WHOAMI = gql`
+    query whoami{
+            whoami{
+                tables(sorting: { field: createdAt, direction: DESC }) {
+                    id
+                    name
+                    createdAt
+                    hikes {
+                        name
+                    }
+                }
+            }
+        }
+    `;
+
+    const {
+        data,
+        loading,
+        refetch,
+    } = useQuery(WHOAMI);
+
+    if (!loading){
+        console.log(data.whoami.tables);
+        console.log(new Date(data.whoami.tables[0].createdAt).toLocaleDateString('en-EN', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            weekday: 'long',
+        }));
+    }
+
     return(
         <View style={{ flex: 1, backgroundColor: colors.background }}>
-            <Text>List</Text>
+            <View style={{width:'100%', flexDirection:'row', justifyContent:'flex-end' }}>
+                <TouchableWithoutFeedback onPress={() => setModalVisible(true)}>
+                    <View
+                        style={[
+                            styles.container,
+                            {
+                                flexDirection: 'row',
+                                marginTop: 20,
+                            },
+                        ]}
+                    >
+                        <IconComp color={colors.primary} name={'plus'} />
+                        <Text
+                            style={[
+                                styles.textLink,
+                                {
+                                    textDecorationLine: 'none',
+                                    marginLeft: '5%',
+                                    alignSelf: 'center',
+                                },
+                            ]}
+                        >
+                            Add a hike
+                        </Text>
+                    </View>
+                </TouchableWithoutFeedback>
+            </View>
+            {!loading && <Table t={data.whoami.tables[0]}/>}
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={modalVisible}
+                onRequestClose={() => {
+                    setModalVisible(false);
+                }}
+            >
+                <View style={styles.modalView}>
+                    <View
+                        style={{
+                            flexDirection: 'row',
+                            justifyContent: 'space-between',
+                        }}
+                    >
+                        <Text style={styles.modalText}>Name of your Table</Text>
+                        <Icon
+                            name="cross"
+                            size={17}
+                            style={styles.closeIcon}
+                            onPress={() => setModalVisible(false)}
+                        />
+                    </View>
+                    <Text style={styles.textLoginMiddle}>Adress email</Text>
+                    <TextInput
+                        textContentType="username"
+                        autoCorrect={false}
+                        autoCapitalize="none"
+                        placeholder="Table name"
+                        placeholderTextColor={colors.border}
+                        style={styles.textInput}
+                        onSubmitEditing={() => create_table()}
+                        onChangeText={(text) => setName(text)}
+                        value={name}
+                    />
+                    <View style={styles.btnContainer}>
+                        <Button
+                            buttonStyle={[
+                                styles.btn,
+                                { width: 100 },
+                            ]}
+                            titleStyle={styles.btnText}
+                            disabled={
+                                name == ''
+                            }
+                            title={'Submit'}
+                            onPress={() =>
+                                create_table()
+                            }
+                        />
+                    </View>
+                </View>
+            </Modal>
         </View>
     );
 }
