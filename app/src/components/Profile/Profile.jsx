@@ -22,6 +22,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Performance from './Performance';
 import FocusUser from './FocusUser';
 import FocusHikeScreen from '../Hike/FocusHikeScreen';
+import { FILES_URL } from '../../providers/AxiosContext';
 
 const stack = createNativeStackNavigator();
 
@@ -255,7 +256,7 @@ function ProfileScreen() {
                                                                 source={
                                                                     profil.whoami.avatar
                                                                         ? {
-                                                                            uri: `https://deway.fr/goto-api/files/photos/${profil.whoami.avatar.filename}`,
+                                                                            uri: `${FILES_URL}/photos/${profil.whoami.avatar.filename}`,
                                                                         }
                                                                         : require('../../../assets/images/default_pp.jpeg')
                                                                 }

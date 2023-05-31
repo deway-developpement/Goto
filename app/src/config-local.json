@@ -1,5 +1,6 @@
 {
   "refreshLink": "http://localhost:3000/auth/refresh",
   "baseLink": "http://localhost:3000/",
-  "graphQLLink": "http://localhost:3000/graphql"
+  "graphQLLink": "http://localhost:3000/graphql",
+  "filesLink": "http://localhost:3000/files"
 }

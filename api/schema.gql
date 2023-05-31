@@ -1877,8 +1877,6 @@ input UserUpdateInput {
 
 input HikeInput {
   name: String!
-  distance: Float!
-  elevation: Float!
   description: String!
   difficulty: Difficulty!
   track: Upload!

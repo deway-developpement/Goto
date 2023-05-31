@@ -10,6 +10,7 @@ import { FlatList } from 'react-native';
 import HikeCreationScreen from '../HikeCreationSreen/HikeCreationSreen';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { LocationContext } from '../../providers/LocationProvider';
+import { FILES_URL } from '../../providers/AxiosContext';
 
 const stack = createNativeStackNavigator();
 
@@ -180,7 +181,7 @@ function DiscoverHeader({ windowHeight, navigation }) {
                         source={
                             popularImage?.getHikePopular?.edges[0]?.node.photos[0]?.filename
                                 ? {
-                                    uri: `https://deway.fr/goto-api/files/photos/${popularImage?.getHikePopular?.edges[0]?.node?.photos[0]?.filename}`,
+                                    uri: `${FILES_URL}/photos/${popularImage?.getHikePopular?.edges[0]?.node?.photos[0]?.filename}`,
                                 }
                                 : require('../../../assets/images/Dalle_background.png')
                         }

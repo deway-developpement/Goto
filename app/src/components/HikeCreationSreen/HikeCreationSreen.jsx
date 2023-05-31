@@ -110,8 +110,6 @@ export default function HikeCreationScreen({ navigation }) {
     const submit = async () => {
         if (
             name !== '' &&
-            !isNaN(parseFloat(distance)) &&
-            !isNaN(parseInt(elevation)) &&
             description.length > 0 &&
             categoryId !== null &&
             file !== null &&
@@ -133,8 +131,6 @@ export default function HikeCreationScreen({ navigation }) {
                     $categoryId: String!
                     $name: String!
                     $description: String!
-                    $distance: Float!
-                    $elevation: Float!
                     $difficulty: Difficulty!
                     $latitude: Float!
                     $longitude: Float!
@@ -144,8 +140,6 @@ export default function HikeCreationScreen({ navigation }) {
                         input: {
                             name: $name
                             description: $description
-                            distance: $distance
-                            elevation: $elevation
                             difficulty: $difficulty
                             track: $file
                             categoryId: $categoryId
@@ -212,12 +206,6 @@ export default function HikeCreationScreen({ navigation }) {
         } else {
             if (name === '') {
                 setError('Le nom ne peut pas être vide');
-            }
-            if (isNaN(parseFloat(distance))) {
-                setError('La distance doit être un nombre');
-            }
-            if (isNaN(parseInt(elevation))) {
-                setError('Le dénivelé doit être un nombre');
             }
             if (description.length === 0) {
                 setError('La description ne peut pas être vide');
@@ -462,13 +450,7 @@ export default function HikeCreationScreen({ navigation }) {
                         titleStyle={styles.btnText}
                     />
 
-                    <Text style={[styles.textLoginMiddle, { marginBottom: 30 }]}>
-                        Photo :{' '}
-                        {file !== null &&
-                            (file?.name?.split('.')[1] in ['jpeg', 'jpg', 'png']
-                                ? file.name
-                                : 'Wrong file type')}
-                    </Text>
+                    <Text style={[styles.textLoginMiddle, { marginBottom: 30 }]}>Photo : </Text>
                     <Button
                         title="Select Image"
                         onPress={() => pickImage()}
@@ -484,7 +466,7 @@ export default function HikeCreationScreen({ navigation }) {
                         buttonStyle={[styles.btn, { width: 200, marginTop: 30 }]}
                         titleStyle={styles.btnText}
                     />
-                    <View style={{ height: 100 }} />
+                    <View style={{ height: 150 }} />
                 </BlurView>
             </ScrollView>
         </View>

@@ -2,6 +2,7 @@ import React from 'react';
 import { Text, Image, View, Dimensions } from 'react-native';
 import { useTheme } from '@react-navigation/native';
 import stylesheet from './style';
+import { FILES_URL } from '../../providers/AxiosContext';
 
 export default function PointsOfInterests(props) {
     const { colors } = useTheme();
@@ -38,7 +39,7 @@ export default function PointsOfInterests(props) {
                     source={
                         props.photo
                             ? {
-                                uri: `https://deway.fr/goto-api/files/photos/${props.photo.filename}`,
+                                uri: `${FILES_URL}/photos/${props.photo.filename}`,
                             }
                             : require('../../../assets/images/Dalle_background.png')
                     }

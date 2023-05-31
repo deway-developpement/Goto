@@ -68,7 +68,7 @@ function MapScreen({ route }) {
                             <View style={{ flex: 1 }}>
                                 <Map mapState={mapState}>
                                     <OverlayImage image={image} />
-                                    {file && <GpxPathLine fileData={file} />}
+                                    {file && <GpxPathLine fileData={file} mapState={mapState} />}
                                 </Map>
                                 <View
                                     style={[

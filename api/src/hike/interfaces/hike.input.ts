@@ -10,14 +10,6 @@ export class HikeInput {
     @Matches(RegExp(/^[\s\w:'?!$&%\-.]{2,25}$/), { message: "Name don't follow the rules" })
     name: string;
 
-    @Field(() => Number)
-    @IsNumber()
-    distance: number;
-
-    @Field(() => Number)
-    @IsNumber()
-    elevation: number;
-
     @Field(() => String)
     @IsString()
     description: string;

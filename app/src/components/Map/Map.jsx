@@ -4,10 +4,13 @@ import { default as MAP_STYLE } from '../../../assets/maps/style.json';
 import { LocationContext } from '../../providers/LocationProvider';
 import { connect } from 'react-redux';
 import { MapState } from './enum';
+import { distance2Coordonate } from '../../services/gpx.services';
 
 function Map({ children, mapState }) {
     const { location, permission } = useContext(LocationContext);
     const cameraRef = useRef(null);
+
+    const points = [];
 
     const childrenWithProps = children.map((child, index) => {
         if (isValidElement(child)) {
@@ -28,6 +31,35 @@ function Map({ children, mapState }) {
             });
         }
     }, [mapState]);
+
+    useEffect(() => {
+        if (mapState === MapState.FOLLOW_POSITION) {
+            cameraRef.current.animateCamera({
+                center: {
+                    latitude: parseFloat(location?.coords?.latitude),
+                    longitude: parseFloat(location?.coords?.longitude),
+                },
+            });
+        }
+        if (mapState === MapState.FOLLOW_AND_RECORD_POSITION) {
+            cameraRef.current.animateCamera({
+                center: {
+                    latitude: parseFloat(location?.coords?.latitude),
+                    longitude: parseFloat(location?.coords?.longitude),
+                },
+            });
+            if (
+                points.length === 0 ||
+                distance2Coordonate(points[points.length - 1], location.coords) > 0.01
+            ) {
+                points.push({
+                    latitude: parseFloat(location?.coords?.latitude),
+                    longitude: parseFloat(location?.coords?.longitude),
+                    time: new Date(),
+                });
+            }
+        }
+    }, [location]);
 
     return (
         <MapView

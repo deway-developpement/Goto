@@ -11,6 +11,7 @@ import SplashScreen from '../SplashScreen/SplashScreen';
 import { ScrollView } from 'react-native';
 import { LocationContext } from '../../providers/LocationProvider';
 import { AxiosContext } from '../../providers/AxiosContext';
+import { FILES_URL } from '../../providers/AxiosContext';
 
 function Tag(props) {
     const { colors } = useTheme();
@@ -44,14 +45,6 @@ export default function FocusHikeScreen({ route }) {
 
     const windowWidth = Dimensions.get('window').width;
     const windowHeight = Dimensions.get('window').height;
-
-    // const WHOAMI = gql`
-    //     query whoami($lastMonth: DateTime!, $PseudoFilter: String!){
-    //         whoami {
-    //             id
-    //         }
-    //     }
-    // `;
 
     const GET_HIKE = gql`
         query hike($id: ID!, $lat: Float!, $lon: Float!) {
@@ -143,7 +136,7 @@ export default function FocusHikeScreen({ route }) {
                     source={
                         data.hike.photos && data.hike.photos.length > 0
                             ? {
-                                uri: `https://deway.fr/goto-api/files/photos/${data.hike.photos[0].filename}`,
+                                uri: `${FILES_URL}/photos/${data.hike.photos[0].filename}`,
                             }
                             : require('../../../assets/images/Dalle_background.png')
                     }
@@ -208,7 +201,7 @@ export default function FocusHikeScreen({ route }) {
                                                 { marginTop: 10, fontSize: 20 },
                                             ]}
                                         >
-                                            {data.hike.duration}h
+                                            {data.hike.duration || '<0.5'}h
                                         </Text>
                                         <Text
                                             style={[
@@ -452,7 +445,7 @@ export default function FocusHikeScreen({ route }) {
                                     source={
                                         data?.hike?.owner?.avatar?.filename
                                             ? {
-                                                uri: `https://deway.fr/goto-api/files/photos/${data?.hike?.owner?.avatar?.filename}`,
+                                                uri: `${FILES_URL}/photos/${data?.hike?.owner?.avatar?.filename}`,
                                             }
                                             : require('../../../assets/images/Dalle_background.png')
                                     }

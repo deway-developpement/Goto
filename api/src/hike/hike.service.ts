@@ -27,7 +27,16 @@ export class HikeService extends TypeOrmQueryService<HikeEntity> {
     }
 
     async create(hike: HikeInput, user: UserEntity): Promise<HikeEntity> {
-        const localfilename = await this.filesService.uploadFile(await hike.track, FileType.GPX);
+        const { createReadStream } = await hike.track;
+        // stream data to string
+        const data: string = await new Promise((resolve, reject) => {
+            const chunks = [];
+            createReadStream()
+                .on('data', (chunk) => chunks.push(chunk))
+                .on('error', (err) => reject(err))
+                .on('end', () => resolve(Buffer.concat(chunks).toString('utf8')));
+        });
+        const localfilename = await this.filesService.uploadFileFromString(data, FileType.GPX);
         const tags = await Promise.all(
             hike.tagsId.map(async (tagId) => {
                 const tag = await this.tagService.findById(tagId);
@@ -43,6 +52,11 @@ export class HikeService extends TypeOrmQueryService<HikeEntity> {
             }
             return category;
         });
+
+        // parse data to points
+        const points = await this.filesService.parseFile(data);
+        const stats = await this.filesService.trackStats(points);
+
         const newHike = this.repo.create({
             ...hike,
             track: localfilename,
@@ -50,6 +64,8 @@ export class HikeService extends TypeOrmQueryService<HikeEntity> {
             duration: 0,
             tags: tags,
             category: category,
+            distance: stats.distance,
+            elevation: stats.elevation,
         });
         newHike.duration = this.duration(newHike);
         return this.repo.save(newHike);

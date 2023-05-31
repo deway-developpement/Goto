@@ -16,6 +16,7 @@ export function parseFile(fileString) {
 }
 
 export function distance2Coordonate(point1, point2) {
+    if (!point1 || !point2) return Number.NaN;
     return (
         6371 *
         2 *
