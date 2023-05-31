@@ -11,6 +11,7 @@ import { UserDTO } from '../user/interfaces/user.dto';
 import { AuthType } from '../auth/interface/auth.type';
 import { HikeConnectionDTO } from '../CustomScalar/hikeConnection/interface/hikeconnection.dto';
 import { Int } from 'type-graphql';
+import { Difficulty } from './interfaces/difficulty.dto';
 
 const guards = [GqlAuthGuard];
 
@@ -72,20 +73,22 @@ export class HikeResolver extends CRUDResolver(HikeDTO, {
         @Args('distance', { description: 'Distance in kilometers', defaultValue: 50 })
         distance: number,
         @Args('search', { nullable: true }) search: string,
+        @Args('difficulty', { nullable: true }) difficulty: Difficulty,
         @Args('limit', { type: () => Int }) limit: number,
         @Args('cursor', { defaultValue: '' }) cursor: string
     ): Promise<HikeConnectionDTO> {
-        return this.service.findByDistance(lat, lon, distance, limit, cursor, search);
+        return this.service.findByDistance(lat, lon, distance, limit, cursor, search, difficulty);
     }
 
     @UseGuards(GqlAuthGuard)
     @Query(() => HikeConnectionDTO)
     async getHikePopular(
         @Args('search', { nullable: true }) search: string,
+        @Args('difficulty', { nullable: true }) difficulty: Difficulty,
         @Args('limit', { type: () => Int }) limit: number,
         @Args('cursor', { defaultValue: '' }) cursor: string
     ): Promise<HikeConnectionDTO> {
-        return this.service.findPopular(limit, cursor, search);
+        return this.service.findPopular(limit, cursor, search, difficulty);
     }
 
     @UseGuards(GqlAuthGuard)
@@ -93,10 +96,11 @@ export class HikeResolver extends CRUDResolver(HikeDTO, {
     async getHikeAlreadyDone(
         @CurrentUser() user: UserDTO,
         @Args('search', { nullable: true }) search: string,
+        @Args('difficulty', { nullable: true }) difficulty: Difficulty,
         @Args('limit', { type: () => Int }) limit: number,
         @Args('cursor', { defaultValue: '' }) cursor: string
     ): Promise<HikeConnectionDTO> {
-        return this.service.findAlreadyDone(user.id, limit, cursor, search);
+        return this.service.findAlreadyDone(user.id, limit, cursor, search, difficulty);
     }
 
     @ResolveField(() => Number)

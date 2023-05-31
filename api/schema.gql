@@ -1708,11 +1708,12 @@ type Query {
     """Distance in kilometers"""
     distance: Float = 50
     search: String
+    difficulty: String
     limit: Int!
     cursor: String = ""
   ): CustomHikeConnection!
-  getHikePopular(search: String, limit: Int!, cursor: String = ""): CustomHikeConnection!
-  getHikeAlreadyDone(search: String, limit: Int!, cursor: String = ""): CustomHikeConnection!
+  getHikePopular(search: String, difficulty: String, limit: Int!, cursor: String = ""): CustomHikeConnection!
+  getHikeAlreadyDone(search: String, difficulty: String, limit: Int!, cursor: String = ""): CustomHikeConnection!
   tag(
     """The id of the record to find."""
     id: ID!
