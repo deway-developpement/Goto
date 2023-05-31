@@ -13,8 +13,6 @@ export default function Charts({
     xLen = 5,
     yLen = 20,
     colors,
-    title,
-    subtitle,
     width,
     xUnit,
     yUnit,
@@ -86,14 +84,17 @@ export default function Charts({
             xAxisLabel={xUnit}
             yAxisInterval={2} // optional, defaults to 1
             chartConfig={{
-                backgroundColor: colors.background,
-                backgroundGradientFrom: colors.primary,
-                backgroundGradientTo: colors.secondary,
+                backgroundGradientFrom: colors.borderLineSecondary,
+                backgroundGradientTo: colors.primary,
                 decimalPlaces: 1, // optional, defaults to 2dp
                 color: () => colors.background,
                 labelColor: () => colors.background,
             }}
             bezier={bezier}
+            style={{
+                marginVertical: 8,
+                borderRadius: 12,
+            }}
         />
     );
 }

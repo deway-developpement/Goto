@@ -94,6 +94,7 @@ export default function FocusHikeScreen({ route }) {
                         filename
                     }
                 }
+                isLiked
                 distanceFrom(lat: $lat, lon: $lon)
             }
         }
