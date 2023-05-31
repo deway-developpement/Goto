@@ -640,6 +640,14 @@ type Photo {
   createdAt: DateTime!
 }
 
+type Table {
+  id: ID!
+  name: String!
+  createdAt: DateTime!
+  hikes: Hike
+  owner: User
+}
+
 type User {
   id: ID!
   pseudo: String!
@@ -665,6 +673,10 @@ type User {
     """Filter to find records to aggregate on"""
     filter: HikeAggregateFilter
   ): [UserLikesAggregateResponse!]!
+  tablesAggregate(
+    """Filter to find records to aggregate on"""
+    filter: TableAggregateFilter
+  ): [UserTablesAggregateResponse!]!
   avatar: Photo
   friends(
     """Specify to filter the records returned."""
@@ -688,12 +700,22 @@ type User {
     sorting: [ReviewSort!] = []
   ): [Review!]!
   likes(
+    """Limit or page results."""
+    paging: CursorPaging = {first: 10}
+
     """Specify to filter the records returned."""
     filter: HikeFilter = {}
 
     """Specify to sort results."""
     sorting: [HikeSort!] = []
-  ): [Hike!]!
+  ): UserLikesConnection!
+  tables(
+    """Specify to filter the records returned."""
+    filter: TableFilter = {}
+
+    """Specify to sort results."""
+    sorting: [TableSort!] = []
+  ): [Table!]!
   isFriend: Boolean!
 }
 
@@ -735,6 +757,14 @@ input HikeAggregateFilter {
   createdAt: DateFieldComparison
 }
 
+input TableAggregateFilter {
+  and: [TableAggregateFilter!]
+  or: [TableAggregateFilter!]
+  id: IDFilterComparison
+  name: StringFieldComparison
+  createdAt: DateFieldComparison
+}
+
 input UserFilter {
   and: [UserFilter!]
   or: [UserFilter!]
@@ -765,6 +795,43 @@ enum UserSortFields {
   createdAt
 }
 
+input CursorPaging {
+  """Paginate before opaque cursor"""
+  before: ConnectionCursor
+
+  """Paginate after opaque cursor"""
+  after: ConnectionCursor
+
+  """Paginate first"""
+  first: Int
+
+  """Paginate last"""
+  last: Int
+}
+
+"""Cursor for paging through collections"""
+scalar ConnectionCursor
+
+input TableFilter {
+  and: [TableFilter!]
+  or: [TableFilter!]
+  id: IDFilterComparison
+  name: StringFieldComparison
+  createdAt: DateFieldComparison
+}
+
+input TableSort {
+  field: TableSortFields!
+  direction: SortDirection!
+  nulls: SortNulls
+}
+
+enum TableSortFields {
+  id
+  name
+  createdAt
+}
+
 type UserEdge {
   """The node containing the User"""
   node: User!
@@ -772,9 +839,6 @@ type UserEdge {
   """Cursor for this node."""
   cursor: ConnectionCursor!
 }
-
-"""Cursor for paging through collections"""
-scalar ConnectionCursor
 
 type PageInfo {
   """true if paging forward and there are more records."""
@@ -858,6 +922,56 @@ type UserAggregateResponse {
   avg: UserAvgAggregate
   min: UserMinAggregate
   max: UserMaxAggregate
+}
+
+type HikeEdge {
+  """The node containing the Hike"""
+  node: Hike!
+
+  """Cursor for this node."""
+  cursor: ConnectionCursor!
+}
+
+type UserLikesConnection {
+  """Paging information"""
+  pageInfo: PageInfo!
+
+  """Array of edges."""
+  edges: [HikeEdge!]!
+
+  """Fetch total count of records"""
+  totalCount: Int!
+}
+
+type UserTablesAggregateGroupBy {
+  id: ID
+  name: String
+  createdAt: DateTime
+}
+
+type UserTablesCountAggregate {
+  id: Int
+  name: Int
+  createdAt: Int
+}
+
+type UserTablesMinAggregate {
+  id: ID
+  name: String
+  createdAt: DateTime
+}
+
+type UserTablesMaxAggregate {
+  id: ID
+  name: String
+  createdAt: DateTime
+}
+
+type UserTablesAggregateResponse {
+  groupBy: UserTablesAggregateGroupBy
+  count: UserTablesCountAggregate
+  min: UserTablesMinAggregate
+  max: UserTablesMaxAggregate
 }
 
 type UserLikesAggregateGroupBy {
@@ -1106,14 +1220,6 @@ type CustomHikeConnection {
 type CustomHikeEdge {
   cursor: String!
   node: Hike!
-}
-
-type HikeEdge {
-  """The node containing the Hike"""
-  node: Hike!
-
-  """Cursor for this node."""
-  cursor: ConnectionCursor!
 }
 
 type HikeConnection {
@@ -1526,6 +1632,30 @@ type AlertMaxAggregate {
   createdAt: DateTime
 }
 
+type TableAggregateGroupBy {
+  id: ID
+  name: String
+  createdAt: DateTime
+}
+
+type TableCountAggregate {
+  id: Int
+  name: Int
+  createdAt: Int
+}
+
+type TableMinAggregate {
+  id: ID
+  name: String
+  createdAt: DateTime
+}
+
+type TableMaxAggregate {
+  id: ID
+  name: String
+  createdAt: DateTime
+}
+
 type Query {
   userAggregate(
     """Filter to find records to aggregate on"""
@@ -1651,20 +1781,17 @@ type Query {
     """Specify to sort results."""
     sorting: [AlertSort!] = []
   ): [Alert!]!
-}
+  table(
+    """The id of the record to find."""
+    id: ID!
+  ): Table
+  tables(
+    """Specify to filter the records returned."""
+    filter: TableFilter = {}
 
-input CursorPaging {
-  """Paginate before opaque cursor"""
-  before: ConnectionCursor
-
-  """Paginate after opaque cursor"""
-  after: ConnectionCursor
-
-  """Paginate first"""
-  first: Int
-
-  """Paginate last"""
-  last: Int
+    """Specify to sort results."""
+    sorting: [TableSort!] = []
+  ): [Table!]!
 }
 
 input CategoryFilter {
@@ -1700,8 +1827,9 @@ type Mutation {
   likeHike(id: String!): Hike!
   unlikeHike(id: String!): Hike!
   createTag(input: TagInput!): Tag!
-  deleteTag(id: String!): Category!
+  deleteTag(id: String!): Tag!
   createCategory(input: CategoryInput!): Category!
+  deleteCategory(id: String!): Category!
   createPointOfInterest(input: PointOfInterestInput!): PointOfInterest!
   deletePointOfInterest(id: String!): PointOfInterest!
   createPerformance(input: PerformanceInput!): Performance!
@@ -1713,6 +1841,10 @@ type Mutation {
   deleteAlert(id: String!): Alert!
   createPhoto(input: PhotoInput!): Photo!
   changeAvatar(input: PhotoInput!): Photo!
+  setHikesOnTable(input: SetHikesOnTableInput!): Table!
+  removeHikesFromTable(input: RemoveHikesFromTableInput!): Table!
+  createTable(input: TableInput!): Table!
+  deleteTable(id: String!): Table!
 }
 
 input UserInput {
@@ -1801,4 +1933,24 @@ enum ObjType {
   USER
   CATEGORY
   POINTOFINTEREST
+}
+
+input SetHikesOnTableInput {
+  """The id of the record."""
+  id: ID!
+
+  """The id of relation."""
+  relationId: ID!
+}
+
+input RemoveHikesFromTableInput {
+  """The id of the record."""
+  id: ID!
+
+  """The id of relation."""
+  relationId: ID!
+}
+
+input TableInput {
+  name: String!
 }

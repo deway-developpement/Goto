@@ -1,44 +1,42 @@
 import { CRUDResolver } from '@nestjs-query/query-graphql';
 import { Inject, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { Mutation, Resolver, Args } from '@nestjs/graphql';
-import { CategoryService } from './category.service';
+import { TableService } from './table.service';
 import { CurrentUser, GqlAuthGuard } from '../auth/guards/graphql-auth.guard';
-import { CategoryDTO } from './interfaces/category.dto';
+import { TableDTO } from './interfaces/table.dto';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import * as _ from '@nestjs-query/query-graphql/node_modules/@nestjs-query/core';
-import { CategoryInput } from './interfaces/category.input';
+import { TableInput } from './interfaces/table.input';
 import { UserDTO } from '../user/interfaces/user.dto';
 import { AuthType } from '../auth/interface/auth.type';
 
 const guards = [GqlAuthGuard];
 
-@Resolver(() => CategoryDTO)
-export class CategoryResolver extends CRUDResolver(CategoryDTO, {
+@Resolver(() => TableDTO)
+export class TableResolver extends CRUDResolver(TableDTO, {
     read: { guards },
     create: { disabled: true },
     update: { disabled: true },
     delete: { disabled: true },
 }) {
-    constructor(@Inject(CategoryService) readonly service: CategoryService) {
+    constructor(@Inject(TableService) readonly service: TableService) {
         super(service);
     }
 
     @UseGuards(GqlAuthGuard)
-    @Mutation(() => CategoryDTO)
-    async createCategory(
-        @Args('input') query: CategoryInput,
+    @Mutation(() => TableDTO)
+    async createTable(
+        @Args('input') query: TableInput,
         @CurrentUser() user: UserDTO
-    ): Promise<CategoryDTO> {
-        if (user.credidential < AuthType.superAdmin) {
-            throw new UnauthorizedException();
-        }
-        return this.service.createOne(query);
+    ): Promise<TableDTO> {
+        return this.service.create(query, user);
     }
 
     @UseGuards(GqlAuthGuard)
-    @Mutation(() => CategoryDTO)
-    async deleteCategory(@Args('id') id: string, @CurrentUser() user: UserDTO): Promise<CategoryDTO> {
-        if (user.credidential < AuthType.superAdmin) {
+    @Mutation(() => TableDTO)
+    async deleteTable(@Args('id') id: string, @CurrentUser() user: UserDTO): Promise<TableDTO> {
+        const table = await this.service.repo.findOne({ where: { id }, relations: ['owner'] });
+        if (user.credidential < AuthType.superAdmin && user.id !== table.owner.id) {
             throw new UnauthorizedException();
         }
         return this.service.deleteOne(id);
