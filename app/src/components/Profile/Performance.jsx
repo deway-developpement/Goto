@@ -443,7 +443,14 @@ export default function Performance({ route }) {
                                         paddingHorizontal: 10,
                                     }}
                                 >
-                                    <Text style={[styles.header]}>Elevation</Text>
+                                    <Text
+                                        style={[
+                                            styles.header,
+                                            { color: colors.primary, fontSize: 24 },
+                                        ]}
+                                    >
+                                        Elevation
+                                    </Text>
                                     <Charts
                                         absciissa={stats?.distanceDeltas}
                                         ordinate={stats?.elevationDeltas}
@@ -457,7 +464,14 @@ export default function Performance({ route }) {
                                         xMode={ChartMode.cumulative}
                                         yMode={ChartMode.cumulative}
                                     />
-                                    <Text style={[styles.header]}>Speed</Text>
+                                    <Text
+                                        style={[
+                                            styles.header,
+                                            { color: colors.primary, fontSize: 24, marginTop: 20 },
+                                        ]}
+                                    >
+                                        Speed
+                                    </Text>
                                     <Charts
                                         absciissa={stats?.distanceDeltas}
                                         ordinate={stats?.speedDeltas}
