@@ -14,6 +14,8 @@ import { UserDTO } from '../../user/interfaces/user.dto';
 @QueryOptions({ pagingStrategy: PagingStrategies.NONE })
 @UnPagedRelation('hikes', () => HikeDTO, {
     nullable: true,
+    disableRemove: true,
+    disableUpdate: true,
 })
 @Relation('owner', () => UserDTO, {
     nullable: true,

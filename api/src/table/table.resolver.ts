@@ -41,4 +41,21 @@ export class TableResolver extends CRUDResolver(TableDTO, {
         }
         return this.service.deleteOne(id);
     }
+
+    @UseGuards(GqlAuthGuard)
+    @Mutation(() => TableDTO)
+    async addHikeToTable(
+        @Args('tableId') tableId: string,
+        @Args('hikeId') hikeId: string,
+        @CurrentUser() user: UserDTO
+    ): Promise<TableDTO> {
+        const table = await this.service.repo.findOne({
+            where: { id: tableId },
+            relations: ['owner'],
+        });
+        if (user.credidential < AuthType.superAdmin && user.id !== table.owner.id) {
+            throw new UnauthorizedException();
+        }
+        return this.service.addHikeToTable(tableId, hikeId);
+    }
 }
