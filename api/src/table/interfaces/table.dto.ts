@@ -4,6 +4,7 @@ import {
     PagingStrategies,
     QueryOptions,
     Relation,
+    UnPagedRelation,
 } from '@nestjs-query/query-graphql';
 import { ObjectType, ID } from '@nestjs/graphql';
 import { HikeDTO } from '../../hike/interfaces/hike.dto';
@@ -11,7 +12,7 @@ import { UserDTO } from '../../user/interfaces/user.dto';
 
 @ObjectType('Table')
 @QueryOptions({ pagingStrategy: PagingStrategies.NONE })
-@Relation('hikes', () => HikeDTO, {
+@UnPagedRelation('hikes', () => HikeDTO, {
     nullable: true,
 })
 @Relation('owner', () => UserDTO, {
