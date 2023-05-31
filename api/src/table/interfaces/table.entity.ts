@@ -1,4 +1,12 @@
-import { Entity, Column, PrimaryGeneratedColumn, Unique, OneToMany, ManyToOne } from 'typeorm';
+import {
+    Entity,
+    Column,
+    PrimaryGeneratedColumn,
+    Unique,
+    ManyToMany,
+    ManyToOne,
+    JoinTable,
+} from 'typeorm';
 import { HikeEntity } from '../../hike/interfaces/hike.entity';
 import { UserEntity } from '../../user/interfaces/user.entity';
 
@@ -14,7 +22,8 @@ export class TableEntity {
     @ManyToOne(() => UserEntity, (user) => user.tables, { cascade: ['remove'] })
     owner: UserEntity;
 
-    @OneToMany(() => HikeEntity, (hike) => hike.category)
+    @ManyToMany(() => HikeEntity, { onDelete: 'CASCADE' })
+    @JoinTable({ name: 'tables_hikes' })
     hikes: HikeEntity[];
 
     @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })

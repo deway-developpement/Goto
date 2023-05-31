@@ -5,7 +5,7 @@ import { Repository } from 'typeorm';
 import { TableEntity } from './interfaces/table.entity';
 import { TableInput } from './interfaces/table.input';
 import { UserEntity } from '../user/interfaces/user.entity';
-import { Inject } from '@nestjs/common';
+import { HttpException, HttpStatus, Inject } from '@nestjs/common';
 import { HikeService } from '../hike/hike.service';
 
 @QueryService(TableEntity)
@@ -24,8 +24,10 @@ export class TableService extends TypeOrmQueryService<TableEntity> {
 
     async addHikeToTable(tableId: string, hikeId: string): Promise<TableEntity> {
         const table = await this.repo.findOne({ where: { id: tableId }, relations: ['hikes'] });
+        if (!table) throw new HttpException('Table not found', HttpStatus.NOT_FOUND);
         const hike = await this.hikeService.repo.findOne({ where: { id: hikeId } });
-        table.hikes.push(hike);
-        return this.repo.save(table);
+        if (!hike) throw new HttpException('Hike not found', HttpStatus.NOT_FOUND);
+        this.addRelations('hikes', tableId, [hikeId]);
+        return table;
     }
 }
