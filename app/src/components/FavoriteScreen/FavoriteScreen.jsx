@@ -1,14 +1,64 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import { SafeAreaView, Text, View } from 'react-native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { useTheme } from '@react-navigation/native';
 import stylesheet from './style';
 import { gql, useQuery } from '@apollo/client';
+import { FlatList } from 'react-native-gesture-handler';
+import Hike from '../Hike/Hike';
+import { useIsFocused } from '@react-navigation/native';
 
 const Tab = createMaterialTopTabNavigator();
-{/* <FlatList
+
+function Scroll(){
+    const WHOAMI = gql`
+    query whoami($limit: Int, $cursor: ConnectionCursor) {
+            whoami{
+                likes (paging: { first: $limit, after: $cursor },sorting: { field: id, direction: DESC }) {
+                    edges {
+                        node {
+                            id
+                        }
+                    }
+                    pageInfo {
+                        hasNextPage
+                        endCursor
+                    }
+                }
+            }
+        }
+    `;
+    var limit=2;
+    var cursor='';
+    const {
+        data,
+        loading,
+        fetchMore,
+        refetch,
+    } = useQuery(WHOAMI, {
+        variables: {
+            limit: limit,
+            cursor: cursor,
+        },
+    });
+    const { colors } = useTheme();
+    const styles = stylesheet(colors);
+
+    let onEndReachedCalledDuringMomentum = false;
+    const nodes = data?.whoami?.likes.edges.map((hike) => hike.node);
+
+    const isFocused = useIsFocused();
+
+    useEffect(() => {
+        if (!isFocused) {
+            refetch();
+        }
+    }, [isFocused]);
+
+    return(
+        <FlatList
             data={nodes}
-            extraData={data?.hikes.edges}
+            extraData={data?.whoami?.likes.edges}
             renderItem={({ item }) => <Hike id={item.id} />}
             keyExtractor={(item) => item.id}
             showsVerticalScrollIndicator={false}
@@ -18,13 +68,13 @@ const Tab = createMaterialTopTabNavigator();
             onEndReachedThreshold={0.2}
             onEndReached={() => {
                 if (
-                    data?.hikes?.pageInfo?.hasNextPage &&
+                    data?.whoami?.likes?.pageInfo?.hasNextPage &&
                     !loading &&
                     !onEndReachedCalledDuringMomentum
                 ) {
                     fetchMore({
                         variables: {
-                            cursor: data?.hikes?.pageInfo?.endCursor,
+                            cursor: data?.whoami?.likes?.pageInfo?.endCursor,
                         },
                         updateQuery: (prev, { fetchMoreResult }) => {
                             if (!fetchMoreResult) {
@@ -50,44 +100,7 @@ const Tab = createMaterialTopTabNavigator();
             onMomentumScrollBegin={() => {
                 onEndReachedCalledDuringMomentum = false;
             }}
-        /> */}
-function Scroll(){
-    // const WHOAMI = gql`
-    // query whoami($limit: Int, $cursor: ConnectionCursor) {
-    //         whoami{
-    //             likes (paging: { first: $limit, after: $cursor },sorting: { field: id, direction: DESC }) {
-    //                 edges {
-    //                     node {
-    //                         id
-    //                     }
-    //                 }
-    //                 pageInfo {
-    //                     hasNextPage
-    //                     endCursor
-    //                 }
-    //             }
-    //         }
-    //     }
-    // `;
-    // var limit=2;
-    // var cursor='';
-    // const {
-    //     data,
-    //     loading,
-    //     refetch,
-    // } = useQuery(WHOAMI, {
-    //     variables: {
-    //         limit: limit,
-    //         cursor: cursor,
-    //     },
-    // });
-    // if (!loading){
-    //     console.log(data);
-    // }
-    const { colors } = useTheme();
-    const styles = stylesheet(colors);
-    return(
-        <View/>
+        />
     );
 }
 
