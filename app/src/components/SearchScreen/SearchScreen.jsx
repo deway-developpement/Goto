@@ -1,5 +1,5 @@
-import React, { useContext, useRef } from 'react';
-import { Text, TouchableWithoutFeedback } from 'react-native';
+import React, { useContext, useRef, useState } from 'react';
+import { Modal, Text, TouchableWithoutFeedback } from 'react-native';
 import { useTheme } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import stylesheet from './style';
@@ -8,8 +8,9 @@ import Hike from '../Hike/Hike';
 import { FlatList } from 'react-native-gesture-handler';
 import { View } from 'react-native';
 import { TextInput } from 'react-native';
-import { IconComp } from '../Icon/Icon';
+import { Icon, IconComp } from '../Icon/Icon';
 import { LocationContext } from '../../providers/LocationProvider';
+import SplashScreen from '../SplashScreen/SplashScreen';
 
 const GET_HIKES_AROUND_ME = gql`
     query hikes($lon: Float!, $lat: Float!, $limit: Int!, $cursor: String, $search: String) {
@@ -103,7 +104,7 @@ export const QUERIES_CONFIG = (category, search, cursor, limit, location) => {
                 lat: location?.coords.latitude,
             },
             variablesSearch: {
-                search: search.split(' ').join('%') + '%',
+                search: '%' + search.split(' ').join('%') + '%',
                 limit: limit,
                 cursor: cursor,
                 lon: location?.coords.longitude,
@@ -128,7 +129,7 @@ export const QUERIES_CONFIG = (category, search, cursor, limit, location) => {
             variablesSearch: {
                 filter: {
                     name: {
-                        like: search.split(' ').join('%') + '%',
+                        like: '%' + search.split(' ').join('%') + '%',
                     },
                     createdAt: {
                         gt: thismonth,
@@ -147,7 +148,7 @@ export const QUERIES_CONFIG = (category, search, cursor, limit, location) => {
                 cursor: cursor,
             },
             variablesSearch: {
-                search: search.split(' ').join('%') + '%',
+                search: '%' + search.split(' ').join('%') + '%',
                 limit: limit,
                 cursor: cursor,
             },
@@ -161,7 +162,7 @@ export const QUERIES_CONFIG = (category, search, cursor, limit, location) => {
                 cursor: cursor,
             },
             variablesSearch: {
-                search: search.split(' ').join('%') + '%',
+                search: '%' + search.split(' ').join('%') + '%',
                 limit: limit,
                 cursor: cursor,
             },
@@ -183,7 +184,7 @@ export const QUERIES_CONFIG = (category, search, cursor, limit, location) => {
         variablesSearch: {
             filter: {
                 name: {
-                    like: search.split(' ').join('%') + '%',
+                    like: '%' + search.split(' ').join('%') + '%',
                 },
                 category: {
                     name: {
@@ -197,25 +198,116 @@ export const QUERIES_CONFIG = (category, search, cursor, limit, location) => {
     };
 };
 
-export default function SearchScreen({ route, navigation }) {
+function CategoryCard({ item, navigate, categoryActive, setCategoryActive }) {
     const { colors } = useTheme();
     const styles = stylesheet(colors);
 
-    const searchBarRef = useRef(null);
+    return (
+        <TouchableWithoutFeedback
+            onPress={() => {
+                const newCategory = categoryActive === item.name ? '' : item.name;
+                setCategoryActive(newCategory);
+                navigate(newCategory);
+            }}
+        >
+            <View
+                style={[
+                    styles.categoryContainer,
+                    {
+                        backgroundColor:
+                            categoryActive === item.name ? colors.filled : colors.empty,
+                    },
+                ]}
+            >
+                <Text
+                    style={[
+                        styles.category,
+                        {
+                            color:
+                                categoryActive === item.name
+                                    ? colors.backgroundSecondary
+                                    : colors.text,
+                        },
+                    ]}
+                >
+                    {item.name}
+                </Text>
+            </View>
+        </TouchableWithoutFeedback>
+    );
+}
 
+function FilterModal({ setModalVisible, navigate, initialCategory }) {
+    const { colors } = useTheme();
+    const styles = stylesheet(colors);
+    const [categoryActive, setCategoryActive] = useState(initialCategory);
+
+    const GET_CATEGORIES = gql`
+        query categories {
+            categories(sorting: { field: id, direction: ASC }) {
+                id
+                name
+            }
+        }
+    `;
+
+    const { data, loading } = useQuery(GET_CATEGORIES);
+
+    if (loading) {
+        return <SplashScreen />;
+    }
+
+    return (
+        <View style={styles.modalContainer}>
+            <Text style={styles.header}>Filter</Text>
+            <Icon
+                name="cross"
+                color={colors.primary}
+                size={18}
+                style={{ top: 37, right: 29, position: 'absolute' }}
+                onPress={() => {
+                    setModalVisible(false);
+                }}
+            />
+            <Text style={styles.subHeader}>Categories</Text>
+            <View
+                style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' }}
+            >
+                {data?.categories.map((category) => (
+                    <CategoryCard
+                        key={category.id}
+                        item={category}
+                        setModalVisible={setModalVisible}
+                        navigate={navigate}
+                        categoryActive={categoryActive}
+                        setCategoryActive={setCategoryActive}
+                    />
+                ))}
+            </View>
+        </View>
+    );
+}
+
+export default function SearchScreen({ route, navigation }) {
+    const { colors } = useTheme();
+    const styles = stylesheet(colors);
+    const searchBarRef = useRef(null);
     const limitByPage = 2;
     const { location } = useContext(LocationContext);
-
     const CONFIG = QUERIES_CONFIG(route.params?.category, '', '', limitByPage, location);
+    const [modalVisible, setModalVisible] = useState(false);
 
     const { data, loading, fetchMore, refetch } = useQuery(CONFIG.query, {
         variables: CONFIG.variables,
     });
-
     const nodes = data?.hikes?.edges.map((hike) => hike.node);
 
-    function removeFilter() {
-        route.params?.category && navigation.navigate('Search');
+    function navigate(category) {
+        if (category === '') {
+            navigation.navigate('Search');
+        } else {
+            navigation.navigate('Search', { category: category });
+        }
         searchBarRef.current.clear();
     }
 
@@ -227,95 +319,121 @@ export default function SearchScreen({ route, navigation }) {
     let onEndReachedCalledDuringMomentum = false;
 
     return (
-        <SafeAreaView style={styles.container}>
-            <FlatList
-                data={nodes}
-                extraData={data?.hikes.edges}
-                renderItem={({ item }) => <Hike id={item.id} />}
-                keyExtractor={(item) => item.id}
-                showsVerticalScrollIndicator={false}
-                emptyListComponent={<Text style={styles.textLink}>No hikes</Text>}
-                ListHeaderComponent={
-                    <>
-                        <View style={[styles.textInputContainer, { marginTop: 28 }]}>
-                            <TextInput
-                                placeholder="Search"
-                                autoCorrect={false}
-                                autoCapitalize="none"
-                                placeholderTextColor={colors.border}
-                                style={[styles.textInput, { width: '90%' }]}
-                                onSubmitEditing={(e) => handleSearch(e.nativeEvent.text)}
-                                ref={searchBarRef}
-                            />
-                            <IconComp color={colors.border} name={'search'} size={24} />
-                        </View>
-                        {route?.params?.category && (
-                            <>
-                                <View
-                                    style={{
-                                        flex: 1,
-                                        flexDirection: 'row',
-                                        justifyContent: 'space-between',
-                                        alignItems: 'center',
-                                        marginTop: 20,
-                                        marginBottom: 10,
-                                    }}
+        <SafeAreaView
+            style={[
+                styles.container,
+                { backgroundColor: modalVisible ? colors.backgroundModal : colors.background },
+            ]}
+        >
+            <Modal
+                animationType="slide"
+                transparent={true}
+                statusBarTranslucent={true}
+                visible={modalVisible}
+                onRequestClose={() => {
+                    setModalVisible(!modalVisible);
+                }}
+            >
+                <FilterModal
+                    setModalVisible={setModalVisible}
+                    navigate={navigate}
+                    initialCategory={route.params?.category}
+                />
+            </Modal>
+            <View style={[styles.textInputContainer, { marginTop: 28 }]}>
+                <TextInput
+                    placeholder="Search"
+                    autoCorrect={false}
+                    autoCapitalize="none"
+                    placeholderTextColor={colors.border}
+                    style={[styles.textInput, { width: '90%' }]}
+                    onSubmitEditing={(e) => handleSearch(e.nativeEvent.text)}
+                    ref={searchBarRef}
+                />
+                <IconComp color={colors.border} name={'search'} size={24} />
+            </View>
+            {modalVisible ? null : (
+                <FlatList
+                    data={nodes}
+                    extraData={data?.hikes.edges}
+                    renderItem={({ item }) => <Hike id={item.id} />}
+                    keyExtractor={(item) => item.id}
+                    showsVerticalScrollIndicator={false}
+                    emptyListComponent={<Text style={styles.textLink}>No hikes</Text>}
+                    ListHeaderComponent={
+                        <>
+                            <View
+                                style={{
+                                    flex: 1,
+                                    flexDirection: 'row',
+                                    justifyContent: 'space-between',
+                                    alignItems: 'center',
+                                    marginTop: 20,
+                                    marginBottom: 10,
+                                }}
+                            >
+                                <Text style={[styles.textHeader]}>
+                                    {route?.params?.category || 'All categories'}
+                                </Text>
+                                <TouchableWithoutFeedback
+                                    onPress={() => setModalVisible(!modalVisible)}
                                 >
-                                    <Text style={[styles.textHeader]}>
-                                        {route?.params?.category}
-                                    </Text>
-                                    <TouchableWithoutFeedback onPress={() => removeFilter()}>
-                                        <View>
-                                            <IconComp
-                                                color={colors.primary}
-                                                name={'filter'}
-                                                pos={0}
-                                            />
-                                        </View>
-                                    </TouchableWithoutFeedback>
-                                </View>
-                            </>
-                        )}
-                    </>
-                }
-                ListFooterComponent={<View style={{ height: 100 }} />}
-                style={[styles.container, { paddingHorizontal: '7%' }]}
-                onEndReachedThreshold={0.2}
-                onEndReached={() => {
-                    if (
-                        data?.hikes?.pageInfo?.hasNextPage &&
-                        !loading &&
-                        !onEndReachedCalledDuringMomentum
-                    ) {
-                        fetchMore({
-                            variables: {
-                                cursor: data?.hikes?.pageInfo?.endCursor,
-                            },
-                            updateQuery: (prev, { fetchMoreResult }) => {
-                                if (!fetchMoreResult) {
-                                    return prev;
-                                }
-                                return {
-                                    hikes: {
-                                        __typename: prev.hikes.__typename,
-                                        edges: [
-                                            ...prev.hikes.edges,
-                                            ...fetchMoreResult.hikes.edges,
-                                        ],
-                                        pageInfo: {
-                                            ...fetchMoreResult.hikes.pageInfo,
-                                        },
-                                    },
-                                };
-                            },
-                        });
+                                    <View
+                                        style={{
+                                            backgroundColor: colors.backgroundSecondary,
+                                            borderRadius: 6,
+                                            paddingHorizontal: 20,
+                                            paddingVertical: 15,
+                                            flexDirection: 'row',
+                                            alignItems: 'center',
+                                        }}
+                                    >
+                                        <Icon name="filter" color={colors.primary} size={14} />
+                                        <Text style={styles.textBtn}>Filter</Text>
+                                    </View>
+                                </TouchableWithoutFeedback>
+                            </View>
+                        </>
                     }
-                    onEndReachedCalledDuringMomentum = true;
-                }}
-                onMomentumScrollBegin={() => {
-                    onEndReachedCalledDuringMomentum = false;
-                }}
-            />
+                    ListFooterComponent={<View style={{ height: 100 }} />}
+                    style={[styles.container, { paddingHorizontal: '7%' }]}
+                    onEndReachedThreshold={0.2}
+                    onEndReached={() => {
+                        if (
+                            data?.hikes?.pageInfo?.hasNextPage &&
+                            !loading &&
+                            !onEndReachedCalledDuringMomentum
+                        ) {
+                            fetchMore({
+                                variables: {
+                                    cursor: data?.hikes?.pageInfo?.endCursor,
+                                },
+                                updateQuery: (prev, { fetchMoreResult }) => {
+                                    if (!fetchMoreResult) {
+                                        return prev;
+                                    }
+                                    return {
+                                        hikes: {
+                                            __typename: prev.hikes.__typename,
+                                            edges: [
+                                                ...prev.hikes.edges,
+                                                ...fetchMoreResult.hikes.edges,
+                                            ],
+                                            pageInfo: {
+                                                ...fetchMoreResult.hikes.pageInfo,
+                                            },
+                                        },
+                                    };
+                                },
+                            });
+                        }
+                        onEndReachedCalledDuringMomentum = true;
+                    }}
+                    onMomentumScrollBegin={() => {
+                        onEndReachedCalledDuringMomentum = false;
+                    }}
+                />
+            )}
         </SafeAreaView>
     );
 }
