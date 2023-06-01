@@ -4,13 +4,16 @@ import { useTheme } from '@react-navigation/native';
 import { distance2Coordonate, parseFile } from '../../services/gpx.services';
 import { LocationContext } from '../../providers/LocationProvider';
 import { MapState } from './enum';
+import { connect } from 'react-redux';
+import { mapStateToProps } from '../../reducer/map.reducer';
 
-export default function GpxPathLine({
+function GpxPathLine({
     fileData,
     cameraRef,
     edgePadding = { top: 100, right: 100, bottom: 100, left: 100 },
     animated = true,
     mapState,
+    isRecording,
 }) {
     const { colors } = useTheme();
     const [leftPoints, setLeftPoints] = useState([]);
@@ -68,7 +71,8 @@ export default function GpxPathLine({
             (leftPoints.length || 0) == 0 ||
             location?.coords?.latitude == null ||
             location?.coords?.longitude == null ||
-            mapState == MapState.FOLLOW_HIKE
+            mapState != MapState.FOCUS_HIKE ||
+            !isRecording
         ) {
             return;
         }
@@ -120,3 +124,5 @@ export default function GpxPathLine({
         </>
     );
 }
+
+export default connect(mapStateToProps)(GpxPathLine);

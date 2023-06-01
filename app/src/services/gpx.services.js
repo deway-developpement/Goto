@@ -15,6 +15,37 @@ export function parseFile(fileString) {
     });
 }
 
+export function stringify(points, name = 'new') {
+    let gpxString = `<?xml version="1.0" encoding="UTF-8"?>
+<gpx xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.topografix.com/GPX/1/1" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd http://www.garmin.com/xmlschemas/GpxExtensions/v3 http://www.garmin.com/xmlschemas/GpxExtensionsv3.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1 http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd http://www.topografix.com/GPX/gpx_style/0/2 http://www.topografix.com/GPX/gpx_style/0/2/gpx_style.xsd" xmlns:gpxtpx="http://www.garmin.com/xmlschemas/TrackPointExtension/v1" xmlns:gpxx="http://www.garmin.com/xmlschemas/GpxExtensions/v3" xmlns:gpx_style="http://www.topografix.com/GPX/gpx_style/0/2" version="1.1" creator="https://deway.fr">
+<metadata>
+    <name>${name}</name>
+    <author>
+        <name>deway-development</name>
+        <link href="https://deway.fr"></link>
+    </author>
+</metadata>
+<trk>
+    <name>${name}</name>
+    <type>Hiking</type>
+    <trkseg>`;
+
+    points.forEach((point) => {
+        gpxString += `
+    <trkpt lat="${point.latitude}" lon="${point.longitude}">
+        <ele>${point.elevation}</ele>
+        <time>${point.time.toISOString()}</time>
+    </trkpt>`;
+    });
+
+    gpxString += `
+    </trkseg>
+</trk>
+</gpx>`;
+
+    return gpxString;
+}
+
 export function distance2Coordonate(point1, point2) {
     if (!point1 || !point2) return Number.NaN;
     return (

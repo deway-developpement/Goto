@@ -9,17 +9,16 @@ import { useNavigation, useTheme } from '@react-navigation/native';
 import {
     changeAngle,
     changeHeight,
-    changeMapState,
+    changeIsRecording,
     changePosition,
     changeWidth,
     init,
-    mapStateToPropsOverlay,
+    mapStateToProps,
 } from '../../../reducer/map.reducer';
 import { Button as Btn } from 'react-native-elements';
 import { Button } from 'react-native';
-import { MapState } from '../enum';
 
-function OverlayModification({ overlay, dispatch, mapState }) {
+function OverlayModification({ overlay, dispatch, isRecording }) {
     const { colors } = useTheme();
     const styles = stylesheet(colors);
     const navigation = useNavigation();
@@ -205,10 +204,9 @@ function OverlayModification({ overlay, dispatch, mapState }) {
                 />
                 <Button title={isHidden ? 'Show' : 'Hide'} onPress={() => setIsHidden(!isHidden)} />
                 <Button
-                    title={mapState === MapState.FOLLOW_AND_RECORD_POSITION ? 'Stop' : 'Start'}
+                    title={isRecording ? 'Stop' : 'Start'}
                     onPress={() => {
-                        if (mapState === MapState.FOLLOW_AND_RECORD_POSITION)
-                            dispatch(changeMapState(MapState.FOLLOW));
+                        if (isRecording) dispatch(changeIsRecording(false));
                         else dispatch(init());
                         setIsHidden(true);
                     }}
@@ -345,4 +343,4 @@ function OverlayModification({ overlay, dispatch, mapState }) {
     );
 }
 
-export default connect(mapStateToPropsOverlay)(OverlayModification);
+export default connect(mapStateToProps)(OverlayModification);

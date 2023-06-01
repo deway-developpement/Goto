@@ -13,9 +13,17 @@ import GpxPathLine from './GpxPathLine';
 import CameraOverlay from '../Camera/menu/CameraOverlay';
 import TrackFocusOverlay from './Menu/TrackFocusOverlay';
 import { MapState } from './enum';
-import { changeMapState, mapStateToProps } from '../../reducer/map.reducer';
+import {
+    changeIsFollowing,
+    changeIsRecording,
+    changeMapState,
+    init,
+    mapStateToProps,
+} from '../../reducer/map.reducer';
+import { Button } from 'react-native';
+import GpxTrackLine from './GpxTrackLine';
 
-function MapScreen({ route, mapState, dispatch }) {
+function MapScreen({ route, mapState, dispatch, isRecording, performance }) {
     const isCamera = () => mapState === MapState.CAMERA;
 
     const { colors } = useTheme();
@@ -35,6 +43,7 @@ function MapScreen({ route, mapState, dispatch }) {
                 width: route.params.dataImg.width,
             });
             route.params.fileData = null;
+            console.log('change map state');
             dispatch(changeMapState(MapState.NONE));
         } else if (image !== null && route.params?.dataImg === null) {
             setImage(null);
@@ -60,6 +69,7 @@ function MapScreen({ route, mapState, dispatch }) {
                             <Map>
                                 <OverlayImage image={image} />
                                 {file && <GpxPathLine fileData={file} mapState={mapState} />}
+                                {isRecording && <GpxTrackLine />}
                             </Map>
                             <View
                                 style={[
@@ -72,6 +82,23 @@ function MapScreen({ route, mapState, dispatch }) {
                                     },
                                 ]}
                             >
+                                <Button
+                                    title="follow"
+                                    onPress={() => {
+                                        console.log('follow');
+                                        dispatch(changeIsFollowing(true));
+                                    }}
+                                />
+                                <Button
+                                    title={isRecording ? 'Stop' : 'init'}
+                                    onPress={() => {
+                                        console.log('init');
+                                        if (isRecording) {
+                                            dispatch(changeIsRecording(false));
+                                            console.log(performance.path);
+                                        } else dispatch(init());
+                                    }}
+                                />
                                 {file === null && image == null && (
                                     <CameraOverlay styles={styles} />
                                 )}

@@ -5,7 +5,7 @@ import { Button } from 'react-native-elements';
 import { useIsFocused, useTheme, useNavigation } from '@react-navigation/native';
 import { Camera, CameraType } from 'expo-camera';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { changeMapState, mapStateToPropsMapState } from '../../reducer/map.reducer';
+import { changeMapState, mapStateToProps } from '../../reducer/map.reducer';
 import { MapState } from '../Map/enum';
 import { connect } from 'react-redux';
 
@@ -110,4 +110,4 @@ function CameraScreen({ dispatch }) {
     );
 }
 
-export default connect(mapStateToPropsMapState)(CameraScreen);
+export default connect(mapStateToProps)(CameraScreen);

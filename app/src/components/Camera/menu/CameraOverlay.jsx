@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button } from 'react-native-elements';
 import { connect } from 'react-redux';
-import { changeMapState, mapStateToPropsMapState } from '../../../reducer/map.reducer';
+import { changeMapState, mapStateToProps } from '../../../reducer/map.reducer';
 import { MapState } from '../../Map/enum';
 
 function CameraOverlay({ styles, dispatch }) {
@@ -17,4 +17,4 @@ function CameraOverlay({ styles, dispatch }) {
     );
 }
 
-export default connect(mapStateToPropsMapState)(CameraOverlay);
+export default connect(mapStateToProps)(CameraOverlay);

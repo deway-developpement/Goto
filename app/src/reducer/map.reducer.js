@@ -1,5 +1,5 @@
 import { createSelector } from 'reselect';
-import { distance2Coordonate } from '../services/gpx.services';
+import { distance2Coordonate, stringify } from '../services/gpx.services';
 import { MapState } from '../components/Map/enum';
 
 const CHANGE_WIDTH = 'CHANGE_WIDTH';
@@ -10,6 +10,8 @@ const ADD_POINT = 'ADD_POINT';
 const RESET = 'RESET';
 const INIT = 'INIT';
 const CHANGE_MAP_STATE = 'CHANGE_MAP_STATE';
+const CHANGE_IS_FOLLOWING = 'CHANGE_IS_FOLLOWING';
+const CHANGE_IS_RECORDING = 'CHANGE_IS_RECORDING';
 
 export const changeWidth = (val) => ({
     type: CHANGE_WIDTH,
@@ -49,6 +51,16 @@ export const changeMapState = (val) => ({
     payload: val,
 });
 
+export const changeIsFollowing = (val) => ({
+    type: CHANGE_IS_FOLLOWING,
+    payload: val,
+});
+
+export const changeIsRecording = (val) => ({
+    type: CHANGE_IS_RECORDING,
+    payload: val,
+});
+
 const initialState = {
     image: {
         width: 0.01,
@@ -61,6 +73,8 @@ const initialState = {
         points: [],
     },
     mapState: MapState.NONE,
+    isFollowing: false,
+    isRecording: false,
 };
 
 export default function mapReducer(state = initialState, action) {
@@ -121,12 +135,23 @@ export default function mapReducer(state = initialState, action) {
                 time: new Date(),
                 points: [],
             },
-            mapState: MapState.FOLLOW_AND_RECORD_POSITION,
+            isRecording: true,
+            isFollowing: true,
         };
     case CHANGE_MAP_STATE:
         return {
             ...state,
             mapState: action.payload,
+        };
+    case CHANGE_IS_FOLLOWING:
+        return {
+            ...state,
+            isFollowing: action.payload,
+        };
+    case CHANGE_IS_RECORDING:
+        return {
+            ...state,
+            isRecording: action.payload,
         };
     default:
         return state;
@@ -134,12 +159,14 @@ export default function mapReducer(state = initialState, action) {
 }
 
 // selectors
-export const getTimeSelector = createSelector((state) => new Date() - state?.performance.time);
+export const getTimeSelector = (state) => new Date() - state?.performance.time;
 
-export const getPoinstSelector = createSelector((state) => {
-    if (state?.performance.time === null) return null;
+export const getPoinstSelector = (state) => {
+    if (state?.performance.time === null) {
+        return null;
+    }
     return state?.performance.points;
-});
+};
 
 export const getDistanceSelector = createSelector(getPoinstSelector, (points) =>
     points?.reduce((acc, point, index) => acc + distance2Coordonate(point, points[index - 1]), 1)
@@ -150,7 +177,9 @@ export const getElevationSelector = createSelector(getPoinstSelector, (points) =
 );
 
 export const getLastPointSelector = createSelector(getPoinstSelector, (points) => {
-    if (points?.length === 0 || !points) return null;
+    if (points?.length === 0 || !points) {
+        return null;
+    }
     return points[points.length - 1];
 });
 
@@ -174,26 +203,11 @@ export const getSpeedSelector = createSelector(
     }
 );
 
-export const getPathSelector = createSelector((state) => state?.performace.points);
-
-// connect
-export const mapStateToPropsPerf = (state) => ({
-    performance: {
-        elapsedTime: getTimeSelector(state),
-        distance: getDistanceSelector(state),
-        elevation: getElevationSelector(state),
-        speed: getSpeedSelector(state),
-        path: getPathSelector(state),
-        points: getPoinstSelector(state),
-        // lastPoint: getLastPointSelector(state),
-        time: state?.performance.time,
-    },
-    mapState: state.mapState,
-});
-
-export const mapStateToPropsOverlay = (state) => ({
-    overlay: { ...state.image },
-    mapState: state.mapState,
+export const getPathSelector = createSelector(getPoinstSelector, (points) => {
+    if (!points || points.length === 0) {
+        return null;
+    }
+    return stringify(points);
 });
 
 export const mapStateToProps = (state) => ({
@@ -209,8 +223,6 @@ export const mapStateToProps = (state) => ({
     },
     overlay: { ...state.image },
     mapState: state.mapState,
-});
-
-export const mapStateToPropsMapState = (state) => ({
-    mapState: state.mapState,
+    isFollowing: state.isFollowing,
+    isRecording: state.isRecording,
 });
