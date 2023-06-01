@@ -13,11 +13,19 @@ import { LocationContext } from '../../providers/LocationProvider';
 import SplashScreen from '../SplashScreen/SplashScreen';
 
 const GET_HIKES_AROUND_ME = gql`
-    query hikes($lon: Float!, $lat: Float!, $limit: Int!, $cursor: String, $search: String) {
+    query hikes(
+        $lon: Float!
+        $lat: Float!
+        $limit: Int!
+        $difficulty: String
+        $cursor: String
+        $search: String
+    ) {
         hikes: getHikeAround(
             lon: $lon
             lat: $lat
             distance: 69
+            difficulty: $difficulty
             limit: $limit
             cursor: $cursor
             search: $search
@@ -38,8 +46,13 @@ const GET_HIKES_AROUND_ME = gql`
 `;
 
 const GET_HIKES_POPULAR = gql`
-    query hikes($limit: Int!, $cursor: String, $search: String) {
-        hikes: getHikePopular(limit: $limit, cursor: $cursor, search: $search) {
+    query hikes($limit: Int!, $cursor: String, $search: String, $difficulty: String) {
+        hikes: getHikePopular(
+            limit: $limit
+            cursor: $cursor
+            search: $search
+            difficulty: $difficulty
+        ) {
             edges {
                 node {
                     id
@@ -56,8 +69,13 @@ const GET_HIKES_POPULAR = gql`
 `;
 
 const GET_HIKES_ALREADY_DONE = gql`
-    query hikes($limit: Int!, $cursor: String, $search: String) {
-        hikes: getHikeAlreadyDone(limit: $limit, cursor: $cursor, search: $search) {
+    query hikes($limit: Int!, $cursor: String, $search: String, $difficulty: String) {
+        hikes: getHikeAlreadyDone(
+            limit: $limit
+            cursor: $cursor
+            search: $search
+            difficulty: $difficulty
+        ) {
             edges {
                 node {
                     id
@@ -102,6 +120,7 @@ export const QUERIES_CONFIG = (category, difficulty, search, cursor, limit, loca
                 cursor: cursor,
                 lon: location?.coords.longitude,
                 lat: location?.coords.latitude,
+                difficulty: difficulty,
             },
             variablesSearch: {
                 search: '%' + search.split(' ').join('%') + '%',
@@ -121,6 +140,9 @@ export const QUERIES_CONFIG = (category, difficulty, search, cursor, limit, loca
                 filter: {
                     createdAt: {
                         gt: thismonth,
+                    },
+                    difficulty: {
+                        in: difficulty ? [difficulty] : ['EASY', 'MEDIUM', 'HARD'],
                     },
                 },
                 limit: limit,
@@ -146,6 +168,7 @@ export const QUERIES_CONFIG = (category, difficulty, search, cursor, limit, loca
             variables: {
                 limit: limit,
                 cursor: cursor,
+                difficulty: difficulty,
             },
             variablesSearch: {
                 search: '%' + search.split(' ').join('%') + '%',
@@ -160,39 +183,10 @@ export const QUERIES_CONFIG = (category, difficulty, search, cursor, limit, loca
             variables: {
                 limit: limit,
                 cursor: cursor,
+                difficulty: difficulty,
             },
             variablesSearch: {
                 search: '%' + search.split(' ').join('%') + '%',
-                limit: limit,
-                cursor: cursor,
-            },
-        };
-    }
-    if (!difficulty) {
-        return {
-            query: GET_HIKES,
-            variables: {
-                filter: {
-                    category: {
-                        name: {
-                            eq: category,
-                        },
-                    },
-                },
-                limit: limit,
-                cursor: cursor,
-            },
-            variablesSearch: {
-                filter: {
-                    name: {
-                        like: '%' + search.split(' ').join('%') + '%',
-                    },
-                    category: {
-                        name: {
-                            eq: category,
-                        },
-                    },
-                },
                 limit: limit,
                 cursor: cursor,
             },
@@ -225,7 +219,7 @@ export const QUERIES_CONFIG = (category, difficulty, search, cursor, limit, loca
                     },
                 },
                 difficulty: {
-                    eq: difficulty,
+                    in: difficulty ? [difficulty] : ['EASY', 'MEDIUM', 'HARD'],
                 },
             },
             limit: limit,
@@ -289,8 +283,8 @@ function DifficultyCard({ item, difficultyActive, setDifficultyActive }) {
                     {
                         backgroundColor: difficultyActive === item ? colors.filled : colors.empty,
                         borderRadius: 12,
-                        paddingHorizontal: 32,
-                        paddingVertical: 15,
+                        paddingHorizontal: 14,
+                        paddingVertical: 11,
                     },
                 ]}
             >
@@ -299,11 +293,11 @@ function DifficultyCard({ item, difficultyActive, setDifficultyActive }) {
                         style={{
                             backgroundColor: colors[item.toLowerCase()],
                             borderRadius: 12,
-                            width: 14,
-                            height: 14,
+                            width: 12,
+                            height: 12,
                             justifyContent: 'center',
                             alignItems: 'center',
-                            marginBottom: 10,
+                            marginBottom: 6,
                             marginHorizontal: 4,
                         }}
                     />
@@ -314,11 +308,10 @@ function DifficultyCard({ item, difficultyActive, setDifficultyActive }) {
                                     ? colors.backgroundSecondary
                                     : colors[item.toLowerCase()],
                             borderRadius: 12,
-                            width: 14,
-                            height: 14,
+                            width: 12,
+                            height: 12,
                             justifyContent: 'center',
                             alignItems: 'center',
-                            marginBottom: 10,
                             marginHorizontal: 4,
                         }}
                     />
@@ -329,11 +322,10 @@ function DifficultyCard({ item, difficultyActive, setDifficultyActive }) {
                                     ? colors[item.toLowerCase()]
                                     : colors.backgroundSecondary,
                             borderRadius: 12,
-                            width: 14,
-                            height: 14,
+                            width: 12,
+                            height: 12,
                             justifyContent: 'center',
                             alignItems: 'center',
-                            marginBottom: 10,
                             marginHorizontal: 4,
                         }}
                     />
@@ -387,7 +379,11 @@ function FilterModal({ setModalVisible, navigate, initialCategory, initialDiffic
                 size={18}
                 style={{ top: 21, right: 8, position: 'absolute' }}
                 onPress={() => {
-                    navigate(categoryActive, difficultyActive);
+                    if (difficultyActive) {
+                        navigate(categoryActive, difficultyActive);
+                    } else {
+                        navigate(categoryActive);
+                    }
                     setModalVisible(false);
                 }}
             />
@@ -396,7 +392,7 @@ function FilterModal({ setModalVisible, navigate, initialCategory, initialDiffic
                 style={{
                     flexDirection: 'row',
                     flexWrap: 'wrap',
-                    justifyContent: 'space-between',
+                    justifyContent: 'space-evenly',
                     marginBottom: 20,
                 }}
             >
@@ -414,7 +410,7 @@ function FilterModal({ setModalVisible, navigate, initialCategory, initialDiffic
                 style={{
                     flexDirection: 'row',
                     flexWrap: 'wrap',
-                    justifyContent: 'space-between',
+                    justifyContent: 'space-evenly',
                     marginBottom: 20,
                 }}
             >
