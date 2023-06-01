@@ -279,7 +279,7 @@ export default function Performance({ route }) {
                                         paddingBottom: 10,
                                     }}
                                 >
-                                    <Text style={[styles.header]}>
+                                    <Text style={[styles.statHeader]}>
                                         {data.performance.duration}h
                                     </Text>
                                     <Text style={[styles.textDescription]}>of walking</Text>
@@ -292,7 +292,7 @@ export default function Performance({ route }) {
                                         paddingBottom: 10,
                                     }}
                                 >
-                                    <Text style={[styles.header]}>
+                                    <Text style={[styles.statHeader]}>
                                         {data.performance.distance}km
                                     </Text>
                                     <Text style={[styles.textDescription]}>covered</Text>
@@ -305,7 +305,7 @@ export default function Performance({ route }) {
                                         paddingBottom: 10,
                                     }}
                                 >
-                                    <Text style={[styles.header]}>
+                                    <Text style={[styles.statHeader]}>
                                         {data.performance.elevation}m
                                     </Text>
                                     <Text style={[styles.textDescription]}>of elevation</Text>
@@ -336,7 +336,7 @@ export default function Performance({ route }) {
                                         paddingBottom: 10,
                                     }}
                                 >
-                                    <Text style={[styles.header]}>
+                                    <Text style={[styles.statHeader]}>
                                         {Math.round(
                                             (data.performance.distance /
                                                 data.performance.duration) *
@@ -354,7 +354,7 @@ export default function Performance({ route }) {
                                         paddingBottom: 10,
                                     }}
                                 >
-                                    <Text style={[styles.header]}>
+                                    <Text style={[styles.statHeader]}>
                                         {getCalorie(
                                             data?.performance?.distance,
                                             data?.performance?.elevation,
