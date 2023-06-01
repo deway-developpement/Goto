@@ -1,5 +1,5 @@
 import React, { useContext, useRef, useState } from 'react';
-import { Modal, Text, TouchableWithoutFeedback } from 'react-native';
+import { Modal, Text, TouchableWithoutFeedback, ScrollView } from 'react-native';
 import { useTheme } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import stylesheet from './style';
@@ -93,7 +93,7 @@ const GET_HIKES = gql`
     }
 `;
 
-export const QUERIES_CONFIG = (category, search, cursor, limit, location) => {
+export const QUERIES_CONFIG = (category, difficulty, search, cursor, limit, location) => {
     if (category === 'Around you' && location?.coords) {
         return {
             query: GET_HIKES_AROUND_ME,
@@ -168,6 +168,36 @@ export const QUERIES_CONFIG = (category, search, cursor, limit, location) => {
             },
         };
     }
+    if (!difficulty) {
+        return {
+            query: GET_HIKES,
+            variables: {
+                filter: {
+                    category: {
+                        name: {
+                            eq: category,
+                        },
+                    },
+                },
+                limit: limit,
+                cursor: cursor,
+            },
+            variablesSearch: {
+                filter: {
+                    name: {
+                        like: '%' + search.split(' ').join('%') + '%',
+                    },
+                    category: {
+                        name: {
+                            eq: category,
+                        },
+                    },
+                },
+                limit: limit,
+                cursor: cursor,
+            },
+        };
+    }
     return {
         query: GET_HIKES,
         variables: {
@@ -176,6 +206,9 @@ export const QUERIES_CONFIG = (category, search, cursor, limit, location) => {
                     name: {
                         eq: category,
                     },
+                },
+                difficulty: {
+                    eq: difficulty,
                 },
             },
             limit: limit,
@@ -191,6 +224,9 @@ export const QUERIES_CONFIG = (category, search, cursor, limit, location) => {
                         eq: category,
                     },
                 },
+                difficulty: {
+                    eq: difficulty,
+                },
             },
             limit: limit,
             cursor: cursor,
@@ -198,16 +234,15 @@ export const QUERIES_CONFIG = (category, search, cursor, limit, location) => {
     };
 };
 
-function CategoryCard({ item, navigate, categoryActive, setCategoryActive }) {
+function CategoryCard({ item, categoryActive, setCategoryActive }) {
     const { colors } = useTheme();
     const styles = stylesheet(colors);
 
     return (
         <TouchableWithoutFeedback
             onPress={() => {
-                const newCategory = categoryActive === item.name ? '' : item.name;
+                const newCategory = categoryActive === item.name ? undefined : item.name;
                 setCategoryActive(newCategory);
-                navigate(newCategory);
             }}
         >
             <View
@@ -237,10 +272,95 @@ function CategoryCard({ item, navigate, categoryActive, setCategoryActive }) {
     );
 }
 
-function FilterModal({ setModalVisible, navigate, initialCategory }) {
+function DifficultyCard({ item, difficultyActive, setDifficultyActive }) {
+    const { colors } = useTheme();
+    const styles = stylesheet(colors);
+
+    return (
+        <TouchableWithoutFeedback
+            onPress={() => {
+                const newDifficulty = difficultyActive === item ? '' : item;
+                setDifficultyActive(newDifficulty);
+            }}
+        >
+            <View
+                style={[
+                    styles.categoryContainer,
+                    {
+                        backgroundColor: difficultyActive === item ? colors.filled : colors.empty,
+                        borderRadius: 12,
+                        paddingHorizontal: 32,
+                        paddingVertical: 15,
+                    },
+                ]}
+            >
+                <View style={{ flexDirection: 'row' }}>
+                    <View
+                        style={{
+                            backgroundColor: colors[item.toLowerCase()],
+                            borderRadius: 12,
+                            width: 14,
+                            height: 14,
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            marginBottom: 10,
+                            marginHorizontal: 4,
+                        }}
+                    />
+                    <View
+                        style={{
+                            backgroundColor:
+                                item === 'EASY'
+                                    ? colors.backgroundSecondary
+                                    : colors[item.toLowerCase()],
+                            borderRadius: 12,
+                            width: 14,
+                            height: 14,
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            marginBottom: 10,
+                            marginHorizontal: 4,
+                        }}
+                    />
+                    <View
+                        style={{
+                            backgroundColor:
+                                item === 'HARD'
+                                    ? colors[item.toLowerCase()]
+                                    : colors.backgroundSecondary,
+                            borderRadius: 12,
+                            width: 14,
+                            height: 14,
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            marginBottom: 10,
+                            marginHorizontal: 4,
+                        }}
+                    />
+                </View>
+                <Text
+                    style={[
+                        styles.category,
+                        {
+                            color:
+                                difficultyActive === item
+                                    ? colors.backgroundSecondary
+                                    : colors.text,
+                        },
+                    ]}
+                >
+                    {item[0] + item.slice(1).toLowerCase()}
+                </Text>
+            </View>
+        </TouchableWithoutFeedback>
+    );
+}
+
+function FilterModal({ setModalVisible, navigate, initialCategory, initialDifficulty }) {
     const { colors } = useTheme();
     const styles = stylesheet(colors);
     const [categoryActive, setCategoryActive] = useState(initialCategory);
+    const [difficultyActive, setDifficultyActive] = useState(initialDifficulty);
 
     const GET_CATEGORIES = gql`
         query categories {
@@ -252,39 +372,62 @@ function FilterModal({ setModalVisible, navigate, initialCategory }) {
     `;
 
     const { data, loading } = useQuery(GET_CATEGORIES);
+    const difficulties = ['EASY', 'MEDIUM', 'HARD'];
 
     if (loading) {
         return <SplashScreen />;
     }
 
     return (
-        <View style={styles.modalContainer}>
+        <ScrollView style={styles.modalContainer} showsVerticalScrollIndicator={false}>
             <Text style={styles.header}>Filter</Text>
             <Icon
                 name="cross"
                 color={colors.primary}
                 size={18}
-                style={{ top: 37, right: 29, position: 'absolute' }}
+                style={{ top: 21, right: 8, position: 'absolute' }}
                 onPress={() => {
+                    navigate(categoryActive, difficultyActive);
                     setModalVisible(false);
                 }}
             />
             <Text style={styles.subHeader}>Categories</Text>
             <View
-                style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' }}
+                style={{
+                    flexDirection: 'row',
+                    flexWrap: 'wrap',
+                    justifyContent: 'space-between',
+                    marginBottom: 20,
+                }}
             >
                 {data?.categories.map((category) => (
                     <CategoryCard
                         key={category.id}
                         item={category}
-                        setModalVisible={setModalVisible}
-                        navigate={navigate}
                         categoryActive={categoryActive}
                         setCategoryActive={setCategoryActive}
                     />
                 ))}
             </View>
-        </View>
+            <Text style={styles.subHeader}>Difficulty</Text>
+            <View
+                style={{
+                    flexDirection: 'row',
+                    flexWrap: 'wrap',
+                    justifyContent: 'space-between',
+                    marginBottom: 20,
+                }}
+            >
+                {difficulties.map((difficulty) => (
+                    <DifficultyCard
+                        key={difficulty}
+                        item={difficulty}
+                        difficultyActive={difficultyActive}
+                        setDifficultyActive={setDifficultyActive}
+                    />
+                ))}
+            </View>
+        </ScrollView>
     );
 }
 
@@ -294,7 +437,14 @@ export default function SearchScreen({ route, navigation }) {
     const searchBarRef = useRef(null);
     const limitByPage = 2;
     const { location } = useContext(LocationContext);
-    const CONFIG = QUERIES_CONFIG(route.params?.category, '', '', limitByPage, location);
+    const CONFIG = QUERIES_CONFIG(
+        route.params?.category,
+        route.params?.difficulty,
+        '',
+        '',
+        limitByPage,
+        location
+    );
     const [modalVisible, setModalVisible] = useState(false);
 
     const { data, loading, fetchMore, refetch } = useQuery(CONFIG.query, {
@@ -302,17 +452,20 @@ export default function SearchScreen({ route, navigation }) {
     });
     const nodes = data?.hikes?.edges.map((hike) => hike.node);
 
-    function navigate(category) {
-        if (category === '') {
-            navigation.navigate('Search');
-        } else {
-            navigation.navigate('Search', { category: category });
-        }
+    function navigate(category, difficulty) {
+        navigation.navigate('Search', { category: category, difficulty: difficulty });
         searchBarRef.current.clear();
     }
 
     function handleSearch(text) {
-        const CONFIG = QUERIES_CONFIG(route.params?.category, text, '', limitByPage, location);
+        const CONFIG = QUERIES_CONFIG(
+            route.params?.category,
+            route.params?.difficulty,
+            text,
+            '',
+            limitByPage,
+            location
+        );
         refetch(CONFIG.variablesSearch);
     }
 
@@ -338,6 +491,7 @@ export default function SearchScreen({ route, navigation }) {
                     setModalVisible={setModalVisible}
                     navigate={navigate}
                     initialCategory={route.params?.category}
+                    initialDifficulty={route.params?.difficulty}
                 />
             </Modal>
             <View style={[styles.textInputContainer, { marginTop: 28 }]}>
