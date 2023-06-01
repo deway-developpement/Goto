@@ -20,6 +20,9 @@ export const Classic = {
         stats: '#207665',
         empty: '#EFF0F1',
         filled: '#2A9D87',
+        easy: '#22C55E',
+        medium: '#F59E0B',
+        hard: '#EF4444',
     },
 };
 
