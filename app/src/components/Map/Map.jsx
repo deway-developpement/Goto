@@ -4,13 +4,12 @@ import { default as MAP_STYLE } from '../../../assets/maps/style.json';
 import { LocationContext } from '../../providers/LocationProvider';
 import { connect } from 'react-redux';
 import { MapState } from './enum';
-import { distance2Coordonate } from '../../services/gpx.services';
+import { changeMapState, mapStateToProps } from '../../reducer/map.reducer';
+// import { distance2Coordonate } from '../../services/gpx.services';
 
-function Map({ children, mapState }) {
+function Map({ children, mapState, dispatch }) {
     const { location, permission } = useContext(LocationContext);
     const cameraRef = useRef(null);
-
-    const points = [];
 
     const childrenWithProps = children.map((child, index) => {
         if (isValidElement(child)) {
@@ -48,16 +47,27 @@ function Map({ children, mapState }) {
                     longitude: parseFloat(location?.coords?.longitude),
                 },
             });
-            if (
-                points.length === 0 ||
-                distance2Coordonate(points[points.length - 1], location.coords) > 0.01
-            ) {
-                points.push({
-                    latitude: parseFloat(location?.coords?.latitude),
-                    longitude: parseFloat(location?.coords?.longitude),
-                    time: new Date(),
-                });
-            }
+            // if (
+            //     lastPoint == null ||
+            //     lastPoint.time < new Date().getTime() - 1000 * 60 ||
+            //     distance2Coordonate(
+            //         {
+            //             latitude: parseFloat(location?.coords?.latitude),
+            //             longitude: parseFloat(location?.coords?.longitude),
+            //         },
+            //         lastPoint
+            //     ) > 0.1
+            // ) {
+            //     console.log('addPoint');
+            //     dispatch(
+            //         addPoint({
+            //             latitude: parseFloat(location?.coords?.latitude),
+            //             longitude: parseFloat(location?.coords?.longitude),
+            //             elevation: parseFloat(location?.coords?.altitude),
+            //             time: new Date(),
+            //         })
+            //     );
+            // }
         }
     }, [location]);
 
@@ -73,6 +83,11 @@ function Map({ children, mapState }) {
             showsUserLocation={permission.granted === true}
             showsMyLocationButton={false}
             pitchEnabled={false}
+            onPanDrag={() => {
+                if (mapState === MapState.FOLLOW_POSITION) {
+                    dispatch(changeMapState(MapState.NONE));
+                }
+            }}
             provider={PROVIDER_GOOGLE}
             customMapStyle={MAP_STYLE}
             style={{ flex: 1, width: '100%' }}
@@ -83,9 +98,5 @@ function Map({ children, mapState }) {
         </MapView>
     );
 }
-
-const mapStateToProps = (state) => {
-    return { overlay: state };
-};
 
 export default connect(mapStateToProps)(Map);

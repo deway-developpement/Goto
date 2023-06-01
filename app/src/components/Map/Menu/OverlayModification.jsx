@@ -5,17 +5,24 @@ import { TouchableWithoutFeedback } from 'react-native';
 import { View } from 'react-native';
 import stylesheet from '../style';
 import { IconComp } from '../../Icon/Icon';
-import { useTheme } from '@react-navigation/native';
+import { useNavigation, useTheme } from '@react-navigation/native';
 import {
     changeAngle,
     changeHeight,
+    changeMapState,
     changePosition,
     changeWidth,
-} from '../../../reducer/overlay.reducer';
+    init,
+    mapStateToPropsOverlay,
+} from '../../../reducer/map.reducer';
+import { Button as Btn } from 'react-native-elements';
+import { Button } from 'react-native';
+import { MapState } from '../enum';
 
-function OverlayModification({ overlay, dispatch }) {
+function OverlayModification({ overlay, dispatch, mapState }) {
     const { colors } = useTheme();
     const styles = stylesheet(colors);
+    const navigation = useNavigation();
 
     const SliderModificator = Object.freeze({
         WIDTH: 'width',
@@ -33,6 +40,8 @@ function OverlayModification({ overlay, dispatch }) {
     const [topRange, setTopRange] = useState([0, 0.01, 0.005]);
     const [leftRange, setLeftRange] = useState([0, 0.01, 0.005]);
     const [angleRange] = useState([0, 360]);
+
+    const [isHidden, setIsHidden] = useState(false);
 
     function handlePlus() {
         switch (activeSlider) {
@@ -173,135 +182,167 @@ function OverlayModification({ overlay, dispatch }) {
 
     return (
         <>
-            <CheckBox
-                wrapperStyle={{
-                    padding: 0,
-                    margin: 0,
-                    backgroundColor: '',
+            <Btn
+                buttonStyle={[styles.btn, { width: 200 }]}
+                titleStyle={styles.btnText}
+                title={'Close'}
+                onPress={() => {
+                    navigation.navigate('Directions', { dataImg: null });
                 }}
-                containerStyle={{
-                    padding: 0,
-                    margin: 0,
-                    backgroundColor: '',
-                }}
-                title="Width"
-                checked={activeSlider === SliderModificator.WIDTH}
-                onPress={() => handleCheck(SliderModificator.WIDTH)}
             />
-            <CheckBox
-                wrapperStyle={{
-                    padding: 0,
-                    margin: 0,
-                    backgroundColor: '',
-                }}
-                containerStyle={{
-                    padding: 0,
-                    margin: 0,
-                    backgroundColor: '',
-                }}
-                title="Height"
-                checked={activeSlider === SliderModificator.HEIGHT}
-                onPress={() => handleCheck(SliderModificator.HEIGHT)}
-            />
-            <CheckBox
-                wrapperStyle={{
-                    padding: 0,
-                    margin: 0,
-                    backgroundColor: '',
-                }}
-                containerStyle={{
-                    padding: 0,
-                    margin: 0,
-                    backgroundColor: '',
-                }}
-                title="Top"
-                checked={activeSlider === SliderModificator.BOTTOM}
-                onPress={() => handleCheck(SliderModificator.BOTTOM)}
-            />
-            <CheckBox
-                wrapperStyle={{
-                    padding: 0,
-                    margin: 0,
-                    backgroundColor: '',
-                }}
-                containerStyle={{
-                    padding: 0,
-                    margin: 0,
-                    backgroundColor: '',
-                }}
-                title="Left"
-                checked={activeSlider === SliderModificator.LEFT}
-                onPress={() => handleCheck(SliderModificator.LEFT)}
-            />
-            <CheckBox
-                wrapperStyle={{
-                    padding: 0,
-                    margin: 0,
-                    backgroundColor: '',
-                }}
-                containerStyle={{
-                    padding: 0,
-                    margin: 0,
-                    backgroundColor: '',
-                }}
-                title="Angle"
-                checked={activeSlider === SliderModificator.ANGLE}
-                onPress={() => handleCheck(SliderModificator.ANGLE)}
-            />
-            {activeSlider !== SliderModificator.NONE && (
-                <Slider
-                    value={getValue()}
-                    onValueChange={handleOnValueChange}
-                    maximumValue={getMaxValue()}
-                    minimumValue={getMinValue()}
-                    step={(getMaxValue() - getMinValue()) / 100}
-                    allowTouchTrack
-                    trackStyle={{
-                        height: 10,
-                        backgroundColor: 'transparent',
+            <View
+                style={[styles.container, { flexDirection: 'row', justifyContent: 'space-evenly' }]}
+            >
+                <Button
+                    title="Reset"
+                    onPress={() => {
+                        dispatch(changeWidth(0.01));
+                        dispatch(changeHeight(0.01));
+                        dispatch(changePosition({ x: 0, y: 0 }));
+                        dispatch(changeAngle(0));
                     }}
-                    thumbStyle={{
-                        height: 20,
-                        width: 20,
-                        backgroundColor: 'transparent',
-                    }}
-                    thumbProps={{
-                        children: (
-                            <IconThemed
-                                type="font-awesome"
-                                size={10}
-                                reverse
-                                containerStyle={{
-                                    bottom: 10,
-                                    right: 10,
-                                }}
-                                color={colors.primary}
-                            />
-                        ),
+                    disabled={isHidden}
+                />
+                <Button title={isHidden ? 'Show' : 'Hide'} onPress={() => setIsHidden(!isHidden)} />
+                <Button
+                    title={mapState === MapState.FOLLOW_AND_RECORD_POSITION ? 'Stop' : 'Start'}
+                    onPress={() => {
+                        if (mapState === MapState.FOLLOW_AND_RECORD_POSITION)
+                            dispatch(changeMapState(MapState.FOLLOW));
+                        else dispatch(init());
+                        setIsHidden(true);
                     }}
                 />
-            )}
-            {activeSlider !== SliderModificator.NONE &&
-                activeSlider !== SliderModificator.ANGLE && (
+            </View>
+            {!isHidden && (
                 <>
-                    <TouchableWithoutFeedback onPress={() => handlePlus()}>
-                        <View style={[styles.logoContainer]}>
-                            <IconComp color={colors.primary} name={'plus'} pos={0} />
-                        </View>
-                    </TouchableWithoutFeedback>
-                    <TouchableWithoutFeedback onPress={() => handleMinus()}>
-                        <View style={[styles.logoContainer]}>
-                            <IconComp color={colors.primary} name={'back'} pos={0} />
-                        </View>
-                    </TouchableWithoutFeedback>
+                    <CheckBox
+                        wrapperStyle={{
+                            padding: 0,
+                            margin: 0,
+                            backgroundColor: '',
+                        }}
+                        containerStyle={{
+                            padding: 0,
+                            margin: 0,
+                            backgroundColor: '',
+                        }}
+                        title="Width"
+                        checked={activeSlider === SliderModificator.WIDTH}
+                        onPress={() => handleCheck(SliderModificator.WIDTH)}
+                    />
+                    <CheckBox
+                        wrapperStyle={{
+                            padding: 0,
+                            margin: 0,
+                            backgroundColor: '',
+                        }}
+                        containerStyle={{
+                            padding: 0,
+                            margin: 0,
+                            backgroundColor: '',
+                        }}
+                        title="Height"
+                        checked={activeSlider === SliderModificator.HEIGHT}
+                        onPress={() => handleCheck(SliderModificator.HEIGHT)}
+                    />
+                    <CheckBox
+                        wrapperStyle={{
+                            padding: 0,
+                            margin: 0,
+                            backgroundColor: '',
+                        }}
+                        containerStyle={{
+                            padding: 0,
+                            margin: 0,
+                            backgroundColor: '',
+                        }}
+                        title="Top"
+                        checked={activeSlider === SliderModificator.BOTTOM}
+                        onPress={() => handleCheck(SliderModificator.BOTTOM)}
+                    />
+                    <CheckBox
+                        wrapperStyle={{
+                            padding: 0,
+                            margin: 0,
+                            backgroundColor: '',
+                        }}
+                        containerStyle={{
+                            padding: 0,
+                            margin: 0,
+                            backgroundColor: '',
+                        }}
+                        title="Left"
+                        checked={activeSlider === SliderModificator.LEFT}
+                        onPress={() => handleCheck(SliderModificator.LEFT)}
+                    />
+                    <CheckBox
+                        wrapperStyle={{
+                            padding: 0,
+                            margin: 0,
+                            backgroundColor: '',
+                        }}
+                        containerStyle={{
+                            padding: 0,
+                            margin: 0,
+                            backgroundColor: '',
+                        }}
+                        title="Angle"
+                        checked={activeSlider === SliderModificator.ANGLE}
+                        onPress={() => handleCheck(SliderModificator.ANGLE)}
+                    />
+                    {activeSlider !== SliderModificator.NONE && (
+                        <Slider
+                            value={getValue()}
+                            onValueChange={handleOnValueChange}
+                            maximumValue={getMaxValue()}
+                            minimumValue={getMinValue()}
+                            step={(getMaxValue() - getMinValue()) / 100}
+                            allowTouchTrack
+                            trackStyle={{
+                                height: 10,
+                                backgroundColor: 'transparent',
+                            }}
+                            thumbStyle={{
+                                height: 20,
+                                width: 20,
+                                backgroundColor: 'transparent',
+                            }}
+                            thumbProps={{
+                                children: (
+                                    <IconThemed
+                                        type="font-awesome"
+                                        size={10}
+                                        reverse
+                                        containerStyle={{
+                                            bottom: 10,
+                                            right: 10,
+                                        }}
+                                        color={colors.primary}
+                                    />
+                                ),
+                            }}
+                        />
+                    )}
+                    {activeSlider !== SliderModificator.NONE &&
+                        activeSlider !== SliderModificator.ANGLE && (
+                        <>
+                            <TouchableWithoutFeedback onPress={() => handlePlus()}>
+                                <View style={[styles.logoContainer]}>
+                                    <IconComp color={colors.primary} name={'plus'} pos={0} />
+                                </View>
+                            </TouchableWithoutFeedback>
+                            <TouchableWithoutFeedback onPress={() => handleMinus()}>
+                                <View style={[styles.logoContainer]}>
+                                    <IconComp color={colors.primary} name={'back'} pos={0} />
+                                </View>
+                            </TouchableWithoutFeedback>
+                        </>
+                    )}
                 </>
             )}
         </>
     );
 }
 
-const mapStateToProps = (state) => {
-    return { overlay: state };
-};
-
-export default connect(mapStateToProps)(OverlayModification);
+export default connect(mapStateToPropsOverlay)(OverlayModification);

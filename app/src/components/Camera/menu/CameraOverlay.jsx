@@ -1,15 +1,20 @@
 import React from 'react';
 import { Button } from 'react-native-elements';
+import { connect } from 'react-redux';
+import { changeMapState, mapStateToPropsMapState } from '../../../reducer/map.reducer';
+import { MapState } from '../../Map/enum';
 
-export default function CameraOverlay({ setIsCamera, styles }) {
+function CameraOverlay({ styles, dispatch }) {
     return (
         <Button
             buttonStyle={[styles.btn, { width: 200 }]}
             titleStyle={styles.btnText}
             title={'Open your camera'}
             onPress={() => {
-                setIsCamera(true);
+                dispatch(changeMapState(MapState.CAMERA));
             }}
         />
     );
 }
+
+export default connect(mapStateToPropsMapState)(CameraOverlay);

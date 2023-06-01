@@ -2,6 +2,7 @@ import React, { useContext, useEffect } from 'react';
 import { Overlay } from 'react-native-maps';
 import { LocationContext } from '../../providers/LocationProvider';
 import { connect } from 'react-redux';
+import { mapStateToPropsOverlay } from '../../reducer/map.reducer';
 
 function OverlayImage({ image, overlay, cameraRef }) {
     const { location } = useContext(LocationContext);
@@ -43,8 +44,4 @@ function OverlayImage({ image, overlay, cameraRef }) {
     }
 }
 
-const mapStateToProps = (state) => {
-    return { overlay: state };
-};
-
-export default connect(mapStateToProps)(OverlayImage);
+export default connect(mapStateToPropsOverlay)(OverlayImage);

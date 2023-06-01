@@ -3,9 +3,9 @@ import React from 'react';
 import { Button } from 'react-native-elements';
 import { MapState } from '../enum';
 import { connect } from 'react-redux';
-import { changeMapState, mapStateToProps } from '../../../reducer/map.reducer';
+import { changeMapState, mapStateToPropsMapState } from '../../../reducer/map.reducer';
 
-function TrackFocusOverlay({ styles, dispatch }) {
+function ImageFocusOverlay({ styles, dispatch }) {
     const navigation = useNavigation();
 
     return (
@@ -15,10 +15,10 @@ function TrackFocusOverlay({ styles, dispatch }) {
             title={'Close'}
             onPress={() => {
                 dispatch(changeMapState(MapState.FOLLOW_POSITION));
-                navigation.navigate('Directions', { fileData: null });
+                navigation.navigate('Directions', { ImageData: null });
             }}
         />
     );
 }
 
-export default connect(mapStateToProps)(TrackFocusOverlay);
+export default connect(mapStateToPropsMapState)(ImageFocusOverlay);
