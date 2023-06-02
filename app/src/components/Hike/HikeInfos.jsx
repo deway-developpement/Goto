@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { Text, View, TouchableWithoutFeedback } from 'react-native';
+import { Text, View, TouchableWithoutFeedback,Modal } from 'react-native';
 import { useTheme } from '@react-navigation/native';
 import stylesheet from './style';
-import { IconComp } from '../Icon/Icon';
+import { IconComp, Icon } from '../Icon/Icon';
 import { gql, useApolloClient, useQuery } from '@apollo/client';
 import { Share } from 'react-native';
 
@@ -59,6 +59,7 @@ export default function HikeInfos({ hike, borderRadius, inProfile = false }) {
     const { colors } = useTheme();
     const styles = stylesheet(colors);
     const client = useApolloClient();
+    const [modalVisible, setModalVisible] = useState(false);
 
     const [like, setLike] = useState(hike.isLiked);
 
@@ -161,6 +162,23 @@ export default function HikeInfos({ hike, borderRadius, inProfile = false }) {
                     : {},
             ]}
         >
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={modalVisible}
+                onRequestClose={() => {
+                    setModalVisible(false);
+                }}
+            >
+                <View style={styles.modalView}>
+                    <Icon
+                        name="cross"
+                        size={17}
+                        style={styles.closeIcon}
+                        onPress={() => setModalVisible(false)}
+                    />
+                </View>
+            </Modal>
             <View
                 style={{
                     flexDirection: 'row',
@@ -180,8 +198,14 @@ export default function HikeInfos({ hike, borderRadius, inProfile = false }) {
                             alignItems: 'center',
                         }}
                     >
+                        <Icon
+                            name="plus"
+                            size={18}
+                            style={styles.closeIcon}
+                            onPress={() => setModalVisible(true)}
+                        />
                         <TouchableWithoutFeedback onPress={() => share(dataAvg.hike.track)}>
-                            <View>
+                            <View style={{marginLeft:10}}>
                                 <IconComp color={colors.primary} name={'share'} pos={0} size={18} />
                             </View>
                         </TouchableWithoutFeedback>

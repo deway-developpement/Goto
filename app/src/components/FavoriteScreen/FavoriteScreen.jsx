@@ -157,7 +157,6 @@ function List(){
     } = useQuery(WHOAMI);
 
     if (!loading){
-        console.log(data.whoami.tables);
         console.log(new Date(data.whoami.tables[0].createdAt).toLocaleDateString('en-EN', {
             year: 'numeric',
             month: 'long',

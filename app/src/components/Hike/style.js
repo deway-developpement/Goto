@@ -49,5 +49,26 @@ const stylesheet = (colors) =>
             alignItems: 'center',
             justifyContent: 'center',
         },
+        littleText: {
+            fontWeight: '600',
+            fontSize: 18,
+        },modalView: {
+            marginHorizontal: '10%',
+            top: '20%',
+            borderRadius: 12,
+            paddingHorizontal: 22,
+            paddingTop: 16,
+            paddingBottom: 30,
+            backgroundColor: colors.backgroundSecondary,
+            width: '80%',
+            position: 'absolute',
+        },
+        modalText: {
+            fontSize: 28,
+            fontWeight: '700',
+            color: colors.text,
+            marginBottom: 19,
+            marginLeft: 3,
+        }
     });
 export default stylesheet;

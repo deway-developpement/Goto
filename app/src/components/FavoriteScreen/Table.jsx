@@ -7,6 +7,7 @@ export default function Table({ t }) {
     const { colors } = useTheme();
     const styles = stylesheet(colors);
     const height = Dimensions.get('screen').height;
+    console.log(t.hikes);
     return (
         <View style={{padding:30, backgroundColor:colors.backgroundSecondary, flexDirection:'column', alignItems:'center', marginTop:20, borderRadius:15}}>
             <View style={{flexDirection:'row'}}>
