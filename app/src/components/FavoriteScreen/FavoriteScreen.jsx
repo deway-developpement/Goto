@@ -77,7 +77,7 @@ function LikedScreen() {
             showsVerticalScrollIndicator={false}
             ListEmptyComponent={<Text style={styles.textLink}>No hikes</Text>}
             ListFooterComponent={<View style={{ height: 150 }} />}
-            style={[styles.container, { paddingHorizontal: '7%' }]}
+            style={styles.container}
             onEndReachedThreshold={0.2}
             onEndReached={() => {
                 if (
@@ -293,7 +293,7 @@ function FavoritesScreen() {
     const { colors } = useTheme();
     const styles = stylesheet(colors);
     return (
-        <View style={{ flex: 1, paddingHorizontal: '7%' }}>
+        <View style={{ flex: 1, paddingHorizontal: 16 }}>
             <SafeAreaView />
             <View style={{ marginHorizontal: '4%' }}>
                 <Text style={[styles.textHeader, { marginTop: '10%' }]}>Your hikes</Text>

@@ -35,7 +35,7 @@ export default function TableFocus({ navigation, route }) {
     });
 
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, { paddingHorizontal: 16 }]}>
             <SafeAreaView style={styles.container}>
                 <Pressable onPress={() => navigation.goBack()} style={{ zIndex: 100 }}>
                     <View style={[styles.logoContainer, { position: 'absolute' }]}>
@@ -65,7 +65,6 @@ export default function TableFocus({ navigation, route }) {
                 <View
                     style={{
                         marginTop: 15,
-                        paddingHorizontal: 15,
                     }}
                 >
                     <FlatList

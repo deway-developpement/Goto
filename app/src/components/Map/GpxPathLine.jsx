@@ -29,7 +29,7 @@ function GpxPathLine({
     useEffect(() => {
         setLeftPoints(parseFile(fileData));
         setLoaded(false);
-    }, []);
+    }, [fileData]);
 
     useEffect(() => {
         if (!loaded) {

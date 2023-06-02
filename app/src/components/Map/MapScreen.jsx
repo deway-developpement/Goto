@@ -53,7 +53,7 @@ function MapScreen({ route, mapState, dispatch, isRecording, isFollowing }) {
             dispatch(changeMapState(MapState.NONE));
         }
 
-        if (route.params?.fileData && (file == null || file.paraUri != route.params.fileData.uri)) {
+        if (route.params?.fileData && (file == null || file != route.params.fileData)) {
             setFile(route.params.fileData);
             route.params.dataImg = null;
             dispatch(changeMapState(MapState.FOCUS_HIKE, route.params.hikeId));
