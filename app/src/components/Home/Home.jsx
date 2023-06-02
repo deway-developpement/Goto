@@ -12,7 +12,7 @@ import ProfileScreen from '../Profile/Profile';
 import SearchScreen from '../SearchScreen/SearchScreen';
 import FocusHikeScreen from '../Hike/FocusHikeScreen';
 import MapWrapper from '../Map/MapScreen';
-
+import FavoritesScreen from '../FavoriteScreen/FavoriteScreen';
 
 
 const Tab = createBottomTabNavigator();
