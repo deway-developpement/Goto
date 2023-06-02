@@ -1,6 +1,6 @@
 import React, { useContext, useEffect } from 'react';
 import stylesheet from './style';
-import { SafeAreaView, KeyboardAvoidingView, Text, View, Platform } from 'react-native';
+import { SafeAreaView, KeyboardAvoidingView, View, Platform } from 'react-native';
 import { AuthContext } from '../../providers/AuthContext';
 import { useTheme } from '@react-navigation/native';
 import KeyboardDismissView from '../KeyboardDismissView/KeyboardDismissView';
@@ -12,15 +12,8 @@ import ProfileScreen from '../Profile/Profile';
 import SearchScreen from '../SearchScreen/SearchScreen';
 import FocusHikeScreen from '../Hike/FocusHikeScreen';
 import MapWrapper from '../Map/MapScreen';
+import FavoritesScreen from '../FavoriteScreen/FavoriteScreen';
 
-function FavoritesScreen() {
-    return (
-        <View style={{ flex: 1, backgroundColor: '' }}>
-            <SafeAreaView />
-            <Text>Favorites</Text>
-        </View>
-    );
-}
 
 const Tab = createBottomTabNavigator();
 
