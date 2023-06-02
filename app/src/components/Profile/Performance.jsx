@@ -481,7 +481,7 @@ export default function Performance({ route }) {
                                         title="Elevation"
                                         colors={colors}
                                         xUnit="km"
-                                        yUnit="m"
+                                        yUnit="km/h"
                                         width={Dimensions.get('window').width - 60}
                                         xMode={ChartMode.cumulative}
                                         yMode={ChartMode.average}

@@ -1,6 +1,7 @@
 const WEIGHT = 70;
 
 export function getCalorie(distance, elevation, duration, difficulty) {
+    if (distance === 0 || duration === 0) return 0;
     difficulty = difficulty2Factor(difficulty);
     const MET =
         1.32 * (distance / duration) -
