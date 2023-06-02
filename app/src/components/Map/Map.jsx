@@ -1,16 +1,15 @@
 import React, { useContext, cloneElement, useRef, isValidElement, useEffect } from 'react';
-import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
+import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import { default as MAP_STYLE } from '../../../assets/maps/style.json';
 import { LocationContext } from '../../providers/LocationProvider';
 import { connect } from 'react-redux';
-import { MapState } from './enum';
+import { addPoint, changeIsFollowing, mapStateToProps } from '../../reducer/map.reducer';
 import { distance2Coordonate } from '../../services/gpx.services';
+// import { distance2Coordonate } from '../../services/gpx.services';
 
-function Map({ children, mapState }) {
+function Map({ children, isFollowing, performance, isRecording, dispatch }) {
     const { location, permission } = useContext(LocationContext);
     const cameraRef = useRef(null);
-
-    const points = [];
 
     const childrenWithProps = children.map((child, index) => {
         if (isValidElement(child)) {
@@ -22,7 +21,7 @@ function Map({ children, mapState }) {
     });
 
     useEffect(() => {
-        if (mapState === MapState.FOLLOW_POSITION) {
+        if (isFollowing) {
             cameraRef.current.animateCamera({
                 center: {
                     latitude: parseFloat(location?.coords?.latitude),
@@ -30,36 +29,29 @@ function Map({ children, mapState }) {
                 },
             });
         }
-    }, [mapState]);
-
-    useEffect(() => {
-        if (mapState === MapState.FOLLOW_POSITION) {
-            cameraRef.current.animateCamera({
-                center: {
-                    latitude: parseFloat(location?.coords?.latitude),
-                    longitude: parseFloat(location?.coords?.longitude),
-                },
-            });
-        }
-        if (mapState === MapState.FOLLOW_AND_RECORD_POSITION) {
-            cameraRef.current.animateCamera({
-                center: {
-                    latitude: parseFloat(location?.coords?.latitude),
-                    longitude: parseFloat(location?.coords?.longitude),
-                },
-            });
+        if (isRecording) {
             if (
-                points.length === 0 ||
-                distance2Coordonate(points[points.length - 1], location.coords) > 0.01
+                performance.lastPoint == null ||
+                performance.lastPoint.time + 1000 * 60 < new Date().getTime() ||
+                distance2Coordonate(
+                    {
+                        latitude: parseFloat(location?.coords?.latitude),
+                        longitude: parseFloat(location?.coords?.longitude),
+                    },
+                    performance.lastPoint
+                ) > 0.05
             ) {
-                points.push({
-                    latitude: parseFloat(location?.coords?.latitude),
-                    longitude: parseFloat(location?.coords?.longitude),
-                    time: new Date(),
-                });
+                dispatch(
+                    addPoint({
+                        latitude: parseFloat(location?.coords?.latitude),
+                        longitude: parseFloat(location?.coords?.longitude),
+                        elevation: parseFloat(location?.coords?.altitude),
+                        time: new Date(),
+                    })
+                );
             }
         }
-    }, [location]);
+    }, [location, isFollowing]);
 
     return (
         <MapView
@@ -73,6 +65,11 @@ function Map({ children, mapState }) {
             showsUserLocation={permission.granted === true}
             showsMyLocationButton={false}
             pitchEnabled={false}
+            onPanDrag={() => {
+                if (isFollowing) {
+                    dispatch(changeIsFollowing(false));
+                }
+            }}
             provider={PROVIDER_GOOGLE}
             customMapStyle={MAP_STYLE}
             style={{ flex: 1, width: '100%' }}
@@ -80,12 +77,16 @@ function Map({ children, mapState }) {
             ref={cameraRef}
         >
             {childrenWithProps}
+            <Marker
+                coordinate={{
+                    latitude: parseFloat(location?.coords?.latitude),
+                    longitude: parseFloat(location?.coords?.longitude),
+                }}
+                anchor={{ x: 0.5, y: 0.5 }}
+                flat={true}
+            />
         </MapView>
     );
 }
-
-const mapStateToProps = (state) => {
-    return { overlay: state };
-};
 
 export default connect(mapStateToProps)(Map);

@@ -2,15 +2,14 @@ import React, { useEffect, useState, useRef } from 'react';
 import stylesheet from './style';
 import { View } from 'react-native';
 import { Button } from 'react-native-elements';
-import {
-    useIsFocused,
-    useTheme,
-    useNavigation,
-} from '@react-navigation/native';
+import { useIsFocused, useTheme, useNavigation } from '@react-navigation/native';
 import { Camera, CameraType } from 'expo-camera';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { changeMapState, mapStateToProps } from '../../reducer/map.reducer';
+import { MapState } from '../Map/enum';
+import { connect } from 'react-redux';
 
-export default function CameraScreen({ setIsCamera }) {
+function CameraScreen({ dispatch }) {
     const navigation = useNavigation();
     const { colors } = useTheme();
     const styles = stylesheet(colors);
@@ -30,14 +29,12 @@ export default function CameraScreen({ setIsCamera }) {
     useEffect(() => {
         if (!isFocused) {
             // close camera when we leave the screen
-            setIsCamera(false);
+            dispatch(changeMapState(MapState.NONE));
         }
     }, [isFocused]);
 
     function toggleCameraType() {
-        setType((current) =>
-            current === CameraType.back ? CameraType.front : CameraType.back
-        );
+        setType((current) => (current === CameraType.back ? CameraType.front : CameraType.back));
     }
 
     if (!permission) {
@@ -47,7 +44,7 @@ export default function CameraScreen({ setIsCamera }) {
 
     if (!permission.granted) {
         console.log('Permission not granted');
-        setIsCamera(false);
+        dispatch(changeMapState(MapState.NONE));
         return <View />;
     }
 
@@ -59,7 +56,7 @@ export default function CameraScreen({ setIsCamera }) {
             });
             const source = data;
             if (source) {
-                setIsCamera(false);
+                dispatch(changeMapState(MapState.IMAGE_EDIT));
                 navigation.navigate('Directions', { dataImg: data });
             }
         }
@@ -91,9 +88,9 @@ export default function CameraScreen({ setIsCamera }) {
                 <Button
                     buttonStyle={[styles.btn, { width: 200 }]}
                     titleStyle={styles.btnText}
-                    title={'Close your camera'}
+                    title={'Close'}
                     onPress={() => {
-                        setIsCamera(false);
+                        dispatch(changeMapState(MapState.NONE));
                     }}
                 />
                 <Button
@@ -112,3 +109,5 @@ export default function CameraScreen({ setIsCamera }) {
         </View>
     );
 }
+
+export default connect(mapStateToProps)(CameraScreen);
