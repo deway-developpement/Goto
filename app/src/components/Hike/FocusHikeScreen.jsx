@@ -109,7 +109,7 @@ export default function FocusHikeScreen({ route }) {
         }
         const res = await authAxios.get('files/tracks/' + data.hike.track);
         const fileData = res.data;
-        navigation.navigate('Directions', { fileData });
+        navigation.navigate('Directions', { fileData, hikeId: data.hike.id });
     }
 
     if (loading) {

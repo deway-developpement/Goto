@@ -3,4 +3,5 @@ export const MapState = Object.freeze({
     FOCUS_HIKE: 1,
     CAMERA: 2,
     IMAGE_EDIT: 3,
+    MODAL_PERFORMANCE: 4,
 });

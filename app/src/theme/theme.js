@@ -21,6 +21,9 @@ export const Classic = {
         empty: '#EFF0F1',
         filled: '#2A9D87',
         ligthLine: '#E4E4EA',
+        easy: '#22C55E',
+        medium: '#F59E0B',
+        hard: '#EF4444',
     },
 };
 

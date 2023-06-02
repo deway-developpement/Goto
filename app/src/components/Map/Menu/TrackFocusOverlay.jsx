@@ -3,12 +3,7 @@ import React from 'react';
 import { Button } from 'react-native-elements';
 import { MapState } from '../enum';
 import { connect } from 'react-redux';
-import {
-    changeIsRecording,
-    changeMapState,
-    init,
-    mapStateToProps,
-} from '../../../reducer/map.reducer';
+import { changeMapState, init, mapStateToProps } from '../../../reducer/map.reducer';
 
 function TrackFocusOverlay({ styles, dispatch, isRecording }) {
     const navigation = useNavigation();
@@ -30,7 +25,7 @@ function TrackFocusOverlay({ styles, dispatch, isRecording }) {
                 title={isRecording ? 'Stop recording' : 'Start recording'}
                 onPress={() => {
                     if (isRecording) {
-                        dispatch(changeIsRecording(false));
+                        dispatch(changeMapState(MapState.MODAL_PERFORMANCE));
                     } else {
                         dispatch(init());
                     }

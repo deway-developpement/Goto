@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import stylesheet from './style';
 import { SafeAreaView, View } from 'react-native';
-import { useTheme } from '@react-navigation/native';
+import { useIsFocused, useTheme } from '@react-navigation/native';
 import CameraScreen from '../Camera/CameraScreen';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Map from './Map';
@@ -17,14 +17,17 @@ import {
     changeIsFollowing,
     changeIsRecording,
     changeMapState,
-    init,
     mapStateToProps,
 } from '../../reducer/map.reducer';
 import { Button } from 'react-native';
 import GpxTrackLine from './GpxTrackLine';
+import { Modal } from 'react-native';
+import MapModal from './MapModal';
+import { LocationContext } from '../../providers/LocationProvider';
 
-function MapScreen({ route, mapState, dispatch, isRecording, performance }) {
+function MapScreen({ route, mapState, dispatch, isRecording }) {
     const isCamera = () => mapState === MapState.CAMERA;
+    const { setMoving } = useContext(LocationContext);
 
     const { colors } = useTheme();
     const styles = stylesheet(colors);
@@ -33,6 +36,7 @@ function MapScreen({ route, mapState, dispatch, isRecording, performance }) {
 
     const [image, setImage] = useState(null);
     const [file, setFile] = useState(null);
+    const isFocused = useIsFocused();
 
     useEffect(() => {
         if (route.params?.dataImg && (image == null || image.paraUri != route.params.dataImg.uri)) {
@@ -52,11 +56,21 @@ function MapScreen({ route, mapState, dispatch, isRecording, performance }) {
         if (route.params?.fileData && (file == null || file.paraUri != route.params.fileData.uri)) {
             setFile(route.params.fileData);
             route.params.dataImg = null;
-            dispatch(changeMapState(MapState.FOCUS_HIKE));
+            dispatch(changeMapState(MapState.FOCUS_HIKE, route.params.hikeId));
         } else if (file !== null && route.params?.fileData === null) {
             setFile(null);
         }
     }, [route.params?.dataImg, route.params?.fileData]);
+
+    useEffect(() => {
+        if (isFocused) {
+            console.log('focused');
+            setMoving(true);
+        } else {
+            console.log('not focused');
+            setMoving(false);
+        }
+    }, [isFocused]);
 
     return (
         <View style={{ width: '100%', height: '100%', flex: 1 }}>
@@ -66,10 +80,39 @@ function MapScreen({ route, mapState, dispatch, isRecording, performance }) {
                 } else {
                     return (
                         <View style={{ flex: 1 }}>
+                            <View
+                                style={[
+                                    {
+                                        zIndex: 100,
+                                        width: '100%',
+                                        height: '100%',
+                                        position: 'absolute',
+                                        backgroundColor:
+                                            mapState === MapState.MODAL_PERFORMANCE
+                                                ? colors.backgroundModal
+                                                : 'transparent',
+                                    },
+                                ]}
+                                pointerEvents="box-none"
+                            >
+                                <Modal
+                                    animationType="slide"
+                                    transparent={true}
+                                    visible={mapState === MapState.MODAL_PERFORMANCE}
+                                    onRequestClose={() => {
+                                        dispatch(changeMapState(MapState.FOCUS_HIKE));
+                                    }}
+                                    onShow={() => {
+                                        dispatch(changeIsRecording(false));
+                                    }}
+                                >
+                                    <MapModal />
+                                </Modal>
+                            </View>
                             <Map>
+                                {isRecording && <GpxTrackLine />}
                                 <OverlayImage image={image} />
                                 {file && <GpxPathLine fileData={file} mapState={mapState} />}
-                                {isRecording && <GpxTrackLine />}
                             </Map>
                             <View
                                 style={[
@@ -85,18 +128,7 @@ function MapScreen({ route, mapState, dispatch, isRecording, performance }) {
                                 <Button
                                     title="follow"
                                     onPress={() => {
-                                        console.log('follow');
                                         dispatch(changeIsFollowing(true));
-                                    }}
-                                />
-                                <Button
-                                    title={isRecording ? 'Stop' : 'init'}
-                                    onPress={() => {
-                                        console.log('init');
-                                        if (isRecording) {
-                                            dispatch(changeIsRecording(false));
-                                            console.log(performance.path);
-                                        } else dispatch(init());
                                     }}
                                 />
                                 {file === null && image == null && (
@@ -116,10 +148,10 @@ function MapScreen({ route, mapState, dispatch, isRecording, performance }) {
 
 const MapScreenToProps = connect(mapStateToProps)(MapScreen);
 
-export default function MapWrapper({ route }) {
+export default function MapWrapper({ route, navigation }) {
     return (
         <Provider store={store}>
-            <MapScreenToProps route={route} />
+            <MapScreenToProps route={route} navigation={navigation} />
         </Provider>
     );
 }

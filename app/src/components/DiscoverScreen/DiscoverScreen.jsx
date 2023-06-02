@@ -181,7 +181,6 @@ function DiscoverHeader({ windowHeight, navigation }) {
             </ScrollView>
             <TouchableWithoutFeedback
                 onPress={() => {
-                    console.log('DISCORVER');
                     navigation.navigate('Search', {
                         category: 'Popular',
                     });

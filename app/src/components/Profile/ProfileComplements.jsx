@@ -279,7 +279,6 @@ function Friends({ friends, MyID, reload, search, setSearch }) {
             <FlatList
                 data={removeDuplicatesFromArray2(friends, nodes)}
                 renderItem={({ item }) => <FriendCard friend={item} allFriends={friends} />}
-                style={styles.friendsContainer}
                 horizontal={true}
                 keyExtractor={(item) => item.id}
                 showsHorizontalScrollIndicator={false}

@@ -74,37 +74,37 @@ export const points = [
     {
         latitude: 48.790487,
         longitude: 2.364463,
-        elevation: 103.3,
+        elevation: 104,
         time: '',
     },
     {
         latitude: 48.790516,
         longitude: 2.36446,
-        elevation: 103.3,
+        elevation: 105,
         time: '',
     },
     {
         latitude: 48.79071,
         longitude: 2.364437,
-        elevation: 103.5,
+        elevation: 102,
         time: '',
     },
     {
         latitude: 48.791053,
         longitude: 2.364394,
-        elevation: 103.0,
+        elevation: 101,
         time: '',
     },
     {
         latitude: 48.791184,
         longitude: 2.364378,
-        elevation: 102.8,
+        elevation: 103,
         time: '',
     },
     {
         latitude: 48.791187,
         longitude: 2.364427,
-        elevation: 102.8,
+        elevation: 101,
         time: '',
     },
     {
@@ -116,7 +116,7 @@ export const points = [
     {
         latitude: 48.791201,
         longitude: 2.364951,
-        elevation: 104.3,
+        elevation: 105,
         time: '',
     },
     {
