@@ -211,7 +211,7 @@ export default function HikeInfos({ hike, borderRadius, dataWhoami, inProfile = 
                         }}
                     >
                         <Icon
-                            name="plus"
+                            name="add"
                             size={18}
                             style={styles.closeIcon}
                             onPress={() => setModalVisible(true)}
