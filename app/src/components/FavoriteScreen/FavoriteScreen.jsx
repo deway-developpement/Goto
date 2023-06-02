@@ -76,7 +76,7 @@ function LikedScreen() {
             keyExtractor={(item) => item.id}
             showsVerticalScrollIndicator={false}
             ListEmptyComponent={<Text style={styles.textLink}>No hikes</Text>}
-            ListFooterComponent={<View style={{ height: 100 }} />}
+            ListFooterComponent={<View style={{ height: 150 }} />}
             style={[styles.container, { paddingHorizontal: '7%' }]}
             onEndReachedThreshold={0.2}
             onEndReached={() => {
@@ -94,11 +94,15 @@ function LikedScreen() {
                                 return prev;
                             }
                             return {
-                                hikes: {
-                                    __typename: prev.hikes.__typename,
-                                    edges: [...prev.hikes.edges, ...fetchMoreResult.hikes.edges],
-                                    pageInfo: {
-                                        ...fetchMoreResult.hikes.pageInfo,
+                                whoami: {
+                                    ...prev.whoami,
+                                    likes: {
+                                        ...prev.whoami.likes,
+                                        edges: [
+                                            ...prev.whoami.likes.edges,
+                                            ...fetchMoreResult.whoami.likes.edges,
+                                        ],
+                                        pageInfo: fetchMoreResult.whoami.likes.pageInfo,
                                     },
                                 },
                             };

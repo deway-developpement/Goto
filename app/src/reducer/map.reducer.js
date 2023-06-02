@@ -141,7 +141,6 @@ export default function mapReducer(state = initialState, action) {
             isFollowing: true,
         };
     case CHANGE_MAP_STATE:
-        console.log('CHANGE_MAP_STATE', action.payload == MapState.FOCUS_HIKE, action.hikeId);
         return {
             ...state,
             mapState: action.payload,

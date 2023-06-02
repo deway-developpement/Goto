@@ -26,7 +26,6 @@ const LocationProvider = ({ children }) => {
     const [location, setLocation] = useState(null);
     const [heading, setHeading] = useState(null);
     const [index, setIndex] = useState(0);
-    const [moving, setMoving] = useState(false);
 
     useEffect(() => {
         if (permission === null) {
@@ -66,7 +65,6 @@ const LocationProvider = ({ children }) => {
                 location,
                 heading,
                 permission,
-                setMoving,
             }}
         >
             {children}

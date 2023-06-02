@@ -84,6 +84,12 @@ const GET_IMAGE_CATEGORIES = (categoryName, location) => {
     }
 };
 
+const EMPTY_QUERY = gql`
+    query {
+        __typename
+    }
+`;
+
 export default function Category({ memoizedLocation, ...props }) {
     const { colors } = useTheme();
     const styles = stylesheet(colors);
@@ -91,20 +97,19 @@ export default function Category({ memoizedLocation, ...props }) {
 
     const windowWidth = Dimensions.get('window').width;
 
-    function handleClickCategory(category, categoryName) {
+    function handleClickCategory(categoryName) {
         navigation.navigate('Search', {
             category: categoryName,
         });
     }
 
-    if (GET_IMAGE_CATEGORIES(props.name, memoizedLocation) !== null) {
-        var { data: imageCategory } = useQuery(
-            GET_IMAGE_CATEGORIES(props.name, memoizedLocation).query,
-            {
-                variables: GET_IMAGE_CATEGORIES(props.name, memoizedLocation).variables,
-            }
-        );
-    }
+    var { data: imageCategory } = useQuery(
+        GET_IMAGE_CATEGORIES(props.name, memoizedLocation)?.query || EMPTY_QUERY,
+        {
+            variables: GET_IMAGE_CATEGORIES(props.name, memoizedLocation)?.variables || {},
+            skip: GET_IMAGE_CATEGORIES(props.name, memoizedLocation) === null,
+        }
+    );
 
     return (
         <TouchableWithoutFeedback onPress={() => handleClickCategory(props.id, props.name)}>

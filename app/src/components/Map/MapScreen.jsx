@@ -1,7 +1,7 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import stylesheet from './style';
 import { SafeAreaView, View } from 'react-native';
-import { useIsFocused, useTheme } from '@react-navigation/native';
+import { useTheme } from '@react-navigation/native';
 import CameraScreen from '../Camera/CameraScreen';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Map from './Map';
@@ -23,11 +23,9 @@ import { Button } from 'react-native';
 import GpxTrackLine from './GpxTrackLine';
 import { Modal } from 'react-native';
 import MapModal from './MapModal';
-import { LocationContext } from '../../providers/LocationProvider';
 
 function MapScreen({ route, mapState, dispatch, isRecording }) {
     const isCamera = () => mapState === MapState.CAMERA;
-    const { setMoving } = useContext(LocationContext);
 
     const { colors } = useTheme();
     const styles = stylesheet(colors);
@@ -36,7 +34,6 @@ function MapScreen({ route, mapState, dispatch, isRecording }) {
 
     const [image, setImage] = useState(null);
     const [file, setFile] = useState(null);
-    const isFocused = useIsFocused();
 
     useEffect(() => {
         if (route.params?.dataImg && (image == null || image.paraUri != route.params.dataImg.uri)) {
@@ -61,16 +58,6 @@ function MapScreen({ route, mapState, dispatch, isRecording }) {
             setFile(null);
         }
     }, [route.params?.dataImg, route.params?.fileData]);
-
-    useEffect(() => {
-        if (isFocused) {
-            console.log('focused');
-            setMoving(true);
-        } else {
-            console.log('not focused');
-            setMoving(false);
-        }
-    }, [isFocused]);
 
     return (
         <View style={{ width: '100%', height: '100%', flex: 1 }}>
