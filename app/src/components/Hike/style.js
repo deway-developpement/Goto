@@ -62,6 +62,12 @@ const stylesheet = (colors) =>
             backgroundColor: colors.backgroundSecondary,
             width: '80%',
             position: 'absolute',
+        },textLoginMiddle: {
+            fontWeight: '600',
+            fontSize: 20,
+            paddingBottom: 10,
+            paddingTop: 10,
+            color: colors.text,
         },
         modalText: {
             fontSize: 28,

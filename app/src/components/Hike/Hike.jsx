@@ -7,7 +7,7 @@ import { gql, useQuery } from '@apollo/client';
 import HikeInfos from './HikeInfos';
 import { FILES_URL } from '../../providers/AxiosContext';
 
-export default function Hike({ id }) {
+export default function Hike({ id, dataWhoami, loadingWhoami}) {
     const GET_HIKE = gql`
         query hike($id: ID!) {
             hike(id: $id) {
@@ -65,7 +65,7 @@ export default function Hike({ id }) {
                             },
                         ]}
                     />
-                    <HikeInfos hike={data.hike} />
+                    <HikeInfos hike={data.hike} dataWhoami={dataWhoami} loadingWhoami={loadingWhoami}/>
                 </View>
             </TouchableWithoutFeedback>
         );

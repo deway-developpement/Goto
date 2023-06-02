@@ -11,6 +11,22 @@ import { TextInput } from 'react-native';
 import { IconComp } from '../Icon/Icon';
 import { LocationContext } from '../../providers/LocationProvider';
 
+const WHOAMI = gql`
+query whoami{
+        whoami{
+            tables(sorting: { field: createdAt, direction: DESC }) {
+                id
+                name
+                createdAt
+                hikes {
+                    id
+                }
+            }
+        }
+    }
+`;
+
+
 const GET_HIKES_AROUND_ME = gql`
     query hikes($lon: Float!, $lat: Float!, $limit: Int!, $cursor: String, $search: String) {
         hikes: getHikeAround(
@@ -226,12 +242,18 @@ export default function SearchScreen({ route, navigation }) {
 
     let onEndReachedCalledDuringMomentum = false;
 
+    
+    const {
+        data: dataWhoami,
+        loading: loadingWhoami,
+    } = useQuery(WHOAMI);
+
     return (
         <SafeAreaView style={styles.container}>
             <FlatList
                 data={nodes}
                 extraData={data?.hikes.edges}
-                renderItem={({ item }) => <Hike id={item.id} />}
+                renderItem={({ item }) => <Hike id={item.id} dataWhoami={dataWhoami} loadingWhoami={loadingWhoami}/>}
                 keyExtractor={(item) => item.id}
                 showsVerticalScrollIndicator={false}
                 emptyListComponent={<Text style={styles.textLink}>No hikes</Text>}

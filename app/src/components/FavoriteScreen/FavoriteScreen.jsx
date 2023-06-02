@@ -144,6 +144,9 @@ function List(){
                     createdAt
                     hikes {
                         name
+                        photos {
+                            filename
+                        }
                     }
                 }
             }
@@ -153,17 +156,7 @@ function List(){
     const {
         data,
         loading,
-        refetch,
     } = useQuery(WHOAMI);
-
-    if (!loading){
-        console.log(new Date(data.whoami.tables[0].createdAt).toLocaleDateString('en-EN', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-            weekday: 'long',
-        }));
-    }
 
     return(
         <View style={{ flex: 1, backgroundColor: colors.background }}>

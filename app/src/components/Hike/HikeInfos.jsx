@@ -6,6 +6,8 @@ import { IconComp, Icon } from '../Icon/Icon';
 import { gql, useApolloClient, useQuery } from '@apollo/client';
 import { Share } from 'react-native';
 import { FILES_URL } from '../../providers/AxiosContext';
+import { BlurView } from 'expo-blur';
+import { FlatList } from 'react-native';
 
 const WHOAMI = gql`
     query whoami($hikeID: ID) {
@@ -14,6 +16,14 @@ const WHOAMI = gql`
             reviews(filter: { hike: { id: { eq: $hikeID } } }) {
                 rating
             }
+        }
+    }
+`;
+
+const ADD_HIKE_TO_TABLE = gql`
+    mutation addHikeToTable($tableId: String!, $hikeId: String!) {
+        addHikeToTable(tableId:$tableId, hikeId:$hikeId) {
+            id
         }
     }
 `;
@@ -56,7 +66,7 @@ const UNLIKE_HIKE = gql`
     }
 `;
 
-export default function HikeInfos({ hike, borderRadius, inProfile = false }) {
+export default function HikeInfos({ hike, borderRadius, dataWhoami, loadingWhoami, inProfile = false }) {
     const { colors } = useTheme();
     const styles = stylesheet(colors);
     const client = useApolloClient();
@@ -148,6 +158,43 @@ export default function HikeInfos({ hike, borderRadius, inProfile = false }) {
         });
         setLike(false);
     }
+
+    const [table, setTable] = useState('');
+    const [firstTable, setFirstTable] = useState('');
+
+    async function handleModalClose() {
+        setModalVisible(false);
+        if (table !== '' && table !== firstTable){
+            console.log(table);
+            await client.mutate({
+                mutation: ADD_HIKE_TO_TABLE,
+                variables: {
+                    tableId: table,
+                    hikeId: hike.id,
+                },
+                errorPolicy: 'all',
+            });
+        }
+    }
+
+    function handleClickTable(tableId) {
+        if (table!=tableId){
+            setTable(tableId);
+        }else{
+            setTable('');
+        }
+    }
+
+    
+    if (!loadingWhoami && dataWhoami && dataWhoami?.whoami?.tables?.length > 0 && table === '' && firstTable==''){
+        for (let i = 0; i < dataWhoami.whoami.tables.length; i++) {
+            if (dataWhoami.whoami.tables[i].hikes.some((h) => h.id === hike.id)) {
+                setTable(dataWhoami.whoami.tables[i].id);
+                setFirstTable(dataWhoami.whoami.tables[i].id);
+                break;
+            }
+        }
+    }
     return (
         <View
             style={[
@@ -171,13 +218,58 @@ export default function HikeInfos({ hike, borderRadius, inProfile = false }) {
                     setModalVisible(false);
                 }}
             >
+                <BlurView
+                    style={{flex:1, position:'absolute', top:0, left:0, width:'100%', height:'100%'}}
+                    intensity={50}
+                    tint="dark"
+                />
                 <View style={styles.modalView}>
                     <Icon
                         name="cross"
                         size={17}
                         style={styles.closeIcon}
-                        onPress={() => setModalVisible(false)}
+                        onPress={() => handleModalClose()}
                     />
+                    <View
+                        style={{
+                            backgroundColor: colors.backgroundSecondary,
+                            borderRadius: 15,
+                            marginTop: 15,
+                            paddingHorizontal: 15,
+                        }}
+                    >
+                        <Text style={[styles.textLoginMiddle, { alignSelf: 'center' }]}>
+                            Category
+                        </Text>
+                        {!loadingWhoami && dataWhoami &&
+                            <FlatList
+                                data={dataWhoami.whoami.tables}
+                                keyExtractor={(item) => item.id}
+                                renderItem={({ item }) => (
+                                    <TouchableWithoutFeedback onPress={() => handleClickTable(item.id)}>
+                                        <View>
+                                            <Text
+                                                style={[
+                                                    styles.textLoginMiddle,
+                                                    {
+                                                        marginRight: 30,
+                                                        paddingVertical: 15,
+                                                    },
+                                                    table !== item.id
+                                                        ? { color: colors.border }
+                                                        : {},
+                                                ]}
+                                            >
+                                                {item.name}
+                                            </Text>
+                                        </View>
+                                    </TouchableWithoutFeedback>
+                                )}
+                                horizontal={true}
+                                showsHorizontalScrollIndicator={false}
+                            />
+                        }
+                    </View>
                 </View>
             </Modal>
             <View
