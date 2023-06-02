@@ -4,7 +4,6 @@ import {
     getLastKnownPositionAsync,
     watchPositionAsync,
     watchHeadingAsync,
-    getCurrentPositionAsync,
 } from 'expo-location';
 import { points } from './localisationFake';
 
@@ -27,6 +26,7 @@ const LocationProvider = ({ children }) => {
     const [location, setLocation] = useState(null);
     const [heading, setHeading] = useState(null);
     const [index, setIndex] = useState(0);
+    const [moving, setMoving] = useState(false);
 
     useEffect(() => {
         if (permission === null) {
@@ -37,27 +37,31 @@ const LocationProvider = ({ children }) => {
             getLastKnownPositionAsync({}).then((response) => {
                 setLocation(response);
             });
-            // watchPositionAsync({}, (response) => {
-            //     setLocation(response);
-            // });
-            // watchHeadingAsync((response) => {
-            //     setHeading(response);
-            // });
+            watchPositionAsync({}, (response) => {
+                setLocation(response);
+            });
+            watchHeadingAsync((response) => {
+                setHeading(response);
+            });
         }
     }, [permission]);
 
-    useSetInterval(() => {
-        setLocation({
-            ...location,
-            coords: {
-                ...location?.coords,
-                latitude: points[index].latitude,
-                longitude: points[index].longitude,
-            },
-            timestamp: new Date().getTime(),
-        });
-        setIndex((index + 1) % points.length);
-    }, 1000);
+    // useSetInterval(() => {
+    //     if (!moving) {
+    //         return;
+    //     }
+    //     setLocation({
+    //         ...location,
+    //         coords: {
+    //             ...location?.coords,
+    //             latitude: points[index].latitude,
+    //             longitude: points[index].longitude,
+    //             altitude: points[index].elevation,
+    //         },
+    //         timestamp: new Date().getTime(),
+    //     });
+    //     setIndex((index + 1) % points.length);
+    // }, 1000);
 
     return (
         <Provider
@@ -65,6 +69,7 @@ const LocationProvider = ({ children }) => {
                 location,
                 heading,
                 permission,
+                setMoving,
             }}
         >
             {children}

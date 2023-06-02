@@ -46,9 +46,10 @@ export const init = () => ({
     type: INIT,
 });
 
-export const changeMapState = (val) => ({
+export const changeMapState = (val, hikeId = null) => ({
     type: CHANGE_MAP_STATE,
     payload: val,
+    hikeId,
 });
 
 export const changeIsFollowing = (val) => ({
@@ -75,6 +76,7 @@ const initialState = {
     mapState: MapState.NONE,
     isFollowing: false,
     isRecording: false,
+    hikeId: null,
 };
 
 export default function mapReducer(state = initialState, action) {
@@ -139,9 +141,16 @@ export default function mapReducer(state = initialState, action) {
             isFollowing: true,
         };
     case CHANGE_MAP_STATE:
+        console.log('CHANGE_MAP_STATE', action.payload == MapState.FOCUS_HIKE, action.hikeId);
         return {
             ...state,
             mapState: action.payload,
+            hikeId:
+                    action.payload === MapState.FOCUS_HIKE
+                        ? action.hikeId
+                        : action.payload === MapState.MODAL_PERFORMANCE
+                            ? state.hikeId
+                            : null,
         };
     case CHANGE_IS_FOLLOWING:
         return {
@@ -159,7 +168,12 @@ export default function mapReducer(state = initialState, action) {
 }
 
 // selectors
-export const getTimeSelector = (state) => new Date() - state?.performance.time;
+export const getTimeSelector = (state) => {
+    if (state?.performance.time === null) {
+        return null;
+    }
+    return new Date().getTime() - state?.performance.time.getTime();
+};
 
 export const getPoinstSelector = (state) => {
     if (state?.performance.time === null) {
@@ -168,13 +182,29 @@ export const getPoinstSelector = (state) => {
     return state?.performance.points;
 };
 
-export const getDistanceSelector = createSelector(getPoinstSelector, (points) =>
-    points?.reduce((acc, point, index) => acc + distance2Coordonate(point, points[index - 1]), 1)
-);
+export const getDistanceSelector = createSelector(getPoinstSelector, (points) => {
+    if (points?.length === 0 || !points) {
+        return 0;
+    }
+    return points?.reduce((acc, point, index) => {
+        if (index === 0) {
+            return 0;
+        }
+        return acc + distance2Coordonate(point, points[index - 1]);
+    }, 0);
+});
 
-export const getElevationSelector = createSelector(getPoinstSelector, (points) =>
-    points?.reduce((acc, point) => acc + point.elevation, 0)
-);
+export const getElevationSelector = createSelector(getPoinstSelector, (points) => {
+    if (points?.length === 0 || !points) {
+        return 0;
+    }
+    return points?.reduce((acc, point, index) => {
+        if (index === 0) {
+            return 0;
+        }
+        return acc + Math.abs(point.elevation - points[index - 1].elevation);
+    }, 0);
+});
 
 export const getLastPointSelector = createSelector(getPoinstSelector, (points) => {
     if (points?.length === 0 || !points) {
@@ -199,7 +229,7 @@ export const getSpeedSelector = createSelector(
         if (elapsed === 0) {
             return 0;
         }
-        return distance / elapsed;
+        return distance / (elapsed / 1000 / 3600);
     }
 );
 
@@ -225,4 +255,5 @@ export const mapStateToProps = (state) => ({
     mapState: state.mapState,
     isFollowing: state.isFollowing,
     isRecording: state.isRecording,
+    hikeId: state.hikeId,
 });

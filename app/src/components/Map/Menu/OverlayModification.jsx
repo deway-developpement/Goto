@@ -9,16 +9,14 @@ import { useNavigation, useTheme } from '@react-navigation/native';
 import {
     changeAngle,
     changeHeight,
-    changeIsRecording,
     changePosition,
     changeWidth,
-    init,
     mapStateToProps,
 } from '../../../reducer/map.reducer';
 import { Button as Btn } from 'react-native-elements';
 import { Button } from 'react-native';
 
-function OverlayModification({ overlay, dispatch, isRecording }) {
+function OverlayModification({ overlay, dispatch }) {
     const { colors } = useTheme();
     const styles = stylesheet(colors);
     const navigation = useNavigation();
@@ -203,14 +201,6 @@ function OverlayModification({ overlay, dispatch, isRecording }) {
                     disabled={isHidden}
                 />
                 <Button title={isHidden ? 'Show' : 'Hide'} onPress={() => setIsHidden(!isHidden)} />
-                <Button
-                    title={isRecording ? 'Stop' : 'Start'}
-                    onPress={() => {
-                        if (isRecording) dispatch(changeIsRecording(false));
-                        else dispatch(init());
-                        setIsHidden(true);
-                    }}
-                />
             </View>
             {!isHidden && (
                 <>

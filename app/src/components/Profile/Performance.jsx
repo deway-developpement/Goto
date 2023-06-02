@@ -14,7 +14,7 @@ import { useNavigation } from '@react-navigation/native';
 import { gql, useQuery } from '@apollo/client';
 import SplashScreen from '../SplashScreen/SplashScreen';
 import { Icon } from '../Icon/Icon';
-import GpxPathLine from '../Map/GpxPathLine';
+import GpxPathLineLite from '../Map/GpxPathLineLite';
 import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
 import { AxiosContext } from '../../providers/AxiosContext';
 import { default as MAP_STYLE } from '../../../assets/maps/style.json';
@@ -402,7 +402,7 @@ export default function Performance({ route }) {
                                     ref={mapRef}
                                 >
                                     {file && (
-                                        <GpxPathLine
+                                        <GpxPathLineLite
                                             fileData={file}
                                             cameraRef={mapRef}
                                             edgePadding={{

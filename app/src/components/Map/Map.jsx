@@ -27,6 +27,7 @@ function Map({ children, isFollowing, performance, isRecording, dispatch }) {
                     latitude: parseFloat(location?.coords?.latitude),
                     longitude: parseFloat(location?.coords?.longitude),
                 },
+                zoom: 16,
             });
         }
         if (isRecording) {
