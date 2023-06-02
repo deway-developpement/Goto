@@ -20,6 +20,7 @@ export const Classic = {
         stats: '#207665',
         empty: '#EFF0F1',
         filled: '#2A9D87',
+        ligthLine: '#E4E4EA',
     },
 };
 

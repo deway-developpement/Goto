@@ -1,19 +1,19 @@
 import React, { useContext, useRef } from 'react';
-import { Text, TouchableWithoutFeedback } from 'react-native';
+import { Text, TouchableWithoutFeedback, FlatList } from 'react-native';
 import { useTheme } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import stylesheet from './style';
 import { gql, useQuery } from '@apollo/client';
 import Hike from '../Hike/Hike';
-import { FlatList } from 'react-native-gesture-handler';
 import { View } from 'react-native';
 import { TextInput } from 'react-native';
 import { IconComp } from '../Icon/Icon';
 import { LocationContext } from '../../providers/LocationProvider';
 
 const WHOAMI = gql`
-query whoami{
-        whoami{
+    query whoami {
+        whoami {
+            id
             tables(sorting: { field: createdAt, direction: DESC }) {
                 id
                 name
@@ -25,7 +25,6 @@ query whoami{
         }
     }
 `;
-
 
 const GET_HIKES_AROUND_ME = gql`
     query hikes($lon: Float!, $lat: Float!, $limit: Int!, $cursor: String, $search: String) {
@@ -242,21 +241,28 @@ export default function SearchScreen({ route, navigation }) {
 
     let onEndReachedCalledDuringMomentum = false;
 
-    
-    const {
-        data: dataWhoami,
-        loading: loadingWhoami,
-    } = useQuery(WHOAMI);
+    const { data: dataWhoami } = useQuery(WHOAMI);
 
     return (
         <SafeAreaView style={styles.container}>
             <FlatList
                 data={nodes}
                 extraData={data?.hikes.edges}
-                renderItem={({ item }) => <Hike id={item.id} dataWhoami={dataWhoami} loadingWhoami={loadingWhoami}/>}
+                renderItem={({ item }) => <Hike id={item.id} dataWhoami={dataWhoami} />}
                 keyExtractor={(item) => item.id}
                 showsVerticalScrollIndicator={false}
-                emptyListComponent={<Text style={styles.textLink}>No hikes</Text>}
+                ListEmptyComponent={
+                    <View
+                        style={{
+                            flex: 1,
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            marginTop: 20,
+                        }}
+                    >
+                        <Text style={styles.textLink}>No hike found</Text>
+                    </View>
+                }
                 ListHeaderComponent={
                     <>
                         <View style={[styles.textInputContainer, { marginTop: 28 }]}>
@@ -337,6 +343,10 @@ export default function SearchScreen({ route, navigation }) {
                 onMomentumScrollBegin={() => {
                     onEndReachedCalledDuringMomentum = false;
                 }}
+                onRefresh={() => {
+                    refetch();
+                }}
+                refreshing={loading}
             />
         </SafeAreaView>
     );

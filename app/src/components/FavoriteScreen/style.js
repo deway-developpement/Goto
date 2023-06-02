@@ -13,7 +13,8 @@ const stylesheet = (colors) =>
             color: colors.primary,
             fontSize: 24,
             fontWeight: '700',
-        },modalView: {
+        },
+        modalView: {
             marginHorizontal: '10%',
             top: '20%',
             borderRadius: 12,
@@ -30,7 +31,8 @@ const stylesheet = (colors) =>
             color: colors.text,
             marginBottom: 19,
             marginLeft: 3,
-        },textInput: {
+        },
+        textInput: {
             height: 40,
             borderColor: colors.border,
             borderRadius: 6,
@@ -69,6 +71,21 @@ const stylesheet = (colors) =>
         },
         textBtn_text: {
             color: colors.primary,
+        },
+        container: {
+            flex: 1,
+            paddingTop: 10,
+            paddingHorizontal: 9,
+        },
+        logoContainer: {
+            width: 50,
+            height: 50,
+            backgroundColor: colors.primary,
+            borderRadius: 12,
+            paddingRight: 2,
+            justifyContent: 'center',
+            alignItems: 'center',
+            zIndex: 1000,
         },
     });
 export default stylesheet;

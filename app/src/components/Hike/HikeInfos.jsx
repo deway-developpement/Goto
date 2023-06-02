@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { Text, View, TouchableWithoutFeedback,Modal } from 'react-native';
+import { Text, View, TouchableWithoutFeedback, Modal } from 'react-native';
 import { useTheme } from '@react-navigation/native';
 import stylesheet from './style';
 import { IconComp, Icon } from '../Icon/Icon';
 import { gql, useApolloClient, useQuery } from '@apollo/client';
 import { Share } from 'react-native';
 import { FILES_URL } from '../../providers/AxiosContext';
-import { BlurView } from 'expo-blur';
-import { FlatList } from 'react-native';
+import HikeModal from './HikeModals';
 
 const WHOAMI = gql`
     query whoami($hikeID: ID) {
@@ -16,14 +15,10 @@ const WHOAMI = gql`
             reviews(filter: { hike: { id: { eq: $hikeID } } }) {
                 rating
             }
-        }
-    }
-`;
-
-const ADD_HIKE_TO_TABLE = gql`
-    mutation addHikeToTable($tableId: String!, $hikeId: String!) {
-        addHikeToTable(tableId:$tableId, hikeId:$hikeId) {
-            id
+            tables {
+                id
+                name
+            }
         }
     }
 `;
@@ -66,7 +61,7 @@ const UNLIKE_HIKE = gql`
     }
 `;
 
-export default function HikeInfos({ hike, borderRadius, dataWhoami, loadingWhoami, inProfile = false }) {
+export default function HikeInfos({ hike, borderRadius, dataWhoami, inProfile = false }) {
     const { colors } = useTheme();
     const styles = stylesheet(colors);
     const client = useApolloClient();
@@ -109,7 +104,7 @@ export default function HikeInfos({ hike, borderRadius, dataWhoami, loadingWhoam
             break;
         }
         case StarsMode.reviewed: {
-            if (dataReview?.whoami?.reviews[0]?.rating){
+            if (dataReview?.whoami?.reviews[0]?.rating) {
                 let rate = Math.round(dataReview?.whoami?.reviews[0]?.rating + Number.EPSILON);
                 setRating(rate);
                 break;
@@ -127,6 +122,7 @@ export default function HikeInfos({ hike, borderRadius, dataWhoami, loadingWhoam
                     rating: star + 1,
                 },
                 errorPolicy: 'all',
+                awaitRefetchQueries: [GET_REVIEWS],
             });
             refetch();
         }
@@ -146,6 +142,7 @@ export default function HikeInfos({ hike, borderRadius, dataWhoami, loadingWhoam
                 id: hike.id,
             },
             errorPolicy: 'all',
+            refetchQueries: ['hike', 'whoami', 'hikes'],
         });
         setLike(true);
     }
@@ -157,46 +154,11 @@ export default function HikeInfos({ hike, borderRadius, dataWhoami, loadingWhoam
                 id: hike.id,
             },
             errorPolicy: 'all',
+            refetchQueries: ['hike', 'whoami', 'hikes'],
         });
         setLike(false);
     }
 
-    const [table, setTable] = useState('');
-    const [firstTable, setFirstTable] = useState('');
-
-    async function handleModalClose() {
-        setModalVisible(false);
-        if (table !== '' && table !== firstTable){
-            console.log(table);
-            await client.mutate({
-                mutation: ADD_HIKE_TO_TABLE,
-                variables: {
-                    tableId: table,
-                    hikeId: hike.id,
-                },
-                errorPolicy: 'all',
-            });
-        }
-    }
-
-    function handleClickTable(tableId) {
-        if (table!=tableId){
-            setTable(tableId);
-        }else{
-            setTable('');
-        }
-    }
-
-    
-    if (!loadingWhoami && dataWhoami && dataWhoami?.whoami?.tables?.length > 0 && table === '' && firstTable==''){
-        for (let i = 0; i < dataWhoami.whoami.tables.length; i++) {
-            if (dataWhoami.whoami.tables[i].hikes.some((h) => h.id === hike.id)) {
-                setTable(dataWhoami.whoami.tables[i].id);
-                setFirstTable(dataWhoami.whoami.tables[i].id);
-                break;
-            }
-        }
-    }
     return (
         <View
             style={[
@@ -213,66 +175,21 @@ export default function HikeInfos({ hike, borderRadius, dataWhoami, loadingWhoam
             ]}
         >
             <Modal
-                animationType="slide"
+                animationType="fade"
                 transparent={true}
                 visible={modalVisible}
                 onRequestClose={() => {
                     setModalVisible(false);
                 }}
+                onShow={() => {
+                    refetch();
+                }}
             >
-                <BlurView
-                    style={{flex:1, position:'absolute', top:0, left:0, width:'100%', height:'100%'}}
-                    intensity={50}
-                    tint="dark"
+                <HikeModal
+                    hikeId={hike.id}
+                    setModalVisible={setModalVisible}
+                    tables={dataWhoami?.whoami?.tables}
                 />
-                <View style={styles.modalView}>
-                    <Icon
-                        name="cross"
-                        size={17}
-                        style={styles.closeIcon}
-                        onPress={() => handleModalClose()}
-                    />
-                    <View
-                        style={{
-                            backgroundColor: colors.backgroundSecondary,
-                            borderRadius: 15,
-                            marginTop: 15,
-                            paddingHorizontal: 15,
-                        }}
-                    >
-                        <Text style={[styles.textLoginMiddle, { alignSelf: 'center' }]}>
-                            Select a table
-                        </Text>
-                        {!loadingWhoami && dataWhoami &&
-                            <FlatList
-                                data={dataWhoami.whoami.tables}
-                                keyExtractor={(item) => item.id}
-                                renderItem={({ item }) => (
-                                    <TouchableWithoutFeedback onPress={() => handleClickTable(item.id)}>
-                                        <View>
-                                            <Text
-                                                style={[
-                                                    styles.textLoginMiddle,
-                                                    {
-                                                        marginRight: 30,
-                                                        paddingVertical: 15,
-                                                    },
-                                                    table !== item.id
-                                                        ? { color: colors.border }
-                                                        : {},
-                                                ]}
-                                            >
-                                                {item.name}
-                                            </Text>
-                                        </View>
-                                    </TouchableWithoutFeedback>
-                                )}
-                                horizontal={true}
-                                showsHorizontalScrollIndicator={false}
-                            />
-                        }
-                    </View>
-                </View>
             </Modal>
             <View
                 style={{
@@ -300,7 +217,7 @@ export default function HikeInfos({ hike, borderRadius, dataWhoami, loadingWhoam
                             onPress={() => setModalVisible(true)}
                         />
                         <TouchableWithoutFeedback onPress={() => share(dataAvg.hike.track)}>
-                            <View style={{marginLeft:10}}>
+                            <View style={{ marginLeft: 10 }}>
                                 <IconComp color={colors.primary} name={'share'} pos={0} size={18} />
                             </View>
                         </TouchableWithoutFeedback>

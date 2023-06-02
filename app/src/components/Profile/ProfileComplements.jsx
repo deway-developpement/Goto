@@ -7,6 +7,7 @@ import {
     Pressable,
     TouchableWithoutFeedback,
     Image,
+    FlatList,
 } from 'react-native';
 import { gql, useQuery } from '@apollo/client';
 import stylesheet from './style';
@@ -14,7 +15,6 @@ import { useTheme } from '@react-navigation/native';
 import { useNavigation } from '@react-navigation/native';
 import HikeInfos from '../Hike/HikeInfos';
 import { Icon } from '../Icon/Icon';
-import { FlatList } from 'react-native-gesture-handler';
 import { FILES_URL } from '../../providers/AxiosContext';
 
 function Stats({ count, distance, duration, elevation }) {
@@ -283,7 +283,20 @@ function Friends({ friends, MyID, reload, search, setSearch }) {
                 horizontal={true}
                 keyExtractor={(item) => item.id}
                 showsHorizontalScrollIndicator={false}
-                ListEmptyComponent={() => <View style={{ height: 58 }} />}
+                ListEmptyComponent={
+                    <View
+                        style={{
+                            flex: 1,
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            marginTop: 10,
+                            marginLeft: 10,
+                            marginBottom: 50,
+                        }}
+                    >
+                        <Text style={styles.textLink}>No friends found</Text>
+                    </View>
+                }
                 onEndReached={() => {
                     if (
                         data?.users?.pageInfo?.hasNextPage &&

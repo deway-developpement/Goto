@@ -1,24 +1,38 @@
-import React, {useEffect,useState} from 'react';
-import { SafeAreaView, Text, View,TouchableWithoutFeedback,Modal,TextInput } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import {
+    SafeAreaView,
+    Text,
+    View,
+    TouchableWithoutFeedback,
+    Modal,
+    TextInput,
+    FlatList,
+} from 'react-native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import { useTheme } from '@react-navigation/native';
+import { CommonActions, useTheme } from '@react-navigation/native';
 import stylesheet from './style';
 import { gql, useQuery, useApolloClient } from '@apollo/client';
-import { FlatList } from 'react-native-gesture-handler';
 import Hike from '../Hike/Hike';
 import { useIsFocused } from '@react-navigation/native';
 import { IconComp, Icon } from '../Icon/Icon';
 import { Button } from 'react-native-elements';
 import Table from './Table';
 import { BlurView } from 'expo-blur';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import TableFocus from './TableFocus';
 
 const Tab = createMaterialTopTabNavigator();
+const Stack = createNativeStackNavigator();
 
-function Scroll(){
+function LikedScreen() {
     const WHOAMI = gql`
-    query whoami($limit: Int, $cursor: ConnectionCursor) {
-            whoami{
-                likes (paging: { first: $limit, after: $cursor },sorting: { field: id, direction: DESC }) {
+        query whoami($limit: Int, $cursor: ConnectionCursor) {
+            whoami {
+                id
+                likes(
+                    paging: { first: $limit, after: $cursor }
+                    sorting: { field: id, direction: DESC }
+                ) {
                     edges {
                         node {
                             id
@@ -32,14 +46,9 @@ function Scroll(){
             }
         }
     `;
-    var limit=2;
-    var cursor='';
-    const {
-        data,
-        loading,
-        fetchMore,
-        refetch,
-    } = useQuery(WHOAMI, {
+    var limit = 2;
+    var cursor = '';
+    const { data, loading, fetchMore, refetch } = useQuery(WHOAMI, {
         variables: {
             limit: limit,
             cursor: cursor,
@@ -59,14 +68,14 @@ function Scroll(){
         }
     }, [isFocused]);
 
-    return(
+    return (
         <FlatList
             data={nodes}
             extraData={data?.whoami?.likes.edges}
             renderItem={({ item }) => <Hike id={item.id} />}
             keyExtractor={(item) => item.id}
             showsVerticalScrollIndicator={false}
-            emptyListComponent={<Text style={styles.textLink}>No hikes</Text>}
+            ListEmptyComponent={<Text style={styles.textLink}>No hikes</Text>}
             ListFooterComponent={<View style={{ height: 100 }} />}
             style={[styles.container, { paddingHorizontal: '7%' }]}
             onEndReachedThreshold={0.2}
@@ -87,10 +96,7 @@ function Scroll(){
                             return {
                                 hikes: {
                                     __typename: prev.hikes.__typename,
-                                    edges: [
-                                        ...prev.hikes.edges,
-                                        ...fetchMoreResult.hikes.edges,
-                                    ],
+                                    edges: [...prev.hikes.edges, ...fetchMoreResult.hikes.edges],
                                     pageInfo: {
                                         ...fetchMoreResult.hikes.pageInfo,
                                     },
@@ -108,16 +114,16 @@ function Scroll(){
     );
 }
 
-function List(){
+function TablesScreen() {
     const { colors } = useTheme();
     const styles = stylesheet(colors);
-    const [modalVisible, setModalVisible] = useState('');
+    const [modalVisible, setModalVisible] = useState(false);
     const [name, setName] = useState('');
     const client = useApolloClient();
 
     const ADD_TABLE = gql`
         mutation createTable($name: String!) {
-            createTable(input: { name: $name}) {
+            createTable(input: { name: $name }) {
                 id
             }
         }
@@ -130,15 +136,16 @@ function List(){
                 name: name,
             },
             errorPolicy: 'all',
+            refetchQueries: ['whoami'],
         });
-        //refetch();
         setModalVisible('');
         setName('');
     }
 
     const WHOAMI = gql`
-    query whoami{
-            whoami{
+        query whoami {
+            whoami {
+                id
                 tables(sorting: { field: createdAt, direction: DESC }) {
                     id
                     name
@@ -155,119 +162,87 @@ function List(){
         }
     `;
 
-    const [nbrTable, setNbrTable] = useState(0);
+    const { data, loading } = useQuery(WHOAMI);
 
-    useEffect(() => {
-        if (!loading && modalVisible!='create') {
-            for (let i = 0; i < data?.whoami?.tables?.length; i++) {
-                if (data?.whoami?.tables[i].id == modalVisible) {
-                    setNbrTable(i);
-                }
-            }
-        }
-    }, [modalVisible]);
-
-    const {
-        data,
-        loading,
-    } = useQuery(WHOAMI);
-    console.log(data?.whoami?.tables[nbrTable]?.length);
-    
-    return(
+    return (
         <View style={{ flex: 1, backgroundColor: colors.background }}>
-            <View style={{width:'100%', flexDirection:'row', justifyContent:'flex-end' }}>
-                <TouchableWithoutFeedback onPress={() => setModalVisible('create')}>
+            <FlatList
+                data={data?.whoami?.tables}
+                keyExtractor={(item) => item.id}
+                renderItem={({ item }) => <Table table={item} />}
+                horizontal={false}
+                showsHorizontalScrollIndicator={false}
+                ListFooterComponent={<View style={{ height: 150 }} />}
+                ListHeaderComponent={
                     <View
-                        style={[
-                            styles.container,
-                            {
-                                flexDirection: 'row',
-                                marginTop: 20,
-                            },
-                        ]}
+                        style={{
+                            width: '100%',
+                            flexDirection: 'row',
+                            justifyContent: 'center',
+                        }}
                     >
-                        <IconComp color={colors.primary} name={'plus'} />
-                        <Text
-                            style={[
-                                styles.textLink,
-                                {
-                                    textDecorationLine: 'none',
-                                    marginLeft: '5%',
-                                    alignSelf: 'center',
-                                },
-                            ]}
-                        >
-                            Add a hike
-                        </Text>
+                        <TouchableWithoutFeedback onPress={() => setModalVisible('create')}>
+                            <View
+                                style={[
+                                    styles.container,
+                                    {
+                                        flexDirection: 'row',
+                                        marginTop: 20,
+                                    },
+                                ]}
+                            >
+                                <IconComp color={colors.primary} name={'plus'} />
+                                <Text
+                                    style={[
+                                        styles.textLink,
+                                        {
+                                            textDecorationLine: 'none',
+                                            marginLeft: '5%',
+                                            alignSelf: 'center',
+                                        },
+                                    ]}
+                                >
+                                    Add a table
+                                </Text>
+                            </View>
+                        </TouchableWithoutFeedback>
                     </View>
-                </TouchableWithoutFeedback>
-            </View>
-            {!loading && 
-                <FlatList
-                    data={data?.whoami?.tables}
-                    keyExtractor={(item) => item.id}
-                    renderItem={({ item }) => (
-                        <Table t={item} setModal={setModalVisible}/>
-                    )}
-                    horizontal={false}
-                    showsHorizontalScrollIndicator={false}
-                    ListFooterComponent={<View style={{ height: 100 }} />}
-                />
-            }
+                }
+                ListEmptyComponent={
+                    <View
+                        style={{
+                            flex: 1,
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            marginTop: 20,
+                        }}
+                    >
+                        <Text style={styles.textLink}>No tables yet.</Text>
+                    </View>
+                }
+                showsVerticalScrollIndicator={false}
+                refreshing={loading}
+            />
             <Modal
-                animationType="slide"
+                animationType="fade"
                 transparent={true}
-                visible={modalVisible!='' && modalVisible!='create'}
+                visible={modalVisible == 'create'}
                 onRequestClose={() => {
                     setModalVisible('');
                 }}
             >
                 <BlurView
-                    style={{flex:1, position:'absolute', top:0, left:0, width:'100%', height:'100%'}}
+                    style={{
+                        flex: 1,
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                    }}
                     intensity={50}
                     tint="dark"
                 />
-                <View style={styles.modalView}>
-                    <Icon
-                        name="cross"
-                        size={17}
-                        style={styles.closeIcon}
-                        onPress={() => setModalVisible('')}
-                    />
-                    <View
-                        style={{
-                            backgroundColor: colors.backgroundSecondary,
-                            borderRadius: 15,
-                            marginTop: 15,
-                            paddingHorizontal: 15,
-                        }}
-                    >
-                        { !loading && 
-                            <Text style={styles.textHeader}>{data?.whoami?.tables[nbrTable]?.name}</Text>
-                        }
-                        {
-                            !loading && data?.whoami?.tables[nbrTable]?.hikes?.length>0 &&
-                            <FlatList
-                                data={data?.whoami?.tables[nbrTable]?.hikes}
-                                keyExtractor={(item) => item.id}
-                                renderItem={({ item }) => <Hike id={item.id} />}
-                                horizontal={false}
-                                showsHorizontalScrollIndicator={false}
-                                ListFooterComponent={<View style={{ height: 100 }} />}
-                            />
-                        }
-                        
-                    </View>
-                </View>
-            </Modal>
-            <Modal
-                animationType="slide"
-                transparent={true}
-                visible={modalVisible=='create'}
-                onRequestClose={() => {
-                    setModalVisible('');
-                }}
-            >
                 <View style={styles.modalView}>
                     <View
                         style={{
@@ -275,15 +250,15 @@ function List(){
                             justifyContent: 'space-between',
                         }}
                     >
-                        <Text style={styles.modalText}>Name of your Table</Text>
+                        <Text style={styles.modalText}>Create a Table</Text>
                         <Icon
                             name="cross"
                             size={17}
                             style={styles.closeIcon}
-                            onPress={() => setModalVisible('')}
+                            onPress={() => setModalVisible(false)}
                         />
                     </View>
-                    <Text style={styles.textLoginMiddle}>Adress email</Text>
+                    <Text style={styles.textLoginMiddle}>Name of your Table</Text>
                     <TextInput
                         textContentType="username"
                         autoCorrect={false}
@@ -297,18 +272,11 @@ function List(){
                     />
                     <View style={styles.btnContainer}>
                         <Button
-                            buttonStyle={[
-                                styles.btn,
-                                { width: 100 },
-                            ]}
+                            buttonStyle={[styles.btn, { width: 100 }]}
                             titleStyle={styles.btnText}
-                            disabled={
-                                name == ''
-                            }
+                            disabled={name == ''}
                             title={'Submit'}
-                            onPress={() =>
-                                create_table()
-                            }
+                            onPress={() => create_table()}
                         />
                     </View>
                 </View>
@@ -317,34 +285,67 @@ function List(){
     );
 }
 
-export default function FavoritesScreen() {
+function FavoritesScreen() {
     const { colors } = useTheme();
     const styles = stylesheet(colors);
     return (
-        <View style={{flex:1, paddingHorizontal:'7%'}}>
+        <View style={{ flex: 1, paddingHorizontal: '7%' }}>
             <SafeAreaView />
-            <View style={{marginHorizontal:'4%'}}>
-                <Text style={[styles.textHeader, {marginTop:'10%'}]}>Your hikes</Text>
+            <View style={{ marginHorizontal: '4%' }}>
+                <Text style={[styles.textHeader, { marginTop: '10%' }]}>Your hikes</Text>
                 <Text style={styles.textSubHeader}>List of your liked hikes</Text>
             </View>
-            <Tab.Navigator  screenOptions={{tabBarContentContainerStyle:{
-                backgroundColor:colors.background,
-                marginBottom:5
-            },tabBarIndicatorContainerStyle:{
-                backgroundColor:colors.lineSecondary,
-            },
-            tabBarIndicatorStyle:
-            {
-                backgroundColor:colors.filled, 
-                height:5,
-            },tabBarStyle:{
-                shadowColor:colors.background,
-                margin:'4%',
-                backgroundColor:colors.background,
-            },tabBarLabelStyle :[styles.textSubHeader, {fontSize:16}]}}>
-                <Tab.Screen name="Scroll" component={Scroll} />
-                <Tab.Screen name="List" component={List} />
+            <Tab.Navigator
+                screenOptions={{
+                    tabBarContentContainerStyle: {
+                        backgroundColor: colors.background,
+                        marginBottom: 5,
+                    },
+                    tabBarIndicatorContainerStyle: {
+                        backgroundColor: colors.lineSecondary,
+                    },
+                    tabBarIndicatorStyle: {
+                        backgroundColor: colors.filled,
+                        height: 5,
+                    },
+                    tabBarStyle: {
+                        shadowColor: colors.background,
+                        margin: '4%',
+                        backgroundColor: colors.background,
+                    },
+                    tabBarLabelStyle: [styles.textSubHeader, { fontSize: 16 }],
+                }}
+            >
+                <Tab.Screen name="All" component={LikedScreen} />
+                <Tab.Screen name="Tables" component={TablesScreen} />
             </Tab.Navigator>
         </View>
+    );
+}
+
+export default function FavoritesWrapper({ navigation }) {
+    useEffect(() => {
+        const unsubscribe = navigation.addListener('blur', () => {
+            navigation.dispatch(
+                CommonActions.reset({
+                    index: 0,
+                    routes: [{ name: 'FavoritesScreen' }],
+                })
+            );
+        });
+
+        return unsubscribe;
+    }, [navigation]);
+
+    return (
+        <Stack.Navigator
+            screenOptions={{
+                headerShown: false,
+            }}
+            initialRouteName="FavoritesScreen"
+        >
+            <Stack.Screen name="FavoritesScreen" component={FavoritesScreen} />
+            <Stack.Screen name="TableFocus" component={TableFocus} />
+        </Stack.Navigator>
     );
 }

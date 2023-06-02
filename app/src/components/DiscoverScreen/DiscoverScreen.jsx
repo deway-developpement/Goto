@@ -77,7 +77,18 @@ function DiscoverScreen({ navigation }) {
                 keyExtractor={(item) => item.id}
                 horizontal={false}
                 showsVerticalScrollIndicator={false}
-                emptyListComponent={<Text style={styles.textLink}>No categories</Text>}
+                ListEmptyComponent={
+                    <View
+                        style={{
+                            flex: 1,
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            marginTop: 20,
+                        }}
+                    >
+                        <Text style={styles.textLink}>No categories, check your connection</Text>
+                    </View>
+                }
                 ListHeaderComponent={
                     <DiscoverHeader windowHeight={windowHeight} navigation={navigation} />
                 }
