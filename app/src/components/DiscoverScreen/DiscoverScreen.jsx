@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Text, Image, View, ScrollView, Dimensions, TouchableWithoutFeedback } from 'react-native';
 import stylesheet from './style';
 import { useIsFocused, useTheme } from '@react-navigation/native';
@@ -39,7 +39,19 @@ export default function DiscoverWrapper({ navigation }) {
 function DiscoverScreen({ navigation }) {
     const { colors } = useTheme();
     const styles = stylesheet(colors);
+    const { location } = useContext(LocationContext);
+    const isFocused = useIsFocused();
+    const [memoizedLocation, setMemoizedLocation] = useState(null);
 
+    useEffect(() => {
+        setMemoizedLocation(location);
+    }, [isFocused]);
+
+    useEffect(() => {
+        if (memoizedLocation === null) {
+            setMemoizedLocation(location);
+        }
+    }, [location]);
     const GET_CATEGORIES = gql`
         query categories($field: CategorySortFields!, $direction: SortDirection!) {
             categories(sorting: { field: $field, direction: $direction }) {
@@ -72,7 +84,13 @@ function DiscoverScreen({ navigation }) {
             <FlatList
                 data={categorie?.categories}
                 renderItem={({ item }) => (
-                    <Category key={item.id} styles={styles} horizontal={false} {...item} />
+                    <Category
+                        key={item.id}
+                        styles={styles}
+                        horizontal={false}
+                        {...item}
+                        memoizedLocation={memoizedLocation}
+                    />
                 )}
                 keyExtractor={(item) => item.id}
                 horizontal={false}
@@ -90,7 +108,11 @@ function DiscoverScreen({ navigation }) {
                     </View>
                 }
                 ListHeaderComponent={
-                    <DiscoverHeader windowHeight={windowHeight} navigation={navigation} />
+                    <DiscoverHeader
+                        windowHeight={windowHeight}
+                        navigation={navigation}
+                        memoizedLocation={memoizedLocation}
+                    />
                 }
                 ListFooterComponent={
                     <View
@@ -106,7 +128,7 @@ function DiscoverScreen({ navigation }) {
     );
 }
 
-function DiscoverHeader({ windowHeight, navigation }) {
+function DiscoverHeader({ windowHeight, navigation, memoizedLocation }) {
     const { colors } = useTheme();
     const styles = stylesheet(colors);
 
@@ -169,6 +191,7 @@ function DiscoverHeader({ windowHeight, navigation }) {
                         horizontal={true}
                         name={'Around you'}
                         id={'around-you'}
+                        memoizedLocation={memoizedLocation}
                     />
                 )}
                 <Category
@@ -176,8 +199,15 @@ function DiscoverHeader({ windowHeight, navigation }) {
                     horizontal={true}
                     name={'Added this month'}
                     id={'added-this-month'}
+                    memoizedLocation={memoizedLocation}
                 />
-                <Category styles={styles} horizontal={true} name={'To redo'} id={'to-redo'} />
+                <Category
+                    styles={styles}
+                    horizontal={true}
+                    name={'To redo'}
+                    id={'to-redo'}
+                    memoizedLocation={memoizedLocation}
+                />
             </ScrollView>
             <TouchableWithoutFeedback
                 onPress={() => {

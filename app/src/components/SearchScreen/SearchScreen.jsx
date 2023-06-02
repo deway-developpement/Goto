@@ -1,6 +1,6 @@
-import React, { useContext, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { Text, TouchableWithoutFeedback, FlatList, ScrollView, Modal } from 'react-native';
-import { useTheme } from '@react-navigation/native';
+import { useIsFocused, useTheme } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import stylesheet from './style';
 import { gql, useQuery } from '@apollo/client';
@@ -448,13 +448,26 @@ export default function SearchScreen({ route, navigation }) {
     const searchBarRef = useRef(null);
     const limitByPage = 2;
     const { location } = useContext(LocationContext);
+    const isFocused = useIsFocused();
+    const [memoizedLocation, setMemoizedLocation] = useState(null);
+
+    useEffect(() => {
+        setMemoizedLocation(location);
+    }, [isFocused]);
+
+    useEffect(() => {
+        if (memoizedLocation === null) {
+            setMemoizedLocation(location);
+        }
+    }, [location]);
+
     const CONFIG = QUERIES_CONFIG(
         route.params?.category,
         route.params?.difficulty,
         '',
         '',
         limitByPage,
-        location
+        memoizedLocation
     );
     const [modalVisible, setModalVisible] = useState(false);
 
@@ -475,7 +488,7 @@ export default function SearchScreen({ route, navigation }) {
             text,
             '',
             limitByPage,
-            location
+            memoizedLocation
         );
         refetch(CONFIG.variablesSearch);
     }

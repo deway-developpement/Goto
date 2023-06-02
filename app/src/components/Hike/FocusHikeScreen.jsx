@@ -1,6 +1,6 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Text, Image, View, TouchableWithoutFeedback, StyleSheet, Dimensions } from 'react-native';
-import { useTheme } from '@react-navigation/native';
+import { useIsFocused, useTheme } from '@react-navigation/native';
 import stylesheet from './style';
 import { useNavigation } from '@react-navigation/native';
 import { gql, useQuery } from '@apollo/client';
@@ -31,6 +31,52 @@ function Tag(props) {
     );
 }
 
+const GET_HIKE = gql`
+    query hike($id: ID!, $lat: Float!, $lon: Float!) {
+        hike(id: $id) {
+            id
+            name
+            description
+            duration
+            distance
+            track
+            difficulty
+            createdAt
+            elevation
+            latitude
+            longitude
+            photos {
+                id
+                filename
+            }
+            category {
+                id
+                name
+            }
+            tags {
+                id
+                name
+            }
+            owner {
+                id
+                pseudo
+                avatar {
+                    filename
+                }
+            }
+            pointsOfInterests {
+                id
+                name
+                description
+                photo {
+                    filename
+                }
+            }
+            isLiked
+            distanceFrom(lat: $lat, lon: $lon)
+        }
+    }
+`;
 export default function FocusHikeScreen({ route }) {
     const { colors } = useTheme();
     const styles = stylesheet(colors);
@@ -38,66 +84,30 @@ export default function FocusHikeScreen({ route }) {
     const hikeId = route.params?.hikeId;
     const { location, permission } = useContext(LocationContext);
     const { authAxios } = useContext(AxiosContext);
+    const isFocused = useIsFocused();
+    const [memoizedLocation, setMemoizedLocation] = useState(null);
+    const windowWidth = Dimensions.get('window').width;
+    const windowHeight = Dimensions.get('window').height;
 
     if (!hikeId) {
         navigation.goBack();
     }
 
-    const windowWidth = Dimensions.get('window').width;
-    const windowHeight = Dimensions.get('window').height;
+    useEffect(() => {
+        setMemoizedLocation(location);
+    }, [isFocused]);
 
-    const GET_HIKE = gql`
-        query hike($id: ID!, $lat: Float!, $lon: Float!) {
-            hike(id: $id) {
-                id
-                name
-                description
-                duration
-                distance
-                track
-                difficulty
-                createdAt
-                elevation
-                latitude
-                longitude
-                photos {
-                    id
-                    filename
-                }
-                category {
-                    id
-                    name
-                }
-                tags {
-                    id
-                    name
-                }
-                owner {
-                    id
-                    pseudo
-                    avatar {
-                        filename
-                    }
-                }
-                pointsOfInterests {
-                    id
-                    name
-                    description
-                    photo {
-                        filename
-                    }
-                }
-                isLiked
-                distanceFrom(lat: $lat, lon: $lon)
-            }
+    useEffect(() => {
+        if (memoizedLocation === null) {
+            setMemoizedLocation(location);
         }
-    `;
+    }, [location]);
 
     const { data, loading } = useQuery(GET_HIKE, {
         variables: {
             id: hikeId,
-            lat: location?.coords.latitude,
-            lon: location?.coords.longitude,
+            lat: memoizedLocation?.coords.latitude,
+            lon: memoizedLocation?.coords.longitude,
         },
     });
 

@@ -37,31 +37,28 @@ const LocationProvider = ({ children }) => {
             getLastKnownPositionAsync({}).then((response) => {
                 setLocation(response);
             });
-            watchPositionAsync({}, (response) => {
-                setLocation(response);
-            });
-            watchHeadingAsync((response) => {
-                setHeading(response);
-            });
+            // watchPositionAsync({}, (response) => {
+            //     setLocation(response);
+            // });
+            // watchHeadingAsync((response) => {
+            //     setHeading(response);
+            // });
         }
     }, [permission]);
 
-    // useSetInterval(() => {
-    //     if (!moving) {
-    //         return;
-    //     }
-    //     setLocation({
-    //         ...location,
-    //         coords: {
-    //             ...location?.coords,
-    //             latitude: points[index].latitude,
-    //             longitude: points[index].longitude,
-    //             altitude: points[index].elevation,
-    //         },
-    //         timestamp: new Date().getTime(),
-    //     });
-    //     setIndex((index + 1) % points.length);
-    // }, 1000);
+    useSetInterval(() => {
+        setLocation({
+            ...location,
+            coords: {
+                ...location?.coords,
+                latitude: points[index].latitude,
+                longitude: points[index].longitude,
+                altitude: points[index].elevation,
+            },
+            timestamp: new Date().getTime(),
+        });
+        setIndex((index + 1) % points.length);
+    }, 1000);
 
     return (
         <Provider

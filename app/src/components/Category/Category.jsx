@@ -1,10 +1,9 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { Text, Image, View, TouchableWithoutFeedback, Dimensions } from 'react-native';
 import { useTheme } from '@react-navigation/native';
 import stylesheet from './style';
 import { useNavigation } from '@react-navigation/native';
 import { gql, useQuery } from '@apollo/client';
-import { LocationContext } from '../../providers/LocationProvider';
 import { FILES_URL } from '../../providers/AxiosContext';
 
 const GET_IMAGE_CATEGORIES = (categoryName, location) => {
@@ -85,14 +84,12 @@ const GET_IMAGE_CATEGORIES = (categoryName, location) => {
     }
 };
 
-export default function Category(props) {
+export default function Category({ memoizedLocation, ...props }) {
     const { colors } = useTheme();
     const styles = stylesheet(colors);
     const navigation = useNavigation();
 
     const windowWidth = Dimensions.get('window').width;
-
-    const { location } = useContext(LocationContext);
 
     function handleClickCategory(category, categoryName) {
         navigation.navigate('Search', {
@@ -100,10 +97,13 @@ export default function Category(props) {
         });
     }
 
-    if (GET_IMAGE_CATEGORIES(props.name, location) !== null) {
-        var { data: imageCategory } = useQuery(GET_IMAGE_CATEGORIES(props.name, location).query, {
-            variables: GET_IMAGE_CATEGORIES(props.name, location).variables,
-        });
+    if (GET_IMAGE_CATEGORIES(props.name, memoizedLocation) !== null) {
+        var { data: imageCategory } = useQuery(
+            GET_IMAGE_CATEGORIES(props.name, memoizedLocation).query,
+            {
+                variables: GET_IMAGE_CATEGORIES(props.name, memoizedLocation).variables,
+            }
+        );
     }
 
     return (

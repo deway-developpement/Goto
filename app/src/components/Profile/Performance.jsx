@@ -455,8 +455,8 @@ export default function Performance({ route }) {
                                     <Charts
                                         absciissa={stats?.distanceDeltas}
                                         ordinate={stats?.elevationDeltas}
-                                        xLen={5}
-                                        yLen={20}
+                                        xLen={Math.min(stats?.distanceDeltas.length, 5)}
+                                        yLen={Math.min(stats?.elevationDeltas.length, 20)}
                                         title="Elevation"
                                         colors={colors}
                                         xUnit="km"
@@ -476,8 +476,8 @@ export default function Performance({ route }) {
                                     <Charts
                                         absciissa={stats?.distanceDeltas}
                                         ordinate={stats?.speedDeltas}
-                                        xLen={5}
-                                        yLen={20}
+                                        xLen={Math.min(stats?.distanceDeltas.length, 5)}
+                                        yLen={Math.min(stats?.speedDeltas.length, 20)}
                                         title="Elevation"
                                         colors={colors}
                                         xUnit="km"
