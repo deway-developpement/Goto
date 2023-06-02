@@ -109,9 +109,11 @@ export default function HikeInfos({ hike, borderRadius, dataWhoami, loadingWhoam
             break;
         }
         case StarsMode.reviewed: {
-            let rate = Math.round(dataReview.whoami.reviews[0].rating + Number.EPSILON);
-            setRating(rate);
-            break;
+            if (dataReview?.whoami?.reviews[0]?.rating){
+                let rate = Math.round(dataReview?.whoami?.reviews[0]?.rating + Number.EPSILON);
+                setRating(rate);
+                break;
+            }
         }
         }
     }, [dataAvg, dataReview, starsMode]);

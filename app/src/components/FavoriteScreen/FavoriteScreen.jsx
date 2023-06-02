@@ -10,6 +10,7 @@ import { useIsFocused } from '@react-navigation/native';
 import { IconComp, Icon } from '../Icon/Icon';
 import { Button } from 'react-native-elements';
 import Table from './Table';
+import { BlurView } from 'expo-blur';
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -143,6 +144,7 @@ function List(){
                     name
                     createdAt
                     hikes {
+                        id
                         name
                         photos {
                             filename
@@ -153,11 +155,24 @@ function List(){
         }
     `;
 
+    const [nbrTable, setNbrTable] = useState(0);
+
+    useEffect(() => {
+        if (!loading && modalVisible!='create') {
+            for (let i = 0; i < data?.whoami?.tables?.length; i++) {
+                if (data?.whoami?.tables[i].id == modalVisible) {
+                    setNbrTable(i);
+                }
+            }
+        }
+    }, [modalVisible]);
+
     const {
         data,
         loading,
     } = useQuery(WHOAMI);
-
+    console.log(data?.whoami?.tables[nbrTable]?.length);
+    
     return(
         <View style={{ flex: 1, backgroundColor: colors.background }}>
             <View style={{width:'100%', flexDirection:'row', justifyContent:'flex-end' }}>
@@ -189,16 +204,62 @@ function List(){
             </View>
             {!loading && 
                 <FlatList
-                    data={data.whoami.tables}
+                    data={data?.whoami?.tables}
                     keyExtractor={(item) => item.id}
                     renderItem={({ item }) => (
-                        <Table t={item}/>
+                        <Table t={item} setModal={setModalVisible}/>
                     )}
                     horizontal={false}
                     showsHorizontalScrollIndicator={false}
                     ListFooterComponent={<View style={{ height: 100 }} />}
                 />
             }
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={modalVisible!='' && modalVisible!='create'}
+                onRequestClose={() => {
+                    setModalVisible('');
+                }}
+            >
+                <BlurView
+                    style={{flex:1, position:'absolute', top:0, left:0, width:'100%', height:'100%'}}
+                    intensity={50}
+                    tint="dark"
+                />
+                <View style={styles.modalView}>
+                    <Icon
+                        name="cross"
+                        size={17}
+                        style={styles.closeIcon}
+                        onPress={() => setModalVisible('')}
+                    />
+                    <View
+                        style={{
+                            backgroundColor: colors.backgroundSecondary,
+                            borderRadius: 15,
+                            marginTop: 15,
+                            paddingHorizontal: 15,
+                        }}
+                    >
+                        { !loading && 
+                            <Text style={styles.textHeader}>{data?.whoami?.tables[nbrTable]?.name}</Text>
+                        }
+                        {
+                            !loading && data?.whoami?.tables[nbrTable]?.hikes?.length>0 &&
+                            <FlatList
+                                data={data?.whoami?.tables[nbrTable]?.hikes}
+                                keyExtractor={(item) => item.id}
+                                renderItem={({ item }) => <Hike id={item.id} />}
+                                horizontal={false}
+                                showsHorizontalScrollIndicator={false}
+                                ListFooterComponent={<View style={{ height: 100 }} />}
+                            />
+                        }
+                        
+                    </View>
+                </View>
+            </Modal>
             <Modal
                 animationType="slide"
                 transparent={true}
