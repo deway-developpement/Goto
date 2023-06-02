@@ -110,7 +110,7 @@ function Scroll(){
 function List(){
     const { colors } = useTheme();
     const styles = stylesheet(colors);
-    const [modalVisible, setModalVisible] = useState(false);
+    const [modalVisible, setModalVisible] = useState('');
     const [name, setName] = useState('');
     const client = useApolloClient();
 
@@ -131,7 +131,7 @@ function List(){
             errorPolicy: 'all',
         });
         //refetch();
-        setModalVisible(false);
+        setModalVisible('');
         setName('');
     }
 
@@ -161,7 +161,7 @@ function List(){
     return(
         <View style={{ flex: 1, backgroundColor: colors.background }}>
             <View style={{width:'100%', flexDirection:'row', justifyContent:'flex-end' }}>
-                <TouchableWithoutFeedback onPress={() => setModalVisible(true)}>
+                <TouchableWithoutFeedback onPress={() => setModalVisible('create')}>
                     <View
                         style={[
                             styles.container,
@@ -187,13 +187,24 @@ function List(){
                     </View>
                 </TouchableWithoutFeedback>
             </View>
-            {!loading && <Table t={data.whoami.tables[0]}/>}
+            {!loading && 
+                <FlatList
+                    data={data.whoami.tables}
+                    keyExtractor={(item) => item.id}
+                    renderItem={({ item }) => (
+                        <Table t={item}/>
+                    )}
+                    horizontal={false}
+                    showsHorizontalScrollIndicator={false}
+                    ListFooterComponent={<View style={{ height: 100 }} />}
+                />
+            }
             <Modal
                 animationType="slide"
                 transparent={true}
-                visible={modalVisible}
+                visible={modalVisible=='create'}
                 onRequestClose={() => {
-                    setModalVisible(false);
+                    setModalVisible('');
                 }}
             >
                 <View style={styles.modalView}>
@@ -208,7 +219,7 @@ function List(){
                             name="cross"
                             size={17}
                             style={styles.closeIcon}
-                            onPress={() => setModalVisible(false)}
+                            onPress={() => setModalVisible('')}
                         />
                     </View>
                     <Text style={styles.textLoginMiddle}>Adress email</Text>
