@@ -1,336 +1,150 @@
-import React, { useState } from 'react';
-import { Slider, Icon as IconThemed, CheckBox } from '@rneui/themed';
+import React from 'react';
+import { Slider, Icon as IconThemed } from '@rneui/themed';
 import { connect } from 'react-redux';
-import { TouchableWithoutFeedback } from 'react-native';
 import { View } from 'react-native';
 import stylesheet from '../style';
-import { IconComp } from '../../Icon/Icon';
+import { Icon } from '../../Icon/Icon';
 import { useNavigation, useTheme } from '@react-navigation/native';
 import {
     changeAngle,
     changeHeight,
+    changeMapState,
     changePosition,
     changeWidth,
     mapStateToProps,
 } from '../../../reducer/map.reducer';
-import { Button as Btn } from 'react-native-elements';
-import { Button } from 'react-native';
+import { Pressable } from 'react-native';
+import { MapState } from '../enum';
 
-function OverlayModification({ overlay, dispatch }) {
+function OverlayModification({ dispatch, mapState }) {
     const { colors } = useTheme();
     const styles = stylesheet(colors);
     const navigation = useNavigation();
 
-    const SliderModificator = Object.freeze({
-        WIDTH: 'width',
-        HEIGHT: 'height',
-        BOTTOM: 'top',
-        LEFT: 'left',
-        ANGLE: 'angle',
-        NONE: 'none',
-    });
-
-    const [activeSlider, setActiveSlider] = useState(SliderModificator.NONE);
-
-    const [widthRange, setWidthRange] = useState([0, 0.02, 0.01]);
-    const [heightRange, setHeightRange] = useState([0, 0.02, 0.01]);
-    const [topRange, setTopRange] = useState([0, 0.01, 0.005]);
-    const [leftRange, setLeftRange] = useState([0, 0.01, 0.005]);
-    const [angleRange] = useState([0, 360]);
-
-    const [isHidden, setIsHidden] = useState(false);
-
-    function handlePlus() {
-        switch (activeSlider) {
-        case SliderModificator.WIDTH:
-            setWidthRange([widthRange[1], widthRange[1] + widthRange[2], widthRange[2]]);
-            if (overlay.width < widthRange[1]) dispatch(changeWidth(widthRange[1]));
-            break;
-        case SliderModificator.HEIGHT:
-            setHeightRange([heightRange[1], heightRange[1] + heightRange[2], heightRange[2]]);
-            if (overlay.height < heightRange[1]) dispatch(changeHeight(heightRange[1]));
-            break;
-        case SliderModificator.BOTTOM:
-            setTopRange([topRange[1], topRange[1] + topRange[2], topRange[2]]);
-            if (overlay.position.y < topRange[1])
-                dispatch(changePosition({ x: overlay.position.x, y: topRange[1] }));
-            break;
-        case SliderModificator.LEFT:
-            setLeftRange([leftRange[1], leftRange[1] + leftRange[2], leftRange[2]]);
-            if (overlay.position.x < leftRange[1])
-                dispatch(changePosition({ x: leftRange[1], y: overlay.position.y }));
-            break;
-        default:
-            break;
-        }
-    }
-
-    function handleMinus() {
-        switch (activeSlider) {
-        case SliderModificator.WIDTH:
-            if (widthRange[0] - widthRange[2] < 0)
-                setWidthRange([0, widthRange[2], widthRange[2]]);
-            else setWidthRange([widthRange[0] - widthRange[2], widthRange[0], widthRange[2]]);
-            if (overlay.width > widthRange[1]) dispatch(changeWidth(widthRange[1]));
-            break;
-        case SliderModificator.HEIGHT:
-            if (heightRange[0] - heightRange[2] < 0)
-                setHeightRange([0, widthRange[2], heightRange[2]]);
-            else
-                setHeightRange([
-                    heightRange[0] - heightRange[2],
-                    heightRange[0],
-                    heightRange[2],
-                ]);
-            if (overlay.height > heightRange[1]) dispatch(changeHeight(heightRange[1]));
-            break;
-        case SliderModificator.BOTTOM:
-            setTopRange([topRange[0] - topRange[2], topRange[0], topRange[2]]);
-            if (overlay.position.y > topRange[1])
-                dispatch(changePosition({ x: overlay.position.x, y: topRange[1] }));
-            break;
-        case SliderModificator.LEFT:
-            setLeftRange([leftRange[0] - leftRange[2], leftRange[0], leftRange[2]]);
-            if (overlay.position.x > leftRange[1])
-                dispatch(changePosition({ x: leftRange[1], y: overlay.position.y }));
-            break;
-        default:
-            break;
-        }
-    }
-
-    function handleCheck(value) {
-        if (value === activeSlider) setActiveSlider(SliderModificator.NONE);
-        else setActiveSlider(value);
-    }
-
-    function getValue() {
-        switch (activeSlider) {
-        case SliderModificator.WIDTH:
-            return overlay.width;
-        case SliderModificator.HEIGHT:
-            return overlay.height;
-        case SliderModificator.BOTTOM:
-            return overlay.position.y;
-        case SliderModificator.LEFT:
-            return overlay.position.x;
-        case SliderModificator.ANGLE:
-            return overlay.angle;
-        default:
-            return 0;
-        }
-    }
-
-    function handleOnValueChange(value) {
-        switch (activeSlider) {
-        case SliderModificator.WIDTH:
-            dispatch(changeWidth(value));
-            break;
-        case SliderModificator.HEIGHT:
-            dispatch(changeHeight(value));
-            break;
-        case SliderModificator.BOTTOM:
-            dispatch(changePosition({ x: overlay.position.x, y: value }));
-            break;
-        case SliderModificator.LEFT:
-            dispatch(changePosition({ x: value, y: overlay.position.y }));
-            break;
-        case SliderModificator.ANGLE:
-            dispatch(changeAngle(value));
-            break;
-        default:
-            break;
-        }
-    }
-
-    function getMaxValue() {
-        switch (activeSlider) {
-        case SliderModificator.WIDTH:
-            return widthRange[1];
-        case SliderModificator.HEIGHT:
-            return heightRange[1];
-        case SliderModificator.BOTTOM:
-            return topRange[1];
-        case SliderModificator.LEFT:
-            return leftRange[1];
-        case SliderModificator.ANGLE:
-            return angleRange[1];
-        default:
-            return 0;
-        }
-    }
-
-    function getMinValue() {
-        switch (activeSlider) {
-        case SliderModificator.WIDTH:
-            return widthRange[0];
-        case SliderModificator.HEIGHT:
-            return heightRange[0];
-        case SliderModificator.BOTTOM:
-            return topRange[0];
-        case SliderModificator.LEFT:
-            return leftRange[0];
-        case SliderModificator.ANGLE:
-            return angleRange[0];
-        default:
-            return 0;
-        }
-    }
+    const isHidden = () => mapState === MapState.IMAGE_EDIT_LOCK;
 
     return (
         <>
-            <Btn
-                buttonStyle={[styles.btn, { width: 200 }]}
-                titleStyle={styles.btnText}
-                title={'Close'}
-                onPress={() => {
-                    navigation.navigate('Directions', { dataImg: null });
-                }}
-            />
-            <View
-                style={[styles.container, { flexDirection: 'row', justifyContent: 'space-evenly' }]}
-            >
-                <Button
-                    title="Reset"
-                    onPress={() => {
-                        dispatch(changeWidth(0.01));
-                        dispatch(changeHeight(0.01));
-                        dispatch(changePosition({ x: 0, y: 0 }));
-                        dispatch(changeAngle(0));
-                    }}
-                    disabled={isHidden}
-                />
-                <Button title={isHidden ? 'Show' : 'Hide'} onPress={() => setIsHidden(!isHidden)} />
-            </View>
-            {!isHidden && (
+            {!isHidden() && (
                 <>
-                    <CheckBox
-                        wrapperStyle={{
-                            padding: 0,
-                            margin: 0,
-                            backgroundColor: '',
+                    <Pressable
+                        onPress={() => {
+                            navigation.navigate('Directions', { dataImg: null });
                         }}
-                        containerStyle={{
-                            padding: 0,
-                            margin: 0,
-                            backgroundColor: '',
+                        style={[
+                            styles.btnContainer,
+                            {
+                                backgroundColor: colors.accent,
+                                borderRadius: 10,
+                                padding: 10,
+                                zIndex: 100,
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                marginHorizontal: 10,
+                            },
+                        ]}
+                    >
+                        <Icon name="cross" size={35} color={colors.background} />
+                    </Pressable>
+                    <Pressable
+                        onPress={() => {
+                            dispatch(changeWidth(0.01));
+                            dispatch(changeHeight(0.01));
+                            dispatch(changePosition({ x: 0, y: 0 }));
+                            dispatch(changeAngle(0));
                         }}
-                        title="Width"
-                        checked={activeSlider === SliderModificator.WIDTH}
-                        onPress={() => handleCheck(SliderModificator.WIDTH)}
-                    />
-                    <CheckBox
-                        wrapperStyle={{
-                            padding: 0,
-                            margin: 0,
-                            backgroundColor: '',
-                        }}
-                        containerStyle={{
-                            padding: 0,
-                            margin: 0,
-                            backgroundColor: '',
-                        }}
-                        title="Height"
-                        checked={activeSlider === SliderModificator.HEIGHT}
-                        onPress={() => handleCheck(SliderModificator.HEIGHT)}
-                    />
-                    <CheckBox
-                        wrapperStyle={{
-                            padding: 0,
-                            margin: 0,
-                            backgroundColor: '',
-                        }}
-                        containerStyle={{
-                            padding: 0,
-                            margin: 0,
-                            backgroundColor: '',
-                        }}
-                        title="Top"
-                        checked={activeSlider === SliderModificator.BOTTOM}
-                        onPress={() => handleCheck(SliderModificator.BOTTOM)}
-                    />
-                    <CheckBox
-                        wrapperStyle={{
-                            padding: 0,
-                            margin: 0,
-                            backgroundColor: '',
-                        }}
-                        containerStyle={{
-                            padding: 0,
-                            margin: 0,
-                            backgroundColor: '',
-                        }}
-                        title="Left"
-                        checked={activeSlider === SliderModificator.LEFT}
-                        onPress={() => handleCheck(SliderModificator.LEFT)}
-                    />
-                    <CheckBox
-                        wrapperStyle={{
-                            padding: 0,
-                            margin: 0,
-                            backgroundColor: '',
-                        }}
-                        containerStyle={{
-                            padding: 0,
-                            margin: 0,
-                            backgroundColor: '',
-                        }}
-                        title="Angle"
-                        checked={activeSlider === SliderModificator.ANGLE}
-                        onPress={() => handleCheck(SliderModificator.ANGLE)}
-                    />
-                    {activeSlider !== SliderModificator.NONE && (
-                        <Slider
-                            value={getValue()}
-                            onValueChange={handleOnValueChange}
-                            maximumValue={getMaxValue()}
-                            minimumValue={getMinValue()}
-                            step={(getMaxValue() - getMinValue()) / 100}
-                            allowTouchTrack
-                            trackStyle={{
-                                height: 10,
-                                backgroundColor: 'transparent',
-                            }}
-                            thumbStyle={{
-                                height: 20,
-                                width: 20,
-                                backgroundColor: 'transparent',
-                            }}
-                            thumbProps={{
-                                children: (
-                                    <IconThemed
-                                        type="font-awesome"
-                                        size={10}
-                                        reverse
-                                        containerStyle={{
-                                            bottom: 10,
-                                            right: 10,
-                                        }}
-                                        color={colors.primary}
-                                    />
-                                ),
-                            }}
-                        />
-                    )}
-                    {activeSlider !== SliderModificator.NONE &&
-                        activeSlider !== SliderModificator.ANGLE && (
-                        <>
-                            <TouchableWithoutFeedback onPress={() => handlePlus()}>
-                                <View style={[styles.logoContainer]}>
-                                    <IconComp color={colors.primary} name={'plus'} pos={0} />
-                                </View>
-                            </TouchableWithoutFeedback>
-                            <TouchableWithoutFeedback onPress={() => handleMinus()}>
-                                <View style={[styles.logoContainer]}>
-                                    <IconComp color={colors.primary} name={'back'} pos={0} />
-                                </View>
-                            </TouchableWithoutFeedback>
-                        </>
-                    )}
+                        style={[
+                            styles.btnContainer,
+                            {
+                                backgroundColor: colors.primary,
+                                borderRadius: 10,
+                                padding: 10,
+                                zIndex: 100,
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                marginHorizontal: 10,
+                            },
+                        ]}
+                    >
+                        <Icon name="reload" size={35} color={colors.background} />
+                    </Pressable>
                 </>
             )}
+            <Pressable
+                onPress={() => {
+                    dispatch(
+                        changeMapState(isHidden() ? MapState.IMAGE_EDIT : MapState.IMAGE_EDIT_LOCK)
+                    );
+                }}
+                style={[
+                    styles.btnContainer,
+                    {
+                        backgroundColor: colors.primary,
+                        borderRadius: 10,
+                        padding: 10,
+                        zIndex: 100,
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        marginHorizontal: 10,
+                    },
+                ]}
+            >
+                <Icon name={isHidden() ? 'lock' : 'unlock'} size={35} color={colors.background} />
+            </Pressable>
         </>
     );
 }
 
 export default connect(mapStateToProps)(OverlayModification);
+
+function OverlayModificationSlider({ overlay, dispatch, mapState }) {
+    const { colors } = useTheme();
+
+    if (mapState === MapState.IMAGE_EDIT_LOCK) {
+        return null;
+    }
+    return (
+        <View
+            style={{
+                width: '100%',
+            }}
+        >
+            <Slider
+                value={overlay.angle}
+                onValueChange={(value) => dispatch(changeAngle(value))}
+                maximumValue={360}
+                minimumValue={0}
+                step={360 / 100}
+                allowTouchTrack
+                trackStyle={{
+                    height: 10,
+                    backgroundColor: 'transparent',
+                }}
+                thumbStyle={{
+                    height: 20,
+                    width: 20,
+                    backgroundColor: 'transparent',
+                }}
+                thumbProps={{
+                    children: (
+                        <IconThemed
+                            type="font-awesome"
+                            size={10}
+                            reverse
+                            containerStyle={{
+                                bottom: 10,
+                                right: 10,
+                            }}
+                            color={colors.primary}
+                        />
+                    ),
+                }}
+                style={{
+                    width: '100%',
+                }}
+            />
+        </View>
+    );
+}
+
+export const SliderAngle = connect(mapStateToProps)(OverlayModificationSlider);

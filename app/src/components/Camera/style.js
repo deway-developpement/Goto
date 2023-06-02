@@ -25,7 +25,6 @@ const stylesheet = (colors) =>
         },
         btnContainer: {
             backgroundColor: 'white',
-            marginTop: 12,
         },
         textBtn: {
             display: 'none',

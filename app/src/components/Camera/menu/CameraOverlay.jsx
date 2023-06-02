@@ -1,19 +1,42 @@
 import React from 'react';
-import { Button } from 'react-native-elements';
 import { connect } from 'react-redux';
-import { changeMapState, mapStateToProps } from '../../../reducer/map.reducer';
+import {
+    changeAngle,
+    changeHeight,
+    changeMapState,
+    changePosition,
+    changeWidth,
+    mapStateToProps,
+} from '../../../reducer/map.reducer';
 import { MapState } from '../../Map/enum';
+import { Pressable } from 'react-native';
+import { Icon } from '../../Icon/Icon';
+import { useTheme } from '@react-navigation/native';
 
-function CameraOverlay({ styles, dispatch }) {
+function CameraOverlay({ dispatch, styles }) {
+    const { colors } = useTheme();
+
     return (
-        <Button
-            buttonStyle={[styles.btn, { width: 200 }]}
-            titleStyle={styles.btnText}
-            title={'Open your camera'}
+        <Pressable
             onPress={() => {
                 dispatch(changeMapState(MapState.CAMERA));
+                dispatch(changeAngle(0));
+                dispatch(changeHeight(0.01));
+                dispatch(changeWidth(0.01));
+                dispatch(changePosition({ x: 0, y: 0 }));
             }}
-        />
+            style={[
+                styles.btnContainer,
+                {
+                    backgroundColor: colors.primary,
+                    borderRadius: 10,
+                    padding: 10,
+                    zIndex: 100,
+                },
+            ]}
+        >
+            <Icon name="turn_camera" size={35} color={colors.background} />
+        </Pressable>
     );
 }
 

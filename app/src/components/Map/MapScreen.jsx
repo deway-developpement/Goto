@@ -8,7 +8,7 @@ import Map from './Map';
 import { Provider, connect } from 'react-redux';
 import store from '../../store/map.store.js';
 import OverlayImage from './OverlayImage';
-import OverlayModification from './Menu/OverlayModification';
+import OverlayModification, { SliderAngle } from './Menu/OverlayModification';
 import GpxPathLine from './GpxPathLine';
 import CameraOverlay from '../Camera/menu/CameraOverlay';
 import TrackFocusOverlay from './Menu/TrackFocusOverlay';
@@ -23,12 +23,16 @@ import { Button } from 'react-native';
 import GpxTrackLine from './GpxTrackLine';
 import { Modal } from 'react-native';
 import MapModal from './MapModal';
+import { Pressable } from 'react-native';
+import { Icon } from '../Icon/Icon';
+import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 
-function MapScreen({ route, mapState, dispatch, isRecording }) {
+function MapScreen({ route, mapState, dispatch, isRecording, isFollowing }) {
     const isCamera = () => mapState === MapState.CAMERA;
 
     const { colors } = useTheme();
     const styles = stylesheet(colors);
+    const tabBarHeight = useBottomTabBarHeight();
 
     const insets = useSafeAreaInsets();
 
@@ -44,10 +48,10 @@ function MapScreen({ route, mapState, dispatch, isRecording }) {
                 width: route.params.dataImg.width,
             });
             route.params.fileData = null;
-            console.log('change map state');
-            dispatch(changeMapState(MapState.NONE));
+            dispatch(changeMapState(MapState.IMAGE_EDIT));
         } else if (image !== null && route.params?.dataImg === null) {
             setImage(null);
+            dispatch(changeMapState(MapState.NONE));
         }
 
         if (route.params?.fileData && (file == null || file.paraUri != route.params.fileData.uri)) {
@@ -106,24 +110,62 @@ function MapScreen({ route, mapState, dispatch, isRecording }) {
                                     styles.btnContainer,
                                     {
                                         position: 'absolute',
-                                        top: 0 + insets.top,
-                                        right: 10,
+                                        top: 10 + insets.top,
+                                        right: 20,
                                         backgroundColor: 'transparent',
+                                        flexDirection: 'row',
+                                        maxWidth: '100%',
+                                        flexWrap: 'wrap',
                                     },
                                 ]}
                             >
-                                <Button
-                                    title="follow"
-                                    onPress={() => {
-                                        dispatch(changeIsFollowing(true));
-                                    }}
-                                />
                                 {file === null && image == null && (
                                     <CameraOverlay styles={styles} />
                                 )}
                                 {image !== null && <OverlayModification mapState={mapState} />}
                                 {file !== null && <TrackFocusOverlay styles={styles} />}
                             </View>
+
+                            {mapState === MapState.IMAGE_EDIT && (
+                                <View
+                                    style={[
+                                        styles.btnContainer,
+                                        {
+                                            position: 'absolute',
+                                            bottom: 10 + tabBarHeight,
+                                            backgroundColor: 'transparent',
+                                            flexDirection: 'column',
+                                            paddingLeft: '25%',
+                                            paddingRight: '25%',
+                                            width: '100%',
+                                            flexWrap: 'wrap',
+                                        },
+                                    ]}
+                                >
+                                    <SliderAngle />
+                                </View>
+                            )}
+                            {!isFollowing && (
+                                <Pressable
+                                    onPress={() => {
+                                        dispatch(changeIsFollowing(true));
+                                    }}
+                                    style={[
+                                        styles.btnContainer,
+                                        {
+                                            position: 'absolute',
+                                            bottom: tabBarHeight + 30,
+                                            right: 20,
+                                            backgroundColor: colors.primary,
+                                            borderRadius: 10,
+                                            padding: 5,
+                                            zIndex: 100,
+                                        },
+                                    ]}
+                                >
+                                    <Icon name="relocate" size={30} color={colors.background} />
+                                </Pressable>
+                            )}
                             <SafeAreaView />
                         </View>
                     );

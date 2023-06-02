@@ -78,14 +78,14 @@ function Map({ children, isFollowing, performance, isRecording, dispatch }) {
             ref={cameraRef}
         >
             {childrenWithProps}
-            <Marker
+            {/* <Marker
                 coordinate={{
                     latitude: parseFloat(location?.coords?.latitude),
                     longitude: parseFloat(location?.coords?.longitude),
                 }}
                 anchor={{ x: 0.5, y: 0.5 }}
                 flat={true}
-            />
+            /> */}
         </MapView>
     );
 }

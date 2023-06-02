@@ -1,6 +1,6 @@
 import React, { useContext, useEffect } from 'react';
 import stylesheet from './style';
-import { SafeAreaView, KeyboardAvoidingView, View, Platform } from 'react-native';
+import { KeyboardAvoidingView, View, Platform } from 'react-native';
 import { AuthContext } from '../../providers/AuthContext';
 import { useTheme } from '@react-navigation/native';
 import KeyboardDismissView from '../KeyboardDismissView/KeyboardDismissView';
@@ -13,7 +13,6 @@ import SearchScreen from '../SearchScreen/SearchScreen';
 import FocusHikeScreen from '../Hike/FocusHikeScreen';
 import MapWrapper from '../Map/MapScreen';
 import FavoritesScreen from '../FavoriteScreen/FavoriteScreen';
-
 
 const Tab = createBottomTabNavigator();
 

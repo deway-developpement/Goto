@@ -1,13 +1,15 @@
 import React, { useEffect, useState, useRef } from 'react';
 import stylesheet from './style';
 import { View } from 'react-native';
-import { Button } from 'react-native-elements';
 import { useIsFocused, useTheme, useNavigation } from '@react-navigation/native';
 import { Camera, CameraType } from 'expo-camera';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { changeMapState, mapStateToProps } from '../../reducer/map.reducer';
 import { MapState } from '../Map/enum';
 import { connect } from 'react-redux';
+import { Icon } from '../Icon/Icon';
+import { Pressable } from 'react-native';
+import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 
 function CameraScreen({ dispatch }) {
     const navigation = useNavigation();
@@ -16,13 +18,12 @@ function CameraScreen({ dispatch }) {
 
     // safe area insets
     const insets = useSafeAreaInsets();
+    const tabBarHeight = useBottomTabBarHeight();
 
     const [type, setType] = useState(CameraType.back);
     const [permission, requestPermission] = Camera.useCameraPermissions();
 
     const cameraRef = useRef();
-
-    //TODO: make the same as for map permission
 
     const isFocused = useIsFocused();
 
@@ -43,7 +44,6 @@ function CameraScreen({ dispatch }) {
     }
 
     if (!permission.granted) {
-        console.log('Permission not granted');
         dispatch(changeMapState(MapState.NONE));
         return <View />;
     }
@@ -80,31 +80,57 @@ function CameraScreen({ dispatch }) {
                     {
                         backgroundColor: '',
                         position: 'absolute',
-                        top: 0 + insets.top,
-                        right: 10,
+                        top: 10 + insets.top,
+                        right: 15,
                     },
                 ]}
             >
-                <Button
-                    buttonStyle={[styles.btn, { width: 200 }]}
-                    titleStyle={styles.btnText}
-                    title={'Close'}
+                <Pressable
                     onPress={() => {
                         dispatch(changeMapState(MapState.NONE));
                     }}
-                />
-                <Button
-                    buttonStyle={[styles.btn, { width: 200 }]}
-                    titleStyle={styles.btnText}
-                    title={'Toggle'}
-                    onPress={() => toggleCameraType()}
-                />
-                <Button
-                    buttonStyle={[styles.btn, { width: 200 }]}
-                    titleStyle={styles.btnText}
-                    title={'Take a photo'}
+                    style={[
+                        styles.btnContainer,
+                        {
+                            backgroundColor: colors.primary,
+                            borderRadius: 10,
+                            padding: 10,
+                            zIndex: 100,
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                        },
+                    ]}
+                >
+                    <Icon name="map_back" size={35} color={colors.background} />
+                </Pressable>
+            </View>
+            <View
+                style={[
+                    styles.btnContainer,
+                    {
+                        backgroundColor: '',
+                        position: 'absolute',
+                        bottom: 30 + tabBarHeight,
+                        alignSelf: 'center',
+                    },
+                ]}
+            >
+                <Pressable
                     onPress={() => takePicture()}
-                />
+                    style={[
+                        styles.btnContainer,
+                        {
+                            backgroundColor: colors.primary,
+                            borderRadius: 10,
+                            padding: 13,
+                            zIndex: 100,
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                        },
+                    ]}
+                >
+                    <Icon name="photo" size={40} color={colors.background} />
+                </Pressable>
             </View>
         </View>
     );
