@@ -22,6 +22,7 @@ import { Pressable } from 'react-native';
 import { addTimeTagToGPXFile, parseFile, performanceStats } from '../../services/gpx.services';
 import { getCalorie } from '../../services/stats.service';
 import Charts, { ChartMode } from '../Chart/Chart';
+import { FILES_URL } from '../../providers/AxiosContext';
 
 const GET_PERFORMANCE = gql`
     query performance($PerfId: ID!, $UserId: ID!) {
@@ -170,7 +171,7 @@ export default function Performance({ route }) {
                 source={
                     data.performance.hike.photos && data.performance.hike.photos.length > 0
                         ? {
-                            uri: `https://deway.fr/goto-api/files/photos/${data.performance.hike.photos[0].filename}`,
+                            uri: `${FILES_URL}/photos/${data.performance.hike.photos[0].filename}`,
                         }
                         : require('../../../assets/images/Dalle_background.png')
                 }

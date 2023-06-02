@@ -8,6 +8,7 @@ import { Icon } from '../Icon/Icon';
 import SplashScreen from '../SplashScreen/SplashScreen';
 import { Historic, Stats } from './ProfileComplements';
 import { Button } from 'react-native-elements';
+import { FILES_URL } from '../../providers/AxiosContext';
 
 export default function FocusUser({ route }) {
     const { colors } = useTheme();
@@ -182,7 +183,7 @@ export default function FocusUser({ route }) {
                             source={
                                 profile.user.avatar
                                     ? {
-                                        uri: `https://deway.fr/goto-api/files/photos/${profile.user.avatar.filename}`,
+                                        uri: `${FILES_URL}/photos/${profile.user.avatar.filename}`,
                                     }
                                     : require('../../../assets/images/default_pp.jpeg')
                             }

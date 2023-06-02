@@ -1,18 +1,25 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Polyline } from 'react-native-maps';
 import { useTheme } from '@react-navigation/native';
-import { parseFile } from '../../services/gpx.services';
+import { distance2Coordonate, parseFile } from '../../services/gpx.services';
+import { LocationContext } from '../../providers/LocationProvider';
+import { MapState } from './enum';
+import { connect } from 'react-redux';
+import { mapStateToProps } from '../../reducer/map.reducer';
 
-export default function GpxPathLine({
+function GpxPathLine({
     fileData,
     cameraRef,
     edgePadding = { top: 100, right: 100, bottom: 100, left: 100 },
     animated = true,
+    mapState,
+    isRecording,
 }) {
     const { colors } = useTheme();
     const [leftPoints, setLeftPoints] = useState([]);
     const [passedPoints, setPassedPoints] = useState([]);
     const [loaded, setLoaded] = useState(false);
+    const { location } = useContext(LocationContext);
 
     let maxLat = null;
     let maxLon = null;
@@ -59,21 +66,42 @@ export default function GpxPathLine({
         }
     }, [leftPoints]);
 
-    function advance() {
-        if (leftPoints.length == 0) {
+    useEffect(() => {
+        if (
+            (leftPoints.length || 0) == 0 ||
+            location?.coords?.latitude == null ||
+            location?.coords?.longitude == null ||
+            mapState != MapState.FOCUS_HIKE ||
+            !isRecording
+        ) {
             return;
         }
-        const gpxPathLeft = leftPoints.slice();
-        const gpxPathpassedPoints = passedPoints.slice();
-        gpxPathpassedPoints.push(gpxPathLeft.shift());
-        gpxPathpassedPoints.push(gpxPathLeft[0]);
-        setPassedPoints(gpxPathpassedPoints);
-        setLeftPoints(gpxPathLeft);
-    }
+        const distances = leftPoints.map(
+            (point) =>
+                distance2Coordonate(
+                    {
+                        latitude: parseFloat(location?.coords?.latitude),
+                        longitude: parseFloat(location?.coords?.longitude),
+                    },
+                    point
+                ) < 0.035
+        );
+        const index = distances.lastIndexOf(true);
+        advance(index + 1);
+    }, [location, leftPoints]);
 
-    useEffect(() => {
-        advance();
-    }, []);
+    function advance(number = 1) {
+        if (number == 0 || leftPoints.length == 0) {
+            return;
+        }
+        const newPassedPoints = [
+            ...passedPoints.slice(),
+            ...leftPoints.slice().splice(0, Math.min(number, leftPoints.length) + 1),
+        ];
+        const newLeftPoints = leftPoints.slice(Math.min(number, leftPoints.length));
+        setPassedPoints(newPassedPoints);
+        setLeftPoints(newLeftPoints);
+    }
 
     return (
         <>
@@ -96,3 +124,5 @@ export default function GpxPathLine({
         </>
     );
 }
+
+export default connect(mapStateToProps)(GpxPathLine);

@@ -53,4 +53,8 @@ const AxiosProvider = ({ children }) => {
     );
 };
 
-export { AxiosContext, AxiosProvider };
+const BASE_URL = config.baseLink;
+const FILES_URL = config.filesLink;
+const GRAPHQL_URL = config.graphqlLink;
+
+export { AxiosContext, AxiosProvider, BASE_URL, FILES_URL, GRAPHQL_URL };

@@ -1,5 +1,6 @@
 {
-    "refreshLink": "https://deway.fr/goto-api/auth/refresh",
-    "baseLink": "https://deway.fr/goto-api/",
-    "graphQLLink": "https://deway.fr/goto-api/graphql"
+  "refreshLink": "https://deway.fr/goto-api/auth/refresh",
+  "baseLink": "https://deway.fr/goto-api/",
+  "graphQLLink": "https://deway.fr/goto-api/graphql",
+  "filesLink": "https://deway.fr/goto-api/files"
 }

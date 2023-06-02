@@ -5,6 +5,7 @@ import stylesheet from './style';
 import { IconComp, Icon } from '../Icon/Icon';
 import { gql, useApolloClient, useQuery } from '@apollo/client';
 import { Share } from 'react-native';
+import { FILES_URL } from '../../providers/AxiosContext';
 
 const WHOAMI = gql`
     query whoami($hikeID: ID) {
@@ -122,7 +123,7 @@ export default function HikeInfos({ hike, borderRadius, inProfile = false }) {
     async function share(filename) {
         Share.share({
             title: hike.name,
-            url: 'https://deway.fr/goto-api/files/tracks/' + filename,
+            url: `${FILES_URL}/tracks/` + filename,
         });
     }
 

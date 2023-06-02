@@ -15,6 +15,7 @@ import { useNavigation } from '@react-navigation/native';
 import HikeInfos from '../Hike/HikeInfos';
 import { Icon } from '../Icon/Icon';
 import { FlatList } from 'react-native-gesture-handler';
+import { FILES_URL } from '../../providers/AxiosContext';
 
 function Stats({ count, distance, duration, elevation }) {
     const { colors } = useTheme();
@@ -78,7 +79,7 @@ function HikeCard({ performance, MyID, FriendPseudo }) {
             <View style={{ marginRight: 25 }}>
                 <Image
                     source={{
-                        uri: `https://deway.fr/goto-api/files/photos/${hike.photos[0].filename}`,
+                        uri: `${FILES_URL}/photos/${hike.photos[0].filename}`,
                     }}
                     style={{
                         height: 150,
@@ -169,7 +170,7 @@ function FriendCard({ friend }) {
                     source={
                         friend.avatar
                             ? {
-                                uri: `https://deway.fr/goto-api/files/photos/${friend.avatar.filename}`,
+                                uri: `${FILES_URL}/photos/${friend.avatar.filename}`,
                             }
                             : require('../../../assets/images/default_pp.jpeg')
                     }

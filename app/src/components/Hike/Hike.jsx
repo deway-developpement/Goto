@@ -5,6 +5,7 @@ import stylesheet from './style';
 import { useNavigation } from '@react-navigation/native';
 import { gql, useQuery } from '@apollo/client';
 import HikeInfos from './HikeInfos';
+import { FILES_URL } from '../../providers/AxiosContext';
 
 export default function Hike({ id }) {
     const GET_HIKE = gql`
@@ -51,7 +52,7 @@ export default function Hike({ id }) {
                         source={
                             data?.hike.photos.length > 0
                                 ? {
-                                    uri: `https://deway.fr/goto-api/files/photos/${data.hike.photos[0].filename}`,
+                                    uri: `${FILES_URL}/photos/${data.hike.photos[0].filename}`,
                                 }
                                 : require('../../../assets/images/Dalle_background.png')
                         }

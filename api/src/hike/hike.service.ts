@@ -27,7 +27,16 @@ export class HikeService extends TypeOrmQueryService<HikeEntity> {
     }
 
     async create(hike: HikeInput, user: UserEntity): Promise<HikeEntity> {
-        const localfilename = await this.filesService.uploadFile(await hike.track, FileType.GPX);
+        const { createReadStream } = await hike.track;
+        // stream data to string
+        const data: string = await new Promise((resolve, reject) => {
+            const chunks = [];
+            createReadStream()
+                .on('data', (chunk) => chunks.push(chunk))
+                .on('error', (err) => reject(err))
+                .on('end', () => resolve(Buffer.concat(chunks).toString('utf8')));
+        });
+        const localfilename = await this.filesService.uploadFileFromString(data, FileType.GPX);
         const tags = await Promise.all(
             hike.tagsId.map(async (tagId) => {
                 const tag = await this.tagService.findById(tagId);
@@ -43,6 +52,11 @@ export class HikeService extends TypeOrmQueryService<HikeEntity> {
             }
             return category;
         });
+
+        // parse data to points
+        const points = await this.filesService.parseFile(data);
+        const stats = await this.filesService.trackStats(points);
+
         const newHike = this.repo.create({
             ...hike,
             track: localfilename,
@@ -50,6 +64,8 @@ export class HikeService extends TypeOrmQueryService<HikeEntity> {
             duration: 0,
             tags: tags,
             category: category,
+            distance: stats.distance,
+            elevation: stats.elevation,
         });
         newHike.duration = this.duration(newHike);
         return this.repo.save(newHike);
@@ -104,7 +120,8 @@ export class HikeService extends TypeOrmQueryService<HikeEntity> {
         distance: number,
         limit: number,
         cursor: string,
-        search = ''
+        search = '',
+        difficulty = null
     ): Promise<HikeConnectionDTO> {
         const formula = `FLOOR(6371 * 2 * ASIN(SQRT(POWER(SIN((${latitude} * PI()/180 - hike.latitude * PI()/180)/ 2), 2) + COS(${latitude} * PI()/180) * COS(hike.latitude * PI()/180) * POWER(SIN((${longitude} * PI()/180 - hike.longitude * PI()/180) / 2), 2))))`;
         //build query to find hikes within distance
@@ -117,9 +134,17 @@ export class HikeService extends TypeOrmQueryService<HikeEntity> {
             .where(`${formula} < :distance`, {
                 distance: distance,
             })
-            .andWhere('hike.name LIKE :search', { search: `%${search}%` }) // search is the search string
             .orderBy('dist', 'ASC')
             .addOrderBy('id', 'ASC'); // order by id
+        if (search !== '') {
+            query.andWhere('lower(hike.name) LIKE :search', {
+                search: `%${search.replace(' ', '%')}%`,
+            });
+        }
+        if (difficulty !== null) {
+            query.andWhere('hike.difficulty = :difficulty', { difficulty: difficulty });
+        }
+
         const totalCount = await query.getCount(); // get total number of results
 
         const ascii = Buffer.from(cursor, 'base64').toString('ascii');
@@ -133,18 +158,20 @@ export class HikeService extends TypeOrmQueryService<HikeEntity> {
 
         const beforeExist = await query
             .clone()
-            .andWhere(`${formula} < :cursoDist OR (${formula} = :cursoDist AND hike.id <= :id)`, {
+            .andWhere(`(${formula} < :cursoDist OR (${formula} = :cursoDist AND hike.id <= :id))`, {
                 cursoDist: dataCursor.distance,
                 id: dataCursor.id,
             })
             .getExists(); // check if there is a hike before the cursor
+
         const hikesId = await query
-            .andWhere(`${formula} > :cursoDist OR (${formula} = :cursoDist AND hike.id > :id)`, {
+            .andWhere(`(${formula} > :cursoDist OR (${formula} = :cursoDist AND hike.id > :id))`, {
                 cursoDist: dataCursor.distance,
                 id: dataCursor.id,
             })
             .limit(limit)
             .getMany(); // get all hikes id
+
         const numberOfResults = await query.getCount();
         // get all hikes from ids found
         const hikes = await Promise.all(
@@ -206,19 +233,28 @@ export class HikeService extends TypeOrmQueryService<HikeEntity> {
         };
     }
 
-    async findPopular(limit: number, cursor: string, search = ''): Promise<HikeConnectionDTO> {
+    async findPopular(
+        limit: number,
+        cursor: string,
+        search = '',
+        difficulty = null
+    ): Promise<HikeConnectionDTO> {
         //build query to find hikes that have an average rating of 4 or more
         const query = await this.repo.manager
             .createQueryBuilder(HikeEntity, 'hike') // select all columns from hikeQuery
-            .select(['hike.id'])
+            .select(['hike.id', 'hike.latitude', 'hike.longitude'])
             .leftJoin('hike.reviews', 'review')
-            .where('hike.name LIKE :search', { search: `%${search}%` }) // search is the search string
             .groupBy('hike.id')
             .having('AVG(review.rating) >= 4')
             .orderBy('hike.id', 'ASC');
-        const totalCount =
-            (await query.clone().select('COUNT(DISTINCT hike.id) as "totalCount"').getRawOne())
-                ?.totalCount || 0; // get total number of results
+        if (search !== '') {
+            query.andWhere('lower(hike.name) LIKE :search', { search: `%${search}%` });
+        }
+        if (difficulty !== null) {
+            query.andWhere('hike.difficulty = :difficulty', { difficulty: difficulty });
+        }
+        const totalCount = (await query.getMany()).length; // get total number of results
+
         const beforeExist = await query
             .clone()
             .andWhere('hike.id <= :cursor', { cursor: cursor })
@@ -258,7 +294,8 @@ export class HikeService extends TypeOrmQueryService<HikeEntity> {
         userId: string,
         limit: number,
         cursor: string,
-        search = ''
+        search = '',
+        difficulty = null
     ): Promise<HikeConnectionDTO> {
         //build query to find hikes within distance
         // the harvesine formula is used to calculate the distance between two points on a sphere
@@ -267,14 +304,19 @@ export class HikeService extends TypeOrmQueryService<HikeEntity> {
             .createQueryBuilder(HikeEntity, 'hike') // select all columns from hikeQuery
             .select(['hike.id'])
             .leftJoin('hike.performances', 'performance')
-            .where('hike.name LIKE :search', { search: `%${search}%` }) // search is the search string
-            .andWhere('performance.userId = :userId', { userId: userId })
+            .where('performance.userId = :userId', { userId: userId })
             .groupBy('hike.id')
             .having('COUNT(performance.id) > 0')
             .orderBy('hike.id', 'ASC');
-        const totalCount =
-            (await query.clone().select('COUNT(DISTINCT hike.id) as "totalCount"').getRawOne())
-                ?.totalCount || 0; // get total number of results
+
+        if (search !== '') {
+            query.andWhere('lower(hike.name) LIKE :search', { search: `%${search}%` });
+        }
+        if (difficulty !== null) {
+            query.andWhere('hike.difficulty = :difficulty', { difficulty: difficulty });
+        }
+        const totalCount = await query.getCount(); // get total number of results
+
         const beforeExist = await query
             .clone()
             .andWhere('hike.id <= :cursor', { cursor: cursor })

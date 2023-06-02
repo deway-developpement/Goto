@@ -5,6 +5,7 @@ import stylesheet from './style';
 import { useNavigation } from '@react-navigation/native';
 import { gql, useQuery } from '@apollo/client';
 import { LocationContext } from '../../providers/LocationProvider';
+import { FILES_URL } from '../../providers/AxiosContext';
 
 const GET_IMAGE_CATEGORIES = (categoryName, location) => {
     if (categoryName == 'Around you') {
@@ -125,11 +126,11 @@ export default function Category(props) {
                     source={
                         props.defaultPhoto
                             ? {
-                                uri: `https://deway.fr/goto-api/files/photos/${props.defaultPhoto.filename}`,
+                                uri: `${FILES_URL}/photos/${props.defaultPhoto.filename}`,
                             }
                             : imageCategory?.hikes?.edges[0]?.node.photos[0]?.filename
                                 ? {
-                                    uri: `https://deway.fr/goto-api/files/photos/${imageCategory?.hikes?.edges[0]?.node.photos[0]?.filename}`,
+                                    uri: `${FILES_URL}/photos/${imageCategory?.hikes?.edges[0]?.node.photos[0]?.filename}`,
                                 }
                                 : require('../../../assets/images/Dalle_background.png')
                     }
