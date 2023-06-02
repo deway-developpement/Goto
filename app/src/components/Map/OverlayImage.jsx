@@ -1,9 +1,8 @@
-import React, { useContext, useEffect, useRef } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { Marker, Overlay } from 'react-native-maps';
 import { LocationContext } from '../../providers/LocationProvider';
 import { connect } from 'react-redux';
 import {
-    changeAngle,
     changeHeight,
     changePosition,
     changeWidth,

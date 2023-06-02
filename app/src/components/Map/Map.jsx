@@ -1,5 +1,5 @@
 import React, { useContext, cloneElement, useRef, isValidElement, useEffect } from 'react';
-import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
+import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
 import { default as MAP_STYLE } from '../../../assets/maps/style.json';
 import { LocationContext } from '../../providers/LocationProvider';
 import { connect } from 'react-redux';
@@ -78,14 +78,6 @@ function Map({ children, isFollowing, performance, isRecording, dispatch }) {
             ref={cameraRef}
         >
             {childrenWithProps}
-            {/* <Marker
-                coordinate={{
-                    latitude: parseFloat(location?.coords?.latitude),
-                    longitude: parseFloat(location?.coords?.longitude),
-                }}
-                anchor={{ x: 0.5, y: 0.5 }}
-                flat={true}
-            /> */}
         </MapView>
     );
 }

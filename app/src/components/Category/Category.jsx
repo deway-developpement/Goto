@@ -112,7 +112,7 @@ export default function Category({ memoizedLocation, ...props }) {
     );
 
     return (
-        <TouchableWithoutFeedback onPress={() => handleClickCategory(props.id, props.name)}>
+        <TouchableWithoutFeedback onPress={() => handleClickCategory(props.name)}>
             <View
                 style={[
                     styles.container,

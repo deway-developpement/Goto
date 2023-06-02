@@ -1,8 +1,8 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import stylesheet from './style';
 import { View } from 'react-native';
 import { useIsFocused, useTheme, useNavigation } from '@react-navigation/native';
-import { Camera, CameraType } from 'expo-camera';
+import { Camera } from 'expo-camera';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { changeMapState, mapStateToProps } from '../../reducer/map.reducer';
 import { MapState } from '../Map/enum';
@@ -20,7 +20,6 @@ function CameraScreen({ dispatch }) {
     const insets = useSafeAreaInsets();
     const tabBarHeight = useBottomTabBarHeight();
 
-    const [type, setType] = useState(CameraType.back);
     const [permission, requestPermission] = Camera.useCameraPermissions();
 
     const cameraRef = useRef();
@@ -33,10 +32,6 @@ function CameraScreen({ dispatch }) {
             dispatch(changeMapState(MapState.NONE));
         }
     }, [isFocused]);
-
-    function toggleCameraType() {
-        setType((current) => (current === CameraType.back ? CameraType.front : CameraType.back));
-    }
 
     if (!permission) {
         requestPermission();
@@ -71,7 +66,6 @@ function CameraScreen({ dispatch }) {
                     overflow: 'hidden',
                     alignSelf: 'center',
                 }}
-                type={type}
                 aspectRatio={3 / 4}
             ></Camera>
             <View

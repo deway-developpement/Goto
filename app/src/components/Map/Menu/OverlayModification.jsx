@@ -112,8 +112,8 @@ function OverlayModificationSlider({ overlay, dispatch, mapState }) {
             <Slider
                 value={overlay.angle}
                 onValueChange={(value) => dispatch(changeAngle(value))}
-                maximumValue={360}
-                minimumValue={0}
+                maximumValue={180}
+                minimumValue={-180}
                 step={360 / 100}
                 allowTouchTrack
                 trackStyle={{

@@ -19,7 +19,6 @@ import {
     changeMapState,
     mapStateToProps,
 } from '../../reducer/map.reducer';
-import { Button } from 'react-native';
 import GpxTrackLine from './GpxTrackLine';
 import { Modal } from 'react-native';
 import MapModal from './MapModal';
