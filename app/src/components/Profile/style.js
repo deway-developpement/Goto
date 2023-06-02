@@ -18,6 +18,11 @@ const stylesheet = (colors) =>
             zIndex: 1000,
         },
         header: {
+            fontSize: 36,
+            fontWeight: '700',
+            color: colors.text,
+        },
+        statHeader: {
             fontSize: 20,
             fontWeight: '700',
             color: colors.text,
