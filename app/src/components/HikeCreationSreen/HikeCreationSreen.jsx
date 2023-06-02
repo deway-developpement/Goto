@@ -7,6 +7,7 @@ import {
     ScrollView,
     Image,
     StyleSheet,
+    FlatList,
 } from 'react-native';
 import { Button } from 'react-native-elements';
 import stylesheet from './style';
@@ -16,7 +17,6 @@ import { IconComp } from '../Icon/Icon';
 import * as DocumentPicker from 'expo-document-picker';
 import { BlurView } from 'expo-blur';
 import { ReactNativeFile } from 'apollo-upload-client';
-import { FlatList } from 'react-native-gesture-handler';
 import { readAsStringAsync } from 'expo-file-system';
 import { DOMParser } from 'xmldom';
 import * as ImagePicker from 'expo-image-picker';

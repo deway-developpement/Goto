@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { Text, View, TouchableWithoutFeedback } from 'react-native';
+import { Text, View, TouchableWithoutFeedback, Modal } from 'react-native';
 import { useTheme } from '@react-navigation/native';
 import stylesheet from './style';
-import { IconComp } from '../Icon/Icon';
+import { IconComp, Icon } from '../Icon/Icon';
 import { gql, useApolloClient, useQuery } from '@apollo/client';
 import { Share } from 'react-native';
 import { FILES_URL } from '../../providers/AxiosContext';
+import HikeModal from './HikeModals';
 
 const WHOAMI = gql`
     query whoami($hikeID: ID) {
@@ -13,6 +14,10 @@ const WHOAMI = gql`
             id
             reviews(filter: { hike: { id: { eq: $hikeID } } }) {
                 rating
+            }
+            tables {
+                id
+                name
             }
         }
     }
@@ -56,10 +61,11 @@ const UNLIKE_HIKE = gql`
     }
 `;
 
-export default function HikeInfos({ hike, borderRadius, inProfile = false }) {
+export default function HikeInfos({ hike, borderRadius, dataWhoami, inProfile = false }) {
     const { colors } = useTheme();
     const styles = stylesheet(colors);
     const client = useApolloClient();
+    const [modalVisible, setModalVisible] = useState(false);
 
     const [like, setLike] = useState(hike.isLiked);
 
@@ -98,9 +104,11 @@ export default function HikeInfos({ hike, borderRadius, inProfile = false }) {
             break;
         }
         case StarsMode.reviewed: {
-            let rate = Math.round(dataReview.whoami.reviews[0].rating + Number.EPSILON);
-            setRating(rate);
-            break;
+            if (dataReview?.whoami?.reviews[0]?.rating) {
+                let rate = Math.round(dataReview?.whoami?.reviews[0]?.rating + Number.EPSILON);
+                setRating(rate);
+                break;
+            }
         }
         }
     }, [dataAvg, dataReview, starsMode]);
@@ -114,6 +122,7 @@ export default function HikeInfos({ hike, borderRadius, inProfile = false }) {
                     rating: star + 1,
                 },
                 errorPolicy: 'all',
+                awaitRefetchQueries: [GET_REVIEWS],
             });
             refetch();
         }
@@ -133,6 +142,7 @@ export default function HikeInfos({ hike, borderRadius, inProfile = false }) {
                 id: hike.id,
             },
             errorPolicy: 'all',
+            refetchQueries: ['hike', 'whoami', 'hikes'],
         });
         setLike(true);
     }
@@ -144,9 +154,11 @@ export default function HikeInfos({ hike, borderRadius, inProfile = false }) {
                 id: hike.id,
             },
             errorPolicy: 'all',
+            refetchQueries: ['hike', 'whoami', 'hikes'],
         });
         setLike(false);
     }
+
     return (
         <View
             style={[
@@ -162,6 +174,23 @@ export default function HikeInfos({ hike, borderRadius, inProfile = false }) {
                     : {},
             ]}
         >
+            <Modal
+                animationType="fade"
+                transparent={true}
+                visible={modalVisible}
+                onRequestClose={() => {
+                    setModalVisible(false);
+                }}
+                onShow={() => {
+                    refetch();
+                }}
+            >
+                <HikeModal
+                    hikeId={hike.id}
+                    setModalVisible={setModalVisible}
+                    tables={dataWhoami?.whoami?.tables}
+                />
+            </Modal>
             <View
                 style={{
                     flexDirection: 'row',
@@ -181,8 +210,14 @@ export default function HikeInfos({ hike, borderRadius, inProfile = false }) {
                             alignItems: 'center',
                         }}
                     >
+                        <Icon
+                            name="add"
+                            size={18}
+                            style={styles.closeIcon}
+                            onPress={() => setModalVisible(true)}
+                        />
                         <TouchableWithoutFeedback onPress={() => share(dataAvg.hike.track)}>
-                            <View>
+                            <View style={{ marginLeft: 10 }}>
                                 <IconComp color={colors.primary} name={'share'} pos={0} size={18} />
                             </View>
                         </TouchableWithoutFeedback>
