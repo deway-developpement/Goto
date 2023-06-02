@@ -18,9 +18,6 @@ export default function Table({ t }) {
     const styles = stylesheet(colors);
     const height = Dimensions.get('screen').height;
 
-
-    console.log(t.hikes[0].photos[0].filename);
-
     return (
         <View style={{padding:30, backgroundColor:colors.backgroundSecondary, flexDirection:'column', alignItems:'center', marginTop:20, borderRadius:15}}>
             <View style={{flexDirection:'row'}}>

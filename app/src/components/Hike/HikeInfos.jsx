@@ -239,7 +239,7 @@ export default function HikeInfos({ hike, borderRadius, dataWhoami, loadingWhoam
                         }}
                     >
                         <Text style={[styles.textLoginMiddle, { alignSelf: 'center' }]}>
-                            Category
+                            Select a table
                         </Text>
                         {!loadingWhoami && dataWhoami &&
                             <FlatList
