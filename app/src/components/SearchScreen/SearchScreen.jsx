@@ -509,7 +509,22 @@ export default function SearchScreen({ route, navigation }) {
                     renderItem={({ item }) => <Hike id={item.id} />}
                     keyExtractor={(item) => item.id}
                     showsVerticalScrollIndicator={false}
-                    emptyListComponent={<Text style={styles.textLink}>No hikes</Text>}
+                    ListEmptyComponent={
+                        <View
+                            style={{
+                                alignItems: 'center',
+                            }}
+                        >
+                            <Text
+                                style={[
+                                    styles.textHeader,
+                                    { marginTop: '50%', textAlign: 'center' },
+                                ]}
+                            >
+                                No hike match this search
+                            </Text>
+                        </View>
+                    }
                     ListHeaderComponent={
                         <>
                             <View
