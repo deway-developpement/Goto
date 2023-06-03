@@ -62,6 +62,7 @@ function HomeScreen({ navigation }) {
                                 tabBarIcon: (props) => (
                                     <Icon name="list" size={30} color={props.color} />
                                 ),
+                                lazy: false,
                             }}
                         />
                         <Tab.Screen
@@ -71,6 +72,7 @@ function HomeScreen({ navigation }) {
                                 tabBarIcon: (props) => (
                                     <Icon name="search" size={30} color={props.color} />
                                 ),
+                                lazy: false,
                             }}
                         />
                         <Tab.Screen
@@ -80,6 +82,7 @@ function HomeScreen({ navigation }) {
                                 tabBarIcon: (props) => (
                                     <Icon name="position" size={30} color={props.color} />
                                 ),
+                                lazy: false,
                             }}
                         />
                         <Tab.Screen
@@ -89,6 +92,7 @@ function HomeScreen({ navigation }) {
                                 tabBarIcon: (props) => (
                                     <Icon name="hiker" size={30} color={props.color} />
                                 ),
+                                lazy: false,
                             }}
                         />
                         <Tab.Screen
@@ -98,6 +102,7 @@ function HomeScreen({ navigation }) {
                                 tabBarIcon: (props) => (
                                     <Icon name="user" size={props.size} color={props.color} />
                                 ),
+                                lazy: false,
                             }}
                         />
                         <Tab.Screen
