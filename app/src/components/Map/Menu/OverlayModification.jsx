@@ -66,7 +66,7 @@ function OverlayModification({ dispatch, mapState }) {
                             },
                         ]}
                     >
-                        <Icon name="reload" size={35} color={colors.darkIcon} />
+                        <Icon name="reset" size={35} color={colors.darkIcon} />
                     </Pressable>
                 </>
             )}

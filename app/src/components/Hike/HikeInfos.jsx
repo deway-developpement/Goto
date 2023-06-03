@@ -213,7 +213,7 @@ export default function HikeInfos({ hike, borderRadius, dataWhoami, inProfile = 
                         <Icon
                             name="add"
                             size={18}
-                            style={styles.closeIcon}
+                            color={colors.primary}
                             onPress={() => setModalVisible(true)}
                         />
                         <TouchableWithoutFeedback onPress={() => share(dataAvg.hike.track)}>
