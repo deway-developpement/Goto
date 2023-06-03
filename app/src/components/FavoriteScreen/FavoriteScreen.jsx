@@ -195,7 +195,7 @@ function TablesScreen() {
                                     },
                                 ]}
                             >
-                                <IconComp color={colors.primary} name={'plus'} />
+                                <IconComp color={colors.primary} name={'add_album'} size={24} />
                                 <Text
                                     style={[
                                         styles.textLink,
