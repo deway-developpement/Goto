@@ -162,7 +162,7 @@ function MapScreen({ route, mapState, dispatch, isRecording, isFollowing }) {
                                         },
                                     ]}
                                 >
-                                    <Icon name="relocate" size={30} color={colors.background} />
+                                    <Icon name="relocate" size={30} color={colors.darkIcon} />
                                 </Pressable>
                             )}
                             <SafeAreaView />

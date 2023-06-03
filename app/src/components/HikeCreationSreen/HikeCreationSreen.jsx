@@ -27,10 +27,6 @@ export default function HikeCreationScreen({ navigation }) {
     const client = useApolloClient();
 
     const [name, setName] = useState('');
-    const [distance, setDistance] = useState('');
-    const distanceRef = useRef(null);
-    const [elevation, setElevation] = useState('');
-    const elevationRef = useRef(null);
     const [description, setDescription] = useState('');
     const descriptionRef = useRef(null);
     const [categoryId, setCategoryId] = useState('');
@@ -159,8 +155,6 @@ export default function HikeCreationScreen({ navigation }) {
                     categoryId,
                     name,
                     description,
-                    distance: parseFloat(distance),
-                    elevation: parseFloat(elevation),
                     difficulty,
                     latitude: coordinates[0],
                     longitude: coordinates[1],
@@ -264,37 +258,9 @@ export default function HikeCreationScreen({ navigation }) {
                         placeholder="name"
                         placeholderTextColor={colors.border}
                         style={[styles.textInput]}
-                        onSubmitEditing={() => distanceRef.current.focus()}
+                        onSubmitEditing={() => descriptionRef.current.focus()}
                         onChangeText={(text) => setName(text)}
                         value={name}
-                    />
-                    <Text style={styles.textLoginMiddle}>Distance</Text>
-                    <TextInput
-                        ref={distanceRef}
-                        autoCorrect={false}
-                        autoCapitalize="none"
-                        placeholder="distance (km)"
-                        keyboardType="decimal-pad"
-                        maxLength={4}
-                        placeholderTextColor={colors.border}
-                        style={[styles.textInput]}
-                        onChangeText={(text) => setDistance(text)}
-                        value={distance}
-                        onSubmitEditing={() => elevationRef.current.focus()}
-                    />
-                    <Text style={styles.textLoginMiddle}>Elevation</Text>
-                    <TextInput
-                        ref={elevationRef}
-                        autoCorrect={false}
-                        autoCapitalize="none"
-                        placeholder="elevation (m)"
-                        keyboardType="number-pad"
-                        maxLength={4}
-                        placeholderTextColor={colors.border}
-                        style={[styles.textInput]}
-                        onChangeText={(text) => setElevation(text)}
-                        value={elevation}
-                        onSubmitEditing={() => descriptionRef.current.focus()}
                     />
                     <Text style={styles.textLoginMiddle}>Description</Text>
                     <TextInput

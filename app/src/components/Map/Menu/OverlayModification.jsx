@@ -44,7 +44,7 @@ function OverlayModification({ dispatch, mapState }) {
                             },
                         ]}
                     >
-                        <Icon name="cross" size={35} color={colors.background} />
+                        <Icon name="cross" size={35} color={colors.darkIcon} />
                     </Pressable>
                     <Pressable
                         onPress={() => {
@@ -66,7 +66,7 @@ function OverlayModification({ dispatch, mapState }) {
                             },
                         ]}
                     >
-                        <Icon name="reset" size={35} color={colors.background} />
+                        <Icon name="reset" size={35} color={colors.darkIcon} />
                     </Pressable>
                 </>
             )}
@@ -89,7 +89,7 @@ function OverlayModification({ dispatch, mapState }) {
                     },
                 ]}
             >
-                <Icon name={isHidden() ? 'lock' : 'unlock'} size={35} color={colors.background} />
+                <Icon name={isHidden() ? 'lock' : 'unlock'} size={35} color={colors.darkIcon} />
             </Pressable>
         </>
     );

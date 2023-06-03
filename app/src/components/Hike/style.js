@@ -52,7 +52,8 @@ const stylesheet = (colors) =>
         littleText: {
             fontWeight: '600',
             fontSize: 18,
-        },modalView: {
+        },
+        modalView: {
             marginHorizontal: '10%',
             top: '20%',
             borderRadius: 12,
@@ -62,7 +63,8 @@ const stylesheet = (colors) =>
             backgroundColor: colors.backgroundSecondary,
             width: '80%',
             position: 'absolute',
-        },textLoginMiddle: {
+        },
+        textLoginMiddle: {
             fontWeight: '600',
             fontSize: 20,
             paddingBottom: 10,
@@ -75,6 +77,6 @@ const stylesheet = (colors) =>
             color: colors.text,
             marginBottom: 19,
             marginLeft: 3,
-        }
+        },
     });
 export default stylesheet;

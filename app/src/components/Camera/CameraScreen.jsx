@@ -95,7 +95,7 @@ function CameraScreen({ dispatch }) {
                         },
                     ]}
                 >
-                    <Icon name="map_back" size={35} color={colors.background} />
+                    <Icon name="map_back" size={35} color={colors.darkIcon} />
                 </Pressable>
             </View>
             <View
@@ -123,7 +123,7 @@ function CameraScreen({ dispatch }) {
                         },
                     ]}
                 >
-                    <Icon name="photo" size={40} color={colors.background} />
+                    <Icon name="photo" size={40} color={colors.darkIcon} />
                 </Pressable>
             </View>
         </View>

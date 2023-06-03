@@ -48,7 +48,7 @@ const stylesheet = (colors) =>
         textContent: {
             fontSize: 22,
             fontWeight: '800',
-            color: colors.primary,
+            color: colors.altText,
             marginLeft: 2,
             marginBottom: 14,
         },
@@ -79,11 +79,11 @@ const stylesheet = (colors) =>
             marginTop: 7.5,
             fontSize: 14,
             fontWeight: '500',
-            color: colors.primary,
+            color: colors.altText,
         },
         input: {
             height: 40,
-            color: colors.primary,
+            color: colors.altText,
             fontSize: 14,
             fontWeight: '400',
             borderColor: colors.lineSecondary,
@@ -119,7 +119,7 @@ const stylesheet = (colors) =>
         pseudo: {
             fontSize: 20,
             fontWeight: '700',
-            color: colors.primary,
+            color: colors.altText,
             alignSelf: 'center',
             marginTop: 12,
             marginBottom: 12,
@@ -127,7 +127,7 @@ const stylesheet = (colors) =>
         smallpseudo: {
             fontSize: 14,
             fontWeight: '500',
-            color: colors.primary,
+            color: colors.altText,
             alignSelf: 'center',
             marginBottom: 12,
             marginTop: 4,
@@ -138,7 +138,7 @@ const stylesheet = (colors) =>
         },
         btn: {
             backgroundColor: colors.backgroundSecondary,
-            color: colors.primary,
+            color: colors.altText,
             borderRadius: 6,
         },
         btnAdd: {
@@ -165,12 +165,12 @@ const stylesheet = (colors) =>
         },
         closeIcon: {
             marginTop: 11,
-            color: colors.primary,
+            color: colors.altText,
         },
         smallModalText: {
             fontSize: 14,
             fontWeight: '400',
-            color: colors.primary,
+            color: colors.altText,
             marginLeft: 13,
         },
         statContainer: {
@@ -184,7 +184,7 @@ const stylesheet = (colors) =>
         statLabel: {
             fontSize: 12,
             fontWeight: '400',
-            color: colors.primary,
+            color: colors.altText,
             marginTop: 4,
         },
         statNumber: {

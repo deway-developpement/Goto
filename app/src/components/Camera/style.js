@@ -30,7 +30,7 @@ const stylesheet = (colors) =>
             display: 'none',
         },
         textBtn_text: {
-            color: colors.primary,
+            color: colors.altText,
             alignSelf: 'center',
         },
         logo: {

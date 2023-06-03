@@ -31,7 +31,7 @@ function TrackFocusOverlay({ styles, dispatch, isRecording, mapState }) {
                         },
                     ]}
                 >
-                    <Icon name="cross" size={35} color={colors.background} />
+                    <Icon name="cross" size={35} color={colors.darkIcon} />
                 </Pressable>
             )}
             <Pressable
@@ -57,7 +57,7 @@ function TrackFocusOverlay({ styles, dispatch, isRecording, mapState }) {
                 <Icon
                     name={isRecording || mapState === MapState.MODAL_PERFORMANCE ? 'stop' : 'start'}
                     size={35}
-                    color={colors.background}
+                    color={colors.darkIcon}
                 />
             </Pressable>
         </>

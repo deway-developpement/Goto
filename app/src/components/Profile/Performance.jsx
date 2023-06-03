@@ -447,7 +447,7 @@ export default function Performance({ route }) {
                                     <Text
                                         style={[
                                             styles.header,
-                                            { color: colors.primary, fontSize: 24 },
+                                            { color: colors.altText, fontSize: 24 },
                                         ]}
                                     >
                                         Elevation
@@ -468,7 +468,7 @@ export default function Performance({ route }) {
                                     <Text
                                         style={[
                                             styles.header,
-                                            { color: colors.primary, fontSize: 24, marginTop: 20 },
+                                            { color: colors.altText, fontSize: 24, marginTop: 20 },
                                         ]}
                                     >
                                         Speed

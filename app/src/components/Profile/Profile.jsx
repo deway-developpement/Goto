@@ -277,7 +277,7 @@ function ProfileScreen() {
                                                                     }
                                                                     buttonStyle={styles.btn}
                                                                     titleStyle={{
-                                                                        color: colors.primary,
+                                                                        color: colors.altText,
                                                                         fontSize: 12,
                                                                         fontWeight: '500',
                                                                     }}

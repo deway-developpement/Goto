@@ -35,7 +35,7 @@ function CameraOverlay({ dispatch, styles }) {
                 },
             ]}
         >
-            <Icon name="turn_camera" size={35} color={colors.background} />
+            <Icon name="turn_camera" size={35} color={colors.darkIcon} />
         </Pressable>
     );
 }

@@ -19,14 +19,14 @@ const stylesheet = (colors) =>
             flex: 1,
         },
         header: {
-            marginTop:20,
+            marginTop: 20,
             marginLeft: 20,
             marginBottom: 29,
             fontWeight: '700',
             fontSize: 32,
         },
         textBtn: {
-            color: colors.primary,
+            color: colors.altText,
             fontSize: 16,
             fontWeight: '500',
             marginLeft: 8,
@@ -67,7 +67,7 @@ const stylesheet = (colors) =>
             fontSize: 20,
             fontWeight: '700',
             marginBottom: 16,
-            color: colors.primary,
+            color: colors.altText,
         },
         categoryContainer: {
             alignItems: 'center',
