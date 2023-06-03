@@ -421,18 +421,14 @@ export default function FocusHikeScreen({ route }) {
                                             },
                                         ]}
                                     >
-                                        <IconComp
-                                            color={colors.backgroundSecondary}
-                                            name={'map'}
-                                            size={20}
-                                        />
+                                        <IconComp color={colors.lightIcon} name={'map'} size={20} />
                                         <Text
                                             style={
                                                 ([styles.textHeader],
                                                 {
                                                     fontSize: 16,
                                                     marginTop: 0,
-                                                    color: colors.backgroundSecondary,
+                                                    color: colors.lightIcon,
                                                     marginLeft: 20,
                                                 })
                                             }

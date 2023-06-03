@@ -51,7 +51,7 @@ function HomeScreen({ navigation }) {
                             tabBarIconStyle: styles.tabBarIcon,
                             tabBarLabelStyle: styles.tabBarLabel,
                             tabBarActiveTintColor: colors.active,
-                            tabBarInactiveTintColor: colors.backgroundSecondary,
+                            tabBarInactiveTintColor: colors.lightIcon,
                             tabBarHideOnKeyboard: true,
                         }}
                     >

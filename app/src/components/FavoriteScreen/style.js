@@ -8,9 +8,15 @@ const stylesheet = (colors) =>
             fontSize: 36,
             fontWeight: '700',
         },
+        textLink: {
+            color: colors.altText,
+            fontSize: 16,
+            fontWeight: '400',
+            textDecorationLine: 'underline',
+        },
         textSubHeader: {
             marginTop: '4%',
-            color: colors.primary,
+            color: colors.altText,
             fontSize: 24,
             fontWeight: '700',
         },
@@ -70,7 +76,7 @@ const stylesheet = (colors) =>
             display: 'none',
         },
         textBtn_text: {
-            color: colors.primary,
+            color: colors.altText,
         },
         container: {
             flex: 1,

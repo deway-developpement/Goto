@@ -39,12 +39,12 @@ const stylesheet = (colors) =>
         },
         closeIcon: {
             marginTop: 11,
-            color: colors.primary,
+            color: colors.altText,
         },
         smallModalText: {
             fontSize: 14,
             fontWeight: '400',
-            color: colors.primary,
+            color: colors.altText,
             marginLeft: 13,
         },
     });

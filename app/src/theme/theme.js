@@ -1,13 +1,12 @@
-import { DefaultTheme } from '@react-navigation/native';
-
 export const Classic = {
-    ...DefaultTheme,
     colors: {
-        ...DefaultTheme.colors,
         background: '#E4ECEA',
         backgroundModal: '#26465366',
         backgroundSecondary: '#FFFFFF',
+        lightIcon: '#FFFFFF',
+        darkIcon: '#E4ECEA',
         text: '#0D0E0E',
+        altText: '#264653',
         primary: '#264653',
         loading: '#DFE17B',
         accent: '#D1406C',
@@ -28,13 +27,14 @@ export const Classic = {
 };
 
 export const Dark = {
-    ...DefaultTheme,
     colors: {
-        ...DefaultTheme.colors,
-        background: '#E4ECEA',
+        background: '#0D0E0E',
         backgroundModal: '#26465366',
-        backgroundSecondary: '#FFFFFF',
-        text: '#0D0E0E',
+        backgroundSecondary: '#1F2937',
+        lightIcon: '#E4E4EA',
+        darkIcon: '#E4ECEA',
+        text: '#FFFFFF',
+        altText: '#FFFFFF',
         primary: '#264653',
         loading: '#DFE17B',
         accent: '#D1406C',
@@ -47,5 +47,9 @@ export const Dark = {
         stats: '#207665',
         empty: '#EFF0F1',
         filled: '#2A9D87',
+        ligthLine: '#E4E4EA',
+        easy: '#22C55E',
+        medium: '#F59E0B',
+        hard: '#EF4444',
     },
 };

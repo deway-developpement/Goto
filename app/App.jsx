@@ -17,6 +17,7 @@ const Stack = createNativeStackNavigator();
 
 export default function App() {
     const theme = useColorScheme();
+    console.log(theme);
 
     // pass status bar color to black
     (() => {

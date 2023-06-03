@@ -26,10 +26,10 @@ const stylesheet = (colors) =>
             color: colors.text,
         },
         container: {
-            width:'100%',
-            height:'100%',
-            backgroundColor:colors.background,
-            flex:1
+            width: '100%',
+            height: '100%',
+            backgroundColor: colors.background,
+            flex: 1,
         },
         inner: {
             paddingTop: 24,
@@ -75,7 +75,7 @@ const stylesheet = (colors) =>
             backgroundColor: colors.primary,
             borderRadius: 6,
             padding: 10,
-            alignSelf:'center'
+            alignSelf: 'center',
         },
         btnText: {
             fontWeight: '600',
@@ -85,7 +85,7 @@ const stylesheet = (colors) =>
             display: 'none',
         },
         textBtn_text: {
-            color: colors.primary,
+            color: colors.altText,
         },
         logoContainer: {
             width: 50,

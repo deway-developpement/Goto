@@ -7,23 +7,23 @@ const stylesheet = (colors) =>
             color: colors.text,
             fontSize: 32,
             fontWeight: '700',
-            paddingLeft:'3%'
+            paddingLeft: '3%',
         },
         textLink: {
-            color: colors.primary,
+            color: colors.altText,
             fontSize: 16,
             fontWeight: '400',
-            textDecorationLine:'underline'
+            textDecorationLine: 'underline',
         },
         logo: {
             width: 150,
             height: 150,
         },
         container: {
-            width:'100%',
-            height:'100%',
-            backgroundColor:colors.background,
-            flex:1
-        }
+            width: '100%',
+            height: '100%',
+            backgroundColor: colors.background,
+            flex: 1,
+        },
     });
 export default stylesheet;
