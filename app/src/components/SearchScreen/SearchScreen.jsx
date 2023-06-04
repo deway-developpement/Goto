@@ -11,22 +11,6 @@ import { Icon, IconComp } from '../Icon/Icon';
 import { LocationContext } from '../../providers/LocationProvider';
 import SplashScreen from '../SplashScreen/SplashScreen';
 
-const WHOAMI = gql`
-    query whoami {
-        whoami {
-            id
-            tables(sorting: { field: createdAt, direction: DESC }) {
-                id
-                name
-                createdAt
-                hikes {
-                    id
-                }
-            }
-        }
-    }
-`;
-
 const GET_HIKES_AROUND_ME = gql`
     query hikes(
         $lon: Float!
@@ -495,8 +479,6 @@ export default function SearchScreen({ route, navigation }) {
 
     let onEndReachedCalledDuringMomentum = false;
 
-    const { data: dataWhoami } = useQuery(WHOAMI);
-
     return (
         <SafeAreaView
             style={[
@@ -536,7 +518,7 @@ export default function SearchScreen({ route, navigation }) {
                 <FlatList
                     data={nodes}
                     extraData={data?.hikes.edges}
-                    renderItem={({ item }) => <Hike id={item.id} dataWhoami={dataWhoami} />}
+                    renderItem={({ item }) => <Hike id={item.id} />}
                     keyExtractor={(item) => item.id}
                     showsVerticalScrollIndicator={false}
                     ListEmptyComponent={

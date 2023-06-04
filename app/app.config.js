@@ -21,10 +21,11 @@ export default ({ config }) => ({
     },
     assetBundlePatterns: ['**/*'],
     ios: {
+        icon: './assets/icon.png',
         bundleIdentifier: 'com.pooolm.deway-development',
         supportsTablet: true,
         config: {
-            googleMapsApiKey: 'AIzaSyBeJpFARAqM4l_uTzf3jcwCDek5iWzXzFY',
+            googleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY,
         },
     },
     android: {
@@ -35,7 +36,7 @@ export default ({ config }) => ({
         package: 'com.pooolm.deway_development',
         config: {
             googleMaps: {
-                apiKey: process.env.GOOGLE_CLOUD_API_KEY,
+                apiKey: process.env.GOOGLE_MAPS_API_KEY,
             },
         },
     },

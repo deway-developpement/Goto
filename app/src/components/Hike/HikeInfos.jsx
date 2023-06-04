@@ -61,7 +61,7 @@ const UNLIKE_HIKE = gql`
     }
 `;
 
-export default function HikeInfos({ hike, borderRadius, dataWhoami, inProfile = false }) {
+export default function HikeInfos({ hike, borderRadius, inProfile = false }) {
     const { colors } = useTheme();
     const styles = stylesheet(colors);
     const client = useApolloClient();
@@ -188,7 +188,7 @@ export default function HikeInfos({ hike, borderRadius, dataWhoami, inProfile = 
                 <HikeModal
                     hikeId={hike.id}
                     setModalVisible={setModalVisible}
-                    tables={dataWhoami?.whoami?.tables}
+                    tables={dataReview?.whoami?.tables || []}
                 />
             </Modal>
             <View
