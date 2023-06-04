@@ -1,4 +1,3 @@
-import { ExpoConfig, ConfigContext } from '@expo/config';
 import * as dotenv from 'dotenv';
 
 // initialize dotenv
@@ -22,6 +21,7 @@ export default ({ config }) => ({
     },
     assetBundlePatterns: ['**/*'],
     ios: {
+        bundleIdentifier: 'com.pooolm.deway-development',
         supportsTablet: true,
         config: {
             googleMapsApiKey: 'AIzaSyBeJpFARAqM4l_uTzf3jcwCDek5iWzXzFY',
@@ -41,7 +41,7 @@ export default ({ config }) => ({
     },
     extra: {
         eas: {
-            projectId: process.env.GOOGLE_CLOUD_API_KEY,
+            projectId: '79a15c27-3de5-4776-a4d9-0bcd304dbf6f',
         },
     },
 });
