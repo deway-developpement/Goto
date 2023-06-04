@@ -16,12 +16,28 @@
     },
     "assetBundlePatterns": ["**/*"],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "config": {
+        "googleMapsApiKey": "AIzaSyBeJpFARAqM4l_uTzf3jcwCDek5iWzXzFY"
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
+      },
+      "package": "com.pooolm.deway_development",
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyBqJCWWMRrGUYLZb8CAXR4jvSasvOrX0Uo"
+        }
+      }
+    },
+    "android.config.googleMaps.apiKey": "AIzaSyBqJCWWMRrGUYLZb8CAXR4jvSasvOrX0Uo",
+    "ios.config.googleMapsApiKey": "AIzaSyBeJpFARAqM4l_uTzf3jcwCDek5iWzXzFY",
+    "extra": {
+      "eas": {
+        "projectId": "79a15c27-3de5-4776-a4d9-0bcd304dbf6f"
       }
     }
   }

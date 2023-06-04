@@ -33,14 +33,14 @@ function Map({ children, isFollowing, performance, isRecording, dispatch }) {
         if (isRecording) {
             if (
                 performance.lastPoint == null ||
-                performance.lastPoint.time + 1000 * 60 < new Date().getTime() ||
+                performance.lastPoint.time + 1000 * 6 < new Date().getTime() ||
                 distance2Coordonate(
                     {
                         latitude: parseFloat(location?.coords?.latitude),
                         longitude: parseFloat(location?.coords?.longitude),
                     },
                     performance.lastPoint
-                ) > 0.05
+                ) > 0.0005
             ) {
                 dispatch(
                     addPoint({

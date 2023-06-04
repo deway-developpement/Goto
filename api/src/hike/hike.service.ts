@@ -254,6 +254,7 @@ export class HikeService extends TypeOrmQueryService<HikeEntity> {
             query.andWhere('hike.difficulty = :difficulty', { difficulty: difficulty });
         }
         const totalCount = (await query.getMany()).length; // get total number of results
+        console.log(totalCount);
 
         const beforeExist = await query
             .clone()
@@ -263,7 +264,8 @@ export class HikeService extends TypeOrmQueryService<HikeEntity> {
             .andWhere('hike.id > :cursor', { cursor: cursor })
             .limit(limit)
             .getMany(); // get all hikes id
-        const numberOfResults = await query.getCount();
+        const numberOfResults = (await query.limit(limit + 1).getMany()).length;
+        console.log(numberOfResults);
         // get all hikes from ids found
         const hikes = await Promise.all(
             hikesId.map(async (hike) => {
