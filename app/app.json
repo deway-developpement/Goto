@@ -18,7 +18,7 @@
     "ios": {
       "supportsTablet": true,
       "config": {
-        "googleMapsApiKey": "AIzaSyAjFDA8dEanQrLRc9Oj6bVaZwHJeMcfKbk"
+        "googleMapsApiKey": ""
       }
     },
     "android": {
@@ -29,7 +29,7 @@
       "package": "com.pooolm.deway_development",
       "config": {
         "googleMaps": {
-          "apiKey": "AIzaSyAjFDA8dEanQrLRc9Oj6bVaZwHJeMcfKbk"
+          "apiKey": ""
         }
       }
     },
