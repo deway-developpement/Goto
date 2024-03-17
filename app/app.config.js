@@ -19,6 +19,10 @@ export default ({ config }) => ({
     updates: {
         fallbackToCacheTimeout: 0,
     },
+    platforms: [
+        'ios',
+        'android',
+    ],
     assetBundlePatterns: ['**/*'],
     ios: {
         icon: './assets/icon.png',
@@ -45,4 +49,7 @@ export default ({ config }) => ({
             projectId: '79a15c27-3de5-4776-a4d9-0bcd304dbf6f',
         },
     },
+    plugins: [
+        'expo-secure-store',
+    ]
 });
