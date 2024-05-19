@@ -71,7 +71,7 @@ function Map({ children, isFollowing, performance, isRecording, dispatch }) {
                     dispatch(changeIsFollowing(false));
                 }
             }}
-            provider={PROVIDER_GOOGLE}
+            // provider={process.env.NODE_ENV === 'production' ? PROVIDER_GOOGLE : null}
             customMapStyle={MAP_STYLE}
             style={{ flex: 1, width: '100%' }}
             maxZoomLevel={18}

@@ -32,7 +32,7 @@ function GpxPathLine({
     }, [fileData]);
 
     useEffect(() => {
-        if (!loaded) {
+        if (!loaded) { // Init the map bounds
             const points = [...leftPoints, ...passedPoints];
             points.map((point) => {
                 if (point.latitude > maxLat || maxLat == null) {

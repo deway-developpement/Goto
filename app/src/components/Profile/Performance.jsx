@@ -393,7 +393,7 @@ export default function Performance({ route }) {
                                         latitudeDelta: 0.0922,
                                         longitudeDelta: 0.0421,
                                     }}
-                                    provider={PROVIDER_GOOGLE}
+                                    // provider={process.env.NODE_ENV === 'production' ? PROVIDER_GOOGLE : null}
                                     customMapStyle={MAP_STYLE}
                                     panEnabled={false}
                                     scrollEnabled={false}
