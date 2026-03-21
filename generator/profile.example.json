@@ -1,0 +1,27 @@
+{
+  "location": {
+    "label": "Annecy Basin, France",
+    "centerLatitude": 45.8992,
+    "centerLongitude": 6.1294,
+    "radiusKm": 55
+  },
+  "targetCount": 20000,
+  "batchSize": 24,
+  "quotaOverrides": {
+    "distanceBuckets": {
+      "big_day": 0.3,
+      "epic_push": 0.12
+    },
+    "difficulties": {
+      "hard": 0.28
+    },
+    "experienceThemes": {
+      "panoramic": 0.24,
+      "solitude": 0.12
+    }
+  },
+  "promptOverrides": {
+    "brandVoice": "Prioritize premium, editorial-quality descriptions that feel useful to hikers and tourism editors.",
+    "extraSafetyRules": "Do not generate exposed scrambling or glacier travel unless the slot difficulty is hard."
+  }
+}

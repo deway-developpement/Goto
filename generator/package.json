@@ -1,0 +1,13 @@
+{
+  "name": "@goto/generator",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "plan": "node src/cli.mjs plan",
+    "prompt": "node src/cli.mjs prompt",
+    "judge": "node src/cli.mjs judge",
+    "ollama:generate": "node src/cli.mjs ollama-generate",
+    "ollama:judge": "node src/cli.mjs ollama-judge",
+    "test": "node --test"
+  }
+}
