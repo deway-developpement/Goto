@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { default as config } from '../config.json';
+import config from '../config';
 
 async function refreshAuth(authContext) {
     if (!authContext.authState.refreshToken) {

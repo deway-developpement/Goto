@@ -9,7 +9,6 @@ import { MapState } from '../Map/enum';
 import { connect } from 'react-redux';
 import { Icon } from '../Icon/Icon';
 import { Pressable } from 'react-native';
-import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 
 function CameraScreen({ dispatch }) {
     const navigation = useNavigation();
@@ -18,8 +17,6 @@ function CameraScreen({ dispatch }) {
 
     // safe area insets
     const insets = useSafeAreaInsets();
-    const tabBarHeight = useBottomTabBarHeight();
-
     const [permission, requestPermission] = Camera.useCameraPermissions();
 
     const cameraRef = useRef();
@@ -104,7 +101,7 @@ function CameraScreen({ dispatch }) {
                     {
                         backgroundColor: '',
                         position: 'absolute',
-                        bottom: 30 + tabBarHeight,
+                        bottom: 30,
                         alignSelf: 'center',
                     },
                 ]}

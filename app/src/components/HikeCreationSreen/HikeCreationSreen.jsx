@@ -9,16 +9,17 @@ import {
     StyleSheet,
     FlatList,
 } from 'react-native';
-import { Button } from 'react-native-elements';
+import { Button } from '@rneui/themed';
 import stylesheet from './style';
 import { useTheme } from '@react-navigation/native';
-import { gql, useApolloClient, useQuery } from '@apollo/client';
+import { gql } from '@apollo/client';
+import { useApolloClient, useQuery } from '@apollo/client/react';
 import { IconComp } from '../Icon/Icon';
 import * as DocumentPicker from 'expo-document-picker';
 import { BlurView } from 'expo-blur';
-import { ReactNativeFile } from 'apollo-upload-client';
+import { createReactNativeFile } from '../../services/upload.service';
 import { readAsStringAsync } from 'expo-file-system';
-import { DOMParser } from 'xmldom';
+import { DOMParser } from '@xmldom/xmldom';
 import * as ImagePicker from 'expo-image-picker';
 
 export default function HikeCreationScreen({ navigation }) {
@@ -111,7 +112,7 @@ export default function HikeCreationScreen({ navigation }) {
             file !== null &&
             file.name.slice(-4) === '.gpx'
         ) {
-            const reactFile = new ReactNativeFile({
+            const reactFile = createReactNativeFile({
                 uri: file.uri,
                 type: 'application/gpx+xml',
                 name: 'file.gpx',
@@ -170,7 +171,7 @@ export default function HikeCreationScreen({ navigation }) {
             const hikeId = res.data?.createHike.id;
             if (hikeId) {
                 if (image !== null && !image.canceled) {
-                    const reactImage = new ReactNativeFile({
+                    const reactImage = createReactNativeFile({
                         uri: image.assets[0].uri,
                         type: 'image/jpeg',
                         name: 'file.jpg',

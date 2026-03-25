@@ -1,16 +1,13 @@
-import { CRUDResolver } from '@nestjs-query/query-graphql';
+import { CRUDResolver } from '@ptc-org/nestjs-query-graphql';
 import { Inject, UnauthorizedException, UseGuards } from '@nestjs/common';
-import { Mutation, Resolver, Args, Query, ResolveField, Parent } from '@nestjs/graphql';
+import { Mutation, Resolver, Args, Query, ResolveField, Parent, Int } from '@nestjs/graphql';
 import { HikeService } from './hike.service';
 import { CurrentUser, GqlAuthGuard } from '../auth/guards/graphql-auth.guard';
 import { HikeDTO } from './interfaces/hike.dto';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import * as _ from '@nestjs-query/query-graphql/node_modules/@nestjs-query/core';
 import { HikeInput } from './interfaces/hike.input';
 import { UserDTO } from '../user/interfaces/user.dto';
 import { AuthType } from '../auth/interface/auth.type';
 import { HikeConnectionDTO } from '../CustomScalar/hikeConnection/interface/hikeconnection.dto';
-import { Int } from 'type-graphql';
 import { Difficulty } from './interfaces/difficulty.dto';
 
 const guards = [GqlAuthGuard];
@@ -24,7 +21,10 @@ export class HikeResolver extends CRUDResolver(HikeDTO, {
     enableTotalCount: true,
     enableAggregate: true,
 }) {
-    constructor(@Inject(HikeService) readonly service: HikeService) {
+    constructor(
+        @Inject(HikeService)
+        readonly service: HikeService & import('@ptc-org/nestjs-query-core').QueryService<HikeDTO>
+    ) {
         super(service);
     }
 

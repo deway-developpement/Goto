@@ -3,7 +3,7 @@ import {
     IDField,
     PagingStrategies,
     QueryOptions,
-} from '@nestjs-query/query-graphql';
+} from '@ptc-org/nestjs-query-graphql';
 import { ObjectType, ID, HideField } from '@nestjs/graphql';
 import { UserDTO } from '../../user/interfaces/user.dto';
 import { HikeEntity } from '../../hike/interfaces/hike.entity';

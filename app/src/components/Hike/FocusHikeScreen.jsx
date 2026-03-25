@@ -3,7 +3,8 @@ import { Text, Image, View, TouchableWithoutFeedback, StyleSheet, Dimensions } f
 import { useIsFocused, useTheme } from '@react-navigation/native';
 import stylesheet from './style';
 import { useNavigation } from '@react-navigation/native';
-import { gql, useQuery } from '@apollo/client';
+import { gql } from '@apollo/client';
+import { useQuery } from '@apollo/client/react';
 import { IconComp } from '../Icon/Icon';
 import HikeInfos from './HikeInfos';
 import PointsOfInterests from './PointOfInterest';
@@ -12,6 +13,7 @@ import { ScrollView } from 'react-native';
 import { LocationContext } from '../../providers/LocationProvider';
 import { AxiosContext } from '../../providers/AxiosContext';
 import { FILES_URL } from '../../providers/AxiosContext';
+import HikeMediaPreview from './HikeMediaPreview';
 
 function Tag(props) {
     const { colors } = useTheme();
@@ -64,7 +66,7 @@ const GET_HIKE = gql`
                     filename
                 }
             }
-            pointsOfInterests {
+            pointsOfInterests: pointsOfInterest {
                 id
                 name
                 description
@@ -89,10 +91,6 @@ export default function FocusHikeScreen({ route }) {
     const windowWidth = Dimensions.get('window').width;
     const windowHeight = Dimensions.get('window').height;
 
-    if (!hikeId) {
-        navigation.goBack();
-    }
-
     useEffect(() => {
         setMemoizedLocation(location);
     }, [isFocused]);
@@ -103,12 +101,19 @@ export default function FocusHikeScreen({ route }) {
         }
     }, [location]);
 
+    useEffect(() => {
+        if (!hikeId) {
+            navigation.goBack();
+        }
+    }, [hikeId, navigation]);
+
     const { data, loading } = useQuery(GET_HIKE, {
         variables: {
-            id: hikeId,
-            lat: memoizedLocation?.coords.latitude,
-            lon: memoizedLocation?.coords.longitude,
+            id: hikeId ?? '',
+            lat: memoizedLocation?.coords?.latitude ?? location?.coords?.latitude ?? 0,
+            lon: memoizedLocation?.coords?.longitude ?? location?.coords?.longitude ?? 0,
         },
+        skip: !hikeId,
     });
 
     const difficulties = ['EASY', 'MEDIUM', 'HARD'];
@@ -122,7 +127,7 @@ export default function FocusHikeScreen({ route }) {
         navigation.navigate('Directions', { fileData, hikeId: data.hike.id });
     }
 
-    if (loading) {
+    if (loading || !data?.hike) {
         return <SplashScreen />;
     } else {
         return (
@@ -142,14 +147,9 @@ export default function FocusHikeScreen({ route }) {
                         <IconComp color={colors.background} name={'back'} pos={0} />
                     </View>
                 </TouchableWithoutFeedback>
-                <Image
-                    source={
-                        data.hike.photos && data.hike.photos.length > 0
-                            ? {
-                                uri: `${FILES_URL}/photos/${data.hike.photos[0].filename}`,
-                            }
-                            : require('../../../assets/images/Dalle_background.png')
-                    }
+                <HikeMediaPreview
+                    photoFilename={data.hike.photos[0]?.filename}
+                    trackFilename={data.hike.track}
                     style={[
                         StyleSheet.absoluteFill,
                         {
@@ -377,7 +377,7 @@ export default function FocusHikeScreen({ route }) {
                                         marginTop: 15,
                                     }}
                                 />
-                                {permission.granted && (
+                                {permission?.granted && (
                                     <>
                                         <Text
                                             style={[

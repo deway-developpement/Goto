@@ -11,11 +11,12 @@ import {
     ScrollView,
     StyleSheet,
 } from 'react-native';
-import { Button } from 'react-native-elements';
+import { Button } from '@rneui/themed';
 import { AuthContext } from '../../providers/AuthContext';
 import { AxiosContext } from '../../providers/AxiosContext';
 import { useTheme } from '@react-navigation/native';
-import { useApolloClient, gql } from '@apollo/client';
+import { gql } from '@apollo/client';
+import { useApolloClient } from '@apollo/client/react';
 import KeyboardDismissView from '../KeyboardDismissView/KeyboardDismissView';
 import { BlurView } from 'expo-blur';
 

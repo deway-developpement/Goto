@@ -6,7 +6,8 @@ import stylesheet from './style';
 import { Icon } from '../Icon/Icon';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Pressable } from 'react-native';
-import { gql, useQuery } from '@apollo/client';
+import { gql } from '@apollo/client';
+import { useQuery } from '@apollo/client/react';
 import Hike from '../Hike/Hike';
 import { FlatList } from 'react-native';
 

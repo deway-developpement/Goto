@@ -37,7 +37,6 @@ const AuthProvider = ({ children }) => {
     useEffect(() => {
         getAuth().then((auth) => {
             if (auth) {
-                console.log('auth', auth);
                 setAuthState({
                     ...authState,
                     accessToken: auth.accessToken,

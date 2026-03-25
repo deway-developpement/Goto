@@ -11,11 +11,6 @@ export default ({ config }) => ({
     orientation: 'portrait',
     icon: './assets/icon.png',
     userInterfaceStyle: 'automatic',
-    splash: {
-        image: './assets/splash.png',
-        resizeMode: 'contain',
-        backgroundColor: '#ffffff',
-    },
     updates: {
         fallbackToCacheTimeout: 0,
     },
@@ -51,5 +46,15 @@ export default ({ config }) => ({
     },
     plugins: [
         'expo-secure-store',
+        [
+            'expo-splash-screen',
+            {
+                image: './assets/splash.png',
+                resizeMode: 'contain',
+                backgroundColor: '#ffffff',
+            },
+        ],
+        'expo-font',
+        'expo-status-bar',
     ]
 });

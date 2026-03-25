@@ -4,7 +4,7 @@ import {
     PagingStrategies,
     QueryOptions,
     Relation,
-} from '@nestjs-query/query-graphql';
+} from '@ptc-org/nestjs-query-graphql';
 import { ObjectType, ID } from '@nestjs/graphql';
 import { HikeDTO } from '../../hike/interfaces/hike.dto';
 import { PhotoDTO } from '../../photo/interfaces/photo.dto';
@@ -13,13 +13,9 @@ import { PhotoDTO } from '../../photo/interfaces/photo.dto';
 @QueryOptions({ pagingStrategy: PagingStrategies.NONE })
 @Relation('hikes', () => HikeDTO, {
     nullable: true,
-    disableRemove: true,
-    disableUpdate: true,
 })
 @Relation('defaultPhoto', () => PhotoDTO, {
     nullable: true,
-    disableRemove: true,
-    disableUpdate: true,
 })
 export class CategoryDTO {
     @IDField(() => ID)

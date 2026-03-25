@@ -3,7 +3,8 @@ import { Text, TouchableWithoutFeedback, FlatList, ScrollView, Modal } from 'rea
 import { useIsFocused, useTheme } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import stylesheet from './style';
-import { gql, useQuery } from '@apollo/client';
+import { gql } from '@apollo/client';
+import { useQuery } from '@apollo/client/react';
 import Hike from '../Hike/Hike';
 import { View } from 'react-native';
 import { TextInput } from 'react-native';

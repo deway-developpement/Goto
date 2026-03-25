@@ -1,29 +1,21 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Text, Image, View, ScrollView, Dimensions, TouchableWithoutFeedback } from 'react-native';
+import { Text, View, ScrollView, Dimensions, TouchableWithoutFeedback } from 'react-native';
 import stylesheet from './style';
 import { useIsFocused, useTheme } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { gql, useQuery } from '@apollo/client';
+import { gql } from '@apollo/client';
+import { useQuery } from '@apollo/client/react';
 import { IconComp } from '../Icon/Icon';
 import Category from '../Category/Category';
 import { FlatList } from 'react-native';
 import HikeCreationScreen from '../HikeCreationSreen/HikeCreationSreen';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { LocationContext } from '../../providers/LocationProvider';
-import { FILES_URL } from '../../providers/AxiosContext';
+import HikeMediaPreview from '../Hike/HikeMediaPreview';
 
 const stack = createNativeStackNavigator();
 
-export default function DiscoverWrapper({ navigation }) {
-    const isFocused = useIsFocused();
-
-    useEffect(() => {
-        if (isFocused) {
-            // go to DiscoverScreen when we come back to the screen from outside
-            navigation.navigate('DiscoverScreen');
-        }
-    }, [isFocused]);
-
+export default function DiscoverWrapper() {
     return (
         <stack.Navigator
             screenOptions={{
@@ -142,6 +134,7 @@ function DiscoverHeader({ windowHeight, navigation, memoizedLocation }) {
                         photos {
                             filename
                         }
+                        track
                     }
                 }
             }
@@ -185,7 +178,7 @@ function DiscoverHeader({ windowHeight, navigation, memoizedLocation }) {
                 horizontal={true}
                 showsHorizontalScrollIndicator={false}
             >
-                {permission.granted && (
+                {permission?.granted && (
                     <Category
                         styles={styles}
                         horizontal={true}
@@ -217,14 +210,11 @@ function DiscoverHeader({ windowHeight, navigation, memoizedLocation }) {
                 }}
             >
                 <View>
-                    <Image
-                        source={
+                    <HikeMediaPreview
+                        photoFilename={
                             popularImage?.getHikePopular?.edges[0]?.node.photos[0]?.filename
-                                ? {
-                                    uri: `${FILES_URL}/photos/${popularImage?.getHikePopular?.edges[0]?.node?.photos[0]?.filename}`,
-                                }
-                                : require('../../../assets/images/Dalle_background.png')
                         }
+                        trackFilename={popularImage?.getHikePopular?.edges[0]?.node.track}
                         style={[
                             {
                                 width: '100%',

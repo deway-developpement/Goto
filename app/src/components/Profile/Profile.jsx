@@ -4,17 +4,18 @@ import {
     Text,
     ActivityIndicator,
     Image,
-    SafeAreaView,
     KeyboardAvoidingView,
     Modal,
     Pressable,
     ScrollView,
 } from 'react-native';
-import { Button } from 'react-native-elements';
-import { gql, useQuery } from '@apollo/client';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Button } from '@rneui/themed';
+import { gql } from '@apollo/client';
+import { useQuery } from '@apollo/client/react';
 import KeyboardDismissView from '../KeyboardDismissView/KeyboardDismissView';
 import stylesheet from './style';
-import { CommonActions, useIsFocused, useTheme } from '@react-navigation/native';
+import { useIsFocused, useTheme } from '@react-navigation/native';
 import { Icon } from '../Icon/Icon';
 import { ProfileModal, SettingsModal, PseudoModal } from './Modals';
 import { Stats, Historic, Friends } from './ProfileComplements.jsx';
@@ -26,20 +27,7 @@ import { FILES_URL } from '../../providers/AxiosContext';
 
 const stack = createNativeStackNavigator();
 
-export default function ProfileWrapper({ navigation }) {
-    useEffect(() => {
-        const unsubscribe = navigation.addListener('blur', () => {
-            navigation.dispatch(
-                CommonActions.reset({
-                    index: 0,
-                    routes: [{ name: 'ProfileScreen' }],
-                })
-            );
-        });
-
-        return unsubscribe;
-    }, [navigation]);
-
+export default function ProfileWrapper() {
     return (
         <stack.Navigator
             screenOptions={{
@@ -93,10 +81,12 @@ function ProfileScreen() {
                 }
                 performances(sorting: { field: date, direction: DESC }) {
                     id
+                    track
                     hike {
                         id
                         name
                         description
+                        track
                         category {
                             id
                             name

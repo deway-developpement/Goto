@@ -9,13 +9,15 @@ import {
     Image,
     FlatList,
 } from 'react-native';
-import { gql, useQuery } from '@apollo/client';
+import { gql } from '@apollo/client';
+import { useQuery } from '@apollo/client/react';
 import stylesheet from './style';
 import { useTheme } from '@react-navigation/native';
 import { useNavigation } from '@react-navigation/native';
 import HikeInfos from '../Hike/HikeInfos';
 import { Icon } from '../Icon/Icon';
 import { FILES_URL } from '../../providers/AxiosContext';
+import HikeMediaPreview from '../Hike/HikeMediaPreview';
 
 function Stats({ count, distance, duration, elevation }) {
     const { colors } = useTheme();
@@ -77,10 +79,9 @@ function HikeCard({ performance, MyID, FriendPseudo }) {
     return (
         <TouchableWithoutFeedback onPress={() => handleClickHike(performance.id)}>
             <View style={{ marginRight: 25 }}>
-                <Image
-                    source={{
-                        uri: `${FILES_URL}/photos/${hike.photos[0].filename}`,
-                    }}
+                <HikeMediaPreview
+                    photoFilename={hike.photos[0]?.filename}
+                    trackFilename={performance.track ?? hike.track}
                     style={{
                         height: 150,
                         width: 190,

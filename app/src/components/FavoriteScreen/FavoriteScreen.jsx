@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import {
-    SafeAreaView,
     Text,
     View,
     TouchableWithoutFeedback,
@@ -8,14 +7,16 @@ import {
     TextInput,
     FlatList,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import { CommonActions, useTheme } from '@react-navigation/native';
+import { useTheme } from '@react-navigation/native';
 import stylesheet from './style';
-import { gql, useQuery, useApolloClient } from '@apollo/client';
+import { gql } from '@apollo/client';
+import { useApolloClient, useQuery } from '@apollo/client/react';
 import Hike from '../Hike/Hike';
 import { useIsFocused } from '@react-navigation/native';
 import { IconComp, Icon } from '../Icon/Icon';
-import { Button } from 'react-native-elements';
+import { Button } from '@rneui/themed';
 import Table from './Table';
 import { BlurView } from 'expo-blur';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -157,6 +158,7 @@ function TablesScreen() {
                     hikes {
                         id
                         name
+                        track
                         photos {
                             filename
                         }
@@ -327,20 +329,7 @@ function FavoritesScreen() {
     );
 }
 
-export default function FavoritesWrapper({ navigation }) {
-    useEffect(() => {
-        const unsubscribe = navigation.addListener('blur', () => {
-            navigation.dispatch(
-                CommonActions.reset({
-                    index: 0,
-                    routes: [{ name: 'FavoritesScreen' }],
-                })
-            );
-        });
-
-        return unsubscribe;
-    }, [navigation]);
-
+export default function FavoritesWrapper() {
     return (
         <Stack.Navigator
             screenOptions={{

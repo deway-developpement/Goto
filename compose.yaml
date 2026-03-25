@@ -1,0 +1,18 @@
+services:
+  database:
+    image: mysql:8.0
+    environment:
+      MYSQL_DATABASE: Goto
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - '3306:3306'
+    volumes:
+      - goto-mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ['CMD', 'mysqladmin', 'ping', '-h', '127.0.0.1', '-proot']
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+volumes:
+  goto-mysql-data:

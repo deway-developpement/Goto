@@ -10,10 +10,10 @@ type Tag {
   createdAt: DateTime!
   hikes(
     """Specify to filter the records returned."""
-    filter: HikeFilter = {}
+    filter: HikeFilter! = {}
 
     """Specify to sort results."""
-    sorting: [HikeSort!] = []
+    sorting: [HikeSort!]! = []
   ): [Hike!]
 }
 
@@ -313,45 +313,45 @@ type Hike {
   category: Category
   tags(
     """Specify to filter the records returned."""
-    filter: TagFilter = {}
+    filter: TagFilter! = {}
 
     """Specify to sort results."""
-    sorting: [TagSort!] = []
+    sorting: [TagSort!]! = []
   ): [Tag!]
   photos(
     """Specify to filter the records returned."""
-    filter: PhotoFilter = {}
+    filter: PhotoFilter! = {}
 
     """Specify to sort results."""
-    sorting: [PhotoSort!] = []
+    sorting: [PhotoSort!]! = []
   ): [Photo!]
-  pointsOfInterests(
+  pointsOfInterest(
     """Specify to filter the records returned."""
-    filter: PointOfInterestFilter = {}
+    filter: PointOfInterestFilter! = {}
 
     """Specify to sort results."""
-    sorting: [PointOfInterestSort!] = []
+    sorting: [PointOfInterestSort!]! = []
   ): [PointOfInterest!]
   reviews(
     """Specify to filter the records returned."""
-    filter: ReviewFilter = {}
+    filter: ReviewFilter! = {}
 
     """Specify to sort results."""
-    sorting: [ReviewSort!] = []
+    sorting: [ReviewSort!]! = []
   ): [Review!]
   alerts(
     """Specify to filter the records returned."""
-    filter: AlertFilter = {}
+    filter: AlertFilter! = {}
 
     """Specify to sort results."""
-    sorting: [AlertSort!] = []
+    sorting: [AlertSort!]! = []
   ): [Alert!]
   performances(
     """Specify to filter the records returned."""
-    filter: PerformanceFilter = {}
+    filter: PerformanceFilter! = {}
 
     """Specify to sort results."""
-    sorting: [PerformanceSort!] = []
+    sorting: [PerformanceSort!]! = []
   ): [Performance!]
   distanceFrom(lat: Float!, lon: Float!): Float!
   isLiked: Boolean!
@@ -363,6 +363,40 @@ input ReviewAggregateFilter {
   id: IDFilterComparison
   rating: NumberFieldComparison
   createdAt: DateFieldComparison
+  hike: ReviewAggregateFilterHikeAggregateFilter
+  user: ReviewAggregateFilterUserAggregateFilter
+}
+
+input ReviewAggregateFilterHikeAggregateFilter {
+  and: [ReviewAggregateFilterHikeAggregateFilter!]
+  or: [ReviewAggregateFilterHikeAggregateFilter!]
+  id: IDFilterComparison
+  name: StringFieldComparison
+  distance: NumberFieldComparison
+  elevation: NumberFieldComparison
+  difficulty: DifficultyFilterComparison
+  duration: NumberFieldComparison
+  latitude: NumberFieldComparison
+  longitude: NumberFieldComparison
+  createdAt: DateFieldComparison
+}
+
+input ReviewAggregateFilterUserAggregateFilter {
+  and: [ReviewAggregateFilterUserAggregateFilter!]
+  or: [ReviewAggregateFilterUserAggregateFilter!]
+  id: IDFilterComparison
+  pseudo: StringFieldComparison
+  email: StringFieldComparison
+  password: StringFieldComparison
+  publicKey: StringFieldComparison
+  credidential: NumberFieldComparison
+  public: BooleanFieldComparison
+  createdAt: DateFieldComparison
+}
+
+input BooleanFieldComparison {
+  is: Boolean
+  isNot: Boolean
 }
 
 input AlertAggregateFilter {
@@ -372,6 +406,35 @@ input AlertAggregateFilter {
   latitude: NumberFieldComparison
   longitude: NumberFieldComparison
   type: AlertTypeFilterComparison
+  createdAt: DateFieldComparison
+  author: AlertAggregateFilterUserAggregateFilter
+  hike: AlertAggregateFilterHikeAggregateFilter
+}
+
+input AlertAggregateFilterUserAggregateFilter {
+  and: [AlertAggregateFilterUserAggregateFilter!]
+  or: [AlertAggregateFilterUserAggregateFilter!]
+  id: IDFilterComparison
+  pseudo: StringFieldComparison
+  email: StringFieldComparison
+  password: StringFieldComparison
+  publicKey: StringFieldComparison
+  credidential: NumberFieldComparison
+  public: BooleanFieldComparison
+  createdAt: DateFieldComparison
+}
+
+input AlertAggregateFilterHikeAggregateFilter {
+  and: [AlertAggregateFilterHikeAggregateFilter!]
+  or: [AlertAggregateFilterHikeAggregateFilter!]
+  id: IDFilterComparison
+  name: StringFieldComparison
+  distance: NumberFieldComparison
+  elevation: NumberFieldComparison
+  difficulty: DifficultyFilterComparison
+  duration: NumberFieldComparison
+  latitude: NumberFieldComparison
+  longitude: NumberFieldComparison
   createdAt: DateFieldComparison
 }
 
@@ -489,11 +552,6 @@ input ReviewFilterUserFilter {
   credidential: NumberFieldComparison
   public: BooleanFieldComparison
   createdAt: DateFieldComparison
-}
-
-input BooleanFieldComparison {
-  is: Boolean
-  isNot: Boolean
 }
 
 input ReviewSort {
@@ -627,10 +685,10 @@ type PointOfInterest {
   photo: Photo
   hikes(
     """Specify to filter the records returned."""
-    filter: HikeFilter = {}
+    filter: HikeFilter! = {}
 
     """Specify to sort results."""
-    sorting: [HikeSort!] = []
+    sorting: [HikeSort!]! = []
   ): [Hike!]!
 }
 
@@ -647,10 +705,10 @@ type Table {
   owner: User
   hikes(
     """Specify to filter the records returned."""
-    filter: HikeFilter = {}
+    filter: HikeFilter! = {}
 
     """Specify to sort results."""
-    sorting: [HikeSort!] = []
+    sorting: [HikeSort!]! = []
   ): [Hike!]
 }
 
@@ -686,41 +744,41 @@ type User {
   avatar: Photo
   friends(
     """Specify to filter the records returned."""
-    filter: UserFilter = {}
+    filter: UserFilter! = {}
 
     """Specify to sort results."""
-    sorting: [UserSort!] = []
+    sorting: [UserSort!]! = []
   ): [User!]!
   performances(
     """Specify to filter the records returned."""
-    filter: PerformanceFilter = {}
+    filter: PerformanceFilter! = {}
 
     """Specify to sort results."""
-    sorting: [PerformanceSort!] = []
+    sorting: [PerformanceSort!]! = []
   ): [Performance!]!
   reviews(
     """Specify to filter the records returned."""
-    filter: ReviewFilter = {}
+    filter: ReviewFilter! = {}
 
     """Specify to sort results."""
-    sorting: [ReviewSort!] = []
+    sorting: [ReviewSort!]! = []
   ): [Review!]!
   likes(
     """Limit or page results."""
-    paging: CursorPaging = {first: 10}
+    paging: CursorPaging! = {first: 10}
 
     """Specify to filter the records returned."""
-    filter: HikeFilter = {}
+    filter: HikeFilter! = {}
 
     """Specify to sort results."""
-    sorting: [HikeSort!] = []
+    sorting: [HikeSort!]! = []
   ): UserLikesConnection!
   tables(
     """Specify to filter the records returned."""
-    filter: TableFilter = {}
+    filter: TableFilter! = {}
 
     """Specify to sort results."""
-    sorting: [TableSort!] = []
+    sorting: [TableSort!]! = []
   ): [Table!]!
   isFriend: Boolean!
 }
@@ -747,6 +805,35 @@ input PerformanceAggregateFilter {
   elevation: NumberFieldComparison
   duration: NumberFieldComparison
   createdAt: DateFieldComparison
+  hike: PerformanceAggregateFilterHikeAggregateFilter
+  user: PerformanceAggregateFilterUserAggregateFilter
+}
+
+input PerformanceAggregateFilterHikeAggregateFilter {
+  and: [PerformanceAggregateFilterHikeAggregateFilter!]
+  or: [PerformanceAggregateFilterHikeAggregateFilter!]
+  id: IDFilterComparison
+  name: StringFieldComparison
+  distance: NumberFieldComparison
+  elevation: NumberFieldComparison
+  difficulty: DifficultyFilterComparison
+  duration: NumberFieldComparison
+  latitude: NumberFieldComparison
+  longitude: NumberFieldComparison
+  createdAt: DateFieldComparison
+}
+
+input PerformanceAggregateFilterUserAggregateFilter {
+  and: [PerformanceAggregateFilterUserAggregateFilter!]
+  or: [PerformanceAggregateFilterUserAggregateFilter!]
+  id: IDFilterComparison
+  pseudo: StringFieldComparison
+  email: StringFieldComparison
+  password: StringFieldComparison
+  publicKey: StringFieldComparison
+  credidential: NumberFieldComparison
+  public: BooleanFieldComparison
+  createdAt: DateFieldComparison
 }
 
 input HikeAggregateFilter {
@@ -760,6 +847,67 @@ input HikeAggregateFilter {
   duration: NumberFieldComparison
   latitude: NumberFieldComparison
   longitude: NumberFieldComparison
+  createdAt: DateFieldComparison
+  category: HikeAggregateFilterCategoryAggregateFilter
+  performances: HikeAggregateFilterPerformanceAggregateFilter
+  alerts: HikeAggregateFilterAlertAggregateFilter
+  reviews: HikeAggregateFilterReviewAggregateFilter
+  pointsOfInterest: HikeAggregateFilterPointOfInterestAggregateFilter
+  tags: HikeAggregateFilterTagAggregateFilter
+}
+
+input HikeAggregateFilterCategoryAggregateFilter {
+  and: [HikeAggregateFilterCategoryAggregateFilter!]
+  or: [HikeAggregateFilterCategoryAggregateFilter!]
+  id: IDFilterComparison
+  name: StringFieldComparison
+  createdAt: DateFieldComparison
+}
+
+input HikeAggregateFilterPerformanceAggregateFilter {
+  and: [HikeAggregateFilterPerformanceAggregateFilter!]
+  or: [HikeAggregateFilterPerformanceAggregateFilter!]
+  id: IDFilterComparison
+  date: DateFieldComparison
+  distance: NumberFieldComparison
+  elevation: NumberFieldComparison
+  duration: NumberFieldComparison
+  createdAt: DateFieldComparison
+}
+
+input HikeAggregateFilterAlertAggregateFilter {
+  and: [HikeAggregateFilterAlertAggregateFilter!]
+  or: [HikeAggregateFilterAlertAggregateFilter!]
+  id: IDFilterComparison
+  latitude: NumberFieldComparison
+  longitude: NumberFieldComparison
+  type: AlertTypeFilterComparison
+  createdAt: DateFieldComparison
+}
+
+input HikeAggregateFilterReviewAggregateFilter {
+  and: [HikeAggregateFilterReviewAggregateFilter!]
+  or: [HikeAggregateFilterReviewAggregateFilter!]
+  id: IDFilterComparison
+  rating: NumberFieldComparison
+  createdAt: DateFieldComparison
+}
+
+input HikeAggregateFilterPointOfInterestAggregateFilter {
+  and: [HikeAggregateFilterPointOfInterestAggregateFilter!]
+  or: [HikeAggregateFilterPointOfInterestAggregateFilter!]
+  id: IDFilterComparison
+  name: StringFieldComparison
+  latitude: NumberFieldComparison
+  longitude: NumberFieldComparison
+  createdAt: DateFieldComparison
+}
+
+input HikeAggregateFilterTagAggregateFilter {
+  and: [HikeAggregateFilterTagAggregateFilter!]
+  or: [HikeAggregateFilterTagAggregateFilter!]
+  id: IDFilterComparison
+  name: StringFieldComparison
   createdAt: DateFieldComparison
 }
 
@@ -879,7 +1027,15 @@ type UserAggregateGroupBy {
   publicKey: String
   credidential: Float
   public: Boolean
-  createdAt: DateTime
+  createdAt(by: GroupBy! = DAY): DateTime
+}
+
+"""Group by"""
+enum GroupBy {
+  DAY
+  WEEK
+  MONTH
+  YEAR
 }
 
 type UserCountAggregate {
@@ -1248,7 +1404,7 @@ type HikeAggregateGroupBy {
   duration: Float
   latitude: Float
   longitude: Float
-  createdAt: DateTime
+  createdAt(by: GroupBy! = DAY): DateTime
 }
 
 type HikeCountAggregate {
@@ -1406,103 +1562,13 @@ type HikeReviewsAggregateResponse {
   max: HikeReviewsMaxAggregate
 }
 
-type TagAggregateGroupBy {
-  id: ID
-  name: String
-  createdAt: DateTime
-}
-
-type TagCountAggregate {
-  id: Int
-  name: Int
-  createdAt: Int
-}
-
-type TagMinAggregate {
-  id: ID
-  name: String
-  createdAt: DateTime
-}
-
-type TagMaxAggregate {
-  id: ID
-  name: String
-  createdAt: DateTime
-}
-
-type CategoryAggregateGroupBy {
-  id: ID
-  name: String
-  createdAt: DateTime
-}
-
-type CategoryCountAggregate {
-  id: Int
-  name: Int
-  createdAt: Int
-}
-
-type CategoryMinAggregate {
-  id: ID
-  name: String
-  createdAt: DateTime
-}
-
-type CategoryMaxAggregate {
-  id: ID
-  name: String
-  createdAt: DateTime
-}
-
-type PointOfInterestAggregateGroupBy {
-  id: ID
-  name: String
-  latitude: Float
-  longitude: Float
-  createdAt: DateTime
-}
-
-type PointOfInterestCountAggregate {
-  id: Int
-  name: Int
-  latitude: Int
-  longitude: Int
-  createdAt: Int
-}
-
-type PointOfInterestSumAggregate {
-  latitude: Float
-  longitude: Float
-}
-
-type PointOfInterestAvgAggregate {
-  latitude: Float
-  longitude: Float
-}
-
-type PointOfInterestMinAggregate {
-  id: ID
-  name: String
-  latitude: Float
-  longitude: Float
-  createdAt: DateTime
-}
-
-type PointOfInterestMaxAggregate {
-  id: ID
-  name: String
-  latitude: Float
-  longitude: Float
-  createdAt: DateTime
-}
-
 type PerformanceAggregateGroupBy {
   id: ID
-  date: DateTime
+  date(by: GroupBy! = DAY): DateTime
   distance: Float
   elevation: Float
   duration: Float
-  createdAt: DateTime
+  createdAt(by: GroupBy! = DAY): DateTime
 }
 
 type PerformanceCountAggregate {
@@ -1556,7 +1622,7 @@ type PerformanceAggregateResponse {
 type ReviewAggregateGroupBy {
   id: ID
   rating: Float
-  createdAt: DateTime
+  createdAt(by: GroupBy! = DAY): DateTime
 }
 
 type ReviewCountAggregate {
@@ -1594,74 +1660,6 @@ type ReviewAggregateResponse {
   max: ReviewMaxAggregate
 }
 
-type AlertAggregateGroupBy {
-  id: ID
-  latitude: Float
-  longitude: Float
-  type: AlertType
-  createdAt: DateTime
-}
-
-type AlertCountAggregate {
-  id: Int
-  latitude: Int
-  longitude: Int
-  type: Int
-  createdAt: Int
-}
-
-type AlertSumAggregate {
-  latitude: Float
-  longitude: Float
-  type: Float
-}
-
-type AlertAvgAggregate {
-  latitude: Float
-  longitude: Float
-  type: Float
-}
-
-type AlertMinAggregate {
-  id: ID
-  latitude: Float
-  longitude: Float
-  type: AlertType
-  createdAt: DateTime
-}
-
-type AlertMaxAggregate {
-  id: ID
-  latitude: Float
-  longitude: Float
-  type: AlertType
-  createdAt: DateTime
-}
-
-type TableAggregateGroupBy {
-  id: ID
-  name: String
-  createdAt: DateTime
-}
-
-type TableCountAggregate {
-  id: Int
-  name: Int
-  createdAt: Int
-}
-
-type TableMinAggregate {
-  id: ID
-  name: String
-  createdAt: DateTime
-}
-
-type TableMaxAggregate {
-  id: ID
-  name: String
-  createdAt: DateTime
-}
-
 type Query {
   userAggregate(
     """Filter to find records to aggregate on"""
@@ -1670,16 +1668,16 @@ type Query {
   user(
     """The id of the record to find."""
     id: ID!
-  ): User
+  ): User!
   users(
     """Limit or page results."""
-    paging: CursorPaging = {first: 10}
+    paging: CursorPaging! = {first: 10}
 
     """Specify to filter the records returned."""
-    filter: UserFilter = {}
+    filter: UserFilter! = {}
 
     """Specify to sort results."""
-    sorting: [UserSort!] = []
+    sorting: [UserSort!]! = []
   ): UserConnection!
   exist(email: String!): Boolean!
   whoami: User!
@@ -1690,62 +1688,62 @@ type Query {
   hike(
     """The id of the record to find."""
     id: ID!
-  ): Hike
+  ): Hike!
   hikes(
     """Limit or page results."""
-    paging: CursorPaging = {first: 10}
+    paging: CursorPaging! = {first: 10}
 
     """Specify to filter the records returned."""
-    filter: HikeFilter = {}
+    filter: HikeFilter! = {}
 
     """Specify to sort results."""
-    sorting: [HikeSort!] = []
+    sorting: [HikeSort!]! = []
   ): HikeConnection!
   getHikeAround(
     lat: Float!
     lon: Float!
 
     """Distance in kilometers"""
-    distance: Float = 50
+    distance: Float! = 50
     search: String
     difficulty: String
     limit: Int!
-    cursor: String = ""
+    cursor: String! = ""
   ): CustomHikeConnection!
-  getHikePopular(search: String, difficulty: String, limit: Int!, cursor: String = ""): CustomHikeConnection!
-  getHikeAlreadyDone(search: String, difficulty: String, limit: Int!, cursor: String = ""): CustomHikeConnection!
+  getHikePopular(search: String, difficulty: String, limit: Int!, cursor: String! = ""): CustomHikeConnection!
+  getHikeAlreadyDone(search: String, difficulty: String, limit: Int!, cursor: String! = ""): CustomHikeConnection!
   tag(
     """The id of the record to find."""
     id: ID!
-  ): Tag
+  ): Tag!
   tags(
     """Specify to filter the records returned."""
-    filter: TagFilter = {}
+    filter: TagFilter! = {}
 
     """Specify to sort results."""
-    sorting: [TagSort!] = []
+    sorting: [TagSort!]! = []
   ): [Tag!]!
   category(
     """The id of the record to find."""
     id: ID!
-  ): Category
+  ): Category!
   categories(
     """Specify to filter the records returned."""
-    filter: CategoryFilter = {}
+    filter: CategoryFilter! = {}
 
     """Specify to sort results."""
-    sorting: [CategorySort!] = []
+    sorting: [CategorySort!]! = []
   ): [Category!]!
   pointOfInterest(
     """The id of the record to find."""
     id: ID!
-  ): PointOfInterest
+  ): PointOfInterest!
   pointOfInterests(
     """Specify to filter the records returned."""
-    filter: PointOfInterestFilter = {}
+    filter: PointOfInterestFilter! = {}
 
     """Specify to sort results."""
-    sorting: [PointOfInterestSort!] = []
+    sorting: [PointOfInterestSort!]! = []
   ): [PointOfInterest!]!
   performanceAggregate(
     """Filter to find records to aggregate on"""
@@ -1754,13 +1752,13 @@ type Query {
   performance(
     """The id of the record to find."""
     id: ID!
-  ): Performance
+  ): Performance!
   performances(
     """Specify to filter the records returned."""
-    filter: PerformanceFilter = {}
+    filter: PerformanceFilter! = {}
 
     """Specify to sort results."""
-    sorting: [PerformanceSort!] = []
+    sorting: [PerformanceSort!]! = []
   ): [Performance!]!
   reviewAggregate(
     """Filter to find records to aggregate on"""
@@ -1769,35 +1767,35 @@ type Query {
   review(
     """The id of the record to find."""
     id: ID!
-  ): Review
+  ): Review!
   reviews(
     """Specify to filter the records returned."""
-    filter: ReviewFilter = {}
+    filter: ReviewFilter! = {}
 
     """Specify to sort results."""
-    sorting: [ReviewSort!] = []
+    sorting: [ReviewSort!]! = []
   ): [Review!]!
   alert(
     """The id of the record to find."""
     id: ID!
-  ): Alert
+  ): Alert!
   alerts(
     """Specify to filter the records returned."""
-    filter: AlertFilter = {}
+    filter: AlertFilter! = {}
 
     """Specify to sort results."""
-    sorting: [AlertSort!] = []
+    sorting: [AlertSort!]! = []
   ): [Alert!]!
   table(
     """The id of the record to find."""
     id: ID!
-  ): Table
+  ): Table!
   tables(
     """Specify to filter the records returned."""
-    filter: TableFilter = {}
+    filter: TableFilter! = {}
 
     """Specify to sort results."""
-    sorting: [TableSort!] = []
+    sorting: [TableSort!]! = []
   ): [Table!]!
 }
 

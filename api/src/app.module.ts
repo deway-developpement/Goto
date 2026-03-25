@@ -48,7 +48,7 @@ console.log = function (...args) {
 @Module({
     imports: [
         ConfigModule.forRoot({
-            envFilePath: `${process.cwd()}/config/env/.env`,
+            envFilePath: [`${process.cwd()}/.env`, `${process.cwd()}/config/env/.env`],
             load: [configuration],
             isGlobal: true,
             validationSchema,
@@ -82,11 +82,11 @@ console.log = function (...args) {
             imports: [ConfigModule],
             useFactory: (configService: ConfigService) => ({
                 type: 'mysql',
-                host: '127.0.0.1',
-                port: 3306,
+                host: configService.get('database.host'),
+                port: configService.get('database.port'),
                 username: configService.get('database.username'),
                 password: configService.get('database.password'),
-                database: 'Goto',
+                database: configService.get('database.name'),
                 entities: ['dist/**/*.entity{.ts,.js}'],
                 migrations: ['./migrations/**/*.js'],
                 synchronize: process.env.NODE_ENV === 'development',

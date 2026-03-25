@@ -2,7 +2,7 @@ import React, { createContext, useContext } from 'react';
 import axios from 'axios';
 import { AuthContext } from './AuthContext';
 import createAuthRefreshInterceptor from 'axios-auth-refresh';
-import { default as config } from '../config.json';
+import config from '../config';
 import { refreshAuth } from '../services/auth.service';
 
 const AxiosContext = createContext(null);

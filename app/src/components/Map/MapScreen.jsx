@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import stylesheet from './style';
-import { SafeAreaView, View } from 'react-native';
+import { View } from 'react-native';
 import { useTheme } from '@react-navigation/native';
 import CameraScreen from '../Camera/CameraScreen';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -24,15 +24,12 @@ import { Modal } from 'react-native';
 import MapModal from './MapModal';
 import { Pressable } from 'react-native';
 import { Icon } from '../Icon/Icon';
-import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 
 function MapScreen({ route, mapState, dispatch, isRecording, isFollowing }) {
     const isCamera = () => mapState === MapState.CAMERA;
 
     const { colors } = useTheme();
     const styles = stylesheet(colors);
-    const tabBarHeight = useBottomTabBarHeight();
-
     const insets = useSafeAreaInsets();
 
     const [image, setImage] = useState(null);
@@ -131,7 +128,7 @@ function MapScreen({ route, mapState, dispatch, isRecording, isFollowing }) {
                                         styles.btnContainer,
                                         {
                                             position: 'absolute',
-                                            bottom: 10 + tabBarHeight,
+                                            bottom: 10,
                                             backgroundColor: 'transparent',
                                             flexDirection: 'column',
                                             paddingLeft: '25%',
@@ -153,7 +150,7 @@ function MapScreen({ route, mapState, dispatch, isRecording, isFollowing }) {
                                         styles.btnContainer,
                                         {
                                             position: 'absolute',
-                                            bottom: tabBarHeight + 30,
+                                            bottom: 30,
                                             right: 20,
                                             backgroundColor: colors.primary,
                                             borderRadius: 10,
@@ -165,7 +162,6 @@ function MapScreen({ route, mapState, dispatch, isRecording, isFollowing }) {
                                     <Icon name="relocate" size={30} color={colors.darkIcon} />
                                 </Pressable>
                             )}
-                            <SafeAreaView />
                         </View>
                     );
                 }

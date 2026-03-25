@@ -1,12 +1,14 @@
 import React from 'react';
-import { View, Dimensions, Text, Image, TouchableWithoutFeedback } from 'react-native';
+import { View, Dimensions, Text, TouchableWithoutFeedback } from 'react-native';
 import { useNavigation, useTheme } from '@react-navigation/native';
 import stylesheet from './style';
-import { FILES_URL } from '../../providers/AxiosContext';
+import HikeMediaPreview from '../Hike/HikeMediaPreview';
 
 function Little({ t, i, colors, left }) {
-    return t?.hikes[i]?.photos[0]?.filename ? (
-        <Image
+    return t?.hikes[i] ? (
+        <HikeMediaPreview
+            photoFilename={t.hikes[i].photos[0]?.filename}
+            trackFilename={t.hikes[i].track}
             style={{
                 height: '100%',
                 width: '50%',
@@ -14,7 +16,6 @@ function Little({ t, i, colors, left }) {
                 marginBottom: 10,
                 marginLeft: left,
             }}
-            source={{ uri: `${FILES_URL}/photos/${t.hikes[i].photos[0].filename}` }}
         />
     ) : (
         <View
@@ -54,12 +55,11 @@ export default function Table({ table }) {
                 }}
             >
                 <View style={{ flexDirection: 'row' }}>
-                    {table?.hikes[0]?.photos[0]?.filename ? (
-                        <Image
+                    {table?.hikes[0] ? (
+                        <HikeMediaPreview
+                            photoFilename={table.hikes[0].photos[0]?.filename}
+                            trackFilename={table.hikes[0].track}
                             style={{ height: height * 0.25, width: '40%', borderRadius: 15 }}
-                            source={{
-                                uri: `${FILES_URL}/photos/${table.hikes[0].photos[0].filename}`,
-                            }}
                         />
                     ) : (
                         <View

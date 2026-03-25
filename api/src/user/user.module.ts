@@ -3,8 +3,8 @@ import { UserResolver } from './user.resolver';
 import { UserService } from './user.service';
 import { UserEntity } from './interfaces/user.entity';
 import { DataCleanUp, DataInit } from './user.init';
-import { NestjsQueryGraphQLModule } from '@nestjs-query/query-graphql';
-import { NestjsQueryTypeOrmModule } from '@nestjs-query/query-typeorm';
+import { NestjsQueryGraphQLModule } from '@ptc-org/nestjs-query-graphql';
+import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 import { UserDTO } from './interfaces/user.dto';
 
 @Module({

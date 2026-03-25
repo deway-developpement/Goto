@@ -2,6 +2,7 @@ import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import * as graphqlUploadExpress from 'graphql-upload/graphqlUploadExpress.js';
 import { AppModule } from './app.module';
+import { ConfigService } from '@nestjs/config';
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule, {
@@ -9,9 +10,9 @@ async function bootstrap() {
     });
     app.useGlobalPipes(new ValidationPipe());
     app.enableCors(); //! to remove after testing
-    app.use(graphqlUploadExpress({ maxFileSize: 10000000, maxFiles: 10 })); // allow file upload up to 1MB
+    app.use(graphqlUploadExpress({ maxFileSize: 10000000, maxFiles: 10 })); // allow file upload up to 10MB
     // allow hook at shutdown
     app.enableShutdownHooks();
-    await app.listen(3000);
+    await app.listen(app.get(ConfigService).get<number>('port', 3000));
 }
 bootstrap();

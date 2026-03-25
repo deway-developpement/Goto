@@ -63,7 +63,7 @@ function Map({ children, isFollowing, performance, isRecording, dispatch }) {
                 longitudeDelta: 0.02,
             }}
             showsPointsOfInterest={false}
-            showsUserLocation={permission.granted === true}
+            showsUserLocation={permission?.granted === true}
             showsMyLocationButton={false}
             pitchEnabled={false}
             onPanDrag={() => {

@@ -5,10 +5,11 @@ import { useNavigation, useTheme } from '@react-navigation/native';
 import { connect } from 'react-redux';
 import { MapState } from './enum';
 import { changeIsRecording, changeMapState, mapStateToProps } from '../../reducer/map.reducer';
-import { Button } from 'react-native-elements';
+import { Button } from '@rneui/themed';
 import { Icon } from '../Icon/Icon';
-import { gql, useApolloClient, useQuery } from '@apollo/client';
-import { ReactNativeFile } from 'apollo-upload-client';
+import { gql } from '@apollo/client';
+import { useApolloClient, useQuery } from '@apollo/client/react';
+import { createReactNativeFile } from '../../services/upload.service';
 import { Buffer } from 'buffer';
 
 const MUTATION_CREATE_PERFORMANCE = gql`
@@ -54,7 +55,7 @@ function MapModal({ dispatch, performance, hikeId }) {
     async function savePerformance() {
         const fileData = performance.path;
         const base64 = new Buffer(fileData, 'ascii').toString('base64');
-        const file = new ReactNativeFile({
+        const file = createReactNativeFile({
             uri: 'data:application/gpx+xml;base64,' + base64,
             name: 'performance.gpx',
             type: 'application/gpx+xml',

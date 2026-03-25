@@ -1,4 +1,4 @@
-import { DOMParser } from 'xmldom';
+import { DOMParser } from '@xmldom/xmldom';
 
 export function parseFile(fileString) {
     const doc = new DOMParser().parseFromString(fileString, 'text/xml');

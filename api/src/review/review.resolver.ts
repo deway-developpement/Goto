@@ -1,11 +1,9 @@
-import { CRUDResolver } from '@nestjs-query/query-graphql';
+import { CRUDResolver } from '@ptc-org/nestjs-query-graphql';
 import { Inject, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { Mutation, Resolver, Args } from '@nestjs/graphql';
 import { ReviewService } from './review.service';
 import { CurrentUser, GqlAuthGuard } from '../auth/guards/graphql-auth.guard';
 import { ReviewDTO } from './interfaces/review.dto';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import * as _ from '@nestjs-query/query-graphql/node_modules/@nestjs-query/core';
 import { ReviewInput } from './interfaces/review.input';
 import { UserDTO } from '../user/interfaces/user.dto';
 
@@ -20,7 +18,11 @@ export class ReviewResolver extends CRUDResolver(ReviewDTO, {
     enableTotalCount: true,
     enableAggregate: true,
 }) {
-    constructor(@Inject(ReviewService) readonly service: ReviewService) {
+    constructor(
+        @Inject(ReviewService)
+        readonly service: ReviewService &
+            import('@ptc-org/nestjs-query-core').QueryService<ReviewDTO>
+    ) {
         super(service);
     }
 

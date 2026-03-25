@@ -1,10 +1,11 @@
 import React from 'react';
-import { Text, Image, View, TouchableWithoutFeedback, Dimensions } from 'react-native';
+import { Text, View, TouchableWithoutFeedback, Dimensions } from 'react-native';
 import { useTheme } from '@react-navigation/native';
 import stylesheet from './style';
 import { useNavigation } from '@react-navigation/native';
-import { gql, useQuery } from '@apollo/client';
-import { FILES_URL } from '../../providers/AxiosContext';
+import { gql } from '@apollo/client';
+import { useQuery } from '@apollo/client/react';
+import HikeMediaPreview from '../Hike/HikeMediaPreview';
 
 const GET_IMAGE_CATEGORIES = (categoryName, location) => {
     if (categoryName == 'Around you') {
@@ -17,6 +18,7 @@ const GET_IMAGE_CATEGORIES = (categoryName, location) => {
                     hikes: getHikeAround(lat: $lat, lon: $lon, distance: 50, limit: 1) {
                         edges {
                             node {
+                                track
                                 photos {
                                     filename
                                 }
@@ -44,6 +46,7 @@ const GET_IMAGE_CATEGORIES = (categoryName, location) => {
                     ) {
                         edges {
                             node {
+                                track
                                 photos {
                                     filename
                                 }
@@ -69,6 +72,7 @@ const GET_IMAGE_CATEGORIES = (categoryName, location) => {
                     hikes: getHikeAlreadyDone(limit: 1) {
                         edges {
                             node {
+                                track
                                 photos {
                                     filename
                                 }
@@ -79,9 +83,28 @@ const GET_IMAGE_CATEGORIES = (categoryName, location) => {
             `,
             variables: {},
         };
-    } else {
-        return null;
     }
+
+    return {
+        query: gql`
+            query hikes($categoryName: String!) {
+                hikes(
+                    filter: { category: { name: { eq: $categoryName } } }
+                    paging: { first: 1 }
+                ) {
+                    edges {
+                        node {
+                            track
+                            photos {
+                                filename
+                            }
+                        }
+                    }
+                }
+            }
+        `,
+        variables: { categoryName },
+    };
 };
 
 const EMPTY_QUERY = gql`
@@ -111,6 +134,8 @@ export default function Category({ memoizedLocation, ...props }) {
         }
     );
 
+    const previewHike = imageCategory?.hikes?.edges[0]?.node;
+
     return (
         <TouchableWithoutFeedback onPress={() => handleClickCategory(props.name)}>
             <View
@@ -127,18 +152,11 @@ export default function Category({ memoizedLocation, ...props }) {
                     props.horizontal ? { width: windowWidth * 0.7 } : {},
                 ]}
             >
-                <Image
-                    source={
-                        props.defaultPhoto
-                            ? {
-                                uri: `${FILES_URL}/photos/${props.defaultPhoto.filename}`,
-                            }
-                            : imageCategory?.hikes?.edges[0]?.node.photos[0]?.filename
-                                ? {
-                                    uri: `${FILES_URL}/photos/${imageCategory?.hikes?.edges[0]?.node.photos[0]?.filename}`,
-                                }
-                                : require('../../../assets/images/Dalle_background.png')
+                <HikeMediaPreview
+                    photoFilename={
+                        props.defaultPhoto?.filename ?? previewHike?.photos[0]?.filename
                     }
+                    trackFilename={previewHike?.track}
                     style={[
                         {
                             height: windowWidth * 0.2,

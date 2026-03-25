@@ -1,11 +1,9 @@
-import { CRUDResolver } from '@nestjs-query/query-graphql';
+import { CRUDResolver } from '@ptc-org/nestjs-query-graphql';
 import { Inject, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { Mutation, Resolver, Args } from '@nestjs/graphql';
 import { PerfomanceService } from './performance.service';
 import { CurrentUser, GqlAuthGuard } from '../auth/guards/graphql-auth.guard';
 import { PerformanceDTO } from './interfaces/performance.dto';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import * as _ from '@nestjs-query/query-graphql/node_modules/@nestjs-query/core';
 import { PerformanceInput } from './interfaces/performance.input';
 import { UserDTO } from '../user/interfaces/user.dto';
 import { AuthType } from '../auth/interface/auth.type';
@@ -21,7 +19,11 @@ export class PerfomanceResolver extends CRUDResolver(PerformanceDTO, {
     enableTotalCount: true,
     enableAggregate: true,
 }) {
-    constructor(@Inject(PerfomanceService) readonly service: PerfomanceService) {
+    constructor(
+        @Inject(PerfomanceService)
+        readonly service: PerfomanceService &
+            import('@ptc-org/nestjs-query-core').QueryService<PerformanceDTO>
+    ) {
         super(service);
     }
 

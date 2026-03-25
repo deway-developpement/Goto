@@ -1,13 +1,15 @@
 import React from 'react';
-import { View, Text, Pressable, Image, SafeAreaView, ScrollView } from 'react-native';
-import { gql, useApolloClient, useQuery } from '@apollo/client';
+import { View, Text, Pressable, Image, ScrollView } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { gql } from '@apollo/client';
+import { useApolloClient, useQuery } from '@apollo/client/react';
 import stylesheet from './style';
 import { useTheme } from '@react-navigation/native';
 import { useNavigation } from '@react-navigation/native';
 import { Icon } from '../Icon/Icon';
 import SplashScreen from '../SplashScreen/SplashScreen';
 import { Historic, Stats } from './ProfileComplements';
-import { Button } from 'react-native-elements';
+import { Button } from '@rneui/themed';
 import { FILES_URL } from '../../providers/AxiosContext';
 
 export default function FocusUser({ route }) {
@@ -31,10 +33,12 @@ export default function FocusUser({ route }) {
                 }
                 performances(sorting: { field: date, direction: DESC }) {
                     id
+                    track
                     hike {
                         id
                         name
                         description
+                        track
                         category {
                             id
                             name

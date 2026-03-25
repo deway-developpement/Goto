@@ -4,22 +4,15 @@ import {
     IDField,
     PagingStrategies,
     QueryOptions,
-} from '@nestjs-query/query-graphql';
+} from '@ptc-org/nestjs-query-graphql';
 import { ObjectType, ID, Field } from '@nestjs/graphql';
 import { UserDTO } from '../../user/interfaces/user.dto';
 import { HikeDTO } from '../../hike/interfaces/hike.dto';
 
 @ObjectType('Performance')
 @QueryOptions({ pagingStrategy: PagingStrategies.NONE })
-@FilterableRelation('user', () => UserDTO, {
-    disableRemove: true,
-    disableUpdate: true,
-    enableAggregate: false,
-})
+@FilterableRelation('user', () => UserDTO)
 @FilterableRelation('hike', () => HikeDTO, {
-    disableRemove: true,
-    disableUpdate: true,
-    enableAggregate: true,
     enableTotalCount: true,
 })
 export class PerformanceDTO {

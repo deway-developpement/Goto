@@ -11,12 +11,13 @@ import {
     StyleSheet,
     ScrollView,
 } from 'react-native';
-import { Button } from 'react-native-elements';
+import { Button } from '@rneui/themed';
 import { useTheme } from '@react-navigation/native';
 import { useIsFocused } from '@react-navigation/native';
 import { AuthContext } from '../../providers/AuthContext';
 import { AxiosContext } from '../../providers/AxiosContext';
-import { gql, useApolloClient } from '@apollo/client';
+import { gql } from '@apollo/client';
+import { useApolloClient } from '@apollo/client/react';
 import KeyboardDismissView from '../KeyboardDismissView/KeyboardDismissView';
 import { refreshAuth } from '../../services/auth.service';
 import SplashScreen from '../SplashScreen/SplashScreen';

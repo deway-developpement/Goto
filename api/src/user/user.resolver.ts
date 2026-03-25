@@ -1,10 +1,8 @@
 import { Args, Mutation, Resolver, Query, ResolveField, Parent } from '@nestjs/graphql';
 import { UserService } from './user.service';
-import { CRUDResolver } from '@nestjs-query/query-graphql';
+import { CRUDResolver } from '@ptc-org/nestjs-query-graphql';
 import { UserDTO } from './interfaces/user.dto';
 import { UserInput, UserUpdateInput } from './interfaces/user.input';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import * as _ from '@nestjs-query/query-graphql/node_modules/@nestjs-query/core';
 import { Inject, UseGuards } from '@nestjs/common';
 import { CurrentUser, GqlAuthGuard, GqlSkipFieldGuard } from '../auth/guards/graphql-auth.guard';
 

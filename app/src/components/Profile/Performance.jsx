@@ -2,7 +2,6 @@ import React, { useContext, useEffect, useRef, useState } from 'react';
 import {
     TouchableWithoutFeedback,
     View,
-    Image,
     StyleSheet,
     Dimensions,
     ScrollView,
@@ -11,18 +10,19 @@ import {
 import { useTheme } from '@react-navigation/native';
 import stylesheet from './style';
 import { useNavigation } from '@react-navigation/native';
-import { gql, useQuery } from '@apollo/client';
+import { gql } from '@apollo/client';
+import { useQuery } from '@apollo/client/react';
 import SplashScreen from '../SplashScreen/SplashScreen';
 import { Icon } from '../Icon/Icon';
 import GpxPathLineLite from '../Map/GpxPathLineLite';
-import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
+import MapView from 'react-native-maps';
 import { AxiosContext } from '../../providers/AxiosContext';
 import { default as MAP_STYLE } from '../../../assets/maps/style.json';
 import { Pressable } from 'react-native';
 import { addTimeTagToGPXFile, parseFile, performanceStats } from '../../services/gpx.services';
 import { getCalorie } from '../../services/stats.service';
 import Charts, { ChartMode } from '../Chart/Chart';
-import { FILES_URL } from '../../providers/AxiosContext';
+import HikeMediaPreview from '../Hike/HikeMediaPreview';
 
 const GET_PERFORMANCE = gql`
     query performance($PerfId: ID!, $UserId: ID!) {
@@ -167,14 +167,9 @@ export default function Performance({ route }) {
                     <Icon name="back" size={30} color={colors.background} />
                 </View>
             </TouchableWithoutFeedback>
-            <Image
-                source={
-                    data.performance.hike.photos && data.performance.hike.photos.length > 0
-                        ? {
-                            uri: `${FILES_URL}/photos/${data.performance.hike.photos[0].filename}`,
-                        }
-                        : require('../../../assets/images/Dalle_background.png')
-                }
+            <HikeMediaPreview
+                photoFilename={data.performance.hike.photos[0]?.filename}
+                trackFilename={data.performance.track ?? data.performance.hike.track}
                 style={[
                     StyleSheet.absoluteFill,
                     {

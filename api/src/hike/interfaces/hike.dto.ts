@@ -6,7 +6,7 @@ import {
     KeySet,
     Relation,
     UnPagedRelation,
-} from '@nestjs-query/query-graphql';
+} from '@ptc-org/nestjs-query-graphql';
 import { ObjectType, ID, Field } from '@nestjs/graphql';
 import { UserDTO } from '../../user/interfaces/user.dto';
 import { Difficulty } from './difficulty.dto';
@@ -20,47 +20,32 @@ import { PerformanceDTO } from '../../performance/interfaces/performance.dto';
 
 @ObjectType('Hike')
 @KeySet(['id'])
-@Relation('owner', () => UserDTO, { disableRemove: true, disableUpdate: true })
+@Relation('owner', () => UserDTO, {})
 @FilterableUnPagedRelation('tags', () => TagDTO, {
     nullable: true,
-    disableRemove: true,
-    disableUpdate: true,
     enableAggregate: false,
 })
 @UnPagedRelation('photos', () => PhotoDTO, {
     nullable: true,
-    disableRemove: true,
-    disableUpdate: true,
     enableAggregate: false,
 })
 @FilterableUnPagedRelation('pointsOfInterest', () => PointOfInterestDTO, {
     nullable: true,
-    disableRemove: true,
-    disableUpdate: true,
     enableAggregate: false,
     relationName: 'pointsOfInterest',
 })
 @FilterableUnPagedRelation('reviews', () => ReviewDTO, {
     nullable: true,
-    disableRemove: true,
-    disableUpdate: true,
     enableAggregate: true,
 })
 @FilterableUnPagedRelation('alerts', () => AlertDTO, {
     nullable: true,
-    disableRemove: true,
-    disableUpdate: true,
 })
 @FilterableRelation('category', () => CategoryDTO, {
     nullable: true,
-    disableRemove: true,
-    disableUpdate: true,
-    enableAggregate: false,
 })
 @FilterableUnPagedRelation('performances', () => PerformanceDTO, {
     nullable: true,
-    disableRemove: true,
-    disableUpdate: true,
     enableAggregate: false,
 })
 export class HikeDTO {

@@ -1,14 +1,17 @@
-import { ApolloClient, InMemoryCache, from, ApolloProvider } from '@apollo/client';
+import { ApolloClient, InMemoryCache, from } from '@apollo/client';
+import { ApolloProvider } from '@apollo/client/react';
 import { onError } from '@apollo/client/link/error';
-import { fromPromise } from 'apollo-link';
+import { fromPromise } from '@apollo/client/link/utils';
 import { setContext } from '@apollo/client/link/context';
+import { filter, mergeMap } from 'rxjs/operators';
 import { AuthContext } from './AuthContext';
 import React, { useContext } from 'react';
 import { refreshAuth } from '../services/auth.service';
-import { default as config } from '../config.json';
-import apolloLogger from 'apollo-link-logger';
-import { createUploadLink } from 'apollo-upload-client';
+import config from '../config';
+import UploadHttpLink from 'apollo-upload-client/UploadHttpLink.mjs';
+import defaultIsExtractableFile from 'apollo-upload-client/isExtractableFile.mjs';
 import { relayStylePagination } from '@apollo/client/utilities';
+import { isReactNativeFile } from '../services/upload.service';
 
 function createApolloClient(authContext) {
     const authLink = setContext(() => {
@@ -46,29 +49,35 @@ function createApolloClient(authContext) {
                                             Authorization: `Bearer ${token}`,
                                         },
                                     });
+                                    pendingRequests.forEach((resolve) => resolve(token));
+                                    pendingRequests = [];
                                     return token;
                                 })
                                 .catch(() => {
                                     // If the token refresh fails, we remove the pending requests and log the user out
+                                    pendingRequests.forEach((resolve) => resolve(null));
                                     pendingRequests = [];
                                     authContext.logout();
-                                    return;
+                                    return null;
                                 })
                                 .finally(() => {
                                     // Finally, we send the requests that were pending and reset the isRefreshing flag
                                     isRefreshing = false;
                                 })
-                        ).filter((value) => Boolean(value));
+                        );
                     } else {
                         // Will only emit once the Promise is resolved
                         _forward = fromPromise(
                             new Promise((resolve) => {
-                                pendingRequests.push(() => resolve());
+                                pendingRequests.push(resolve);
                             }) // this line create a Promise and add its resolve function to the pendingRequests array
                         );
                     }
                     // We return the Observable that will be fetched once the token refresh is complete
-                    return _forward.flatMap(() => forward(operation));
+                    return _forward.pipe(
+                        filter(Boolean),
+                        mergeMap(() => forward(operation))
+                    );
                 }
                 }
             }
@@ -79,9 +88,10 @@ function createApolloClient(authContext) {
         }
     });
 
-    const httpLink = new createUploadLink({
+    const httpLink = new UploadHttpLink({
         uri: config.graphQLLink,
-        print: true,
+        isExtractableFile: (value) =>
+            defaultIsExtractableFile(value) || isReactNativeFile(value),
     });
 
     const client = new ApolloClient({

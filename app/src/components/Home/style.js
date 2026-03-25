@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 
-const stylesheet = (colors) =>
+const stylesheet = (colors, bottomInset = 0) =>
     StyleSheet.create({
         imageMap: {
             backgroundColor: '',
@@ -45,21 +45,20 @@ const stylesheet = (colors) =>
             backgroundColor: colors.primary,
             borderTopEndRadius: 12,
             borderTopStartRadius: 12,
-            flex: 1,
-            height: 'auto',
-            position: 'absolute',
+            height: 54 + bottomInset,
+            paddingTop: 4,
         },
         tabBarIcon: {
             width: 30,
             height: 30,
-            marginTop: 18,
-            marginBottom: 10,
+            marginBottom: 0,
+            marginTop: 0,
         },
         tabBarLabel: {
             fontSize: 12,
             fontWeight: '500',
             lineHeight: 20,
-            marginBottom: 10,
+            marginBottom: 0,
         },
         btn: {
             backgroundColor: colors.primary,

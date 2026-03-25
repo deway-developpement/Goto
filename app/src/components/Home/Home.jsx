@@ -13,6 +13,7 @@ import SearchScreen from '../SearchScreen/SearchScreen';
 import FocusHikeScreen from '../Hike/FocusHikeScreen';
 import MapWrapper from '../Map/MapScreen';
 import FavoritesScreen from '../FavoriteScreen/FavoriteScreen';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const Tab = createBottomTabNavigator();
 
@@ -21,7 +22,8 @@ function HomeScreen({ navigation }) {
         goto: require('../../../assets/font/goto.ttf'),
     });
     const { colors } = useTheme();
-    const styles = stylesheet(colors);
+    const insets = useSafeAreaInsets();
+    const styles = stylesheet(colors, insets.bottom);
 
     const authContext = useContext(AuthContext);
 
@@ -63,6 +65,7 @@ function HomeScreen({ navigation }) {
                                     <Icon name="list" size={30} color={props.color} />
                                 ),
                                 lazy: false,
+                                popToTopOnBlur: true,
                             }}
                         />
                         <Tab.Screen
@@ -93,6 +96,7 @@ function HomeScreen({ navigation }) {
                                     <Icon name="hiker" size={30} color={props.color} />
                                 ),
                                 lazy: false,
+                                popToTopOnBlur: true,
                             }}
                         />
                         <Tab.Screen
@@ -103,6 +107,7 @@ function HomeScreen({ navigation }) {
                                     <Icon name="user" size={props.size} color={props.color} />
                                 ),
                                 lazy: false,
+                                popToTopOnBlur: true,
                             }}
                         />
                         <Tab.Screen
@@ -111,6 +116,7 @@ function HomeScreen({ navigation }) {
                             options={{
                                 headerShown: false,
                                 tabBarButton: () => null,
+                                tabBarItemStyle: { display: 'none' },
                             }}
                         />
                     </Tab.Navigator>

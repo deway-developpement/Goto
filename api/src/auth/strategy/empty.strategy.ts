@@ -3,4 +3,8 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
-export class EmptyStrategy extends PassportStrategy(Strategy, 'Empty') {}
+export class EmptyStrategy extends PassportStrategy(Strategy, 'Empty') {
+    validate() {
+        return true;
+    }
+}

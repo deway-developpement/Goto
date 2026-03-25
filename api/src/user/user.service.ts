@@ -3,9 +3,9 @@ import { Repository } from 'typeorm';
 import { UserEntity } from './interfaces/user.entity';
 import { BadRequestException } from '@nestjs/common';
 import { genSalt, hash } from 'bcrypt';
-import { TypeOrmQueryService } from '@nestjs-query/query-typeorm';
+import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { UserInput } from './interfaces/user.input';
-import { QueryService } from '@nestjs-query/core';
+import { QueryService } from '@ptc-org/nestjs-query-core';
 import { AuthType } from '../auth/interface/auth.type';
 import { UserDTO } from './interfaces/user.dto';
 

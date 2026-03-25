@@ -1,5 +1,9 @@
+import { DarkTheme, DefaultTheme } from '@react-navigation/native';
+
 export const Classic = {
+    ...DefaultTheme,
     colors: {
+        ...DefaultTheme.colors,
         background: '#E4ECEA',
         backgroundModal: '#26465366',
         backgroundSecondary: '#FFFFFF',
@@ -27,7 +31,9 @@ export const Classic = {
 };
 
 export const Dark = {
+    ...DarkTheme,
     colors: {
+        ...DarkTheme.colors,
         background: '#0D0E0E',
         backgroundModal: '#26465366',
         backgroundSecondary: '#1F2937',

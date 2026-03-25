@@ -1,11 +1,9 @@
-import { CRUDResolver } from '@nestjs-query/query-graphql';
+import { CRUDResolver } from '@ptc-org/nestjs-query-graphql';
 import { Inject, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { Mutation, Resolver, Args } from '@nestjs/graphql';
 import { PointOfInterestService } from './poi.service';
 import { CurrentUser, GqlAuthGuard } from '../auth/guards/graphql-auth.guard';
 import { PointOfInterestDTO } from './interfaces/poi.dto';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import * as _ from '@nestjs-query/query-graphql/node_modules/@nestjs-query/core';
 import { PointOfInterestEntity } from './interfaces/poi.entity';
 import { PointOfInterestInput } from './interfaces/poi.input';
 import { UserDTO } from '../user/interfaces/user.dto';
@@ -20,7 +18,11 @@ export class PointOfInterestResolver extends CRUDResolver(PointOfInterestDTO, {
     update: { disabled: true },
     delete: { disabled: true },
 }) {
-    constructor(@Inject(PointOfInterestService) readonly service: PointOfInterestService) {
+    constructor(
+        @Inject(PointOfInterestService)
+        readonly service: PointOfInterestService &
+            import('@ptc-org/nestjs-query-core').QueryService<PointOfInterestDTO>
+    ) {
         super(service);
     }
 

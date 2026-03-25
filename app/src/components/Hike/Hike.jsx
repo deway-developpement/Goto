@@ -1,11 +1,12 @@
 import React from 'react';
-import { Image, View, TouchableWithoutFeedback, Dimensions } from 'react-native';
+import { View, TouchableWithoutFeedback, Dimensions } from 'react-native';
 import { useTheme } from '@react-navigation/native';
 import stylesheet from './style';
 import { useNavigation } from '@react-navigation/native';
-import { gql, useQuery } from '@apollo/client';
+import { gql } from '@apollo/client';
+import { useQuery } from '@apollo/client/react';
 import HikeInfos from './HikeInfos';
-import { FILES_URL } from '../../providers/AxiosContext';
+import HikeMediaPreview from './HikeMediaPreview';
 
 export default function Hike({ id }) {
     const GET_HIKE = gql`
@@ -22,6 +23,7 @@ export default function Hike({ id }) {
                     id
                     filename
                 }
+                track
                 isLiked
             }
         }
@@ -48,14 +50,9 @@ export default function Hike({ id }) {
         return (
             <TouchableWithoutFeedback onPress={() => handleClickHike(id)}>
                 <View style={[styles.container, { marginTop: 30, borderRadius: 12 }]}>
-                    <Image
-                        source={
-                            data?.hike.photos.length > 0
-                                ? {
-                                    uri: `${FILES_URL}/photos/${data.hike.photos[0].filename}`,
-                                }
-                                : require('../../../assets/images/Dalle_background.png')
-                        }
+                    <HikeMediaPreview
+                        photoFilename={data?.hike.photos[0]?.filename}
+                        trackFilename={data?.hike.track}
                         style={[
                             {
                                 height: windowHeight * 0.5,

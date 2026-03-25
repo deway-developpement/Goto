@@ -38,7 +38,10 @@ export class DataInit implements OnApplicationBootstrap {
 
     async onApplicationBootstrap() {
         // check if running in production
-        if (process.env.NODE_ENV !== 'development') {
+        if (
+            process.env.NODE_ENV !== 'development' ||
+            process.env.RESET_DB_ON_START !== 'true'
+        ) {
             return;
         }
         // remove everything in the database
@@ -101,7 +104,10 @@ export class DataCleanUp implements BeforeApplicationShutdown {
 
     async beforeApplicationShutdown() {
         // check if running in production
-        if (process.env.NODE_ENV !== 'development') {
+        if (
+            process.env.NODE_ENV !== 'development' ||
+            process.env.RESET_DB_ON_SHUTDOWN !== 'true'
+        ) {
             return;
         }
         // remove everything in the database

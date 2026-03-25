@@ -18,11 +18,11 @@ const configService = new ConfigService();
 
 export default new DataSource({
     type: 'mysql',
-    host: '127.0.0.1',
-    port: 3306,
+    host: configService.get('DATABASE_HOST', '127.0.0.1'),
+    port: configService.get('DATABASE_PORT', 3306),
     username: configService.get('DATABASE_USERNAME'),
     password: configService.get('DATABASE_PASSWORD'),
-    database: 'Goto',
+    database: configService.get('DATABASE_NAME', 'Goto'),
     entities: [
         UserEntity,
         HikeEntity,

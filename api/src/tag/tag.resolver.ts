@@ -1,11 +1,9 @@
-import { CRUDResolver } from '@nestjs-query/query-graphql';
+import { CRUDResolver } from '@ptc-org/nestjs-query-graphql';
 import { Inject, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { Mutation, Resolver, Args } from '@nestjs/graphql';
 import { TagService } from './tag.service';
 import { CurrentUser, GqlAuthGuard } from '../auth/guards/graphql-auth.guard';
 import { TagDTO } from './interfaces/tag.dto';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import * as _ from '@nestjs-query/query-graphql/node_modules/@nestjs-query/core';
 import { TagEntity } from './interfaces/tag.entity';
 import { TagInput } from './interfaces/tag.input';
 import { UserDTO } from '../user/interfaces/user.dto';
@@ -20,7 +18,10 @@ export class TagResolver extends CRUDResolver(TagDTO, {
     update: { disabled: true },
     delete: { disabled: true },
 }) {
-    constructor(@Inject(TagService) readonly service: TagService) {
+    constructor(
+        @Inject(TagService)
+        readonly service: TagService & import('@ptc-org/nestjs-query-core').QueryService<TagDTO>
+    ) {
         super(service);
     }
 

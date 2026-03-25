@@ -4,8 +4,9 @@ import { useTheme } from '@react-navigation/native';
 import { Icon } from '../Icon/Icon';
 import stylesheet from './style';
 import { AuthContext } from '../../providers/AuthContext';
-import { useApolloClient, gql } from '@apollo/client';
-import ReactNativeFile from 'apollo-upload-client';
+import { gql } from '@apollo/client';
+import { useApolloClient } from '@apollo/client/react';
+import { createReactNativeFile } from '../../services/upload.service';
 import * as ImagePicker from 'expo-image-picker';
 import KeyboardDismissView from '../KeyboardDismissView/KeyboardDismissView';
 
@@ -37,7 +38,8 @@ function ProfileModal({ setModalVisible, profil, reload }) {
         });
 
         if (!result.canceled) {
-            const file = new ReactNativeFile({
+            console.log(result);
+            const file = createReactNativeFile({
                 uri: result.assets[0].uri,
                 type: 'image/jpeg',
                 name: 'image.jpg',

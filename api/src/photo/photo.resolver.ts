@@ -3,8 +3,6 @@ import { Mutation, Resolver, Args } from '@nestjs/graphql';
 import { PhotoService } from './photo.service';
 import { CurrentUser, GqlAuthGuard } from '../auth/guards/graphql-auth.guard';
 import { PhotoDTO } from './interfaces/photo.dto';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import * as _ from '@nestjs-query/query-graphql/node_modules/@nestjs-query/core';
 import { ObjType, PhotoInput } from './interfaces/photo.input';
 import { UserDTO } from '../user/interfaces/user.dto';
 import { AuthType } from '../auth/interface/auth.type';

@@ -5,7 +5,7 @@ import {
     QueryOptions,
     Relation,
     UnPagedRelation,
-} from '@nestjs-query/query-graphql';
+} from '@ptc-org/nestjs-query-graphql';
 import { ObjectType, ID } from '@nestjs/graphql';
 import { HikeDTO } from '../../hike/interfaces/hike.dto';
 import { UserDTO } from '../../user/interfaces/user.dto';
@@ -14,13 +14,9 @@ import { UserDTO } from '../../user/interfaces/user.dto';
 @QueryOptions({ pagingStrategy: PagingStrategies.NONE })
 @UnPagedRelation('hikes', () => HikeDTO, {
     nullable: true,
-    disableRemove: true,
-    disableUpdate: true,
 })
 @Relation('owner', () => UserDTO, {
     nullable: true,
-    disableRemove: true,
-    disableUpdate: true,
 })
 export class TableDTO {
     @IDField(() => ID)

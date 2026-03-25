@@ -1,11 +1,9 @@
-import { CRUDResolver } from '@nestjs-query/query-graphql';
+import { CRUDResolver } from '@ptc-org/nestjs-query-graphql';
 import { Inject, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { Mutation, Resolver, Args } from '@nestjs/graphql';
 import { TableService } from './table.service';
 import { CurrentUser, GqlAuthGuard } from '../auth/guards/graphql-auth.guard';
 import { TableDTO } from './interfaces/table.dto';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import * as _ from '@nestjs-query/query-graphql/node_modules/@nestjs-query/core';
 import { TableInput } from './interfaces/table.input';
 import { UserDTO } from '../user/interfaces/user.dto';
 import { AuthType } from '../auth/interface/auth.type';
@@ -19,7 +17,11 @@ export class TableResolver extends CRUDResolver(TableDTO, {
     update: { disabled: true },
     delete: { disabled: true },
 }) {
-    constructor(@Inject(TableService) readonly service: TableService) {
+    constructor(
+        @Inject(TableService)
+        readonly service: TableService &
+            import('@ptc-org/nestjs-query-core').QueryService<TableDTO>
+    ) {
         super(service);
     }
 
