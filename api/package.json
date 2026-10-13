@@ -50,7 +50,7 @@
         "graphql-tools": "^8.2.3",
         "graphql-upload": "15.0.2",
         "joi": "^17.6.0",
-        "mysql": "^2.18.1",
+        "mysql2": "^3.0.1",
         "nestjs-graphql-tools": "^0.7.10",
         "passport": "^0.6.0",
         "passport-jwt": "^4.0.0",
