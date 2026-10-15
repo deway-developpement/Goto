@@ -66,6 +66,12 @@ They compare served HTML and every asset against a fresh local build, verify bot
 and ensure hidden paths/listings and unbuilt source URLs are inaccessible.
 The browser validation of the approved v8 is recorded in [web/VALIDATION.md](../web/VALIDATION.md).
 
+## Current first cutover behind Apache
+
+Use [the Apache cutover guide](apache-cutover.md) and `deploy/compose.apache.yaml` for the
+current WEB-only deployment. The native API remains unchanged. The following two-service Caddy
+configuration describes the later migration target.
+
 ## Pull-only server configuration
 
 `deploy/compose.yaml` consumes images only. It has no build sections, published host ports,

@@ -1,0 +1,15 @@
+# Current production target: native Apache proxies /goto/ to this loopback port.
+name: goto-web
+services:
+  goto-web:
+    image: ${GOTO_WEB_IMAGE:?Set the tested WEB image reference}
+    restart: unless-stopped
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    pids_limit: 16
+    mem_limit: 32m
+    ports: ['127.0.0.1:8113:8080']
+    logging:
+      driver: json-file
+      options: {max-size: 5m, max-file: '2'}

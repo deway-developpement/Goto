@@ -8,10 +8,11 @@ The hiking app you need
 - `app/` : POC Expo conservé, sans build mobile dans cette CI.
 - PR et push `main` : builds et tests isolés des deux conteneurs.
 - Release publiée `vX.Y.Z` : tests puis publication des packages GHCR privés `goto-api` et `goto-web`.
-- `deploy/compose.yaml` : déploiement par pull de digests derrière Caddy ; promotion explicite côté infra.
+- `deploy/compose.apache.yaml` : vitrine sur loopback derrière Apache pour la première bascule.
+- `deploy/compose.yaml` : cible ultérieure derrière Caddy, par promotion explicite de digests côté infra.
 
 Voir [les releases et le déploiement](docs/container-releases.md),
-[la vitrine](web/README.md) et [la validation de l’intégration](docs/container-validation.md).
+[la bascule Apache](docs/apache-cutover.md), [la vitrine](web/README.md) et [la validation de l’intégration](docs/container-validation.md).
 
 ## Développement local
 

@@ -35,3 +35,14 @@ Source/build separation:
 - Three build-contract tests pass: no source writes, reproducible clean output, font/CSS invalidation,
   and refusal to build in-place/inside a source directory.
 - Container smoke checks fetch every generated asset and reject unversioned source asset URLs.
+
+Apache deployment preparation:
+- Apache 2.4.66 standalone configuration on loopback: syntax and actual requests passed.
+- /goto/ HTML matches the backend; browser checks at 1440/900/390 px load all assets and pass CSP/interactions.
+- gzip, immutable successful assets, non-cacheable missing assets, canonical URL, retired WordPress/Pricing,
+  APK/ZIP range responses and unchanged native API routes verified through the Apache candidate.
+- Four isolated cutover tests cover successful restore, failed-public-check rollback, and refusal
+  to overwrite concurrent edits. No root/production files are changed by these tests.
+- Current live baseline: /goto/ 200 (WordPress), API GraphQL 200 with Query, profile 401, root 301, Atomic 200.
+- Actual Apache activation requires interactive sudo on this host. WEB-only Compose binds loopback;
+  the native API, its process/service and its database stay unchanged.

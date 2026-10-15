@@ -25,7 +25,9 @@ jobs:
           persist-credentials: false
       - name: Check WEB build contract
         if: matrix.component == 'web'
-        run: python3 -m unittest discover -s web/tests
+        run: |
+          python3 -m unittest discover -s web/tests
+          python3 -m unittest discover -s scripts/tests
       - uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4
       - uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7
         with:
