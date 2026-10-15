@@ -7,7 +7,8 @@ This repository contains these applications:
 - `web/`: static English showcase with local HTML/CSS/JS assets, a scratch/darkhttpd image and no npm dependencies.
 - `api/`: NestJS GraphQL API. Runtime code lives in `api/src`, grouped by domain (`hike/`, `user/`, `photo/`, etc.). Database migrations and SQL helpers live in `api/migrations`.
 
-Keep web assets under `web/site/assets`; run `python3 web/tools/version-assets.py` after changes.
+Keep editable web sources under `web/src/` with stable asset names. Run `python3 web/tools/build.py`
+to generate ignored `web/dist/`; Docker runs this build automatically. Never commit generated files.
 `deploy/` contains pull-only server manifests; `scripts/smoke-*.sh` exercise images using isolated resources.
 Keep new API/mobile code inside existing feature folders. Add mobile frontend assets under `app/assets/images` or `app/assets/maps`, not beside components.
 

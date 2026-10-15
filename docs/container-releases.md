@@ -56,8 +56,14 @@ with a read-only filesystem as `node`, test GraphQL user creation, bcrypt login 
 then restart and verify user/upload persistence. Cleanup targets only that invocation's resources.
 They do not test historical migrations against production data.
 
+WEB sources live in `web/src/`; `python3 web/tools/build.py` generates ignored `web/dist/`.
+Docker performs this step automatically, so fingerprinted CSS/JS and other generated assets are never committed.
+The build contract tests cover source immutability, reproducible clean output, font/CSS cache invalidation
+and rejection of in-place builds.
+
 WEB smoke tests run the scratch/darkhttpd image as UID/GID 65532, with no capabilities and a read-only root.
-They compare served HTML and both downloads byte for byte against the checked-out approved files and verify hidden paths/listings are inaccessible.
+They compare served HTML and every asset against a fresh local build, verify both downloads against source files,
+and ensure hidden paths/listings and unbuilt source URLs are inaccessible.
 The browser validation of the approved v8 is recorded in [web/VALIDATION.md](../web/VALIDATION.md).
 
 ## Pull-only server configuration

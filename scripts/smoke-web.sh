@@ -13,15 +13,20 @@ docker run -d --name "$name" --read-only --cap-drop ALL \
 port=$(docker inspect --format '{{(index (index .NetworkSettings.Ports "8080/tcp") 0).HostPort}}' "$name")
 base="http://127.0.0.1:$port"
 curl --fail --silent --show-error --retry 10 --retry-connrefused --retry-delay 1 "$base/" > "$tmp/index.html"
-# Verify the approved HTML exactly, not just an HTTP status.
-cmp "$root/web/site/index.html" "$tmp/index.html"
+# Rebuild the expected output without mutating the checkout.
+python3 "$root/web/tools/build.py" --output "$tmp/site"
+cmp "$tmp/site/index.html" "$tmp/index.html"
+for asset in "$tmp/site/assets/"*; do
+    curl --fail --silent --show-error "$base/assets/$(basename "$asset")" > "$tmp/asset"
+    cmp "$asset" "$tmp/asset"
+done
 for file in goto-android.apk goto-ios.zip; do
     curl --fail --silent --show-error "$base/downloads/$file" > "$tmp/$file"
-    cmp "$root/web/site/downloads/$file" "$tmp/$file"
+    cmp "$root/web/src/downloads/$file" "$tmp/$file"
 done
-for path in /.git/config /Dockerfile /missing /assets/; do
+for path in /.git/config /Dockerfile /missing /assets/ /assets/style.css /assets/site.js /src/index.html; do
     code=$(curl --silent --output /dev/null --write-out '%{http_code}' "$base$path")
     test "$code" = 404 || { echo "Unexpected access: $path ($code)" >&2; exit 1; }
 done
 test "$(docker inspect --format '{{.Config.User}}' "$name")" = '65532:65532'
-echo 'WEB: approved HTML, both unchanged builds, hidden paths and non-root read-only runtime passed.'
+echo 'WEB: built HTML/assets, both unchanged downloads, hidden paths and non-root read-only runtime passed.'

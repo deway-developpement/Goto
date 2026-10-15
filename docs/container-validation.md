@@ -11,12 +11,12 @@ Integration branch: `feat/static-web-release-images`. Production checkout and se
 | GraphQL user creation, native bcrypt login and JWT profile | Passed |
 | API restart | User can still log in; upload files persist |
 | API and WEB with read-only root, no capabilities, non-root user | Passed |
-| Served WEB HTML and Android/iOS files compared against approved sources | Identical |
+| Served WEB HTML/assets compared against a fresh build; Android/iOS against source files | Identical |
 | Hidden files, Dockerfile, missing path and asset directory listing | HTTP 404 |
 | Compose rendering using example-only values | Passed; no host ports or builds |
 | Both new workflows checked with actionlint 1.7.11 | Passed |
 | Shell syntax and Git whitespace | Passed |
-| Static website source compared with approved v8 | Assets/downloads identical; one HTML blank line has whitespace normalized |
+| Generated website compared with the previous validated v8 image content | Every output file identical |
 
 Local image sizes (uncompressed): WEB about 52 MB including downloads; API about 316 MB.
 The API image excludes `.env`, local uploads, SQL dumps, source-only migration tools and development dependencies.
@@ -27,3 +27,11 @@ Not yet exercised: the release event, authenticated GHCR pushes/private pulls, p
 physical-device app execution, production schema compatibility/migration, Caddy/DNS cutover or deployment.
 The workflow controls package visibility and tests before publishing; actual package privacy must be
 confirmed after the first successful publication. No release or package is created by these local tests.
+
+Source/build separation:
+- `web/src/` contains stable source filenames; `web/dist/` is generated and ignored.
+- Docker runs the dependency-free Python build, and copies only its output into scratch.
+- All previous runtime files are reproduced byte for byte, including HTML, CSS, JS and downloads.
+- Three build-contract tests pass: no source writes, reproducible clean output, font/CSS invalidation,
+  and refusal to build in-place/inside a source directory.
+- Container smoke checks fetch every generated asset and reject unversioned source asset URLs.

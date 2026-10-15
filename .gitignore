@@ -169,3 +169,7 @@ api/data
 # Deployment credentials and per-server settings
 .env.*
 !**/.env.example
+
+# Generated static website and Python build caches
+/web/dist/
+__pycache__/

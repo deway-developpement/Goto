@@ -55,23 +55,31 @@ The original WordPress service has not been changed or removed. At cutover, hand
 vitrine paths; preserve `/goto-api/`. Removed pricing paths return 410 in the example edge config,
 and have no corresponding files or navigation in the site.
 
-## Editing
+## Sources and build
 
-Edit `site/index.html` and the CSS in `site/assets/`. Images and fonts are local to the site.
-After changing an asset, run:
+Edit `src/index.html`, `src/assets/style.css` and `src/assets/site.js`. Images and fonts
+also live under `src/assets/`, with stable filenames. These are plain HTML/CSS/JS sources.
+Only sources and the build script are tracked; `dist/` is generated and ignored by Git.
 
 ```sh
-python3 tools/version-assets.py
+python3 tools/build.py
+python3 -m unittest discover -s tests
 ```
 
-The helper changes filenames based on their contents and updates HTML/CSS references, avoiding
-stale assets with the long cache policy. Rebuild the image afterwards.
+The dependency-free Python build copies the site to `dist/`, fingerprints local assets by content,
+and updates HTML/CSS references. It starts from a clean output directory and never changes `src/`.
+Font changes also invalidate the referencing CSS, while unchanged assets keep their cache keys.
+Preview the built files with `python3 -m http.server 8080 --directory dist` if Docker is unavailable.
 
-To replace the APK, copy it to `site/downloads/goto-android.apk`, regenerate the `.sha256` file,
-and update the visible size in HTML. The Apple archive is an x86_64 iPhoneSimulator build, version 1.0.0, with iOS 13.0 minimum declared.
-It is a simulator artifact, not a TestFlight or iPhone installer. No Apple Developer membership
-or store distribution is part of this project. Simulator execution and APK compatibility, login and hiking functionality require
-device testing; HTTP-download checks do not verify application behaviour.
+The Docker build performs the same generation in its build stage and copies only the resulting
+site into the final scratch image. Python, the `src/` directory and build tools are absent from the running image.
+No npm installation, framework or JavaScript compilation is needed for this static site.
+
+To replace the APK, copy it to `src/downloads/goto-android.apk`, regenerate the `.sha256` file,
+and update the visible size in the source HTML. The Apple archive is an x86_64 iPhoneSimulator build,
+version 1.0.0, with iOS 13.0 minimum declared. It is a simulator artifact, not a TestFlight distribution.
+Simulator execution and APK compatibility, login and hiking functionality require device testing;
+HTTP-download checks do not verify application behaviour.
 
 ## Sources
 

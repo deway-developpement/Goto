@@ -48,3 +48,7 @@ Latest scroll correction (v8):
   exactly one accessible app panel; click-to-wheel recovery and live resize verified.
 - Existing carousel, keyboard, comparison, download checks pass. No horizontal overflow,
   broken images or browser/CSP errors. Both provided downloads still match SHA-256.
+
+Source/build separation: editable files moved to `src/` with stable filenames. The Docker build
+generates fingerprinted files in its build stage; local `dist/` output is ignored by Git.
+The complete generated site matches the previously validated image content byte for byte.

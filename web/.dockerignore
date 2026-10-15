@@ -5,5 +5,7 @@
 !vendor/darkhttpd/
 !vendor/darkhttpd/darkhttpd.c
 !vendor/darkhttpd/COPYING
-!site/
-!site/**
+!src/
+!src/**
+!tools/
+!tools/build.py
