@@ -1,0 +1,22 @@
+services:
+  goto-web:
+    build: .
+    image: goto-web:local
+    restart: unless-stopped
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    pids_limit: 16
+    mem_limit: 32m
+    expose: ["8080"]
+    networks: [edge]
+    logging:
+      driver: json-file
+      options:
+        max-size: 5m
+        max-file: "2"
+
+networks:
+  edge:
+    external: true
+    name: ${CADDY_NETWORK:-caddy}

@@ -12,7 +12,7 @@
         "start": "nest start",
         "start:dev": "NODE_ENV=development nest start --watch",
         "start:debug": "nest start --debug --watch",
-        "start:prod": "NODE_ENV=production node dist/main",
+        "start:prod": "NODE_ENV=production node dist/src/main.js",
         "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
         "test": "jest",
         "test:watch": "jest --watch",
@@ -23,7 +23,9 @@
         "typeorm:run-migrations": "npm run typeorm migration:run -- -d ./src/ormconfig.ts",
         "typeorm:generate-migration": "npm run typeorm -- -d ./src/ormconfig.ts migration:generate ./migrations/$npm_config_name",
         "typeorm:create-migration": "npm run typeorm -- migration:create ./migrations/$npm_config_name",
-        "typeorm:revert-migration": "npm run typeorm -- -d ./src/ormconfig.ts migration:revert"
+        "typeorm:revert-migration": "npm run typeorm -- -d ./src/ormconfig.ts migration:revert",
+        "migration:run:prod": "node node_modules/typeorm/cli.js migration:run -d dist/src/ormconfig.js",
+        "migration:show:prod": "node node_modules/typeorm/cli.js migration:show -d dist/src/ormconfig.js"
     },
     "dependencies": {
         "@apollo/server": "^5.5.1",

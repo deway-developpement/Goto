@@ -1,6 +1,18 @@
 # Goto
 The hiking app you need
 
+## Vitrine et images de release
+
+- `web/` : vitrine anglaise validée, HTML/CSS/JS natifs, servie par darkhttpd dans `scratch`.
+- `api/` : API NestJS, image Node 22 non root, fichiers persistants dans `/app/data`.
+- `app/` : POC Expo conservé, sans build mobile dans cette CI.
+- PR et push `main` : builds et tests isolés des deux conteneurs.
+- Release publiée `vX.Y.Z` : tests puis publication des packages GHCR privés `goto-api` et `goto-web`.
+- `deploy/compose.yaml` : déploiement par pull de digests derrière Caddy ; promotion explicite côté infra.
+
+Voir [les releases et le déploiement](docs/container-releases.md),
+[la vitrine](web/README.md) et [la validation de l’intégration](docs/container-validation.md).
+
 ## Développement local
 
 Prérequis : Node.js 22, npm et MySQL local (Docker reste une option).

@@ -1,0 +1,9 @@
+*
+!Dockerfile
+!mime.types
+!vendor/
+!vendor/darkhttpd/
+!vendor/darkhttpd/darkhttpd.c
+!vendor/darkhttpd/COPYING
+!site/
+!site/**

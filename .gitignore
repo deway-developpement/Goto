@@ -165,3 +165,7 @@ api/config/env/
 api/config/*.js
 api/test
 api/data
+
+# Deployment credentials and per-server settings
+.env.*
+!**/.env.example

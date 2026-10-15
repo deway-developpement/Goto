@@ -1,0 +1,44 @@
+# Merge this site block into the existing edge Caddyfile.
+# Caddy and goto-web must share the Docker network selected by CADDY_NETWORK.
+goto.deway.fr {
+    encode zstd gzip
+
+    header {
+        -Server
+        X-Content-Type-Options nosniff
+        Referrer-Policy strict-origin-when-cross-origin
+        X-Frame-Options DENY
+        Permissions-Policy "camera=(), microphone=(), geolocation=()"
+        Content-Security-Policy "default-src 'none'; script-src 'self'; img-src 'self'; style-src 'self'; font-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'"
+    }
+
+    # Versioned asset filenames are changed by tools/version-assets.py.
+    @assets path /assets/*
+    header @assets {
+        >Cache-Control "public, max-age=31536000, immutable"
+        match status 200 206 304
+    }
+
+    # HTML and downloads are revalidated so a replacement is seen promptly.
+    @revalidate not path /assets/*
+    header @revalidate >Cache-Control "no-cache"
+
+    @apk path /downloads/*.apk
+    header @apk Content-Disposition "attachment; filename=goto-android.apk"
+
+    @apple path /downloads/*.zip
+    header @apple Content-Disposition "attachment; filename=goto-ios.zip"
+
+    # Removed commercial page, including historical WordPress variants.
+    @retired path /pricing /pricing/* /index.php/pricing /index.php/pricing/*
+    respond @retired 410
+
+    reverse_proxy goto-web:8080
+}
+
+# On deway.fr, replace only the old /goto vitrine route when migrating.
+# Do not redirect /goto-api/ or other application endpoints.
+# redir /goto https://goto.deway.fr/ 308
+# redir /goto/ https://goto.deway.fr/ 308
+# redir /goto/pricing https://goto.deway.fr/pricing 308
+# redir /goto/pricing/* https://goto.deway.fr/pricing 308

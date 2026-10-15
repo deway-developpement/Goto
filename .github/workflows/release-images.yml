@@ -1,0 +1,95 @@
+name: Release API and WEB images
+on:
+  release:
+    types: [published]
+permissions:
+  contents: read
+concurrency:
+  group: release-images-${{ github.event.release.tag_name }}
+  cancel-in-progress: false
+jobs:
+  release:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          ref: ${{ github.event.release.tag_name }}
+          persist-credentials: false
+      - name: Validate version and resolve the released commit
+        id: version
+        env:
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ ! "$RELEASE_TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9][a-zA-Z0-9.-]*)?$ ]]; then
+            echo 'Use a release tag such as v1.0.0 or v1.0.0-rc.1.' >&2
+            exit 1
+          fi
+          echo "version=${RELEASE_TAG#v}" >> "$GITHUB_OUTPUT"
+          echo "revision=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+      - name: Require private packages
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PACKAGE_OWNER_TYPE: ${{ github.event.repository.owner.type }}
+        run: python3 scripts/check-package-visibility.py
+      - uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4
+      - name: Build API
+        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7
+        with:
+          context: ./api
+          load: true
+          push: false
+          platforms: linux/amd64
+          tags: goto-api:ci
+          labels: |
+            org.opencontainers.image.revision=${{ steps.version.outputs.revision }}
+            org.opencontainers.image.version=${{ steps.version.outputs.version }}
+          cache-from: type=gha,scope=goto-api
+          cache-to: type=gha,mode=max,scope=goto-api
+      - name: Build WEB
+        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7
+        with:
+          context: ./web
+          load: true
+          push: false
+          platforms: linux/amd64
+          tags: goto-web:ci
+          labels: |
+            org.opencontainers.image.revision=${{ steps.version.outputs.revision }}
+            org.opencontainers.image.version=${{ steps.version.outputs.version }}
+          cache-from: type=gha,scope=goto-web
+          cache-to: type=gha,mode=max,scope=goto-web
+      - name: Validate both images before either is published
+        run: |
+          bash scripts/smoke-api.sh goto-api:ci
+          bash scripts/smoke-web.sh goto-web:ci
+      - uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ github.token }}
+      - name: Push the tested images and record deployment digests
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+          REVISION: ${{ steps.version.outputs.revision }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          owner="${GITHUB_REPOSITORY_OWNER,,}"
+          echo '### Tested release images' >> "$GITHUB_STEP_SUMMARY"
+          echo '| Component | Pull reference |' >> "$GITHUB_STEP_SUMMARY"
+          echo '| --- | --- |' >> "$GITHUB_STEP_SUMMARY"
+          for component in api web; do
+            image="ghcr.io/$owner/goto-$component"
+            docker tag "goto-$component:ci" "$image:$VERSION"
+            docker tag "goto-$component:ci" "$image:sha-$REVISION"
+            digest=$(docker push --quiet "$image:$VERSION")
+            [[ "$digest" =~ ^sha256:[a-f0-9]{64}$ ]]
+            docker push --quiet "$image:sha-$REVISION"
+            echo "| $component | \`$image@$digest\` |" >> "$GITHUB_STEP_SUMMARY"
+          done

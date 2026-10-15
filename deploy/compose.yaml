@@ -1,0 +1,49 @@
+# Production consumes release images only; keep database lifecycle in its own stack.
+name: goto
+services:
+  goto-web:
+    image: ${GOTO_WEB_IMAGE:?Set the tested WEB image digest}
+    restart: unless-stopped
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    pids_limit: 16
+    mem_limit: 32m
+    expose: ['8080']
+    networks: [edge]
+    logging:
+      driver: json-file
+      options: {max-size: 5m, max-file: '2'}
+  goto-api:
+    image: ${GOTO_API_IMAGE:?Set the tested API image digest}
+    env_file: ${GOTO_API_ENV_FILE:?Set an absolute path to the API runtime env file}
+    environment:
+      NODE_ENV: production
+      PORT: '3000'
+      RESET_DB_ON_START: 'false'
+      RESET_DB_ON_SHUTDOWN: 'false'
+    init: true
+    restart: unless-stopped
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    pids_limit: 128
+    mem_limit: 512m
+    tmpfs: ['/tmp:rw,nosuid,noexec,size=32m']
+    volumes: [api-data:/app/data]
+    expose: ['3000']
+    networks: [edge, database]
+    logging:
+      driver: json-file
+      options: {max-size: 5m, max-file: '2'}
+networks:
+  edge:
+    external: true
+    name: ${CADDY_NETWORK:-caddy}
+  database:
+    external: true
+    name: ${GOTO_DATABASE_NETWORK:?Set the shared MySQL Docker network}
+volumes:
+  api-data:
+    external: true
+    name: ${GOTO_API_DATA_VOLUME:-goto-api-data}

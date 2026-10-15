@@ -56,7 +56,7 @@ console.log = function (...args) {
         GraphQLModule.forRoot({
             driver: ApolloDriver,
             imports: [AuthModule, UserModule],
-            autoSchemaFile: 'schema.gql',
+            autoSchemaFile: process.env.NODE_ENV === 'production' ? true : 'schema.gql',
             uploads: false,
             transformSchema: (schema) => regexDirectiveTransformer(schema, 'constraint'),
             buildSchemaOptions: {

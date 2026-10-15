@@ -1,0 +1,10 @@
+services:
+  goto-web:
+    build: .
+    image: goto-web:local
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    pids_limit: 16
+    mem_limit: 32m
+    ports: ["127.0.0.1:18088:8080"]

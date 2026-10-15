@@ -36,6 +36,6 @@ export default new DataSource({
         ReviewEntity,
         TableEntity,
     ],
-    migrations: ['migrations/**/*.ts'],
-    synchronize: true,
+    migrations: [process.env.NODE_ENV === 'production' ? 'dist/migrations/*.js' : 'migrations/*.ts'],
+    synchronize: false,
 });

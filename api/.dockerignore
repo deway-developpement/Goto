@@ -1,0 +1,12 @@
+*
+!Dockerfile
+!package.json
+!package-lock.json
+!tsconfig*.json
+!nest-cli.json
+!src/
+!src/**
+!config/
+!config/*.ts
+!migrations/
+!migrations/*.ts
