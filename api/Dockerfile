@@ -1,5 +1,5 @@
 # Node 22 LTS; keep build and runtime on the same libc for native bcrypt.
-FROM node:22-bookworm-slim@sha256:c3de60bf2f9dd0ac6370e6117950ff62d6e339527e7472301c9c78a017978392 AS build
+FROM node:26-bookworm-slim@sha256:298992629d69bbd5b2b03ad57094d8e4fcb3a8eeb7c4e25d29de656519568913 AS build
 WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci --legacy-peer-deps --no-audit --no-fund
@@ -9,7 +9,7 @@ COPY config/ ./config/
 COPY migrations/*.ts ./migrations/
 RUN npm run build && npm prune --omit=dev --legacy-peer-deps --no-audit --no-fund
 
-FROM node:22-bookworm-slim@sha256:c3de60bf2f9dd0ac6370e6117950ff62d6e339527e7472301c9c78a017978392
+FROM node:26-bookworm-slim@sha256:298992629d69bbd5b2b03ad57094d8e4fcb3a8eeb7c4e25d29de656519568913
 LABEL org.opencontainers.image.source="https://github.com/deway-developpement/Goto"
 LABEL org.opencontainers.image.description="Goto GraphQL API"
 ENV NODE_ENV=production PORT=3000
